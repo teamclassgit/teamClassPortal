@@ -158,7 +158,10 @@ const WizardClassBooking = () => {
                         options={{
                             linear: true
                         }}
-                        instance={el => setStepper(el)}
+                        instance={el => {
+                            setStepper(el)
+                            if (bookingInfo && bookingInfo.status === 'confirmed') el.to(4)
+                        }}
                     />
 
                 </div>
