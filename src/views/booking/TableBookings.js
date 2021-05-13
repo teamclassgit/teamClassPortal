@@ -99,23 +99,21 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
             sortable: true,
             maxWidth: '120px',
             cell: row => (
-                <div className='d-flex align-items-center'>
-                <span className='d-block font-weight-bold text-truncate'>
-                    {moment(row.createdAt).calendar(null, {
-                        lastDay: '[Yesterday]',
-                        sameDay: 'LT',
-                        lastWeek: 'dddd',
-                        sameElse: 'MMMM Do, YYYY'
-                    })}
-                        </span>
-                </div>
+                    <small>
+                        {moment(row.createdAt).calendar(null, {
+                            lastDay: '[Yesterday]',
+                            sameDay: 'LT',
+                            lastWeek: 'dddd',
+                            sameElse: 'MMMM Do, YYYY'
+                        })}
+                    </small>
             )
         },
         {
             name: 'Customer',
             selector: 'customerName',
             sortable: true,
-            maxWidth: '200px',
+            maxWidth: '180px',
             cell: row => (
                 <div className='d-flex align-items-center'>
                     <Avatar color={`${status[row.status].color}`} content={row.customerName} initials/>
@@ -138,7 +136,7 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
             name: 'Class',
             selector: 'teamClassId',
             sortable: true,
-            maxWidth: '200px',
+            maxWidth: '170px',
             cell: row => (<div className='user-info text-truncate ml-1'>
                 <span className='d-block font-weight-bold text-truncate'>{getClassTitle(row.teamClassId)}</span>
             </div>)
@@ -147,13 +145,13 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
             name: 'Attendees',
             selector: 'attendees',
             sortable: true,
-            maxWidth: '50px'
+            maxWidth: '20px'
         },
         {
             name: 'Event Date',
             selector: 'id',
             sortable: true,
-            maxWidth: '180px',
+            maxWidth: '150px',
             cell: row => (<div className='user-info text-truncate ml-1'>
                 <span className='d-block font-weight-bold text-truncate'>{getFormattedEventDate(row.id)}</span>
             </div>)
@@ -162,7 +160,7 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
             name: 'Status',
             selector: 'status',
             sortable: true,
-            maxWidth: '50px',
+            maxWidth: '40px',
             cell: row => {
                 return (
                     <Badge color={status[row.status] && status[row.status].color} pill>

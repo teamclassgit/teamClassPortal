@@ -35,6 +35,7 @@ const WizardClassBooking = () => {
     const [getTeamClass, {...classResult}] = useLazyQuery(queryClassById)
     const [getCustomer, {...customerResult}] = useLazyQuery(queryCustomerById)
     const [getClassEvents, {...calendarEventsByClassResult}] = useLazyQuery(queryCalendarEventsByClassId)
+    const [getAttendees, {...attendeesResult}] = useLazyQuery(queryAttendeesByBookingId)
 
     const result = useQuery(queryBookingById,
         {
@@ -46,36 +47,15 @@ const WizardClassBooking = () => {
             }
         })
 
-    const {...attendeesResult} = useQuery(queryAttendeesByBookingId,
-        {
-            fetchPolicy: "no-cache",
-            variables: {
-                bookingId: id
-            },
-            onCompleted: data => {
-                if (data && data.listAttendees && data.listAttendees.items) {
-                    setAttendees(data.listAttendees.items.map(element => element))
-                    setRealCountAttendees(data.listAttendees.items.length)
-                }
-            }
-        })
-
     React.useEffect(() => {
 
         if (bookingInfo) {
 
-            getTeamClass({
+            getAttendees({
                 variables: {
-                    classId: bookingInfo.teamClassId
+                    bookingId: bookingInfo.id
                 }
             })
-        }
-
-    }, [bookingInfo])
-
-    React.useEffect(() => {
-
-        if (bookingInfo) {
 
             getTeamClass({
                 variables: {
@@ -95,6 +75,15 @@ const WizardClassBooking = () => {
         }
 
     }, [bookingInfo])
+
+    React.useEffect(() => {
+
+        if (bookingInfo && attendeesResult.data) {
+            setAttendees(attendeesResult.data.listAttendees.items.map(element => element))
+            setRealCountAttendees(attendeesResult.data.listAttendees.items.length)
+        }
+
+    }, [attendeesResult.data])
 
     React.useEffect(() => {
 
@@ -135,7 +124,8 @@ const WizardClassBooking = () => {
             subtitle: 'Who is coming',
             icon: <Users size={18}/>,
             content: <Attendees stepper={stepper} type='wizard-horizontal' attendees={attendees}
-                                teamClass={teamClass} booking={bookingInfo} setRealCountAttendees={setRealCountAttendees}/>
+                                teamClass={teamClass} booking={bookingInfo}
+                                setRealCountAttendees={setRealCountAttendees}/>
         },
         {
             id: 'personal-info',

@@ -13,10 +13,6 @@ query GetBookings($filter:TableBookingFilterInput!) {
          status
          createdAt 
          updatedAt
-         customer {
-            id
-            email
-        }
     }
   }
 }`
