@@ -1,8 +1,8 @@
-import {Fragment, useState} from 'react'
+import {Fragment} from 'react'
 import {ArrowLeft, ArrowRight} from 'react-feather'
-import {Label, FormGroup, Row, Col, Input, Form, Button} from 'reactstrap'
+import {Button, Col, Form, Row} from 'reactstrap'
 import TableAttendees from "./TableAttendees"
-import {useLazyQuery, useMutation} from "@apollo/client"
+import {useMutation} from "@apollo/client"
 import mutationCreateAttendee from "../../../graphql/MutationCreateAttendee"
 import mutationUpdateAttendee from "../../../graphql/MutationUpdateAttendee"
 import mutationDeleteAttendee from "../../../graphql/MutationDeleteAttendee"
@@ -74,7 +74,8 @@ const Attendees = ({stepper, type, teamClass, booking, attendees, setRealCountAt
                 <Row>
                     <Col sm='12'>
                         <TableAttendees hasKit={teamClass && teamClass.hasKit} currentBookingId={booking && booking.id}
-                                        attendees={attendees} saveAttendee={saveAttendee} deleteAttendee={deleteAttendee} updateAttendeesCount={updateAttendeesCount}/>
+                                        attendees={attendees} saveAttendee={saveAttendee}
+                                        deleteAttendee={deleteAttendee} updateAttendeesCount={updateAttendeesCount}/>
                     </Col>
                 </Row>
                 <Row>

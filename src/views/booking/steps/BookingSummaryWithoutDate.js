@@ -1,7 +1,7 @@
 import React from "react"
-import {Card, CardBody, CardFooter, CardHeader, FormText, Media, Badge} from "reactstrap"
+import {Badge, Card, CardBody, FormText, Media} from "reactstrap"
 import moment from "moment"
-import {Calendar, Clock} from "react-feather"
+import {Calendar} from "react-feather"
 import Avatar from '@components/avatar'
 import {toAmPm} from '../../../utility/Utils'
 

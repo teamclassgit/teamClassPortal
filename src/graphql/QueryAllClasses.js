@@ -6,6 +6,11 @@ query GetClasses($filter:TableTeamClassFilterInput!) {
     items {
       id
       title
+      instructorName
+      duration
+      minimum
+      pricePerson
+      instructorId
       category
     }
   }

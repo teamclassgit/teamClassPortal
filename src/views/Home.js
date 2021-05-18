@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, CardTitle, CardText, CardLink } from 'reactstrap'
+import {Card, CardBody, CardHeader, CardLink, CardText, CardTitle} from 'reactstrap'
 
 const Home = () => {
   return (

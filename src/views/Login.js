@@ -1,8 +1,8 @@
-import { useSkin } from '@hooks/useSkin'
-import { Link, Redirect } from 'react-router-dom'
-import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
+import {useSkin} from '@hooks/useSkin'
+import {Link} from 'react-router-dom'
+import {Facebook, GitHub, Mail, Twitter} from 'react-feather'
 import InputPasswordToggle from '@components/input-password-toggle'
-import { Row, Col, CardTitle, CardText, Form, FormGroup, Label, Input, CustomInput, Button } from 'reactstrap'
+import {Button, CardText, CardTitle, Col, CustomInput, Form, FormGroup, Input, Label, Row} from 'reactstrap'
 import '@styles/base/pages/page-auth.scss'
 
 const Login = () => {

@@ -1,5 +1,5 @@
 import {Fragment} from 'react'
-import {Row, Col, Breadcrumb, BreadcrumbItem} from 'reactstrap'
+import {Col, Row} from 'reactstrap'
 import WizardClassBooking from './WizardClassBooking'
 import {useParams} from "react-router-dom"
 

@@ -1,6 +1,6 @@
-import { Award } from 'react-feather'
+import {Award} from 'react-feather'
 import Avatar from '@components/avatar'
-import {Button, Card, CardBody, CardFooter, CardText, Col} from 'reactstrap'
+import {Button, Card, CardBody, CardFooter, CardText} from 'reactstrap'
 import decorationLeft from '@src/assets/images/elements/decore-left.png'
 import decorationRight from '@src/assets/images/elements/decore-right.png'
 import React from "react"

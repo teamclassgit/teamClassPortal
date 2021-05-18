@@ -1,19 +1,19 @@
 // ** React Imports
-import React, {useState} from 'react'
+import React from 'react'
 
 // ** Third Party Components
-import {User, Mail, X, Phone} from 'react-feather'
+import {Mail, Phone, User, X} from 'react-feather'
 import {
     Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
     FormGroup,
+    Input,
     InputGroup,
     InputGroupAddon,
     InputGroupText,
-    Input,
-    Label
+    Label,
+    Modal,
+    ModalBody,
+    ModalHeader
 } from 'reactstrap'
 
 // ** Styles
@@ -22,7 +22,7 @@ import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import {isValidEmail} from "../../../utility/Utils"
 
-const AddNewModal = ({
+const AddNewAttendee = ({
                          open,
                          handleModal,
                          currentBookingId,
@@ -210,4 +210,4 @@ const AddNewModal = ({
     )
 }
 
-export default AddNewModal
+export default AddNewAttendee

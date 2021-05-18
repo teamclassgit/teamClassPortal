@@ -1,7 +1,7 @@
-import { Fragment } from 'react'
+import {Fragment} from 'react'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
-import { InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap'
+import {InputGroup, InputGroupAddon, InputGroupText} from 'reactstrap'
 
 const PhoneMask = () => {
   const options = { phone: true, phoneRegionCode: 'US' }

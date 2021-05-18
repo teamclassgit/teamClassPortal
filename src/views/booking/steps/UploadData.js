@@ -1,14 +1,8 @@
 // ** React Imports
 import React, {useState} from 'react'
 import readXlsxFile from 'read-excel-file'
-import {AlertCircle, X} from 'react-feather'
-import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    Card, CardHeader, CardTitle, CardBody, Alert
-} from 'reactstrap'
+import {X} from 'react-feather'
+import {Alert, Button, Card, CardBody, CardHeader, CardTitle, Modal, ModalBody, ModalHeader} from 'reactstrap'
 
 import Uppy from '@uppy/core'
 import {DragDrop} from '@uppy/react'

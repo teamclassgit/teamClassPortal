@@ -2,13 +2,11 @@ import React, {useRef, useState} from 'react'
 import Wizard from '@components/wizard'
 import Attendees from './steps/Attendees'
 import Confirmation from './steps/Confirmation'
-import PersonalInfo from './steps/PersonalInfo'
+import BillingInfo from './steps/BillingInfo'
 import DateTimeConfirmation from './steps/DateTimeConfirmation'
-import {Row, Col, Spinner} from 'reactstrap'
-import {Calendar, Users, Check, CreditCard} from 'react-feather'
-import {
-    useParams
-} from "react-router-dom"
+import {Col, Row, Spinner} from 'reactstrap'
+import {Calendar, Check, CreditCard, Users} from 'react-feather'
+import {useParams} from "react-router-dom"
 
 import queryBookingById from "../../graphql/QueryBookingById"
 import queryClassById from "../../graphql/QueryClassById"
@@ -27,6 +25,7 @@ const WizardClassBooking = () => {
     const [calendarEvent, setCalendarEvent] = React.useState(null)
     const [attendees, setAttendees] = React.useState([])
     const [realCountAttendees, setRealCountAttendees] = React.useState(0)
+    const serviceFee = 0.1
 
     const ref = useRef(null)
 
@@ -132,9 +131,9 @@ const WizardClassBooking = () => {
             title: 'Reservation',
             subtitle: 'Billing details',
             icon: <CreditCard size={18}/>,
-            content: <PersonalInfo stepper={stepper} type='wizard-horizontal' calendarEvent={calendarEvent}
-                                   setCalendarEvent={setCalendarEvent} customer={customer} booking={bookingInfo}
-                                   attendeesListCount={attendees && attendees.length}/>
+            content: <BillingInfo stepper={stepper} type='wizard-horizontal' calendarEvent={calendarEvent}
+                                  setCalendarEvent={setCalendarEvent} customer={customer} booking={bookingInfo}
+                                  attendeesListCount={attendees && attendees.length}/>
         },
         {
             id: 'social-links',
@@ -171,7 +170,7 @@ const WizardClassBooking = () => {
                 <div className='py-3'>
                     {bookingInfo && (<BookingSummaryWithoutDate calendarEvent={calendarEvent}
                                                                 teamClass={teamClass}
-                                                                serviceFee={0.1}
+                                                                serviceFee={serviceFee}
                                                                 attendeesAdded={realCountAttendees}
                                                                 attendees={bookingInfo.attendees}
                                                                 pricePerson={bookingInfo.pricePerson}

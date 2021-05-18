@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react'
-import {ArrowLeft, ArrowRight} from 'react-feather'
-import {Label, FormGroup, Row, Col, Form, Input, Button} from 'reactstrap'
+import {ArrowLeft} from 'react-feather'
+import {Button, Col, Form, FormGroup, Input, Row} from 'reactstrap'
 import '@styles/react/libs/react-select/_react-select.scss'
 import CreditCardMask from "../../forms/input-mask/CreditCardMask"
 import ExpCreditCardMask from "../../forms/input-mask/ExpCreditCardMask"
@@ -14,7 +14,7 @@ import mutationUpdateCalendarEvent from "../../../graphql/MutationUpdateCalendar
 import mutationUpdateCustomer from "../../../graphql/MutationUpdateCustomer"
 import {isValidEmail} from "../../../utility/Utils"
 
-const PersonalInfo = ({
+const BillingInfo = ({
                           stepper,
                           type,
                           booking,
@@ -237,4 +237,4 @@ const PersonalInfo = ({
     )
 }
 
-export default PersonalInfo
+export default BillingInfo

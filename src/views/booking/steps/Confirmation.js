@@ -1,7 +1,5 @@
 import React, {Fragment} from 'react'
-import {AlertCircle, ArrowLeft} from 'react-feather'
-import {Label, FormGroup, Row, Col, Form, Input, Button, Alert} from 'reactstrap'
-import BookingSummaryWithoutDate from "./BookingSummaryWithoutDate"
+import {Col, Row} from 'reactstrap'
 import CardCongratulations from "./CardCongratulations"
 
 const Confirmation = ({stepper, type, customer, booking}) => {

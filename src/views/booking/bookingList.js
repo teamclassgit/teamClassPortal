@@ -4,7 +4,7 @@ import queryAllBookings from '../../graphql/QueryAllBookings'
 import queryAllCalendarEvents from "../../graphql/QueryAllCalendarEvents"
 import queryAllCustomers from "../../graphql/QueryAllCustomers"
 import queryAllClasses from "../../graphql/QueryAllClasses"
-import {useMutation, useQuery} from "@apollo/client"
+import {useQuery} from "@apollo/client"
 import {Col, Row, Spinner} from "reactstrap"
 
 
@@ -26,7 +26,7 @@ const BookingList = () => {
 
     React.useEffect(() => {
 
-        if (allBookingsResult.data) setBookings(allBookingsResult.data.listBookings.items)
+        if (allBookingsResult.data) setBookings(allBookingsResult.data.listBookings.items.map(element => element))
 
     }, [allBookingsResult.data])
 
@@ -77,15 +77,14 @@ const BookingList = () => {
         <Fragment>
             {(allClasses.loading || allBookingsResult.loading || allCalendarEventsResults.loading || allCustomersResult.loading) && (
                 <div>
-                    <Spinner className='mr-25' />
-                    <Spinner type='grow' />
+                    <Spinner className='mr-25'/>
+                    <Spinner type='grow'/>
                 </div>
             )}
             {allBookingsResult && allBookingsResult.data &&
             <Row>
                 <Col sm='12'>
-                    <DataTableBookings data={bookings} customers={customers} calendarEvents={calendarEvents}
-                                       classes={classes}/>
+                    <DataTableBookings bookings={bookings} customers={customers} setCustomers={setCustomers} calendarEvents={calendarEvents} classes={classes} />
                 </Col>
             </Row>}
         </Fragment>

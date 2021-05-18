@@ -1,37 +1,30 @@
 // ** React Imports
-import React, {Fragment, useState, forwardRef} from 'react'
+import React, {forwardRef, Fragment, useState} from 'react'
 // ** Add New Modal Component
-import AddNewModal from './AddNewModal'
+import AddNewAttendee from './AddNewAttendee'
+import UploadData from "./UploadData"
 // ** Custom Components
 import Avatar from '@components/avatar'
 // ** Third Party Components
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
+import {AlertTriangle, ChevronDown, Download, Edit, Grid, Plus, Share, Trash} from 'react-feather'
 import {
-    ChevronDown,
-    Share,
-    Grid,
-    Plus,
-    Download,
-    Trash,
-    Edit,
-    AlertTriangle
-} from 'react-feather'
-import {
+    Badge,
+    Button,
     Card,
     CardHeader,
     CardTitle,
-    Button,
-    UncontrolledButtonDropdown,
-    DropdownToggle,
-    DropdownMenu,
+    Col,
     DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
     Input,
     Label,
     Row,
-    Col, Badge
+    UncontrolledButtonDropdown
 } from 'reactstrap'
-import UploadData from "./UploadData"
+
 
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({onClick, ...rest}, ref) => (
@@ -362,8 +355,8 @@ const DataTableAttendees = ({
                     selectableRowsComponent={BootstrapCheckbox}
                 />
             </Card>
-            <AddNewModal open={modal} handleModal={handleModal} currentBookingId={currentBookingId}
-                         currentElement={currentElement} saveAttendee={saveAttendee} data={data} setData={setData} updateAttendeesCount={updateAttendeesCount}/>
+            <AddNewAttendee open={modal} handleModal={handleModal} currentBookingId={currentBookingId}
+                            currentElement={currentElement} saveAttendee={saveAttendee} data={data} setData={setData} updateAttendeesCount={updateAttendeesCount}/>
             <UploadData open={modalUpload} handleModal={handleModalUpload} currentBookingId={currentBookingId}
                         saveAttendee={saveAttendee} data={data} setData={setData} updateAttendeesCount={updateAttendeesCount}/>
         </Fragment>

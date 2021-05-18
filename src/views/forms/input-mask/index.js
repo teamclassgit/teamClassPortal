@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import {Fragment} from 'react'
 import PhoneMask from './PhoneMask'
 import DateMask from './DateMask'
 import TimeMask from './TimeMask'
@@ -9,7 +9,7 @@ import CreditCardMask from './CreditCardMask'
 import Breadcrumbs from '@components/breadcrumbs'
 import CustomDelimitersMask from './CustomDelimitersMask'
 import NumeralFormattingMask from './NumeralFormattingMask'
-import { Row, Col, Card, CardBody, CardTitle, CardHeader } from 'reactstrap'
+import {Card, CardBody, CardHeader, CardTitle, Col, Row} from 'reactstrap'
 
 const InputMask = () => {
   return (

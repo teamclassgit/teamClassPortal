@@ -1,40 +1,29 @@
 // ** React Imports
-import React, {Fragment, useState, forwardRef} from 'react'
+import React, {forwardRef, Fragment, useState} from 'react'
 // ** Third Party Components
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
 import Avatar from '@components/avatar'
 import moment from 'moment'
 import {toAmPm} from '../../utility/Utils'
-
+import AddNewBooking from "./AddNewBooking"
+import {ChevronDown, Copy, File, FileText, Grid, Plus, Printer, Share} from 'react-feather'
 import {
-    ChevronDown,
-    Share,
-    Printer,
-    FileText,
-    File,
-    Grid,
-    Copy,
-    Plus,
-    Download,
-    Trash,
-    Edit,
-    AlertTriangle
-} from 'react-feather'
-import {
+    Badge,
+    Button,
     Card,
     CardHeader,
     CardTitle,
-    Button,
-    UncontrolledButtonDropdown,
-    DropdownToggle,
-    DropdownMenu,
+    Col,
     DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
     Input,
     Label,
     Row,
-    Col, Badge
+    UncontrolledButtonDropdown
 } from 'reactstrap'
+
 
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({onClick, ...rest}, ref) => (
@@ -44,15 +33,21 @@ const BootstrapCheckbox = forwardRef(({onClick, ...rest}, ref) => (
     </div>
 ))
 
-const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
+const DataTableBookings = ({bookings, customers, setCustomers, classes, calendarEvents}) => {
 
     // ** States
+    const [data, setData] = useState(bookings)
     const [currentPage, setCurrentPage] = useState(0)
+    const [currentElement, setCurrentElement] = React.useState(null)
     const [searchValue, setSearchValue] = useState('')
     const [filteredData, setFilteredData] = useState([])
+    const [modal, setModal] = useState(false)
 
-    // ** Vars
-    const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']
+    React.useEffect(() => {
+
+        setData(bookings)
+
+    }, [bookings])
 
     const status = {
         quote: {title: 'quote', color: 'light-danger'},
@@ -81,7 +76,6 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
         const result = calendarEvents.filter(element => element.bookingId === bookingId)
 
         if (result && result.length > 0) {
-            console.log("find one")
             const calendarEvent = result[0]
             const date = new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)
             const time = toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, '')
@@ -99,14 +93,14 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
             sortable: true,
             maxWidth: '120px',
             cell: row => (
-                    <small>
-                        {moment(row.createdAt).calendar(null, {
-                            lastDay: '[Yesterday]',
-                            sameDay: 'LT',
-                            lastWeek: 'dddd',
-                            sameElse: 'MMMM Do, YYYY'
-                        })}
-                    </small>
+                <small>
+                    {moment(row.createdAt).calendar(null, {
+                        lastDay: '[Yesterday]',
+                        sameDay: 'LT',
+                        lastWeek: 'dddd',
+                        sameElse: 'MMMM Do, YYYY'
+                    })}
+                </small>
             )
         },
         {
@@ -184,6 +178,9 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
             }
         }
     ]
+
+    // ** Function to handle Modal toggle
+    const handleModal = () => setModal(!modal)
 
     // ** Function to handle filter
     const handleFilter = e => {
@@ -303,28 +300,26 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
                                 <span className='align-middle ml-50'>Export</span>
                             </DropdownToggle>
                             <DropdownMenu right>
-                                <DropdownItem className='w-100'>
-                                    <Printer size={15}/>
-                                    <span className='align-middle ml-50'>Print</span>
-                                </DropdownItem>
                                 <DropdownItem className='w-100' onClick={() => downloadCSV(data)}>
                                     <FileText size={15}/>
                                     <span className='align-middle ml-50'>CSV</span>
                                 </DropdownItem>
-                                <DropdownItem className='w-100'>
-                                    <Grid size={15}/>
-                                    <span className='align-middle ml-50'>Excel</span>
-                                </DropdownItem>
-                                <DropdownItem className='w-100'>
-                                    <File size={15}/>
-                                    <span className='align-middle ml-50'>PDF</span>
-                                </DropdownItem>
-                                <DropdownItem className='w-100'>
-                                    <Copy size={15}/>
-                                    <span className='align-middle ml-50'>Copy</span>
-                                </DropdownItem>
                             </DropdownMenu>
                         </UncontrolledButtonDropdown>
+                        <Button className='ml-2' color='primary' onClick={e => {
+                            const newElement = {
+                                name : "",
+                                email: "",
+                                phone: "",
+                                company: "",
+                                attendees: ""
+                            }
+                            setCurrentElement(newElement)
+                            handleModal()
+                        }}>
+                            <Plus size={15}/>
+                            <span className='align-middle ml-50'>Add Booking</span>
+                        </Button>
                     </div>
                 </CardHeader>
                 <Row className='justify-content-end mx-0'>
@@ -356,6 +351,8 @@ const DataTableBookings = ({data, customers, classes, calendarEvents}) => {
                     data={searchValue.length ? filteredData : data}
                 />
             </Card>
+            <AddNewBooking open={modal} handleModal={handleModal} data={data} setData={setData} classes={classes}
+                           setCustomers={setCustomers} customers={customers}  currentElement={currentElement}/>
         </Fragment>
     )
 }

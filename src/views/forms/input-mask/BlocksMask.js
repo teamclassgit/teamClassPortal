@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import {Fragment} from 'react'
 import Cleave from 'cleave.js/react'
 
 const BlocksMask = () => {
