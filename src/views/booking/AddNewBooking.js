@@ -97,6 +97,7 @@ const AddNewBooking = ({
                             name: newName, // combine with quotaTime
                             email: newEmail,
                             phone: newPhone,
+                            company: newCompany,
                             createdAt: moment().format(),
                             updatedAt: moment().format()
                         }
