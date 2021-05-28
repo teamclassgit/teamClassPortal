@@ -15,14 +15,15 @@ import mutationUpdateCustomer from "../../../graphql/MutationUpdateCustomer"
 import {isValidEmail} from "../../../utility/Utils"
 
 const BillingInfo = ({
-                          stepper,
-                          type,
-                          booking,
-                          attendeesListCount,
-                          customer,
-                          calendarEvent,
-                          setCalendarEvent
-                      }) => {
+                         stepper,
+                         type,
+                         booking,
+                         attendeesListCount,
+                         customer,
+                         calendarEvent,
+                         setCalendarEvent,
+                         setConfirmation
+                     }) => {
 
     const [phone, setPhone] = React.useState("")
     const [name, setName] = React.useState("")
@@ -58,21 +59,6 @@ const BillingInfo = ({
 
         try {
             const date = moment(new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day))
-
-            const calendarEventUpdated = {
-                id: calendarEvent.id,
-                classId: calendarEvent.classId,
-                bookingId: calendarEvent.bookingId,
-                year: calendarEvent.year,
-                month: calendarEvent.month,
-                day: calendarEvent.day,
-                fromHour: calendarEvent.fromHour,
-                fromMinutes: calendarEvent.fromMinutes,
-                toHour: calendarEvent.toHour,
-                toMinutes: calendarEvent.toMinutes,
-                status: "confirmed"
-            }
-
             const eventDate = moment(`${date.format("DD/MM/YYYY")} ${calendarEvent.fromHour}:${calendarEvent.fromMinutes}`, 'DD/MM/YYYY HH:mm')
 
             await updateQuota(
@@ -116,7 +102,22 @@ const BillingInfo = ({
 
             console.log("customer updated")
 
+
             if (calendarEvent.id) {
+
+                const calendarEventUpdated = {
+                    id: calendarEvent.id,
+                    classId: calendarEvent.classId,
+                    bookingId: calendarEvent.bookingId,
+                    year: calendarEvent.year,
+                    month: calendarEvent.month,
+                    day: calendarEvent.day,
+                    fromHour: calendarEvent.fromHour,
+                    fromMinutes: calendarEvent.fromMinutes,
+                    toHour: calendarEvent.toHour,
+                    toMinutes: calendarEvent.toMinutes,
+                    status: "confirmed"
+                }
 
                 await updateCalendarEvent(
                     {
@@ -128,21 +129,12 @@ const BillingInfo = ({
 
                 console.log("calendar event updated")
 
-            } else {
-                const result = await createCalendarEvent(
-                    {
-                        variables: calendarEventUpdated
-                    }
-                )
-
-                if (result && result.data) setCalendarEvent(result.data.createCalendarEvent)
-
-                console.log("calendar event created")
             }
 
             setProcessing(false)
 
-            stepper.next()
+            setConfirmation(true)
+            //stepper.next()
 
         } catch (ex) {
 
@@ -228,7 +220,7 @@ const BillingInfo = ({
                         <span className='align-middle d-sm-inline-block d-none'>Previous</span>
                     </Button.Ripple>
                     <Button.Ripple color='secondary' className='btn-submit' onClick={() => saveBooking()}
-                                   disabled={!phone || !name || !email || processing || !emailValid}>
+                                   disabled={!phone || !name || !email || processing || !emailValid || !calendarEvent}>
                         {processing ? `Saving...` : `Submit`}
                     </Button.Ripple>
                 </div>

@@ -4,6 +4,9 @@ import {Alert, Button, Col, Form, FormGroup, Row} from 'reactstrap'
 import Flatpickr from "react-flatpickr"
 import moment from "moment"
 import {toAmPm} from '../../../utility/Utils'
+import {useMutation} from "@apollo/client"
+import mutationCreateCalendarEvent from "../../../graphql/MutationCreateCalendarEvent"
+import mutationUpdateCalendarEvent from "../../../graphql/MutationUpdateCalendarEvent"
 
 const DateTimeConfirmation = ({
                                   stepper,
@@ -16,12 +19,11 @@ const DateTimeConfirmation = ({
                               }) => {
 
     const [date, setDate] = React.useState(null)
-
     const [time, setTime] = React.useState(null)
-
     const [availableTimes, setAvailableTimes] = React.useState(null)
-
-    const [dateFocused, setDateFocused] = React.useState(false)
+    const [processing, setProcessing] = React.useState(false)
+    const [createCalendarEvent, {...calendarEventData}] = useMutation(mutationCreateCalendarEvent, {})
+    const [updateCalendarEvent, {...UpdatedCalendarEventData}] = useMutation(mutationUpdateCalendarEvent, {})
 
     const isDayBlocked = (day) => {
         return false
@@ -49,12 +51,14 @@ const DateTimeConfirmation = ({
     React.useEffect(() => {
 
         //setDate([new Date(2021, 4, 10)])
-        setDate(calendarEvent ? [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)] : null)
+        setDate(calendarEvent ? [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)] : [new Date().setDate(new Date().getDate() + 20)])
         setTime(calendarEvent ? `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}` : null)
 
     }, [calendarEvent])
 
     const hasEvents = (selectedDate, fullStartHour, fullEndHour, breakBetweenClasses) => {
+
+        if (!availableEvents) return false
 
         const day = selectedDate.date()
         const month = selectedDate.month() + 1
@@ -124,41 +128,86 @@ const DateTimeConfirmation = ({
 
     React.useEffect(() => {
 
-        if (date && date.length > 0 && time && booking && teamClass) {
-            const selectedDate = moment(date[0])
-            const eventDate = moment(`${selectedDate.format("DD/MM/YYYY")} ${time}`, 'DD/MM/YYYY HH:mm')
-            const newFromHour = eventDate.hour()
-            const newFromMinutes = eventDate.minutes()
-            const eventEnd = eventDate.add(teamClass.duration, 'hours')
-            const newToHour = eventEnd.hour()
-            const newToMinutes = eventEnd.minutes()
 
-            const newStatus = calendarEvent && calendarEvent.id
+    }, [time])
+
+    const saveCalendarEvent = async () => {
+
+        setProcessing(true)
+
+        const selectedDate = moment(date[0])
+        const eventDate = moment(`${selectedDate.format("DD/MM/YYYY")} ${time}`, 'DD/MM/YYYY HH:mm')
+        const newFromHour = eventDate.hour()
+        const newFromMinutes = eventDate.minutes()
+        const eventEnd = eventDate.add(teamClass.duration, 'hours')
+        const newToHour = eventEnd.hour()
+        const newToMinutes = eventEnd.minutes()
+
+        const sameEventDate = calendarEvent && calendarEvent.id
             && selectedDate.year() === calendarEvent.year
             && selectedDate.month() + 1 === calendarEvent.month
             && selectedDate.date() === calendarEvent.day
             && newFromHour === calendarEvent.fromHour
-            && newFromMinutes === calendarEvent.fromMinutes ? "confirmed" : "reserved"
+            && newFromMinutes === calendarEvent.fromMinutes
 
-            setCalendarEvent(
-                {
-                    id: calendarEvent ? calendarEvent.id : null,
-                    classId: teamClass.id,
-                    bookingId: booking.id,
-                    year: selectedDate.year(),
-                    month: selectedDate.month() + 1,
-                    day: selectedDate.date(),
-                    fromHour: newFromHour,
-                    fromMinutes: newFromMinutes,
-                    toHour: newToHour,
-                    toMinutes: newToMinutes,
-                    status: newStatus,
-                    rushFee: isRushDate()
-                })
+        if (sameEventDate) {
+            setProcessing(false)
+            stepper.next()
+            return
         }
 
+        try {
 
-    }, [time])
+            const calendarEventUpdated = {
+                id: calendarEvent ? calendarEvent.id : null,
+                classId: teamClass.id,
+                bookingId: booking.id,
+                year: selectedDate.year(),
+                month: selectedDate.month() + 1,
+                day: selectedDate.date(),
+                fromHour: newFromHour,
+                fromMinutes: newFromMinutes,
+                toHour: newToHour,
+                toMinutes: newToMinutes,
+                status: "reserved",
+                rushFee: isRushDate()
+            }
+
+            if (calendarEvent && calendarEvent.id) {
+
+                await updateCalendarEvent(
+                    {
+                        variables: calendarEventUpdated
+                    }
+                )
+
+                setCalendarEvent(calendarEventUpdated)
+
+                console.log("calendar event updated")
+
+            } else {
+                const result = await createCalendarEvent(
+                    {
+                        variables: calendarEventUpdated
+                    }
+                )
+
+                if (result && result.data) setCalendarEvent(result.data.createCalendarEvent)
+
+                console.log("calendar event created")
+            }
+
+            setProcessing(false)
+
+            stepper.next()
+
+        } catch (ex) {
+
+            console.log(ex)
+            setProcessing(false)
+
+        }
+    }
 
     return (
         <Fragment>
@@ -199,7 +248,8 @@ const DateTimeConfirmation = ({
                             )}
                         </Row>
                         {availableTimes && availableTimes.length > 0 && (
-                            <div className="pb-1"><small className='text-default text-primary'>Times displayed in Central
+                            <div className="pb-1"><small className='text-default text-primary'>Times displayed in
+                                Central
                                 Time.</small></div>)}
                         <div>
                             {date && date.length > 0 && (<Alert color='danger' isOpen={isRushDate()}>
@@ -215,14 +265,11 @@ const DateTimeConfirmation = ({
                     <Col md={12} lg={1} sm={12}></Col>
                 </Row>
 
-                <div className='d-flex justify-content-between'>
-                    <Button.Ripple color='secondary' className='btn-prev' outline disabled>
-                        <ArrowLeft size={14} className='align-middle mr-sm-25 mr-0'></ArrowLeft>
-                        <span className='align-middle d-sm-inline-block d-none'>Previous</span>
-                    </Button.Ripple>
-                    <Button.Ripple color='primary' className='btn-next' onClick={() => stepper.next()}
-                                   disabled={!time || !date}>
-                        <span className='align-middle d-sm-inline-block d-none'>Next</span>
+                <div className='d-flex justify-content-end'>
+                    <Button.Ripple color='primary' className='btn-next' onClick={() => saveCalendarEvent()}
+                                   disabled={!time || !date || processing}>
+                        <span
+                            className='align-middle d-sm-inline-block d-none'>{processing ? "Processing..." : "Confirm & Next"}</span>
                         <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>
                     </Button.Ripple>
                 </div>

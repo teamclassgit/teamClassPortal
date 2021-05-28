@@ -5,7 +5,7 @@ import decorationLeft from '@src/assets/images/elements/decore-left.png'
 import decorationRight from '@src/assets/images/elements/decore-right.png'
 import React from "react"
 
-const CardCongratulations = ({firstName, stepper}) => {
+const CardCongratulations = ({firstName, stepper, setConfirmation}) => {
   return (
     <Card className='card-congratulations'>
       <CardBody className='text-center'>
@@ -21,7 +21,7 @@ const CardCongratulations = ({firstName, stepper}) => {
       </CardBody>
       <CardFooter>
         <div className='text-center'>
-        <Button.Ripple color='secondary' className='btn-submit' onClick={() => stepper.to(1)} >
+        <Button.Ripple color='secondary' className='btn-submit' onClick={() => setConfirmation(false) } >
           Change my booking
         </Button.Ripple>
         </div>

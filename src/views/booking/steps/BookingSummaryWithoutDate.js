@@ -57,10 +57,10 @@ const BookingSummaryWithoutDate = (props) => {
                         <Media body>
                             <h6>
                                 <a className="text-reset">
-                                    Make delicious cocktails with homemade syrups and fresh ingredients!
+                                    {teamClass.title}
                                 </a>
                             </h6>
-                            <p className="text-muted text-sm mb-0">1 hour(s) | Kit included</p>
+                            <p className="text-muted text-sm mb-0">{teamClass.duration * 60} Minutes | {teamClass.hasKit ? "Kit included" : ""}</p>
                         </Media>
                     </Media>
                 </div>
@@ -69,6 +69,12 @@ const BookingSummaryWithoutDate = (props) => {
                     <Media body>
                         <h6 className='mb-0'>{` ${moment(date).format("LL")}`}</h6>
                         <small>{time} {calendarEvent && calendarEvent.status !== 'confirmed' ? <Badge color='warning'>To be confirmed</Badge>  : <Badge color='primary'>Confirmed</Badge>}</small>
+                    </Media>
+                </Media>)}
+                {(!date || !time) && (<Media className="pb-1">
+
+                    <Media body>
+                        <h6 className='mb-0'><Avatar color='light-primary' className='rounded mr-1' icon={<Calendar size={18}/>}/> TBD</h6>
                     </Media>
                 </Media>)}
                 <div className="text-block pb-0">

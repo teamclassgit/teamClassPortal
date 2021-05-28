@@ -3,9 +3,10 @@ import Wizard from '@components/wizard'
 import Attendees from './steps/Attendees'
 import Confirmation from './steps/Confirmation'
 import BillingInfo from './steps/BillingInfo'
+import SpecialRequests from './steps/SpecialRequests'
 import DateTimeConfirmation from './steps/DateTimeConfirmation'
 import {Col, Row, Spinner} from 'reactstrap'
-import {Calendar, Check, CreditCard, Users} from 'react-feather'
+import {Calendar, Check, CreditCard, Users, List} from 'react-feather'
 import {useParams} from "react-router-dom"
 
 import queryBookingById from "../../graphql/QueryBookingById"
@@ -17,7 +18,9 @@ import {useLazyQuery, useQuery} from "@apollo/client"
 import BookingSummaryWithoutDate from "./steps/BookingSummaryWithoutDate"
 
 const WizardClassBooking = () => {
+
     const [bookingInfo, setBookingInfo] = React.useState(null)
+    const [confirmation, setConfirmation] = React.useState(false)
     const [teamClass, setTeamClass] = React.useState(null)
     const [customer, setCustomer] = React.useState(null)
     const [availableEvents, setAvailableEvents] = React.useState(null)
@@ -71,6 +74,8 @@ const WizardClassBooking = () => {
                     classId: bookingInfo.teamClassId
                 }
             })
+
+            setConfirmation(bookingInfo && bookingInfo.status === 'confirmed')
         }
 
     }, [bookingInfo])
@@ -127,42 +132,63 @@ const WizardClassBooking = () => {
                                 setRealCountAttendees={setRealCountAttendees}/>
         },
         {
+            id: 'additionals',
+            title: 'Additionals',
+            subtitle: 'Special requests',
+            icon: <List size={18}/>,
+            content: <SpecialRequests stepper={stepper} type='wizard-horizontal' booking={bookingInfo} teamClass={teamClass}/>
+        },
+        {
             id: 'personal-info',
             title: 'Reservation',
             subtitle: 'Billing details',
-            icon: <CreditCard size={18}/>,
+            icon: <CreditCard size={18} />,
             content: <BillingInfo stepper={stepper} type='wizard-horizontal' calendarEvent={calendarEvent}
                                   setCalendarEvent={setCalendarEvent} customer={customer} booking={bookingInfo}
-                                  attendeesListCount={attendees && attendees.length}/>
-        },
+                                  attendeesListCount={attendees && attendees.length} setConfirmation={setConfirmation}/>
+        }
+    ]
+
+    const stepsConfirmation = [
         {
-            id: 'social-links',
+            id: 'confirmation',
             title: 'Confirmation',
             subtitle: 'Booking summary',
             icon: <Check size={18}/>,
             content: <Confirmation stepper={stepper} type='wizard-horizontal' customer={customer}
-                                   booking={bookingInfo}/>
+                                   booking={bookingInfo} setConfirmation={setConfirmation}/>
         }
     ]
+
+    const jumpToStep = (event) => {
+        //if (event.detail.to === 3) event.preventDefault()
+    }
 
     return bookingInfo && customer && teamClass ? (
         <Row>
             <Col lg={9} md={12} sm={12}>
                 <div className='modern-horizontal-wizard'>
 
-                    <Wizard
+                    {!confirmation && <Wizard
                         type='modern-horizontal'
                         ref={ref}
                         steps={steps}
                         options={{
-                            linear: true
+                            linear: false
                         }}
                         instance={el => {
                             setStepper(el)
-                            if (bookingInfo && bookingInfo.status === 'confirmed') el.to(4)
+                        }}/>}
+                    {confirmation && <Wizard
+                        type='modern-horizontal'
+                        ref={ref}
+                        steps={stepsConfirmation}
+                        options={{
+                            linear: false
                         }}
-                    />
-
+                        instance={el => {
+                            setStepper(el)
+                        }}/>}
                 </div>
             </Col>
 

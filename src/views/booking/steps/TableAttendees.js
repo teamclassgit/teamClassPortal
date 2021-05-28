@@ -291,15 +291,13 @@ const DataTableAttendees = ({
                                 <span className='align-middle ml-50'>Bulk actions</span>
                             </DropdownToggle>
                             <DropdownMenu right>
-                                <DropdownItem className='w-100'>
+                                <DropdownItem className='w-100' onClick={downloadTemplate}>
                                     <Download size={15}/>
-                                    <span className='align-middle ml-50'
-                                          onClick={downloadTemplate}>Download template<br></br><small>Use this template to build your list</small></span>
+                                    <span className='align-middle ml-50'>Download template<br></br><small>Use this template to build your list</small></span>
                                 </DropdownItem>
-                                <DropdownItem className='w-100'>
+                                <DropdownItem className='w-100' onClick={handleModalUpload}>
                                     <Grid size={15}/>
-                                    <span onClick={handleModalUpload}
-                                          className='align-middle ml-50'>Upload data<br></br><small>Excel file with your attendees</small></span>
+                                    <span className='align-middle ml-50'>Upload data<br></br><small>Excel file with your attendees</small></span>
                                 </DropdownItem>
                             </DropdownMenu>
                         </UncontrolledButtonDropdown>
