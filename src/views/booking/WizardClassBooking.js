@@ -20,6 +20,8 @@ import BookingSummaryWithoutDate from "./steps/BookingSummaryWithoutDate"
 const WizardClassBooking = () => {
 
     const [bookingInfo, setBookingInfo] = React.useState(null)
+    const [bookingAdditions, setBookingAdditions] = React.useState([])
+    const [totalAdditions, setTotalAdditions] = React.useState(0)
     const [confirmation, setConfirmation] = React.useState(false)
     const [teamClass, setTeamClass] = React.useState(null)
     const [customer, setCustomer] = React.useState(null)
@@ -112,6 +114,23 @@ const WizardClassBooking = () => {
 
     }, [calendarEventsByClassResult.data])
 
+    React.useEffect(() => {
+
+        let total = 0
+
+        if (bookingAdditions && bookingInfo) {
+            total = bookingAdditions.reduce((accumulator, current) => {
+                if (current.unit === "Class") return accumulator + (current.unitPrice * (current.quantity ? current.quantity : 0))
+                else if (current.unit === "Attendee") return accumulator + (current.unitPrice * bookingInfo.attendees * (current.quantity ? current.quantity : 0))
+                else return 0
+            }, 0)
+        }
+
+        setTotalAdditions(total)
+
+    }, [bookingAdditions])
+
+
     const steps = [
         {
             id: 'account-details',
@@ -131,18 +150,12 @@ const WizardClassBooking = () => {
                                 teamClass={teamClass} booking={bookingInfo}
                                 setRealCountAttendees={setRealCountAttendees}/>
         },
-        {
-            id: 'additionals',
-            title: 'Additionals',
-            subtitle: 'Special requests',
-            icon: <List size={18}/>,
-            content: <SpecialRequests stepper={stepper} type='wizard-horizontal' booking={bookingInfo} teamClass={teamClass}/>
-        },
+
         {
             id: 'personal-info',
             title: 'Reservation',
             subtitle: 'Billing details',
-            icon: <CreditCard size={18} />,
+            icon: <CreditCard size={18}/>,
             content: <BillingInfo stepper={stepper} type='wizard-horizontal' calendarEvent={calendarEvent}
                                   setCalendarEvent={setCalendarEvent} customer={customer} booking={bookingInfo}
                                   attendeesListCount={attendees && attendees.length} setConfirmation={setConfirmation}/>
@@ -201,7 +214,9 @@ const WizardClassBooking = () => {
                                                                 attendees={bookingInfo.attendees}
                                                                 pricePerson={bookingInfo.pricePerson}
                                                                 minimum={bookingInfo.classMinimum}
-                                                                salesTax={bookingInfo.salesTax}/>)}
+                                                                salesTax={bookingInfo.salesTax}
+                                                                bookingId={id}
+                                                                additionals={totalAdditions}/>)}
                 </div>
             </Col>
         </Row>

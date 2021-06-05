@@ -8,7 +8,7 @@ import {toAmPm} from '../../../utility/Utils'
 const BookingSummaryWithoutDate = (props) => {
 
     const {
-        serviceFee, attendeesAdded, attendees, pricePerson, minimum, salesTax, calendarEvent, teamClass
+        serviceFee, attendeesAdded, attendees, pricePerson, minimum, salesTax, additionals, calendarEvent, teamClass, bookingId
     } = props
 
     const [totalWithoutFee, setTotalWithoutFee] = React.useState(0)
@@ -24,8 +24,8 @@ const BookingSummaryWithoutDate = (props) => {
         const withoutFee = (attendees > minimum ? (pricePerson * attendees) : (pricePerson * minimum))
         const underGroupFee = (attendees > minimum ? 0 : pricePerson * (minimum - attendees))
         const fee = withoutFee * serviceFee
-        const tax = (withoutFee + fee) * salesTax
-        const finalValue = withoutFee + fee + tax
+        const tax = (withoutFee + additionals + fee) * salesTax
+        const finalValue = withoutFee + additionals + fee + tax
 
         setTotalTax(tax.toFixed(2))
         setTotalWithoutFee(withoutFee.toFixed(2))
@@ -39,7 +39,7 @@ const BookingSummaryWithoutDate = (props) => {
 
         getTotals()
 
-    }, [serviceFee, attendees, pricePerson, minimum])
+    }, [serviceFee, attendees, pricePerson, minimum, additionals])
 
     React.useEffect(() => {
         //setDate([new Date(2021, 4, 10)])
@@ -56,6 +56,7 @@ const BookingSummaryWithoutDate = (props) => {
                     <Media className="align-items-center">
                         <Media body>
                             <h6>
+                                <p className="text-reset"># <small className="text-truncate text-muted text-sm mb-0">{bookingId}</small></p>
                                 <a className="text-reset">
                                     {teamClass.title}
                                 </a>
@@ -88,6 +89,10 @@ const BookingSummaryWithoutDate = (props) => {
                                     </FormText>)}
                             </th>
                             <td className="text-right py-1 text-sm">${totalWithoutFee}</td>
+                        </tr>
+                        <tr>
+                            <th className="font-weight-normal text-sm py-1">Additionals</th>
+                            <td className="text-right py-1 text-sm">${additionals.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <th className="font-weight-normal text-sm py-1">Booking fee
