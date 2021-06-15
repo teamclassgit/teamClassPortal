@@ -142,23 +142,14 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
                                            booking={bookingInfo} teamClass={teamClass}/>
         },
 
-        {
+       /* {
             id: 'additions',
             title: 'Additionals',
             subtitle: 'Special requests',
             icon: <List size={18}/>,
             content: <SpecialRequests stepper={stepper} type='wizard-horizontal' booking={bookingInfo}
                                       teamClass={teamClass} setBookingAdditions={setBookingAdditions}/>
-        },
-        {
-            id: 'personal-info',
-            title: 'Reservation',
-            subtitle: 'Billing details',
-            icon: <CreditCard size={18}/>,
-            content: <BillingInfo stepper={stepper} type='wizard-horizontal' calendarEvent={calendarEvent}
-                                  setCalendarEvent={setCalendarEvent} customer={customer} booking={bookingInfo}
-                                  attendeesListCount={attendees && attendees.length} setConfirmation={setConfirmation}/>
-        },
+        }, */
 
         {
             id: 'step-address',
@@ -168,6 +159,16 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
             content: <Attendees stepper={stepper} type='wizard-horizontal' attendees={attendees}
                                 teamClass={teamClass} booking={bookingInfo}
                                 setRealCountAttendees={setRealCountAttendees}/>
+        },
+
+        {
+            id: 'personal-info',
+            title: 'Reservation',
+            subtitle: 'Billing details',
+            icon: <CreditCard size={18}/>,
+            content: <BillingInfo stepper={stepper} type='wizard-horizontal' calendarEvent={calendarEvent}
+                                  setCalendarEvent={setCalendarEvent} customer={customer} booking={bookingInfo}
+                                  attendeesListCount={attendees && attendees.length} setConfirmation={setConfirmation}/>
         }
     ]
 
