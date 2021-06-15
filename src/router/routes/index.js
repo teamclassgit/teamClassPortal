@@ -22,6 +22,11 @@ const Routes = [
         layout: 'VerticalLayoutNoMenu'
     },
     {
+        path: '/dateSelection/:id',
+        component: lazy(() => import('../../views/booking/DateSelection')),
+        layout: 'VerticalLayoutNoTopBar'
+    },
+    {
         path: '/login',
         component: lazy(() => import('../../views/Login')),
         layout: 'BlankLayout',

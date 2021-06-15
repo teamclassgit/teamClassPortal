@@ -3,8 +3,7 @@ import {Col, Row} from 'reactstrap'
 import WizardClassBooking from './WizardClassBooking'
 import {useParams} from "react-router-dom"
 
-const Booking = () => {
-
+const DateSelection = () => {
 
     const {id} = useParams()
 
@@ -12,10 +11,10 @@ const Booking = () => {
         <Fragment>
             <Row>
                 <Col sm='12'>
-                    <WizardClassBooking oneStepOnly={false}/>
+                    <WizardClassBooking oneStepOnly={true} step={1} />
                 </Col>
             </Row>
         </Fragment>
     )
 }
-export default Booking
+export default DateSelection

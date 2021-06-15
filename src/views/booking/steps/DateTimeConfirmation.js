@@ -269,7 +269,7 @@ const DateTimeConfirmation = ({
                     <Button.Ripple color='primary' className='btn-next' onClick={() => saveCalendarEvent()}
                                    disabled={!time || !date || processing}>
                         <span
-                            className='align-middle d-sm-inline-block d-none'>{processing ? "Processing..." : "Confirm & Next"}</span>
+                            className='align-middle d-sm-inline-block d-none'>{processing ? "Processing..." : "Request date"}</span>
                         <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>
                     </Button.Ripple>
                 </div>

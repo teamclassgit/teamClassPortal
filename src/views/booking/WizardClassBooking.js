@@ -17,7 +17,7 @@ import queryCalendarEventsByClassId from "../../graphql/QueryCalendarEventsByCla
 import {useLazyQuery, useQuery} from "@apollo/client"
 import BookingSummaryWithoutDate from "./steps/BookingSummaryWithoutDate"
 
-const WizardClassBooking = () => {
+const WizardClassBooking = ({oneStepOnly, step}) => {
 
     const [bookingInfo, setBookingInfo] = React.useState(null)
     const [bookingAdditions, setBookingAdditions] = React.useState([])
@@ -141,16 +141,15 @@ const WizardClassBooking = () => {
                                            calendarEvent={calendarEvent} setCalendarEvent={setCalendarEvent}
                                            booking={bookingInfo} teamClass={teamClass}/>
         },
-        {
-            id: 'step-address',
-            title: 'Attendees',
-            subtitle: 'Who is coming',
-            icon: <Users size={18}/>,
-            content: <Attendees stepper={stepper} type='wizard-horizontal' attendees={attendees}
-                                teamClass={teamClass} booking={bookingInfo}
-                                setRealCountAttendees={setRealCountAttendees}/>
-        },
 
+        {
+            id: 'additions',
+            title: 'Additionals',
+            subtitle: 'Special requests',
+            icon: <List size={18}/>,
+            content: <SpecialRequests stepper={stepper} type='wizard-horizontal' booking={bookingInfo}
+                                      teamClass={teamClass} setBookingAdditions={setBookingAdditions}/>
+        },
         {
             id: 'personal-info',
             title: 'Reservation',
@@ -159,6 +158,16 @@ const WizardClassBooking = () => {
             content: <BillingInfo stepper={stepper} type='wizard-horizontal' calendarEvent={calendarEvent}
                                   setCalendarEvent={setCalendarEvent} customer={customer} booking={bookingInfo}
                                   attendeesListCount={attendees && attendees.length} setConfirmation={setConfirmation}/>
+        },
+
+        {
+            id: 'step-address',
+            title: 'Attendees',
+            subtitle: 'Who is coming',
+            icon: <Users size={18}/>,
+            content: <Attendees stepper={stepper} type='wizard-horizontal' attendees={attendees}
+                                teamClass={teamClass} booking={bookingInfo}
+                                setRealCountAttendees={setRealCountAttendees}/>
         }
     ]
 
@@ -187,7 +196,7 @@ const WizardClassBooking = () => {
                         ref={ref}
                         steps={steps}
                         options={{
-                            linear: false
+                            linear: oneStepOnly
                         }}
                         instance={el => {
                             setStepper(el)
@@ -197,10 +206,11 @@ const WizardClassBooking = () => {
                         ref={ref}
                         steps={stepsConfirmation}
                         options={{
-                            linear: false
+                            linear: oneStepOnly
                         }}
                         instance={el => {
                             setStepper(el)
+                            //if (oneStepOnly && step) el.to(step)
                         }}/>}
                 </div>
             </Col>
