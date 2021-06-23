@@ -70,14 +70,14 @@ const BookingList = () => {
       {allBookingsResult && allBookingsResult.data && (
         <Row>
           <Col sm="12">
-            <DataTableBookings
+            {/* <DataTableBookings
               bookings={bookings}
               customers={customers}
               setCustomers={setCustomers}
               calendarEvents={calendarEvents}
               classes={classes}
-            />
-            <CardColumnsBoard />
+            /> */}
+            <CardColumnsBoard bookings={bookings.slice(1, 50)} customers={customers} calendarEvents={calendarEvents} classes={classes} />
           </Col>
         </Row>
       )}
