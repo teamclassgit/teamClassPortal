@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import { Container, Draggable } from 'react-smooth-dnd'
-import { CardBody, CardText, Card } from 'reactstrap'
+import { FileText, Plus, Share } from 'react-feather'
+import {
+  CardBody,
+  CardText,
+  Card,
+  CardHeader,
+  CardTitle,
+  UncontrolledButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  Button,
+  Row,
+  Col
+} from 'reactstrap'
 import './CardColumnsBoard.scss'
 import { toAmPm } from '../../../utility/Utils'
 
@@ -94,83 +108,112 @@ const CardColumnsBoard = ({ bookings, customers, calendarEvents, classes }) => {
     return scene.children.filter((col) => col.id === columnId)[0].data[index]
   }
   return (
-    <div>
-      <Container
-        orientation="horizontal"
-        onDrop={(drop) => onColumnDrop(drop)}
-        dragHandleSelector=".column-drag-handle"
-        dropPlaceholder={{
-          animationDuration: 150,
-          showOnTop: true,
-          className: 'cards-drop-preview'
-        }}
-      >
-        {scene &&
-          scene.children.map((column) => {
-            return (
-              <Draggable key={column.id}>
-                <div className={`board-column ${highlightColumn === column.id ? 'highlighted' : ''}`}>
-                  <div className="mb-1 ml-1 text-capitalize">{column.status}</div>
-                  <Container
-                    groupName="col"
-                    onDragStart={(e) => console.log('drag started', e)}
-                    onDragEnd={(e) => setHighlighColumn(null)}
-                    onDrop={(e) => onCardDrop(column.id, e)}
-                    getChildPayload={(index) => getCardPayload(column.id, index)}
-                    dragClass="card-ghost"
-                    dropClass="card-ghost-drop"
-                    onDragEnter={() => {
-                      setHighlighColumn(column.id)
-                    }}
-                    onDragLeave={() => {
-                      console.log('drag leave:', column.id)
-                    }}
-                    onDropReady={(p) => console.log('Drop ready: ', p)}
-                    dropPlaceholder={{
-                      animationDuration: 150,
-                      showOnTop: true,
-                      className: 'drop-preview'
-                    }}
-                    dropPlaceholderAnimationDuration={200}
-                  >
-                    {column.data.map(({ id, attendees, teamClassId, customerName, createdAt, classTitle, scheduled }) => {
-                      return (
-                        <Draggable key={id}>
-                          <Card>
-                            <CardBody>
-                              <CardText>
-                                {customerName} -{' '}
-                                <small className="text-muted">
-                                  {moment(createdAt).calendar(null, {
-                                    lastDay: '[Yesterday]',
-                                    sameDay: 'LT',
-                                    lastWeek: 'dddd',
-                                    sameElse: 'MMMM Do, YYYY'
-                                  })}
-                                </small>
-                                <br />
-                                <p className="mb-0 mt-1">{classTitle}</p>
-                                <br />
-                                <strong>{attendees} Attendees</strong>
-                                <br />
-                                {scheduled && (
-                                  <span className="text-dark mt-3">
-                                    Scheduled: <small className="text-dark">{scheduled}</small>
-                                  </span>
-                                )}
-                              </CardText>
-                            </CardBody>
-                          </Card>
-                        </Draggable>
-                      )
-                    })}
-                  </Container>
-                </div>
-              </Draggable>
-            )
-          })}
-      </Container>
-    </div>
+    <Col>
+      <Row>
+        <Card className="w-100 bg-transparent shadow-none">
+          <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start border-bottom">
+            <CardTitle tag="h4" className="mt-1 ">
+              All Time Bookings
+            </CardTitle>
+            <div className="d-flex mt-md-0">
+              <UncontrolledButtonDropdown>
+                <DropdownToggle color="secondary" caret outline>
+                  <Share size={15} />
+                  <span className="align-middle ml-50">Export</span>
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem className="w-100">
+                    <FileText size={15} />
+                    <span className="align-middle ml-50">CSV</span>
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledButtonDropdown>
+              <Button className="ml-2" color="primary">
+                <Plus size={15} />
+                <span className="align-middle ml-50">Add Booking</span>
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+      </Row>
+      <Row>
+        <Container
+          orientation="horizontal"
+          onDrop={(drop) => onColumnDrop(drop)}
+          dragHandleSelector=".column-drag-handle"
+          dropPlaceholder={{
+            animationDuration: 150,
+            showOnTop: true,
+            className: 'cards-drop-preview'
+          }}
+        >
+          {scene &&
+            scene.children.map((column) => {
+              return (
+                <Draggable key={column.id}>
+                  <div className={`board-column ${highlightColumn === column.id ? 'highlighted' : ''}`}>
+                    <div className="mb-1 ml-1 text-capitalize">{column.status}</div>
+                    <Container
+                      groupName="col"
+                      onDragStart={(e) => console.log('drag started', e)}
+                      onDragEnd={(e) => setHighlighColumn(null)}
+                      onDrop={(e) => onCardDrop(column.id, e)}
+                      getChildPayload={(index) => getCardPayload(column.id, index)}
+                      dragClass="card-ghost"
+                      dropClass="card-ghost-drop"
+                      onDragEnter={() => {
+                        setHighlighColumn(column.id)
+                      }}
+                      onDragLeave={() => {
+                        console.log('drag leave:', column.id)
+                      }}
+                      onDropReady={(p) => console.log('Drop ready: ', p)}
+                      dropPlaceholder={{
+                        animationDuration: 150,
+                        showOnTop: true,
+                        className: 'drop-preview'
+                      }}
+                      dropPlaceholderAnimationDuration={200}
+                    >
+                      {column.data.map(({ id, attendees, teamClassId, customerName, createdAt, classTitle, scheduled }) => {
+                        return (
+                          <Draggable key={id}>
+                            <Card>
+                              <CardBody>
+                                <CardText>
+                                  {customerName} -{' '}
+                                  <small className="text-muted">
+                                    {moment(createdAt).calendar(null, {
+                                      lastDay: '[Yesterday]',
+                                      sameDay: 'LT',
+                                      lastWeek: 'dddd',
+                                      sameElse: 'MMMM Do, YYYY'
+                                    })}
+                                  </small>
+                                  <br />
+                                  <p className="mb-0 mt-1">{classTitle}</p>
+                                  <br />
+                                  <strong>{attendees} Attendees</strong>
+                                  <br />
+                                  {scheduled && (
+                                    <span className="text-dark mt-3">
+                                      Scheduled: <small className="text-dark">{scheduled}</small>
+                                    </span>
+                                  )}
+                                </CardText>
+                              </CardBody>
+                            </Card>
+                          </Draggable>
+                        )
+                      })}
+                    </Container>
+                  </div>
+                </Draggable>
+              )
+            })}
+        </Container>
+      </Row>
+    </Col>
   )
 }
 export default CardColumnsBoard
