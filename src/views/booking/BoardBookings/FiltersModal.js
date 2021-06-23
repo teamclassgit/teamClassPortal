@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal, ModalHeader, ModalBody, FormGroup, Label, Input } from 'reactstrap'
 import Select from 'react-select'
-import { handleInputChange } from 'react-select/src/utils'
 
 function FiltersModal({ open, handleModal, classes, onFilterUpdate }) {
   const [filterBy, setFilterBy] = useState({
@@ -10,7 +9,10 @@ function FiltersModal({ open, handleModal, classes, onFilterUpdate }) {
   })
 
   useEffect(() => {
-    onFilterUpdate(filterBy)
+    if (filterBy.type) {
+      onFilterUpdate(filterBy)
+      handleModal()
+    }
   }, [filterBy])
 
   const classOptions = classes.map(({ title, id }) => ({ value: id, label: title }))
@@ -27,8 +29,7 @@ function FiltersModal({ open, handleModal, classes, onFilterUpdate }) {
           <Label for="exampleSelect" className="text-dark">
             Filter by class
           </Label>
-          <Input type="select" name="select" id="exampleSelect"></Input>
-          {/* <Select defaultValue={classOptions[1]} options={classOptions} onChange={(e) => handleInputChange('class', e.value)} /> */}
+          <Select defaultValue={classOptions[1]} options={classOptions} onChange={(e) => handleInputChange('class', e.value)} />
         </FormGroup>
       </ModalBody>
     </Modal>

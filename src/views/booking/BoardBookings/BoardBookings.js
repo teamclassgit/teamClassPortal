@@ -17,9 +17,13 @@ import {
   Row,
   Col,
   Label,
-  Input
+  Input,
+  Badge,
+  Media
 } from 'reactstrap'
-import { FileText, Plus, Share, Filter } from 'react-feather'
+import Avatar from '@components/avatar'
+
+import { FileText, Plus, Share, Filter, Calendar } from 'react-feather'
 import FiltersModal from './FiltersModal'
 
 import Board from '@lourenci/react-kanban'
@@ -29,18 +33,27 @@ import moment from 'moment'
 import './BoardBookings.scss'
 
 const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEvents }) => {
-  const [filteredBookings, setFilteredBookings] = useState(bookings)
-  const [data, setData] = useState(bookings)
+  const [loading, setLoading] = useState(false)
+  const [filteredBookings, setFilteredBookings] = useState([])
+  const [data, setData] = useState([])
   const [currentElement, setCurrentElement] = React.useState(null)
   const [modal, setModal] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
 
   React.useEffect(() => {
+    setFilteredBookings(bookings)
+  }, [bookings])
+
+  React.useEffect(() => {
+    console.log('filteres', filteredBookings)
+    setLoading(false)
     setData(filteredBookings)
   }, [filteredBookings])
 
   const handleFilterByClass = (classId) => {
-    setFilteredBookings(filteredBookings.filter(({ teamClassId }) => teamClassId === classId))
+    setLoading(true)
+    const newBookings = bookings.filter(({ teamClassId }) => teamClassId === classId)
+    setFilteredBookings(newBookings)
   }
 
   // ** Function to handle Modal toggle
@@ -95,39 +108,69 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
     }
   })
 
-  const board = {
-    columns: [
-      {
-        id: 1,
-        title: 'Quote',
-        cards: bookingCards.filter((element) => element.status.indexOf('quote') > -1)
-      },
-      {
-        id: 2,
-        title: 'Scheduled',
-        cards: bookingCards.filter((element) => element.status.indexOf('scheduled') > -1)
-      },
-      {
-        id: 3,
-        title: 'Coordinating',
-        cards: bookingCards.filter((element) => element.status.indexOf('coordinating') > -1)
-      },
-      {
-        id: 4,
-        title: 'Headcount',
-        cards: bookingCards.filter((element) => element.status.indexOf('headcount') > -1)
-      },
-      {
-        id: 5,
-        title: 'Invoice sent',
-        cards: bookingCards.filter((element) => element.status.indexOf('invoiced') > -1)
-      },
-      {
-        id: 6,
-        title: 'Invoice paid',
-        cards: bookingCards.filter((element) => element.status.indexOf('confirmed') > -1)
-      }
-    ]
+  const getBoard = () => {
+    return {
+      columns: [
+        {
+          id: 1,
+          title: 'Quote',
+          cards: bookingCards.filter((element) => element.status.indexOf('quote') > -1)
+        },
+        {
+          id: 2,
+          title: 'Scheduled',
+          cards: bookingCards.filter((element) => element.status.indexOf('scheduled') > -1)
+        },
+        {
+          id: 3,
+          title: 'Coordinating',
+          cards: bookingCards.filter((element) => element.status.indexOf('coordinating') > -1)
+        },
+        {
+          id: 4,
+          title: 'Headcount',
+          cards: bookingCards.filter((element) => element.status.indexOf('headcount') > -1)
+        },
+        {
+          id: 5,
+          title: 'Invoice sent',
+          cards: bookingCards.filter((element) => element.status.indexOf('invoiced') > -1)
+        },
+        {
+          id: 6,
+          title: 'Invoice paid',
+          cards: bookingCards.filter((element) => element.status.indexOf('confirmed') > -1)
+        }
+      ]
+    }
+  }
+
+  const handleFilter = (e) => {
+    const value = e.target.value
+    let updatedData = []
+    setSearchValue(value)
+
+    if (value.length) {
+      updatedData = data.filter((item) => {
+        const startsWith =
+          (item.customerName && item.customerName.toLowerCase().startsWith(value.toLowerCase())) ||
+          (item.customerId && getCustomerEmail(item.customerId).toLowerCase().startsWith(value.toLowerCase())) ||
+          (item.teamClassId && getClassTitle(item.teamClassId).toLowerCase().startsWith(value.toLowerCase()))
+
+        const includes =
+          (item.customerName && item.customerName.toLowerCase().includes(value.toLowerCase())) ||
+          (item.customerId && getCustomerEmail(item.customerId).toLowerCase().includes(value.toLowerCase())) ||
+          (item.teamClassId && getClassTitle(item.teamClassId).toLowerCase().includes(value.toLowerCase()))
+
+        if (startsWith) {
+          return startsWith
+        } else if (!startsWith && includes) {
+          return includes
+        } else return null
+      })
+      setFilteredData(updatedData)
+      setSearchValue(value)
+    }
   }
 
   // ** Converts table to CSV
@@ -170,16 +213,14 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
     link.click()
   }
 
-  const getClassesFilter = () => {
-    return (
-      <DropdownMenu className="class-filter-options-container">
-        {classes.map(({ title }) => (
-          <DropdownItem>
-            <span>{title}</span>
-          </DropdownItem>
-        ))}
-      </DropdownMenu>
-    )
+  const handleFilterType = ({ type, value }) => {
+    switch (type) {
+      case 'class':
+        handleFilterByClass(value)
+        break
+      default:
+        break
+    }
   }
 
   return (
@@ -255,84 +296,89 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
         </Col>
       </Row>
       <Row>
-        <Board
-          allowRemoveLane
-          allowRenameColumn
-          allowRemoveCard
-          onLaneRemove={console.log}
-          onCardRemove={console.log}
-          onLaneRename={console.log}
-          initialBoard={board}
-          // allowAddCard={{ on: 'top' }}
-          onNewCardConfirm={(draftCard) => ({
-            id: new Date().getTime(),
-            ...draftCard
-          })}
-          onCardNew={console.log}
-          renderCard={(
-            { customerName, createdAt, attendees, classTitle, scheduled, id, email, teamClassId, phone, company },
-            { removeCard, dragging }
-          ) => {
-            return (
-              <Card className="card-board">
-                <CardBody>
-                  <CardText>
-                    <strong className="text-dark">
-                      {customerName} -{' '}
-                      <small className="text-muted">
-                        {moment(createdAt).calendar(null, {
-                          lastDay: '[Yesterday]',
-                          sameDay: 'LT',
-                          lastWeek: 'dddd',
-                          sameElse: 'MMMM Do, YYYY'
-                        })}
-                      </small>
-                    </strong>
-                    <br />
-                    <p className="mb-0 mt-1">{classTitle}</p>
-                    <br />
-                    <strong>{attendees} Attendees</strong>
-                    <br />
+        {!loading && filteredBookings.length ? (
+          <Board
+            allowRemoveLane
+            allowRenameColumn
+            allowRemoveCard
+            initialBoard={getBoard()}
+            // allowAddCard={{ on: 'top' }}
+            onNewCardConfirm={(draftCard) => ({
+              id: new Date().getTime(),
+              ...draftCard
+            })}
+            renderCard={(
+              { customerName, createdAt, attendees, classTitle, scheduled, id, email, teamClassId, phone, company, status },
+              { removeCard, dragging }
+            ) => {
+              return (
+                <Card className="card-board">
+                  <CardBody>
+                    <CardText>
+                      <strong className="text-dark">
+                        {customerName}
+                        <br />
+                        <small className="text-muted">
+                          {moment(createdAt).calendar(null, {
+                            lastDay: '[Yesterday]',
+                            sameDay: 'LT',
+                            lastWeek: 'dddd',
+                            sameElse: 'MMMM Do, YYYY'
+                          })}
+                        </small>
+                      </strong>
+                      <br />
+                      <p className="mb-0 mt-1 text-truncate">{classTitle}</p>
+                      <br />
+                      <strong>{attendees} Attendees</strong>
+                    </CardText>
                     {scheduled && (
-                      <span className="text-dark mt-3">
-                        Scheduled: <small className="text-dark">{scheduled}</small>
-                      </span>
+                      <Media className="">
+                        <Avatar color="light-primary" className="rounded mr-1" icon={<Calendar size={18} />} />
+                        <Media body>
+                          <h6 className="mb-0">{scheduled}</h6>
+                          <small>{status === 'confirmed' ? 'Confirmed' : ''}</small>
+                        </Media>
+                      </Media>
                     )}
-                  </CardText>
-                </CardBody>
-                <CardFooter className="card-board-footer">
-                  <Button
-                    color="link"
-                    className="m-0 p-0"
-                    onClick={() => {
-                      const newElement = {
-                        name: customerName,
-                        email,
-                        phone,
-                        company,
-                        class: teamClassId,
-                        attendees
-                      }
-                      setCurrentElement(newElement)
-                      handleModal()
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <CardLink href={`/booking/${id}`} target={'blank'}>
-                    Checkout
-                  </CardLink>
-                </CardFooter>
-              </Card>
-            )
-          }}
-        />
+                  </CardBody>
+                  <CardFooter className="card-board-footer">
+                    <Button
+                      color="link"
+                      className="m-0 p-0"
+                      onClick={() => {
+                        const newElement = {
+                          name: customerName,
+                          email,
+                          phone,
+                          company,
+                          class: teamClassId,
+                          attendees,
+                          editMode: true
+                        }
+                        setCurrentElement(newElement)
+                        handleModal()
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <CardLink href={`/booking/${id}`} target={'blank'}>
+                      Checkout
+                    </CardLink>
+                  </CardFooter>
+                </Card>
+              )
+            }}
+          />
+        ) : (
+          ''
+        )}
       </Row>
       <FiltersModal
         open={showFiltersModal}
         handleModal={() => setShowFiltersModal(!showFiltersModal)}
         classes={classes}
-        onFilterUpdate={(x) => console.log(x)}
+        onFilterUpdate={(data) => handleFilterType(data)}
       />
       <AddNewBooking
         open={modal}
@@ -343,6 +389,7 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
         setCustomers={setCustomers}
         customers={customers}
         currentElement={currentElement}
+        // editMode={currentElement.editMode}
       />
     </>
   )
