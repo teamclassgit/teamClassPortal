@@ -145,13 +145,12 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
     }
   }
 
-  const handleFilter = (e) => {
+  const handleSearch = (e) => {
+    setLoading(true)
     const value = e.target.value
     let updatedData = []
-    setSearchValue(value)
-
     if (value.length) {
-      updatedData = data.filter((item) => {
+      updatedData = bookings.filter((item) => {
         const startsWith =
           (item.customerName && item.customerName.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.customerId && getCustomerEmail(item.customerId).toLowerCase().startsWith(value.toLowerCase())) ||
@@ -168,8 +167,9 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
           return includes
         } else return null
       })
-      setFilteredData(updatedData)
-      setSearchValue(value)
+      setFilteredBookings(updatedData)
+    } else {
+      setFilteredBookings(bookings)
     }
   }
 
@@ -291,7 +291,7 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
             bsSize="sm"
             id="search-input"
             // value={searchValue}
-            // onChange={handleFilter}
+            onChange={handleSearch}
           />
         </Col>
       </Row>
