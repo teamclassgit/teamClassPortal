@@ -14,7 +14,8 @@ import {
   DropdownItem,
   Button,
   Row,
-  Col
+  Col,
+  CardLink
 } from 'reactstrap'
 import './CardColumnsBoard.scss'
 import { toAmPm } from '../../../utility/Utils'
@@ -201,6 +202,8 @@ const CardColumnsBoard = ({ bookings, customers, calendarEvents, classes }) => {
                                     </span>
                                   )}
                                 </CardText>
+                                <CardLink href="#">Card Link</CardLink>
+                                <CardLink href="#">Another Link</CardLink>
                               </CardBody>
                             </Card>
                           </Draggable>

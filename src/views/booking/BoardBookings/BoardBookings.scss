@@ -1,0 +1,28 @@
+.card-board {
+  max-width: 18em;
+  .card-board-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 1.5rem;
+  }
+}
+
+.class-filter-options-container {
+  transform: translate3d(0px, 40px, 0px);
+  width: 13rem !important;
+  height: 20rem;
+  overflow: hidden;
+  overflow-y: scroll;
+  button {
+    padding-right: 2rem;
+  }
+}
+
+.react-kanban-board > div:first-child {
+  height: 67vh;
+  overflow: scroll;
+  .react-kanban-column {
+    min-height: 65vh !important;
+    height: auto !important;
+  }
+}

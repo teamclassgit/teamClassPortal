@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import DataTableBookings from './TableBookings'
-import BoardBookings from './BoardBookings'
+import BoardBookings from './BoardBookings/BoardBookings'
 import queryAllBookings from '../../graphql/QueryAllBookings'
 import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents'
 import queryAllCustomers from '../../graphql/QueryAllCustomers'
@@ -78,13 +78,15 @@ const BookingList = () => {
               calendarEvents={calendarEvents}
               classes={classes}
             /> */}
-
-             {bookings && bookings.length > 0  && <BoardBookings  bookings={bookings}
-                            customers={customers}
-                            setCustomers={setCustomers}
-                            calendarEvents={calendarEvents}
-                            classes={classes}></BoardBookings>} >
-
+            {bookings && bookings.length > 0 && (
+              <BoardBookings
+                bookings={bookings}
+                customers={customers}
+                setCustomers={setCustomers}
+                calendarEvents={calendarEvents}
+                classes={classes}
+              />
+            )}
           </Col>
         </Row>
       )}
