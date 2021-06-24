@@ -1,9 +1,20 @@
 .card-board {
   max-width: 18em;
+  &:hover {
+    cursor: move;
+  }
+  .flip-button {
+    position: absolute;
+    right: -10px;
+    top: 0;
+    &:hover {
+      color: black !important;
+    }
+  }
   .card-board-footer {
     display: flex;
-    justify-content: space-between;
-    padding: 10px 1.5rem;
+    justify-content: flex-end;
+    padding: 5px 0rem;
   }
 }
 

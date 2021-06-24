@@ -22,15 +22,14 @@ import {
   Media
 } from 'reactstrap'
 import Avatar from '@components/avatar'
-
-import { FileText, Plus, Share, Filter, Calendar } from 'react-feather'
+import { FileText, Plus, Share, Filter, Calendar, Edit2, ShoppingCart, Repeat } from 'react-feather'
 import FiltersModal from './FiltersModal'
-
 import Board from '@lourenci/react-kanban'
 import '@lourenci/react-kanban/dist/styles.css'
 import { toAmPm } from '../../../utility/Utils'
 import moment from 'moment'
 import './BoardBookings.scss'
+import BookingSummaryWithoutDate from '../steps/BookingSummaryWithoutDate'
 
 const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEvents }) => {
   const [loading, setLoading] = useState(false)
@@ -39,13 +38,13 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
   const [currentElement, setCurrentElement] = React.useState(null)
   const [modal, setModal] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
+  const [cardFlipped, setCardFlipped] = useState(null)
 
   React.useEffect(() => {
     setFilteredBookings(bookings)
   }, [bookings])
 
   React.useEffect(() => {
-    console.log('filteres', filteredBookings)
     setLoading(false)
     setData(filteredBookings)
   }, [filteredBookings])
@@ -92,21 +91,31 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
     return ''
   }
 
-  const bookingCards = filteredBookings.map(({ customerName, id, attendees, teamClassId, createdAt, status, customerId }) => {
-    return {
-      customerName,
-      id,
-      attendees,
-      teamClassId,
-      createdAt,
-      status,
-      classTitle: getClassTitle(teamClassId),
-      scheduled: getFormattedEventDate(id),
-      email: getCustomerEmail(customerId),
-      phone: getCustomerPhone(customerId),
-      company: getCustomerCompany(customerId)
+  const bookingCards = filteredBookings.map(
+    ({ id, teamClassId, customerId, customerName, attendees, classMinimum, pricePerson, serviceFee, salesTax, status, createdAt }) => {
+      return {
+        customerName,
+        id,
+        attendees,
+        teamClassId,
+        createdAt,
+        status,
+        classTitle: getClassTitle(teamClassId),
+        scheduled: getFormattedEventDate(id),
+        email: getCustomerEmail(customerId),
+        phone: getCustomerPhone(customerId),
+        company: getCustomerCompany(customerId),
+        serviceFee,
+        pricePerson,
+        minimum: classMinimum,
+        salesTax,
+        attendeesAdded: 18, // ????
+        additionals: 2, // ?????
+        calendarEvent: calendarEvents.filter((element) => element.bookingId === id)[0],
+        teamClass: classes.filter((element) => element.id === teamClassId)[0]
+      }
     }
-  })
+  )
 
   const getBoard = () => {
     return {
@@ -232,14 +241,6 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
               All Time Bookings
             </CardTitle>
             <div className="d-flex mt-md-0">
-              {/* <UncontrolledButtonDropdown className="mr-2 position-relative">
-                <DropdownToggle color="primary" caret outline>
-                  <Search size={15} />
-                  <span className="align-middle ml-50">Filter by class</span>
-                </DropdownToggle>
-                {getClassesFilter()}
-              </UncontrolledButtonDropdown> */}
-
               <UncontrolledButtonDropdown>
                 <DropdownToggle color="secondary" caret outline>
                   <Share size={15} />
@@ -308,64 +309,106 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
               ...draftCard
             })}
             renderCard={(
-              { customerName, createdAt, attendees, classTitle, scheduled, id, email, teamClassId, phone, company, status },
+              {
+                customerName,
+                id,
+                attendees,
+                teamClassId,
+                createdAt,
+                status,
+                classTitle,
+                scheduled,
+                email,
+                phone,
+                company,
+                serviceFee,
+                pricePerson,
+                minimum,
+                salesTax,
+                attendeesAdded,
+                additionals,
+                calendarEvent,
+                teamClass
+              },
               { removeCard, dragging }
             ) => {
               return (
                 <Card className="card-board">
-                  <CardBody>
-                    <CardText>
-                      <strong className="text-dark">
-                        {customerName}
-                        <br />
-                        <small className="text-muted">
-                          {moment(createdAt).calendar(null, {
-                            lastDay: '[Yesterday]',
-                            sameDay: 'LT',
-                            lastWeek: 'dddd',
-                            sameElse: 'MMMM Do, YYYY'
-                          })}
-                        </small>
-                      </strong>
-                      <br />
-                      <p className="mb-0 mt-1 text-truncate">{classTitle}</p>
-                      <br />
-                      <strong>{attendees} Attendees</strong>
-                    </CardText>
-                    {scheduled && (
-                      <Media className="">
-                        <Avatar color="light-primary" className="rounded mr-1" icon={<Calendar size={18} />} />
-                        <Media body>
-                          <h6 className="mb-0">{scheduled}</h6>
-                          <small>{status === 'confirmed' ? 'Confirmed' : ''}</small>
-                        </Media>
-                      </Media>
-                    )}
-                  </CardBody>
-                  <CardFooter className="card-board-footer">
-                    <Button
-                      color="link"
-                      className="m-0 p-0"
-                      onClick={() => {
-                        const newElement = {
-                          name: customerName,
-                          email,
-                          phone,
-                          company,
-                          class: teamClassId,
-                          attendees,
-                          editMode: true
-                        }
-                        setCurrentElement(newElement)
-                        handleModal()
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <CardLink href={`/booking/${id}`} target={'blank'}>
-                      Checkout
-                    </CardLink>
-                  </CardFooter>
+                  {cardFlipped && cardFlipped === id ? (
+                    <BookingSummaryWithoutDate
+                      serviceFee={serviceFee}
+                      attendeesAdded={attendeesAdded}
+                      attendees={attendees}
+                      pricePerson={pricePerson}
+                      minimum={minimum}
+                      salesTax={salesTax}
+                      additionals={additionals}
+                      calendarEvent={calendarEvent}
+                      teamClass={teamClass}
+                      bookingId={id}
+                      flipCard={() => setCardFlipped(null)}
+                    />
+                  ) : (
+                    <>
+                      <CardBody>
+                        <Button color="link" className="flip-button text-muted" onClick={() => setCardFlipped(id)}>
+                          <Repeat size={14} />
+                        </Button>
+                        <CardText>
+                          <strong className="text-dark">
+                            {customerName}
+                            <br />
+                            <small className="text-muted">
+                              {moment(createdAt).calendar(null, {
+                                lastDay: '[Yesterday]',
+                                sameDay: 'LT',
+                                lastWeek: 'dddd',
+                                sameElse: 'MMMM Do, YYYY'
+                              })}
+                            </small>
+                          </strong>
+                          <br />
+                          <p className="mb-0 mt-1 text-truncate">{classTitle}</p>
+                          <br />
+                          <strong>{attendees} Attendees</strong>
+                        </CardText>
+                        {scheduled && (
+                          <Media className="">
+                            <Avatar color="light-primary" className="rounded mr-1" icon={<Calendar size={18} />} />
+                            <Media body>
+                              <h6 className="mb-0">{scheduled}</h6>
+                              <small>{status === 'confirmed' ? 'Confirmed' : ''}</small>
+                            </Media>
+                          </Media>
+                        )}
+                      </CardBody>
+                      <CardFooter className="card-board-footer">
+                        <Button
+                          color="link"
+                          className="m-0 p-0"
+                          onClick={() => {
+                            const newElement = {
+                              name: customerName,
+                              email,
+                              phone,
+                              company,
+                              class: teamClassId,
+                              attendees,
+                              editMode: true
+                            }
+                            setCurrentElement(newElement)
+                            handleModal()
+                          }}
+                        >
+                          <Avatar color="light-primary" className="rounded mr-1" icon={<Edit2 size={18} />} />
+                          {/* <Edit2 size={18} /> */}
+                        </Button>
+                        <CardLink href={`/booking/${id}`} target={'blank'}>
+                          <Avatar color="light-secondary" className="rounded mr-1" icon={<ShoppingCart size={18} />} />
+                        </CardLink>
+                      </CardFooter>
+                    </>
+                  )}
                 </Card>
               )
             }}
