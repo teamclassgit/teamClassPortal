@@ -1,22 +1,20 @@
 // ** Checks if an object is empty (returns boolean)
-export const isObjEmpty = obj => Object.keys(obj).length === 0
+export const isObjEmpty = (obj) => Object.keys(obj).length === 0
 
 // ** Returns K format from a number
-export const kFormatter = num => (num > 999 ? `${(num / 1000).toFixed(1)}k` : num)
+export const kFormatter = (num) => (num > 999 ? `${(num / 1000).toFixed(1)}k` : num)
 
 // ** Converts HTML to string
-export const htmlToString = html => html.replace(/<\/?[^>]+(>|$)/g, '')
+export const htmlToString = (html) => html.replace(/<\/?[^>]+(>|$)/g, '')
 
 // ** Checks if the passed date is today
-const isToday = date => {
-    const today = new Date()
-    return (
-        /* eslint-disable operator-linebreak */
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-        /* eslint-enable */
-    )
+const isToday = (date) => {
+  const today = new Date()
+  return (
+    /* eslint-disable operator-linebreak */
+    date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()
+    /* eslint-enable */
+  )
 }
 
 /**
@@ -26,21 +24,21 @@ const isToday = date => {
  * @param {String} value date to format
  * @param {Object} formatting Intl object to format with
  */
-export const formatDate = (value, formatting = {month: 'short', day: 'numeric', year: 'numeric'}) => {
-    if (!value) return value
-    return new Intl.DateTimeFormat('en-US', formatting).format(new Date(value))
+export const formatDate = (value, formatting = { month: 'short', day: 'numeric', year: 'numeric' }) => {
+  if (!value) return value
+  return new Intl.DateTimeFormat('en-US', formatting).format(new Date(value))
 }
 
 // ** Returns short month of passed date
 export const formatDateToMonthShort = (value, toTimeForCurrentDay = true) => {
-    const date = new Date(value)
-    let formatting = {month: 'short', day: 'numeric'}
+  const date = new Date(value)
+  let formatting = { month: 'short', day: 'numeric' }
 
-    if (toTimeForCurrentDay && isToday(date)) {
-        formatting = {hour: 'numeric', minute: 'numeric'}
-    }
+  if (toTimeForCurrentDay && isToday(date)) {
+    formatting = { hour: 'numeric', minute: 'numeric' }
+  }
 
-    return new Intl.DateTimeFormat('en-US', formatting).format(new Date(value))
+  return new Intl.DateTimeFormat('en-US', formatting).format(new Date(value))
 }
 
 /**
@@ -59,33 +57,34 @@ export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
  * ? NOTE: If you have different pages to navigate based on user ability then this function can be useful. However, you need to update it.
  * @param {String} userRole Role of user
  */
-export const getHomeRouteForLoggedInUser = userRole => {
-    if (userRole === 'admin') return '/'
-    if (userRole === 'client') return '/access-control'
-    return '/login'
+export const getHomeRouteForLoggedInUser = (userRole) => {
+  if (userRole === 'admin') return '/'
+  if (userRole === 'client') return '/access-control'
+  return '/login'
 }
 
 export const toAmPm = (hour, minutes, timeZoneLabel) => {
-    const suffix = hour >= 12 ? "PM" : "AM"
-    const hours = `${(((hour + 11) % 12) + 1)}:${minutes === 0 ? '00' : minutes} ${suffix} ${timeZoneLabel}`
-
-    return hours
+  const suffix = hour >= 12 ? 'PM' : 'AM'
+  const hours = `${((hour + 11) % 12) + 1}:${minutes === 0 ? '00' : minutes} ${suffix} ${timeZoneLabel ? timeZoneLabel : ''}`
+  //   console.log('apm', hours)
+  return hours
 }
 
 export const isValidEmail = (email) => {
-    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    return !email || reg.test(String(email).toLowerCase())
+  const reg =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return !email || reg.test(String(email).toLowerCase())
 }
 
 // ** React Select Theme Colors
-export const selectThemeColors = theme => ({
-    ...theme,
-    colors: {
-        ...theme.colors,
-        primary25: '#7367f01a', // for option hover bg-color
-        primary: '#7367f0', // for selected option bg-color
-        neutral10: '#7367f0', // for tags bg-color
-        neutral20: '#ededed', // for input border-color
-        neutral30: '#ededed' // for input hover border-color
-    }
+export const selectThemeColors = (theme) => ({
+  ...theme,
+  colors: {
+    ...theme.colors,
+    primary25: '#7367f01a', // for option hover bg-color
+    primary: '#7367f0', // for selected option bg-color
+    neutral10: '#7367f0', // for tags bg-color
+    neutral20: '#ededed', // for input border-color
+    neutral30: '#ededed' // for input hover border-color
+  }
 })

@@ -1,0 +1,23 @@
+.card-board {
+  width: 18em;
+  margin-bottom: 0.5em;
+  &:hover {
+    cursor: move;
+  }
+  .card-body {
+    padding-bottom: 5px !important;
+  }
+  .flip-button {
+    position: absolute;
+    right: -10px;
+    top: 0;
+    &:hover {
+      color: black !important;
+    }
+  }
+  .card-board-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px 0rem;
+  }
+}

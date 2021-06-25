@@ -1,12 +1,10 @@
 // ** React Imports
-import React, { forwardRef, Fragment, useState } from 'react'
-import AddNewBooking from '../AddNewBooking'
+import React, { useEffect, useState, useContext } from 'react'
+import { useMutation } from '@apollo/client'
+
+import moment from 'moment'
 import {
   Card,
-  CardBody,
-  CardText,
-  CardLink,
-  CardFooter,
   CardHeader,
   CardTitle,
   UncontrolledButtonDropdown,
@@ -17,28 +15,35 @@ import {
   Row,
   Col,
   Label,
-  Input,
-  Badge,
-  Media
+  Input
 } from 'reactstrap'
-import Avatar from '@components/avatar'
-import { FileText, Plus, Share, Filter, Calendar, Edit2, ShoppingCart, Repeat } from 'react-feather'
-import FiltersModal from './FiltersModal'
+import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus'
+import AddNewBooking from '../AddNewBooking'
+import BoardCard from './BoardCard/BoardCard'
 import Board from '@lourenci/react-kanban'
-import '@lourenci/react-kanban/dist/styles.css'
 import { toAmPm } from '../../../utility/Utils'
-import moment from 'moment'
+import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
+import BookingsHeader from '../BookingsHeader/BookingsHeader'
 import './BoardBookings.scss'
-import BookingSummaryWithoutDate from '../steps/BookingSummaryWithoutDate'
+import '@lourenci/react-kanban/dist/styles.css'
 
-const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEvents }) => {
+const BOOKING_STATUS = [
+  { label: 'Quote', value: 'quote' },
+  { label: 'Scheduled', value: 'scheduled' },
+  { label: 'Confirmed', value: 'confirmed' },
+  { label: 'Kit Fullfitment', value: 'kitfullfitment' },
+  { label: 'Completed', value: 'completed' }
+]
+
+const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEvents, changeView }) => {
+  const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
+
   const [loading, setLoading] = useState(false)
   const [filteredBookings, setFilteredBookings] = useState([])
   const [data, setData] = useState([])
   const [currentElement, setCurrentElement] = React.useState(null)
   const [modal, setModal] = useState(false)
-  const [showFiltersModal, setShowFiltersModal] = useState(false)
-  const [cardFlipped, setCardFlipped] = useState(null)
+  const [updateBookingStatus, { ...finalBookingData }] = useMutation(mutationUpdateBookingStatus, {})
 
   React.useEffect(() => {
     setFilteredBookings(bookings)
@@ -109,8 +114,8 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
         pricePerson,
         minimum: classMinimum,
         salesTax,
-        attendeesAdded: 18, // ????
-        additionals: 2, // ?????
+        attendeesAdded: 0, // ????
+        additionals: 0, // ?????
         calendarEvent: calendarEvents.filter((element) => element.bookingId === id)[0],
         teamClass: classes.filter((element) => element.id === teamClassId)[0]
       }
@@ -119,38 +124,11 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
 
   const getBoard = () => {
     return {
-      columns: [
-        {
-          id: 1,
-          title: 'Quote',
-          cards: bookingCards.filter((element) => element.status.indexOf('quote') > -1)
-        },
-        {
-          id: 2,
-          title: 'Scheduled',
-          cards: bookingCards.filter((element) => element.status.indexOf('scheduled') > -1)
-        },
-        {
-          id: 3,
-          title: 'Coordinating',
-          cards: bookingCards.filter((element) => element.status.indexOf('coordinating') > -1)
-        },
-        {
-          id: 4,
-          title: 'Headcount',
-          cards: bookingCards.filter((element) => element.status.indexOf('headcount') > -1)
-        },
-        {
-          id: 5,
-          title: 'Invoice sent',
-          cards: bookingCards.filter((element) => element.status.indexOf('invoiced') > -1)
-        },
-        {
-          id: 6,
-          title: 'Invoice paid',
-          cards: bookingCards.filter((element) => element.status.indexOf('confirmed') > -1)
-        }
-      ]
+      columns: BOOKING_STATUS.map(({ label, value }, index) => ({
+        id: index,
+        title: label,
+        cards: bookingCards.filter(({ status }) => status === value)
+      }))
     }
   }
 
@@ -232,192 +210,54 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
     }
   }
 
+  useEffect(() => {
+    if (classFilterContext) {
+      handleFilterType(classFilterContext)
+    } else {
+      setLoading(true)
+      setFilteredBookings(bookings)
+    }
+  }, [classFilterContext])
+
+  // Here we change the status of the dragged card
+  const handleDragCard = async (booking, source, destination) => {
+    const sourceStatus = BOOKING_STATUS[source.fromColumnId].value
+    const newStatus = BOOKING_STATUS[destination.toColumnId].value
+    const bookingId = booking.id
+
+    try {
+      await updateBookingStatus({
+        variables: {
+          id: bookingId,
+          status: newStatus
+        }
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <>
       <Row>
-        <Card className="w-100 bg-transparent shadow-none mb-0">
-          <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start border-bottom">
-            <CardTitle tag="h4" className="mt-1 ">
-              All Time Bookings
-            </CardTitle>
-            <div className="d-flex mt-md-0">
-              <UncontrolledButtonDropdown>
-                <DropdownToggle color="secondary" caret outline>
-                  <Share size={15} />
-                  <span className="align-middle ml-50">Export</span>
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem className="w-100" onClick={() => downloadCSV(data)}>
-                    <FileText size={15} />
-                    <span className="align-middle ml-50">CSV</span>
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledButtonDropdown>
-
-              <Button
-                className="ml-2"
-                color="primary"
-                onClick={(e) => {
-                  const newElement = {
-                    name: '',
-                    email: '',
-                    phone: '',
-                    company: '',
-                    attendees: ''
-                  }
-                  setCurrentElement(newElement)
-                  handleModal()
-                }}
-              >
-                <Plus size={15} />
-                <span className="align-middle ml-50">Add Booking</span>
-              </Button>
-
-              <Button className="ml-0 btn-outline" color="" outline onClick={() => setShowFiltersModal(true)}>
-                <Filter size={15} />
-                <span className="align-middle ml-50">Filters</span>
-              </Button>
-            </div>
-          </CardHeader>
-        </Card>
-      </Row>
-      <Row className="justify-content-end mx-0">
-        <Col className="d-flex align-items-center justify-content-end mt-1" md="6" sm="12">
-          <Label className="mr-1" for="search-input">
-            Search
-          </Label>
-          <Input
-            className="dataTable-filter mb-50"
-            type="text"
-            bsSize="sm"
-            id="search-input"
-            // value={searchValue}
-            onChange={handleSearch}
-          />
-        </Col>
-      </Row>
-      <Row>
         {!loading && filteredBookings.length ? (
           <Board
-            allowRemoveLane
-            allowRenameColumn
-            allowRemoveCard
+            disableColumnDrag
             initialBoard={getBoard()}
-            // allowAddCard={{ on: 'top' }}
             onNewCardConfirm={(draftCard) => ({
               id: new Date().getTime(),
               ...draftCard
             })}
-            renderCard={(
-              {
-                customerName,
-                id,
-                attendees,
-                teamClassId,
-                createdAt,
-                status,
-                classTitle,
-                scheduled,
-                email,
-                phone,
-                company,
-                serviceFee,
-                pricePerson,
-                minimum,
-                salesTax,
-                attendeesAdded,
-                additionals,
-                calendarEvent,
-                teamClass
-              },
-              { removeCard, dragging }
-            ) => {
-              return (
-                <Card className="card-board">
-                  {cardFlipped && cardFlipped === id ? (
-                    <BookingSummaryWithoutDate
-                      serviceFee={serviceFee}
-                      attendeesAdded={attendeesAdded}
-                      attendees={attendees}
-                      pricePerson={pricePerson}
-                      minimum={minimum}
-                      salesTax={salesTax}
-                      additionals={additionals}
-                      calendarEvent={calendarEvent}
-                      teamClass={teamClass}
-                      bookingId={id}
-                      flipCard={() => setCardFlipped(null)}
-                    />
-                  ) : (
-                    <>
-                      <CardBody>
-                        <Button color="link" className="flip-button text-muted" onClick={() => setCardFlipped(id)}>
-                          <Repeat size={14} />
-                        </Button>
-                        <CardText>
-                          <strong className="text-dark">
-                            {customerName}
-                            <br />
-                            <small className="text-muted">
-                              {moment(createdAt).calendar(null, {
-                                lastDay: '[Yesterday]',
-                                sameDay: 'LT',
-                                lastWeek: 'dddd',
-                                sameElse: 'MMMM Do, YYYY'
-                              })}
-                            </small>
-                          </strong>
-                          <br />
-                          <p className="mb-0 mt-1 text-truncate">{classTitle}</p>
-                          <br />
-                          <strong>{attendees} Attendees</strong>
-                        </CardText>
-                        {scheduled && (
-                          <Media className="">
-                            <Avatar color="light-primary" className="rounded mr-1" icon={<Calendar size={18} />} />
-                            <Media body>
-                              <h6 className="mb-0">{scheduled}</h6>
-                              <small>{status === 'confirmed' ? 'Confirmed' : ''}</small>
-                            </Media>
-                          </Media>
-                        )}
-                      </CardBody>
-                      <CardFooter className="card-board-footer">
-                        <Button
-                          color="link"
-                          className="m-0 p-0"
-                          onClick={() => {
-                            const newElement = {
-                              name: customerName,
-                              email,
-                              phone,
-                              company,
-                              class: teamClassId,
-                              attendees,
-                              editMode: true
-                            }
-                            setCurrentElement(newElement)
-                            handleModal()
-                          }}
-                        >
-                          <Avatar color="light-primary" className="rounded mr-1" icon={<Edit2 size={18} />} />
-                          {/* <Edit2 size={18} /> */}
-                        </Button>
-                        <CardLink href={`/booking/${id}`} target={'blank'}>
-                          <Avatar color="light-secondary" className="rounded mr-1" icon={<ShoppingCart size={18} />} />
-                        </CardLink>
-                      </CardFooter>
-                    </>
-                  )}
-                </Card>
-              )
-            }}
+            onCardDragEnd={(a, card, source, destination) => handleDragCard(card, source, destination)}
+            renderCard={(cardConTent, { removeCard, dragging }) => (
+              <BoardCard content={cardConTent} showAddModal={() => handleModal()} setCurrentElement={(data) => setCurrentElement(data)} />
+            )}
           />
         ) : (
           ''
         )}
       </Row>
-      <FiltersModal
+      {/* <FiltersModal
         open={showFiltersModal}
         handleModal={() => setShowFiltersModal(!showFiltersModal)}
         classes={classes}
@@ -432,8 +272,8 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
         setCustomers={setCustomers}
         customers={customers}
         currentElement={currentElement}
-        // editMode={currentElement.editMode}
-      />
+        editMode={currentElement?.editMode}
+      /> */}
     </>
   )
 }

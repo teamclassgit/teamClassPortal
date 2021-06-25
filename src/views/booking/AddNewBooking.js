@@ -29,7 +29,7 @@ import mutationCreateQuota from '../../graphql/MutationCreateQuota'
 import { useMutation } from '@apollo/client'
 import moment from 'moment'
 
-const AddNewBooking = ({ open, handleModal, data, setData, currentElement, customers, setCustomers, classes }) => {
+const AddNewBooking = ({ open, handleModal, data, setData, currentElement, customers, setCustomers, classes, editMode }) => {
   const [isOldCustomer, setIsOldCustomer] = React.useState(false)
   const [newName, setNewName] = React.useState('')
   const [newEmail, setNewEmail] = React.useState('')
@@ -175,36 +175,41 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
-        <h5 className="modal-title">New Booking</h5>
+        <h5 className="modal-title">{editMode ? 'Edit Booking' : 'New Booking'}</h5>
       </ModalHeader>
       <ModalBody className="flex-grow-1">
-        <FormGroup>
-          <div className="demo-inline-spacing">
-            <CustomInput
-              type="radio"
-              id="exampleCustomRadio"
-              name="customRadio"
-              inline
-              label="New Customer"
-              onClick={(e) => {
-                setIsOldCustomer(false)
-                setSelectedCustomer(null)
-              }}
-              defaultChecked
-            />
-            <CustomInput
-              type="radio"
-              id="exampleCustomRadio2"
-              name="customRadio"
-              inline
-              label="Old Customer"
-              onClick={(e) => {
-                setIsOldCustomer(true)
-                setWarning({ open: false, message: '' })
-              }}
-            />
-          </div>
-        </FormGroup>
+        {!editMode ? (
+          <FormGroup>
+            <div className="demo-inline-spacing">
+              <CustomInput
+                type="radio"
+                id="exampleCustomRadio"
+                name="customRadio"
+                inline
+                label="New Customer"
+                onClick={(e) => {
+                  setIsOldCustomer(false)
+                  setSelectedCustomer(null)
+                }}
+                defaultChecked
+              />
+              <CustomInput
+                type="radio"
+                id="exampleCustomRadio2"
+                name="customRadio"
+                inline
+                label="Old Customer"
+                onClick={(e) => {
+                  setIsOldCustomer(true)
+                  setWarning({ open: false, message: '' })
+                }}
+              />
+            </div>
+          </FormGroup>
+        ) : (
+          ''
+        )}
+
         {!isOldCustomer && (
           <div>
             <FormGroup>
@@ -295,6 +300,7 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
           <Label for="full-name">Event Details</Label>
 
           <Select
+            isDisabled={editMode}
             theme={selectThemeColors}
             className="react-select"
             classNamePrefix="select"

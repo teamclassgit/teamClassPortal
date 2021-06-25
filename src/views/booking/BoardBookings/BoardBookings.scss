@@ -1,39 +1,21 @@
-.card-board {
-  max-width: 18em;
-  &:hover {
-    cursor: move;
-  }
-  .flip-button {
-    position: absolute;
-    right: -10px;
-    top: 0;
-    &:hover {
-      color: black !important;
-    }
-  }
-  .card-board-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: 5px 0rem;
-  }
-}
-
 .class-filter-options-container {
   transform: translate3d(0px, 40px, 0px);
   width: 13rem !important;
   height: 20rem;
   overflow: hidden;
-  overflow-y: scroll;
+  overflow-y: none;
   button {
     padding-right: 2rem;
   }
 }
 
 .react-kanban-board > div:first-child {
-  height: 67vh;
+  height: calc(100vh - 22em);
   overflow: scroll;
   .react-kanban-column {
     min-height: 65vh !important;
     height: auto !important;
+    padding: 5px 10px !important;
+    margin: 0 0.5em;
   }
 }
