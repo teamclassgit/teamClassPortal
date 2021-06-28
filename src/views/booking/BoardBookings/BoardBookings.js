@@ -1,29 +1,13 @@
 // ** React Imports
 import React, { useEffect, useState, useContext } from 'react'
 import { useMutation } from '@apollo/client'
-
 import moment from 'moment'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  UncontrolledButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-  Row,
-  Col,
-  Label,
-  Input
-} from 'reactstrap'
+import { Row } from 'reactstrap'
 import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus'
-import AddNewBooking from '../AddNewBooking'
 import BoardCard from './BoardCard/BoardCard'
 import Board from '@lourenci/react-kanban'
 import { toAmPm } from '../../../utility/Utils'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
-import BookingsHeader from '../BookingsHeader/BookingsHeader'
 import './BoardBookings.scss'
 import '@lourenci/react-kanban/dist/styles.css'
 
@@ -35,21 +19,19 @@ const BOOKING_STATUS = [
   { label: 'Completed', value: 'completed' }
 ]
 
-const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEvents, changeView }) => {
-  const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
-
+const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurrentElement }) => {
+  const { classFilterContext } = useContext(FiltersContext)
   const [loading, setLoading] = useState(false)
   const [filteredBookings, setFilteredBookings] = useState([])
   const [data, setData] = useState([])
-  const [currentElement, setCurrentElement] = React.useState(null)
   const [modal, setModal] = useState(false)
-  const [updateBookingStatus, { ...finalBookingData }] = useMutation(mutationUpdateBookingStatus, {})
+  const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {})
 
-  React.useEffect(() => {
+  useEffect(() => {
     setFilteredBookings(bookings)
   }, [bookings])
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoading(false)
     setData(filteredBookings)
   }, [filteredBookings])
@@ -132,9 +114,8 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
     }
   }
 
-  const handleSearch = (e) => {
+  const handleSearch = (value) => {
     setLoading(true)
-    const value = e.target.value
     let updatedData = []
     if (value.length) {
       updatedData = bookings.filter((item) => {
@@ -183,28 +164,13 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
     return result
   }
 
-  // ** Downloads CSV
-  function downloadCSV(array) {
-    const link = document.createElement('a')
-    let csv = convertArrayOfObjectsToCSV(array)
-    if (csv === null) return
-
-    const filename = 'export.csv'
-
-    if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`
-    }
-
-    link.setAttribute('href', encodeURI(csv))
-    link.setAttribute('download', filename)
-    link.click()
-  }
-
   const handleFilterType = ({ type, value }) => {
     switch (type) {
       case 'class':
         handleFilterByClass(value)
         break
+      case 'text':
+        handleSearch(value)
       default:
         break
     }
@@ -249,7 +215,7 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
               ...draftCard
             })}
             onCardDragEnd={(a, card, source, destination) => handleDragCard(card, source, destination)}
-            renderCard={(cardConTent, { removeCard, dragging }) => (
+            renderCard={(cardConTent) => (
               <BoardCard content={cardConTent} showAddModal={() => handleModal()} setCurrentElement={(data) => setCurrentElement(data)} />
             )}
           />
@@ -257,23 +223,6 @@ const BoardBookings = ({ bookings, customers, setCustomers, classes, calendarEve
           ''
         )}
       </Row>
-      {/* <FiltersModal
-        open={showFiltersModal}
-        handleModal={() => setShowFiltersModal(!showFiltersModal)}
-        classes={classes}
-        onFilterUpdate={(data) => handleFilterType(data)}
-      />
-      <AddNewBooking
-        open={modal}
-        handleModal={handleModal}
-        data={data}
-        setData={setData}
-        classes={classes}
-        setCustomers={setCustomers}
-        customers={customers}
-        currentElement={currentElement}
-        editMode={currentElement?.editMode}
-      /> */}
     </>
   )
 }

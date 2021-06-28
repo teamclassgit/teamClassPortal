@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import DataTableBookings from './TableBookings'
 import BoardBookings from './BoardBookings/BoardBookings'
 import queryAllBookings from '../../graphql/QueryAllBookings'
@@ -13,14 +13,15 @@ import FiltersModal from './BoardBookings/FiltersModal'
 import AddNewBooking from './AddNewBooking'
 
 const BookingList = () => {
-  const [genericFilter, setGenericFilter] = React.useState({ id: { ne: '' } })
-  const [bookings, setBookings] = React.useState([])
-  const [customers, setCustomers] = React.useState([])
-  const [classes, setClasses] = React.useState([])
-  const [calendarEvents, setCalendarEvents] = React.useState([])
-  const [switchView, setSwitchView] = React.useState(false)
+  const [genericFilter, setGenericFilter] = useState({ id: { ne: '' } })
+  const [bookings, setBookings] = useState([])
+  const [customers, setCustomers] = useState([])
+  const [classes, setClasses] = useState([])
+  const [calendarEvents, setCalendarEvents] = useState([])
+  const [switchView, setSwitchView] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
-  const [modal, setModal] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [currentElement, setCurrentElement] = useState(null)
 
   const { ...allBookingsResult } = useQuery(queryAllBookings, {
     fetchPolicy: 'no-cache',
@@ -29,7 +30,7 @@ const BookingList = () => {
     }
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (allBookingsResult.data) setBookings(allBookingsResult.data.listBookings.items.map((element) => element))
   }, [allBookingsResult.data])
 
@@ -40,7 +41,7 @@ const BookingList = () => {
     }
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (allCalendarEventsResults.data) setCalendarEvents(allCalendarEventsResults.data.listCalendarEvents.items)
   }, [allCalendarEventsResults.data])
 
@@ -51,7 +52,7 @@ const BookingList = () => {
     }
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (allCustomersResult.data) setCustomers(allCustomersResult.data.listCustomers.items)
   }, [allCustomersResult.data])
 
@@ -62,12 +63,13 @@ const BookingList = () => {
     }
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (allClasses.data) setClasses(allClasses.data.listTeamClasses.items)
   }, [allClasses.data])
 
+  const handleModal = () => setShowAddModal(!showAddModal)
+
   // ** Function to handle Modal toggle
-  const handleModal = () => setModal(!modal)
   return (
     <Fragment>
       {(allClasses.loading || allBookingsResult.loading || allCalendarEventsResults.loading || allCustomersResult.loading) && (
@@ -77,12 +79,16 @@ const BookingList = () => {
         </div>
       )}
       {allBookingsResult && allBookingsResult.data && (
-        <Row>
+        <>
           <BookingsHeader
             setShowFiltersModal={(val) => setShowFiltersModal(val)}
             switchView={switchView}
             setSwitchView={() => setSwitchView(!switchView)}
-            handleModal={() => handleModal()}
+            showAddModal={() => handleModal()}
+            setCurrentElement={(d) => setCurrentElement(d)}
+            classes={classes}
+            customers={customers}
+            bookings={bookings}
           />
           <Col sm="12">
             {bookings && bookings.length > 0 && switchView ? (
@@ -102,12 +108,16 @@ const BookingList = () => {
                 calendarEvents={calendarEvents}
                 classes={classes}
                 changeView={() => setSwitchView(!switchView)}
+                setCurrentElement={(d) => {
+                  setCurrentElement(d)
+                  handleModal()
+                }}
               />
             )}
           </Col>
           <FiltersModal open={showFiltersModal} handleModal={() => setShowFiltersModal(!showFiltersModal)} classes={classes} />
-          {/* <AddNewBooking
-            open={modal}
+          <AddNewBooking
+            open={showAddModal}
             handleModal={handleModal}
             data={[]}
             setData={(x) => console.log(x)}
@@ -116,8 +126,8 @@ const BookingList = () => {
             customers={customers}
             currentElement={currentElement}
             editMode={currentElement?.editMode}
-          /> */}
-        </Row>
+          />
+        </>
       )}
     </Fragment>
   )

@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { forwardRef, Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect, useContext } from 'react'
 // ** Third Party Components
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
@@ -7,41 +7,45 @@ import Avatar from '@components/avatar'
 import moment from 'moment'
 import { toAmPm } from '../../utility/Utils'
 import AddNewBooking from './AddNewBooking'
-import { ChevronDown, Copy, File, FileText, Grid, Plus, Trello, Share } from 'react-feather'
-import {
-  Badge,
-  Button,
-  Card,
-  CardHeader,
-  CardTitle,
-  Col,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Input,
-  Label,
-  Row,
-  UncontrolledButtonDropdown
-} from 'reactstrap'
-
-// ** Bootstrap Checkbox Component
-const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
-  <div className="custom-control custom-checkbox">
-    <input type="checkbox" className="custom-control-input" ref={ref} {...rest} />
-    <label className="custom-control-label" onClick={onClick} />
-  </div>
-))
+import { ChevronDown } from 'react-feather'
+import { FiltersContext } from '../../context/FiltersContext/FiltersContext'
+import { Badge, Card } from 'reactstrap'
 
 const DataTableBookings = ({ bookings, customers, setCustomers, classes, calendarEvents, changeView }) => {
-  // ** States
+  const { classFilterContext } = useContext(FiltersContext)
   const [data, setData] = useState(bookings)
   const [currentPage, setCurrentPage] = useState(0)
-  const [currentElement, setCurrentElement] = React.useState(null)
+  const [currentElement, setCurrentElement] = useState(null)
   const [searchValue, setSearchValue] = useState('')
   const [filteredData, setFilteredData] = useState([])
   const [modal, setModal] = useState(false)
 
-  React.useEffect(() => {
+  const handleFilterByClass = (classId) => {
+    const newBookings = bookings.filter(({ teamClassId }) => teamClassId === classId)
+    setFilteredData(newBookings)
+    setSearchValue(classId)
+  }
+
+  const handleFilterType = ({ type, value }) => {
+    switch (type) {
+      case 'class':
+        handleFilterByClass(value)
+        break
+      default:
+        break
+    }
+  }
+
+  useEffect(() => {
+    if (classFilterContext) {
+      handleFilterType(classFilterContext)
+    } else {
+      setFilteredData(data)
+      setSearchValue('')
+    }
+  }, [classFilterContext])
+
+  useEffect(() => {
     setData(bookings)
   }, [bookings])
 
@@ -181,35 +185,6 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
 
-  // ** Function to handle filter
-  const handleFilter = (e) => {
-    const value = e.target.value
-    let updatedData = []
-    setSearchValue(value)
-
-    if (value.length) {
-      updatedData = data.filter((item) => {
-        const startsWith =
-          (item.customerName && item.customerName.toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.customerId && getCustomerEmail(item.customerId).toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.teamClassId && getClassTitle(item.teamClassId).toLowerCase().startsWith(value.toLowerCase()))
-
-        const includes =
-          (item.customerName && item.customerName.toLowerCase().includes(value.toLowerCase())) ||
-          (item.customerId && getCustomerEmail(item.customerId).toLowerCase().includes(value.toLowerCase())) ||
-          (item.teamClassId && getClassTitle(item.teamClassId).toLowerCase().includes(value.toLowerCase()))
-
-        if (startsWith) {
-          return startsWith
-        } else if (!startsWith && includes) {
-          return includes
-        } else return null
-      })
-      setFilteredData(updatedData)
-      setSearchValue(value)
-    }
-  }
-
   // ** Function to handle Pagination
   const handlePagination = (page) => {
     setCurrentPage(page.selected)
@@ -241,101 +216,9 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
     />
   )
 
-  // ** Converts table to CSV
-  function convertArrayOfObjectsToCSV(array) {
-    let result
-
-    const columnDelimiter = ','
-    const lineDelimiter = '\n'
-    const keys = Object.keys(data[0])
-
-    result = ''
-    result += keys.join(columnDelimiter)
-    result += lineDelimiter
-
-    array.forEach((item) => {
-      let ctr = 0
-      keys.forEach((key) => {
-        if (ctr > 0) result += columnDelimiter
-
-        result += item[key]
-
-        ctr++
-      })
-      result += lineDelimiter
-    })
-
-    return result
-  }
-
-  // ** Downloads CSV
-  function downloadCSV(array) {
-    const link = document.createElement('a')
-    let csv = convertArrayOfObjectsToCSV(array)
-    if (csv === null) return
-
-    const filename = 'export.csv'
-
-    if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`
-    }
-
-    link.setAttribute('href', encodeURI(csv))
-    link.setAttribute('download', filename)
-    link.click()
-  }
-
   return (
     <Fragment>
       <Card>
-        {/* <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start border-bottom">
-          <CardTitle tag="h4">All Time Bookings</CardTitle>
-
-          <div className="d-flex mt-md-0 mt-1">
-            <UncontrolledButtonDropdown>
-              <DropdownToggle color="secondary" caret outline>
-                <Share size={15} />
-                <span className="align-middle ml-50">Export</span>
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem className="w-100" onClick={() => downloadCSV(data)}>
-                  <FileText size={15} />
-                  <span className="align-middle ml-50">CSV</span>
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledButtonDropdown>
-            <Button
-              className="ml-2"
-              color="primary"
-              onClick={(e) => {
-                const newElement = {
-                  name: '',
-                  email: '',
-                  phone: '',
-                  company: '',
-                  attendees: ''
-                }
-                setCurrentElement(newElement)
-                handleModal()
-              }}
-            >
-              <Plus size={15} />
-              <span className="align-middle ml-50">Add Booking</span>
-            </Button>
-            <Button className="ml-0 btn-outline" color="" outline onClick={() => changeView()}>
-              <Trello size={20} />
-            </Button>
-          </div>
-        </CardHeader>
-        <Row className="justify-content-end mx-0">
-          <Col className="d-flex align-items-center justify-content-end mt-1" md="6" sm="12">
-            <Label className="mr-1" for="search-input">
-              Search
-            </Label>
-            <Input className="dataTable-filter mb-50" type="text" bsSize="sm" id="search-input" value={searchValue} onChange={handleFilter} />
-          </Col>
-        </Row>
-         */}
         <DataTable
           noHeader
           pagination

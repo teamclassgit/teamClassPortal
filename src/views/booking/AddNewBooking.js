@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
 import { selectThemeColors } from '@utils'
 // ** Third Party Components
@@ -30,24 +30,20 @@ import { useMutation } from '@apollo/client'
 import moment from 'moment'
 
 const AddNewBooking = ({ open, handleModal, data, setData, currentElement, customers, setCustomers, classes, editMode }) => {
-  const [isOldCustomer, setIsOldCustomer] = React.useState(false)
-  const [newName, setNewName] = React.useState('')
-  const [newEmail, setNewEmail] = React.useState('')
-  const [newPhone, setNewPhone] = React.useState('')
-  const [newCompany, setNewCompany] = React.useState('')
-  const [newAttendees, setNewAttendees] = React.useState('')
-  const [selectedClass, setSelectedClass] = React.useState(null)
-  const [selectedCustomer, setSelectedCustomer] = React.useState(null)
-  const [processing, setProcessing] = React.useState(false)
-  const [emailValid, setEmailValid] = React.useState(true)
-  const [attendeesValid, setAttendeesValid] = React.useState(true)
-  const [warning, setWarning] = React.useState({ open: false, message: '' })
+  const [isOldCustomer, setIsOldCustomer] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [newEmail, setNewEmail] = useState('')
+  const [newPhone, setNewPhone] = useState('')
+  const [newCompany, setNewCompany] = useState('')
+  const [newAttendees, setNewAttendees] = useState('')
+  const [selectedClass, setSelectedClass] = useState(null)
+  const [selectedCustomer, setSelectedCustomer] = useState(null)
+  const [processing, setProcessing] = useState(false)
+  const [emailValid, setEmailValid] = useState(true)
+  const [attendeesValid, setAttendeesValid] = useState(true)
+  const [warning, setWarning] = useState({ open: false, message: '' })
   const [createCustomer] = useMutation(mutationCreateCustomer, {})
   const [createQuota] = useMutation(mutationCreateQuota, {})
-
-  useEffect(() => {
-    console.log('selectedClass', selectedClass)
-  }, [selectedClass])
 
   const serviceFeeValue = 0.1
   const salesTaxValue = 0.0825
@@ -95,12 +91,10 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
         })
 
         if (!resultCreateCustomer || !resultCreateCustomer.data) {
-          console.log('Error creating customer', resultCreateCustomer)
           setProcessing(false)
           return
         }
 
-        console.log('1. New customer created: ', resultCreateCustomer.data.createCustomer.id)
         customer = resultCreateCustomer.data.createCustomer
         setCustomers([resultCreateCustomer.data.createCustomer, ...customers])
       }
@@ -131,17 +125,13 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
       })
 
       if (!resultCreateQuota || !resultCreateQuota.data) {
-        console.log('Error creating quota', resultCreateQuota)
         setProcessing(false)
         return
       }
-
-      console.log('2. New quota created: ', resultCreateQuota.data.createBooking.id)
       setData([resultCreateQuota.data.createBooking, ...data])
       setProcessing(false)
       handleModal()
     } catch (ex) {
-      console.log(ex)
       setProcessing(false)
     }
   }
@@ -153,7 +143,7 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
   // ** Custom close btn
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentElement) {
       setNewName(currentElement.name)
       setNewEmail(currentElement.email)

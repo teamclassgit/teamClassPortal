@@ -10,7 +10,7 @@
 }
 
 .react-kanban-board > div:first-child {
-  height: calc(100vh - 22em);
+  height: calc(100vh - 19em);
   overflow: scroll;
   .react-kanban-column {
     min-height: 65vh !important;
