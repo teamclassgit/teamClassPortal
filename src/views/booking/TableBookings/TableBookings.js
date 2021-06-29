@@ -1,24 +1,31 @@
 // ** React Imports
 import React, { Fragment, useState, useEffect, useContext } from 'react'
 // ** Third Party Components
-import ReactPaginate from 'react-paginate'
-import DataTable from 'react-data-table-component'
-import Avatar from '@components/avatar'
 import moment from 'moment'
-import { toAmPm } from '../../utility/Utils'
-import AddNewBooking from './AddNewBooking'
-import { ChevronDown } from 'react-feather'
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext'
-import { Badge, Card } from 'reactstrap'
+import Avatar from '@components/avatar'
+import DataTable from 'react-data-table-component'
+import { Edit2, ShoppingCart, ChevronDown } from 'react-feather'
+import ReactPaginate from 'react-paginate'
+import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
+import { Button, Card } from 'reactstrap'
+import StatusSelector from './StatusSelector'
+import {
+  getCustomerEmail,
+  getClassTitle,
+  getBookingValue,
+  getCustomerPhone,
+  getCustomerCompany,
+  getBookingColor,
+  getFormattedEventDate
+} from '../common'
+import './TableBookings.scss'
 
-const DataTableBookings = ({ bookings, customers, setCustomers, classes, calendarEvents, changeView }) => {
+const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement, classes, calendarEvents, changeView }) => {
   const { classFilterContext } = useContext(FiltersContext)
   const [data, setData] = useState(bookings)
   const [currentPage, setCurrentPage] = useState(0)
-  const [currentElement, setCurrentElement] = useState(null)
   const [searchValue, setSearchValue] = useState('')
   const [filteredData, setFilteredData] = useState([])
-  const [modal, setModal] = useState(false)
 
   const handleFilterByClass = (classId) => {
     const newBookings = bookings.filter(({ teamClassId }) => teamClassId === classId)
@@ -26,11 +33,40 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
     setSearchValue(classId)
   }
 
+  const handleSearch = (value) => {
+    let updatedData = []
+    if (value.length) {
+      updatedData = bookings.filter((item) => {
+        const startsWith =
+          (item.customerName && item.customerName.toLowerCase().startsWith(value.toLowerCase())) ||
+          (item.customerId && getCustomerEmail(item.customerId, customers).toLowerCase().startsWith(value.toLowerCase())) ||
+          (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().startsWith(value.toLowerCase()))
+
+        const includes =
+          (item.customerName && item.customerName.toLowerCase().includes(value.toLowerCase())) ||
+          (item.customerId && getCustomerEmail(item.customerId, customers).toLowerCase().includes(value.toLowerCase())) ||
+          (item.teamClassId && getClassTitle(item.teamClassIdm, classes).toLowerCase().includes(value.toLowerCase()))
+
+        if (startsWith) {
+          return startsWith
+        } else if (!startsWith && includes) {
+          return includes
+        } else return null
+      })
+      setFilteredData(updatedData)
+      setSearchValue(value)
+    } else {
+      setFilteredData(bookings)
+    }
+  }
+
   const handleFilterType = ({ type, value }) => {
     switch (type) {
       case 'class':
         handleFilterByClass(value)
         break
+      case 'text':
+        handleSearch(value)
       default:
         break
     }
@@ -48,39 +84,6 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
   useEffect(() => {
     setData(bookings)
   }, [bookings])
-
-  const status = {
-    quote: { title: 'quote', color: 'light-danger' },
-    'quote-a': { title: 'quote', color: 'light-danger' },
-    'quote-b': { title: 'quote', color: 'light-danger' },
-    scheduled: { title: 'scheduled', color: 'light-warning' },
-    confirmed: { title: 'confirmed', color: 'light-success' },
-    draft: { title: 'quote', color: 'light-danger' },
-    canceled: { title: 'canceled', color: 'light-danger' }
-  }
-
-  const getCustomerEmail = (customerId) => {
-    const result = customers.filter((element) => element.id === customerId)
-    return result && result.length > 0 ? result[0].email : ''
-  }
-
-  const getClassTitle = (teamClassId) => {
-    const result = classes.filter((element) => element.id === teamClassId)
-    return result && result.length > 0 ? result[0].title : ''
-  }
-
-  const getFormattedEventDate = (bookingId) => {
-    const result = calendarEvents.filter((element) => element.bookingId === bookingId)
-
-    if (result && result.length > 0) {
-      const calendarEvent = result[0]
-      const date = new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)
-      const time = toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, '')
-      return `${moment(date).format('LL')} ${time}`
-    }
-
-    return ''
-  }
 
   // ** Table Common Column
   const columns = [
@@ -107,7 +110,7 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
       maxWidth: '180px',
       cell: (row) => (
         <div className="d-flex align-items-center">
-          <Avatar color={`${status[row.status].color}`} content={row.customerName} initials />
+          <Avatar color={getBookingColor(row.status)} content={row.customerName} initials />
           <div className="user-info text-truncate ml-1">
             <span className="d-block font-weight-bold text-truncate">{row.customerName}</span>
           </div>
@@ -121,7 +124,7 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
       maxWidth: '280px',
       cell: (row) => (
         <div className="user-info text-truncate ml-1">
-          <span className="d-block font-weight-bold text-truncate">{getCustomerEmail(row.customerId)}</span>
+          <span className="d-block font-weight-bold text-truncate">{getCustomerEmail(row.customerId, customers)}</span>
         </div>
       )
     },
@@ -132,7 +135,7 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
       maxWidth: '170px',
       cell: (row) => (
         <div className="user-info text-truncate ml-1">
-          <span className="d-block font-weight-bold text-truncate">{getClassTitle(row.teamClassId)}</span>
+          <span className="d-block font-weight-bold text-truncate">{getClassTitle(row.teamClassId, classes)}</span>
         </div>
       )
     },
@@ -149,7 +152,7 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
       maxWidth: '150px',
       cell: (row) => (
         <div className="user-info text-truncate ml-1">
-          <span className="d-block font-weight-bold text-truncate">{getFormattedEventDate(row.id)}</span>
+          <span className="d-block font-weight-bold text-truncate">{getFormattedEventDate(row.id, calendarEvents)}</span>
         </div>
       )
     },
@@ -157,14 +160,8 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
       name: 'Status',
       selector: 'status',
       sortable: true,
-      maxWidth: '40px',
-      cell: (row) => {
-        return (
-          <Badge color={status[row.status] && status[row.status].color} pill>
-            {status[row.status] ? status[row.status].title : row.status}
-          </Badge>
-        )
-      }
+      maxWidth: '200px',
+      cell: (row) => <StatusSelector value={getBookingValue(row.status)} row={row} bookings={bookings} setBookings={setBookings} />
     },
     {
       name: 'Actions',
@@ -173,17 +170,35 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
       cell: (row) => {
         return (
           <div className="d-flex">
+            <Button
+              color="link"
+              className="m-0 p-0"
+              onClick={() => {
+                const { customerId, customerName, teamClassId, attendees, id } = row
+                const newElement = {
+                  customerId,
+                  name: customerName,
+                  email: getCustomerEmail(customerId, customers),
+                  phone: getCustomerPhone(customerId, customers),
+                  company: getCustomerCompany(customerId, customers),
+                  class: teamClassId,
+                  attendees,
+                  editMode: true,
+                  id
+                }
+                setCurrentElement(newElement)
+              }}
+            >
+              <Avatar color="light-primary" className="rounded mr-1" icon={<Edit2 size={18} />} />
+            </Button>
             <a href={`/booking/${row.id}`} target={'blank'}>
-              Checkout
+              <Avatar color="light-secondary" className="rounded mr-1" icon={<ShoppingCart size={18} />} />
             </a>
           </div>
         )
       }
     }
   ]
-
-  // ** Function to handle Modal toggle
-  const handleModal = () => setModal(!modal)
 
   // ** Function to handle Pagination
   const handlePagination = (page) => {
@@ -225,7 +240,7 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
           columns={columns}
           defaultSortField={'createdAt'}
           defaultSortAsc={false}
-          paginationPerPage={7}
+          paginationPerPage={8}
           className="react-dataTable"
           sortIcon={<ChevronDown size={10} />}
           paginationDefaultPage={currentPage + 1}
@@ -233,17 +248,6 @@ const DataTableBookings = ({ bookings, customers, setCustomers, classes, calenda
           data={searchValue.length ? filteredData : data}
         />
       </Card>
-
-      <AddNewBooking
-        open={modal}
-        handleModal={handleModal}
-        data={data}
-        setData={setData}
-        classes={classes}
-        setCustomers={setCustomers}
-        customers={customers}
-        currentElement={currentElement}
-      />
     </Fragment>
   )
 }

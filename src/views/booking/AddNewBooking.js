@@ -23,13 +23,14 @@ import {
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
-import { isValidEmail } from '../../utility/Utils'
+import { isValidEmail, isPhoneValid } from '../../utility/Utils'
 import mutationCreateCustomer from '../../graphql/MutationCreateCustomer'
+import mutationUpdateBooking from '../../graphql/MutationUpdateBooking'
 import mutationCreateQuota from '../../graphql/MutationCreateQuota'
 import { useMutation } from '@apollo/client'
 import moment from 'moment'
 
-const AddNewBooking = ({ open, handleModal, data, setData, currentElement, customers, setCustomers, classes, editMode }) => {
+const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers, setCustomers, setBookings, classes, editMode }) => {
   const [isOldCustomer, setIsOldCustomer] = useState(false)
   const [newName, setNewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
@@ -40,9 +41,11 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
   const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [processing, setProcessing] = useState(false)
   const [emailValid, setEmailValid] = useState(true)
+  const [phoneValid, setPhoneValid] = useState(true)
   const [attendeesValid, setAttendeesValid] = useState(true)
   const [warning, setWarning] = useState({ open: false, message: '' })
   const [createCustomer] = useMutation(mutationCreateCustomer, {})
+  const [updateBooking] = useMutation(mutationUpdateBooking, {})
   const [createQuota] = useMutation(mutationCreateQuota, {})
 
   const serviceFeeValue = 0.1
@@ -54,17 +57,76 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
     setEmailValid(isValidEmail(email))
   }
 
+  const phoneValidation = (phone) => {
+    setPhoneValid(isPhoneValid(phone))
+  }
+
+  useEffect(() => {
+    phoneValidation(newPhone)
+  }, [newPhone])
+
   const groupSizeValidation = (groupSize) => {
     setAttendeesValid(groupSize > 0)
   }
 
-  const colourOptions = [
-    { value: 'ocean', label: 'Ocean' },
-    { value: 'blue', label: 'Blue' },
-    { value: 'purple', label: 'Purple' },
-    { value: 'red', label: 'Red' },
-    { value: 'orange', label: 'Orange' }
-  ]
+  const updateBookingAndCustomer = async () => {
+    setProcessing(true)
+    const isValidEmail = customers.filter((customer) => customer.email === newEmail && customer.id !== currentElement.customerId)
+    const newClass = classes.find((cls) => cls.id === selectedClass)
+    // Validate if the email is not from other user
+    if (!isValidEmail.length && newClass) {
+      try {
+        const resultUpdateBooking = await updateBooking({
+          variables: {
+            customerId: currentElement.customerId,
+            bookingId: currentElement.id,
+            name: newName, // combine with quotaTime
+            email: newEmail,
+            phone: newPhone,
+            company: newCompany,
+            attendees: newAttendees,
+            updatedAt: moment().format(),
+            teamClassId: newClass.id,
+            instructorId: newClass.id,
+            instructorName: newClass.instructorName,
+            classMinimum: newClass.minimum,
+            pricePerson: newClass.pricePerson,
+            duration: newClass.duration
+          }
+        })
+
+        if (!resultUpdateBooking || !resultUpdateBooking.data) {
+          setProcessing(false)
+          return
+        }
+
+        // Update customers object
+        const updatedCustomer = resultUpdateBooking.data.updateCustomer
+        const oldCustomerIndex = customers.findIndex((cxt) => cxt.id === updatedCustomer.id)
+        const newCustomers = [...customers]
+        newCustomers[oldCustomerIndex] = updatedCustomer
+        setCustomers(newCustomers)
+
+        // Update bookings object
+        const updatedBooking = resultUpdateBooking.data.updateBooking
+        const oldBookingIndex = bookings.findIndex((bkn) => bkn.id === updatedBooking.id)
+        const newBookings = [...bookings]
+        newBookings[oldBookingIndex] = updatedBooking
+        setBookings(newBookings)
+        setProcessing(false)
+
+        // hide modal
+        handleModal()
+      } catch (e) {
+        console.error(e)
+        setWarning({ open: true, message: 'An error just happened please try again.' })
+        setProcessing(false)
+      }
+    } else {
+      setWarning({ open: true, message: 'A customer with the same email already exist.' })
+      setProcessing(false)
+    }
+  }
 
   const saveNewBooking = async () => {
     setProcessing(true)
@@ -95,8 +157,9 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
           return
         }
 
-        customer = resultCreateCustomer.data.createCustomer
-        setCustomers([resultCreateCustomer.data.createCustomer, ...customers])
+        // Update customers object
+        const createdCustomer = resultCreateCustomer.data.createCustomer
+        setCustomers([createdCustomer, ...customers])
       }
 
       const teamClass = classes.find((element) => element.id === selectedClass)
@@ -128,12 +191,16 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
         setProcessing(false)
         return
       }
-      setData([resultCreateQuota.data.createBooking, ...data])
+
+      // Update bookings object
+      const createdBooking = resultUpdateBooking.data.updateBooking
+      setBookings([createdBooking, ...bookings])
       setProcessing(false)
-      handleModal()
     } catch (ex) {
       setProcessing(false)
     }
+    // Hide modal
+    handleModal()
   }
 
   const cancel = () => {
@@ -241,12 +308,15 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
                   </InputGroupText>
                 </InputGroupAddon>
                 <Cleave
-                  className="form-control"
+                  className={`${phoneValid ? '' : 'border-danger'} form-control`}
                   placeholder="Phone *"
                   options={options}
                   id="phone"
                   value={newPhone}
                   onChange={(e) => setNewPhone(e.target.value)}
+                  onBlur={(e) => {
+                    phoneValidation(e.target.value)
+                  }}
                 />
               </InputGroup>
             </FormGroup>
@@ -290,7 +360,6 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
           <Label for="full-name">Event Details</Label>
 
           <Select
-            isDisabled={editMode}
             theme={selectThemeColors}
             className="react-select"
             classNamePrefix="select"
@@ -305,7 +374,7 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
               })
             }
             value={{
-              value: selectedClass,
+              value: selectedClass || '',
               label: getClassName(selectedClass)
             }}
             onChange={(option) => setSelectedClass(option.value)}
@@ -328,9 +397,9 @@ const AddNewBooking = ({ open, handleModal, data, setData, currentElement, custo
         <Button
           className="mr-1"
           color="primary"
-          onClick={saveNewBooking}
+          onClick={!editMode ? saveNewBooking : updateBookingAndCustomer}
           disabled={
-            (!selectedCustomer && (!newName || !newEmail || !newPhone || !emailValid)) ||
+            (!selectedCustomer && (!newName || !newEmail || !newPhone || !emailValid || !phoneValid)) ||
             !newAttendees ||
             processing ||
             !attendeesValid ||

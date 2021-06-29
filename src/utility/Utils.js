@@ -76,6 +76,11 @@ export const isValidEmail = (email) => {
   return !email || reg.test(String(email).toLowerCase())
 }
 
+export const isPhoneValid = (phone) => {
+  const reg = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/
+  return !phone || reg.test(phone)
+}
+
 // ** React Select Theme Colors
 export const selectThemeColors = (theme) => ({
   ...theme,

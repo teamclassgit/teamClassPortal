@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react'
-import DataTableBookings from './TableBookings'
+import DataTableBookings from './TableBookings/TableBookings'
 import BoardBookings from './BoardBookings/BoardBookings'
 import queryAllBookings from '../../graphql/QueryAllBookings'
 import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents'
@@ -94,11 +94,15 @@ const BookingList = () => {
             {bookings && bookings.length > 0 && switchView ? (
               <DataTableBookings
                 bookings={bookings}
+                setBookings={setBookings}
                 customers={customers}
-                setCustomers={setCustomers}
                 calendarEvents={calendarEvents}
                 classes={classes}
                 changeView={() => setSwitchView(!switchView)}
+                setCurrentElement={(d) => {
+                  setCurrentElement(d)
+                  handleModal()
+                }}
               />
             ) : (
               <BoardBookings
@@ -119,13 +123,13 @@ const BookingList = () => {
           <AddNewBooking
             open={showAddModal}
             handleModal={handleModal}
-            data={[]}
-            setData={(x) => console.log(x)}
+            bookings={bookings}
             classes={classes}
             setCustomers={setCustomers}
             customers={customers}
             currentElement={currentElement}
             editMode={currentElement?.editMode}
+            setBookings={setBookings}
           />
         </>
       )}

@@ -21,13 +21,16 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
 
   useEffect(() => {
+    // if (searchValue !== '') {
     setClassFilterContext({
       type: 'text',
       value: searchValue
     })
+    // }
   }, [searchValue])
 
   useEffect(() => {
+    setSearchValue('')
     setFilteredData(bookings)
   }, [bookings])
 
@@ -49,8 +52,6 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
   useEffect(() => {
     if (classFilterContext) {
       handleFilterType(classFilterContext)
-    } else {
-      // setFilteredData(bookings)
     }
   }, [classFilterContext])
 
@@ -68,9 +69,7 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
   const handleSearch = (value) => {
     let updatedData = []
     setSearchValue(value)
-
     if (value.length) {
-      console.log(filteredData, value)
       updatedData = filteredData.filter((item) => {
         const startsWith =
           (item.customerName && item.customerName.toLowerCase().startsWith(value.toLowerCase())) ||
@@ -86,7 +85,6 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
           return includes
         } else return null
       })
-      console.log({ updatedData })
       setFilteredData(updatedData)
     }
   }
@@ -145,7 +143,7 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
             type="text"
             id="search-input"
             placeholder="Search"
-            // value={searchValue}
+            value={searchValue}
             onChange={(e) => handleSearch(e.target.value)}
           />
           <ButtonGroup>

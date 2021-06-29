@@ -8,7 +8,6 @@ import Avatar from '@components/avatar'
 
 function BoardCard({
   setCurrentElement,
-  showAddModal,
   content: {
     customerName,
     id,
@@ -27,7 +26,8 @@ function BoardCard({
     salesTax,
     additionals,
     calendarEvent,
-    teamClass
+    teamClass,
+    customerId
   }
 }) {
   const [flippedCard, setFlippedCard] = useState(false)
@@ -161,16 +161,17 @@ function BoardCard({
           className="m-0 p-0"
           onClick={() => {
             const newElement = {
+              customerId,
               name: customerName,
               email,
               phone,
               company,
               class: teamClassId,
               attendees,
-              editMode: true
+              editMode: true,
+              id
             }
             setCurrentElement(newElement)
-            showAddModal()
           }}
         >
           <Avatar color="light-primary" className="rounded mr-1" icon={<Edit2 size={18} />} />
