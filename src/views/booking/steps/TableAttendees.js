@@ -58,6 +58,12 @@ const DataTableAttendees = ({
     // ** Function to handle Modal toggle
     const handleModalUpload = () => setModalUpload(!modalUpload)
 
+    React.useEffect(() => {
+
+       setData(attendees)
+
+    }, [attendees])
+
     // ** Vars
     const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']
 
