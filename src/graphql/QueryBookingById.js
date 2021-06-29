@@ -21,6 +21,7 @@ query GetBooking($bookingId:ID!) {
      salesTax
      discount
      status
+     rushFee
      createdAt 
      updatedAt
   }

@@ -13,6 +13,7 @@ export default gql`
         pricePerson
         serviceFee
         salesTax
+        rushFee
         discount
         status
         createdAt

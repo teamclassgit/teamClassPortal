@@ -50,6 +50,7 @@ mutation createQuota(
      salesTax
      discount
      status
+     rushFee
      createdAt 
      updatedAt
   }

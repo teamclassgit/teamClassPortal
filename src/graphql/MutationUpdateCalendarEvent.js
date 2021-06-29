@@ -13,6 +13,7 @@ mutation updateCalendarEvent(
   $toHour: Int!,
   $toMinutes: Int!,
   $status: String!,
+  $isRushFee: Boolean!,
 ) {
    updateCalendarEvent(
      input: {
@@ -27,6 +28,7 @@ mutation updateCalendarEvent(
               toHour:$toHour
               toMinutes:$toMinutes
               status:$status
+              rushFee:$isRushFee
           }) {
       id
       classId
@@ -39,5 +41,6 @@ mutation updateCalendarEvent(
       toHour
       toMinutes
       status
+      rushFee
   }
 }`

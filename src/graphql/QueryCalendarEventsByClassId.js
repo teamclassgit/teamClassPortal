@@ -15,6 +15,7 @@ query ListCalendarEvents($classId:ID!) {
       fromHour
       fromMinutes
       month
+      rushFee
     }
   }
 }`

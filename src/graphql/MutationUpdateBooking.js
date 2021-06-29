@@ -58,6 +58,7 @@ export default gql`
       salesTax
       discount
       status
+      rushFee
       createdAt
       updatedAt
     }

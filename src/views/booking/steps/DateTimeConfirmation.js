@@ -1,16 +1,77 @@
 import React, {Fragment} from 'react'
 import {AlertCircle, ArrowLeft, ArrowRight} from 'react-feather'
-import {Alert, Button, Col, Form, FormGroup, Row} from 'reactstrap'
+import {Alert, Button, Col, Form, FormGroup, Row, Badge} from 'reactstrap'
 import Flatpickr from "react-flatpickr"
 import moment from "moment"
 import {toAmPm} from '../../../utility/Utils'
 import {useMutation} from "@apollo/client"
-import mutationCreateCalendarEvent from "../../../graphql/MutationCreateCalendarEvent"
-import mutationUpdateCalendarEvent from "../../../graphql/MutationUpdateCalendarEvent"
+import mutationRequestPreferredTimeNew from "../../../graphql/MutationRequestPreferredTimeNew"
+import mutationRequestPreferredTimeUpdate from "../../../graphql/MutationRequestPreferredTimeUpdate"
+
+const DEFAULT_AVAILABILITY_ALWAYS = true
+const DEFAULT_AVAILABILITY = [
+    {
+        increment: 30,
+        toMinutes: 0,
+        dayOfWeek: 1,
+        fromHour: 7,
+        fromMinutes: 0,
+        toHour: 21
+    },
+    {
+        increment: 30,
+        toMinutes: 0,
+        dayOfWeek: 2,
+        fromHour: 7,
+        fromMinutes: 0,
+        toHour: 21
+    },
+    {
+        increment: 30,
+        toMinutes: 0,
+        dayOfWeek: 3,
+        fromHour: 7,
+        fromMinutes: 0,
+        toHour: 21
+    },
+    {
+        increment: 30,
+        toMinutes: 0,
+        dayOfWeek: 4,
+        fromHour: 7,
+        fromMinutes: 0,
+        toHour: 21
+    },
+    {
+        increment: 30,
+        toMinutes: 0,
+        dayOfWeek: 5,
+        fromHour: 7,
+        fromMinutes: 0,
+        toHour: 21
+    },
+    {
+        increment: 30,
+        toMinutes: 0,
+        dayOfWeek: 6,
+        fromHour: 7,
+        fromMinutes: 0,
+        toHour: 21
+    },
+    {
+        increment: 30,
+        toMinutes: 0,
+        dayOfWeek: 7,
+        fromHour: 7,
+        fromMinutes: 0,
+        toHour: 21
+    }
+]
 
 const DateTimeConfirmation = ({
                                   stepper,
                                   type,
+                                  classRushFee,
                                   availableEvents,
                                   calendarEvent,
                                   setCalendarEvent,
@@ -22,11 +83,20 @@ const DateTimeConfirmation = ({
     const [time, setTime] = React.useState(null)
     const [availableTimes, setAvailableTimes] = React.useState(null)
     const [processing, setProcessing] = React.useState(false)
-    const [createCalendarEvent, {...calendarEventData}] = useMutation(mutationCreateCalendarEvent, {})
-    const [updateCalendarEvent, {...UpdatedCalendarEventData}] = useMutation(mutationUpdateCalendarEvent, {})
+    const [createCalendarEvent, {...calendarEventData}] = useMutation(mutationRequestPreferredTimeNew, {})
+    const [updateCalendarEvent, {...UpdatedCalendarEventData}] = useMutation(mutationRequestPreferredTimeUpdate, {})
 
     const isDayBlocked = (day) => {
         return false
+    }
+
+    const isDateTooEarly = () => {
+
+        const today = new Date()
+        const reference = new Date()
+        reference.setDate(today.getDate() + 5)//5 days
+
+        return date && date.length > 0 && date[0] > today && date[0] <= reference
     }
 
     const isDateInThePast = () => {
@@ -38,7 +108,7 @@ const DateTimeConfirmation = ({
         const today = new Date()
         const reference = new Date()
         reference.setDate(today.getDate() + 15)//15 days
-        return date && date.length > 0 && date[0] > today && date[0] <= reference
+        return !isDateTooEarly() && date && date.length > 0 && date[0] > today && date[0] <= reference
     }
 
     const isScheduledDate = () => {
@@ -78,13 +148,14 @@ const DateTimeConfirmation = ({
         return calendarEvents && calendarEvents.length > 0
     }
 
+    console.log(time)
+
     const getAvailableTimes = (selectedDate) => {
 
         const times = []
 
-        if (selectedDate && teamClass && teamClass.availability) {
-
-            const availabilities = teamClass.availability.filter(element => element.dayOfWeek === selectedDate.isoWeekday())
+        if (selectedDate && teamClass) {
+            const availabilities = teamClass.availability && teamClass.availability.length > 0 && !DEFAULT_AVAILABILITY_ALWAYS ? teamClass.availability.filter(element => element.dayOfWeek === selectedDate.isoWeekday()) : DEFAULT_AVAILABILITY.filter(element => element.dayOfWeek === selectedDate.isoWeekday())
 
             for (let j = 0; j < availabilities.length; j++) {
                 const availability = availabilities[j]
@@ -100,7 +171,7 @@ const DateTimeConfirmation = ({
 
                         const fullMinutes = i * 60
                         let eHour = Math.floor(fullMinutes / 60)
-                        eHour = (eHour < 10) ? `0${eHour}` : eHour
+                        eHour = (eHour < 10) ? `${eHour}` : eHour
                         let eMinutes = fullMinutes % 60
                         eMinutes = (eMinutes < 10) ? `0${eMinutes}` : eMinutes
 
@@ -125,11 +196,6 @@ const DateTimeConfirmation = ({
         }
 
     }, [date])
-
-    React.useEffect(() => {
-
-
-    }, [time])
 
     const saveCalendarEvent = async () => {
 
@@ -158,7 +224,7 @@ const DateTimeConfirmation = ({
 
         try {
 
-            const calendarEventUpdated = {
+            const calendarEventData = {
                 id: calendarEvent ? calendarEvent.id : null,
                 classId: teamClass.id,
                 bookingId: booking.id,
@@ -170,25 +236,28 @@ const DateTimeConfirmation = ({
                 toHour: newToHour,
                 toMinutes: newToMinutes,
                 status: "reserved",
-                rushFee: isRushDate()
+                isRushFee: isRushDate(),
+                rushFee: classRushFee,
+                bookingStatus: "date-requested",
+                updatedAt: moment().format()
             }
 
             if (calendarEvent && calendarEvent.id) {
 
-                await updateCalendarEvent(
+                const result = await updateCalendarEvent(
                     {
-                        variables: calendarEventUpdated
+                        variables: calendarEventData
                     }
                 )
 
-                setCalendarEvent(calendarEventUpdated)
+                if (result && result.data) setCalendarEvent(result.data.updateCalendarEvent)
 
                 console.log("calendar event updated")
 
             } else {
                 const result = await createCalendarEvent(
                     {
-                        variables: calendarEventUpdated
+                        variables: calendarEventData
                     }
                 )
 
@@ -238,7 +307,8 @@ const DateTimeConfirmation = ({
                     <Col md={12} lg={6} sm={12} className="py-2">
                         <Row>
                             {availableTimes && availableTimes.map((element, index) => (
-                                <Button.Ripple key={`time${index}`} className="btn-sm" disabled={isDateInThePast()}
+                                <Button.Ripple key={`time${index}`} className="btn-sm"
+                                               disabled={isDateInThePast() || isDateTooEarly()}
                                                color='primary' tag={Col} lg={4} md={6} sm={12}
                                                outline={!(time === element.label)}
                                                onClick={e => setTime(element.label)}
@@ -248,15 +318,13 @@ const DateTimeConfirmation = ({
                             )}
                         </Row>
                         {availableTimes && availableTimes.length > 0 && (
-                            <div className="pb-1"><small className='text-default text-primary'>Times displayed in
-                                Central
-                                Time.</small></div>)}
+                            <div className="pb-1 pt-1"><small className='text-default text-primary'><Badge>CT:
+                                Central Time</Badge></small></div>)}
                         <div>
                             {date && date.length > 0 && (<Alert color='danger' isOpen={isRushDate()}>
                                 <div className='alert-body'>
-                                    <AlertCircle size={15}/>{' '}
-                                    <span className='ml-1'>
-                                    Rush fee will be included.
+                                    <AlertCircle size={15}/>
+                                    <span className='ml-1'>{classRushFee * 100}% Rush fee will be included. Additional shipping may be required.
                                   </span>
                                 </div>
                             </Alert>)}

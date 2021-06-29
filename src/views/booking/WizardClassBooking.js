@@ -17,6 +17,9 @@ import queryCalendarEventsByClassId from "../../graphql/QueryCalendarEventsByCla
 import {useLazyQuery, useQuery} from "@apollo/client"
 import BookingSummaryWithoutDate from "./steps/BookingSummaryWithoutDate"
 
+const RUSH_FEE = 0.15
+const SERVICE_FEE = 0.1
+
 const WizardClassBooking = ({oneStepOnly, step}) => {
 
     const [bookingInfo, setBookingInfo] = React.useState(null)
@@ -30,16 +33,13 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
     const [calendarEvent, setCalendarEvent] = React.useState(null)
     const [attendees, setAttendees] = React.useState([])
     const [realCountAttendees, setRealCountAttendees] = React.useState(0)
-    const serviceFee = 0.1
-
-    const ref = useRef(null)
-
-    const {id} = useParams()
-
     const [getTeamClass, {...classResult}] = useLazyQuery(queryClassById)
     const [getCustomer, {...customerResult}] = useLazyQuery(queryCustomerById)
     const [getClassEvents, {...calendarEventsByClassResult}] = useLazyQuery(queryCalendarEventsByClassId)
     const [getAttendees, {...attendeesResult}] = useLazyQuery(queryAttendeesByBookingId)
+
+    const ref = useRef(null)
+    const {id} = useParams()
 
     const result = useQuery(queryBookingById,
         {
@@ -137,7 +137,7 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
             title: 'Event Date',
             subtitle: 'Date and time',
             icon: <Calendar size={18}/>,
-            content: <DateTimeConfirmation stepper={stepper} type='wizard-horizontal' availableEvents={availableEvents}
+            content: <DateTimeConfirmation classRushFee={RUSH_FEE} stepper={stepper} type='wizard-horizontal' availableEvents={availableEvents}
                                            calendarEvent={calendarEvent} setCalendarEvent={setCalendarEvent}
                                            booking={bookingInfo} teamClass={teamClass}/>
         },
@@ -219,8 +219,9 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
             <Col lg={3} md={12} sm={12}>
                 <div className='py-3'>
                     {bookingInfo && (<BookingSummaryWithoutDate calendarEvent={calendarEvent}
+                                                                classRushFee={RUSH_FEE}
                                                                 teamClass={teamClass}
-                                                                serviceFee={serviceFee}
+                                                                serviceFee={SERVICE_FEE}
                                                                 attendeesAdded={realCountAttendees}
                                                                 attendees={bookingInfo.attendees}
                                                                 pricePerson={bookingInfo.pricePerson}

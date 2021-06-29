@@ -64,9 +64,9 @@ export const getHomeRouteForLoggedInUser = (userRole) => {
 }
 
 export const toAmPm = (hour, minutes, timeZoneLabel) => {
-  const suffix = hour >= 12 ? 'PM' : 'AM'
-  const hours = `${((hour + 11) % 12) + 1}:${minutes === 0 ? '00' : minutes} ${suffix} ${timeZoneLabel ? timeZoneLabel : ''}`
-  //   console.log('apm', hours)
+  const suffix = hour >= 12 ? "PM" : "AM"
+  const hours = `${hour >= 12 ? (((hour + 11) % 12) + 1) : hour}:${minutes === 0 ? '00' : minutes} ${suffix} ${timeZoneLabel}`
+
   return hours
 }
 

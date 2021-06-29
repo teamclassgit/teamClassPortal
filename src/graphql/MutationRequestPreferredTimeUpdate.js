@@ -1,7 +1,8 @@
 import {gql} from "@apollo/client"
 
 export default gql`
-mutation createCalendarEvent(
+mutation requestPreferredTimeUpdate(
+  $id:ID!,
   $classId: ID!, 
   $bookingId: ID!,
   $year: Int!, 
@@ -12,9 +13,14 @@ mutation createCalendarEvent(
   $toHour: Int!,
   $toMinutes: Int!,
   $status: String!,
+  $bookingStatus: String!,
+  $isRushFee: Boolean!,
+  $rushFee: Float!,
+  $updatedAt: AWSDateTime!
 ) {
-   createCalendarEvent(
+   updateCalendarEvent(
      input: {
+              id:$id,
               classId:$classId,
               bookingId:$bookingId,
               year:$year, 
@@ -25,6 +31,7 @@ mutation createCalendarEvent(
               toHour:$toHour
               toMinutes:$toMinutes
               status:$status
+              rushFee:$isRushFee
           }) {
       id
       classId
@@ -38,5 +45,11 @@ mutation createCalendarEvent(
       toMinutes
       status
       rushFee
+  }
+  updateBooking(
+    input: {id: $bookingId, updatedAt: $updatedAt, status: $bookingStatus, rushFee:$rushFee}) {
+     id
+     status
+     rushFee
   }
 }`
