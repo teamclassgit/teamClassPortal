@@ -37,5 +37,6 @@ mutation createCalendarEvent(
       toHour
       toMinutes
       status
+      rushFee
   }
 }`

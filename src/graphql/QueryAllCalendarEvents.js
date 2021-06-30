@@ -15,6 +15,7 @@ query GetCalendarEvents($filter:TableCalendarEventFilterInput!) {
       fromHour
       fromMinutes
       month
+      rushFee
     }
   }
 }`

@@ -45,6 +45,7 @@ mutation updateQuota(
      salesTax
      discount
      status
+     rushFee
      createdAt 
      updatedAt
   }

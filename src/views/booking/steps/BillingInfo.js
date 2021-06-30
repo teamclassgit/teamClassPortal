@@ -116,7 +116,8 @@ const BillingInfo = ({
                     fromMinutes: calendarEvent.fromMinutes,
                     toHour: calendarEvent.toHour,
                     toMinutes: calendarEvent.toMinutes,
-                    status: "confirmed"
+                    status: "confirmed",
+                    isRushFee : calendarEvent.rushFee
                 }
 
                 await updateCalendarEvent(

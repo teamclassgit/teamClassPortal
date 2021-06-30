@@ -1,0 +1,22 @@
+.class-filter-options-container {
+  transform: translate3d(0px, 40px, 0px);
+  width: 13rem !important;
+  height: 20rem;
+  overflow: hidden;
+  overflow-y: none;
+  button {
+    padding-right: 2rem;
+  }
+}
+
+.react-kanban-board > div:first-child {
+  height: calc(100vh - 15.3em);
+  overflow: scroll;
+  width: 100vw;
+  .react-kanban-column {
+    // min-height: 65vh !important;
+    height: auto !important;
+    padding: 5px 10px !important;
+    margin: 0 0.5em;
+  }
+}

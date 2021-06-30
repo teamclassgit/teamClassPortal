@@ -15,6 +15,7 @@ query ListCalendarEvents($bookingId:ID!) {
       fromHour
       fromMinutes
       month
+      rushFee
     }
   }
 }`
