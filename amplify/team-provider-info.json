@@ -1,0 +1,20 @@
+{
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-teamclassweb-prod-131931-authRole",
+      "UnauthRoleArn": "arn:aws:iam::144376056846:role/amplify-teamclassweb-prod-131931-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::144376056846:role/amplify-teamclassweb-prod-131931-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-teamclassweb-prod-131931-deployment",
+      "UnauthRoleName": "amplify-teamclassweb-prod-131931-unauthRole",
+      "StackName": "amplify-teamclassweb-prod-131931",
+      "StackId": "arn:aws:cloudformation:us-east-1:144376056846:stack/amplify-teamclassweb-prod-131931/ee8b5820-90b2-11eb-867f-0e92a46f2873",
+      "AmplifyAppId": "dn4vibiztjks7"
+    },
+    "categories": {
+      "auth": {
+        "teamclassweb996cf041": {}
+      }
+    }
+  }
+}
