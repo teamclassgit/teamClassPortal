@@ -8,7 +8,6 @@ import DateTimeConfirmation from './steps/DateTimeConfirmation'
 import {Col, Row, Spinner} from 'reactstrap'
 import {Calendar, Check, CreditCard, Users, List} from 'react-feather'
 import {useParams} from "react-router-dom"
-
 import queryBookingById from "../../graphql/QueryBookingById"
 import queryClassById from "../../graphql/QueryClassById"
 import queryCustomerById from "../../graphql/QueryCustomerById"
@@ -16,11 +15,9 @@ import queryAttendeesByBookingId from "../../graphql/QueryAttendeesByBookingId"
 import queryCalendarEventsByClassId from "../../graphql/QueryCalendarEventsByClassId"
 import {useLazyQuery, useQuery} from "@apollo/client"
 import BookingSummaryWithoutDate from "./steps/BookingSummaryWithoutDate"
+import {RUSH_FEE, SERVICE_FEE} from "../../utility/Constants"
 
-const RUSH_FEE = 0.15
-const SERVICE_FEE = 0.1
-
-const WizardClassBooking = ({oneStepOnly, step}) => {
+const WizardClassBooking = () => {
 
     const [bookingInfo, setBookingInfo] = React.useState(null)
     const [bookingAdditions, setBookingAdditions] = React.useState([])
@@ -47,7 +44,7 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
                 bookingId: id
             },
             onCompleted: data => {
-                setBookingInfo(data.getBooking)
+                setBookingInfo(data.booking)
             }
         })
 
@@ -57,7 +54,7 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
 
             getAttendees({
                 variables: {
-                    bookingId: bookingInfo.id
+                    bookingId: bookingInfo._id
                 }
             })
 
@@ -85,29 +82,30 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
     React.useEffect(() => {
 
         if (bookingInfo && attendeesResult.data) {
-            setAttendees(attendeesResult.data.listAttendees.items.map(element => element))
-            setRealCountAttendees(attendeesResult.data.listAttendees.items.length)
+            setAttendees(attendeesResult.data.attendees.map(element => element))
+            setRealCountAttendees(attendeesResult.data.attendees.length)
         }
 
     }, [attendeesResult.data])
 
     React.useEffect(() => {
 
-        if (bookingInfo && classResult.data) setTeamClass(classResult.data.getTeamClass)
+        if (bookingInfo && classResult.data) setTeamClass(classResult.data.teamClass)
 
     }, [classResult.data])
 
     React.useEffect(() => {
 
-        if (bookingInfo && customerResult.data) setCustomer(customerResult.data.getCustomer)
+        if (bookingInfo && customerResult.data) setCustomer(customerResult.data.customer)
 
     }, [customerResult.data])
 
     React.useEffect(() => {
 
         if (bookingInfo && calendarEventsByClassResult.data) {
-            setAvailableEvents(calendarEventsByClassResult.data.listCalendarEvents.items.map(element => element))
-            const bookingEvent = calendarEventsByClassResult.data.listCalendarEvents.items.filter(element => element.bookingId === bookingInfo.id)
+            setAvailableEvents(calendarEventsByClassResult.data.calendarEvents.map(element => element))
+            const bookingEvent = calendarEventsByClassResult.data.calendarEvents.filter(element => element.bookingId === bookingInfo._id
+            )
 
             if (bookingEvent && bookingEvent.length > 0) setCalendarEvent(bookingEvent[0])
         }
@@ -137,19 +135,20 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
             title: 'Event Date',
             subtitle: 'Date and time',
             icon: <Calendar size={18}/>,
-            content: <DateTimeConfirmation classRushFee={RUSH_FEE} stepper={stepper} type='wizard-horizontal' availableEvents={availableEvents}
+            content: <DateTimeConfirmation classRushFee={RUSH_FEE} stepper={stepper} type='wizard-horizontal'
+                                           availableEvents={availableEvents}
                                            calendarEvent={calendarEvent} setCalendarEvent={setCalendarEvent}
                                            booking={bookingInfo} teamClass={teamClass}/>
         },
 
-       /* {
-            id: 'additions',
-            title: 'Additionals',
-            subtitle: 'Special requests',
-            icon: <List size={18}/>,
-            content: <SpecialRequests stepper={stepper} type='wizard-horizontal' booking={bookingInfo}
-                                      teamClass={teamClass} setBookingAdditions={setBookingAdditions}/>
-        }, */
+        /* {
+             id: 'additions',
+             title: 'Additionals',
+             subtitle: 'Special requests',
+             icon: <List size={18}/>,
+             content: <SpecialRequests stepper={stepper} type='wizard-horizontal' booking={bookingInfo}
+                                       teamClass={teamClass} setBookingAdditions={setBookingAdditions}/>
+         }, */
 
         {
             id: 'step-address',
@@ -197,7 +196,7 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
                         ref={ref}
                         steps={steps}
                         options={{
-                            linear: oneStepOnly
+                            linear: false
                         }}
                         instance={el => {
                             setStepper(el)
@@ -207,11 +206,10 @@ const WizardClassBooking = ({oneStepOnly, step}) => {
                         ref={ref}
                         steps={stepsConfirmation}
                         options={{
-                            linear: oneStepOnly
+                            linear: false
                         }}
                         instance={el => {
                             setStepper(el)
-                            //if (oneStepOnly && step) el.to(step)
                         }}/>}
                 </div>
             </Col>

@@ -49,12 +49,12 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
   }, [classFilterContext])
 
   const getCustomerEmail = (customerId) => {
-    const result = customers.filter((element) => element.id === customerId)
+    const result = customers.filter((element) => element._id === customerId)
     return result && result.length > 0 ? result[0].email : ''
   }
 
   const getClassTitle = (teamClassId) => {
-    const result = classes.filter((element) => element.id === teamClassId)
+    const result = classes.filter((element) => element._id === teamClassId)
     return result && result.length > 0 ? result[0].title : ''
   }
 

@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import moment from 'moment'
 import Select from 'react-select'
 import { useMutation } from '@apollo/client'
 import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus'
-import { BOOKING_STATUS } from '../../../utility/constants'
+import { BOOKING_STATUS } from '../../../utility/Constants'
 
 function StatusSelector({ row, value, bookings, setBookings }) {
   const [currentValue, setCurrentValue] = useState(value)
@@ -16,7 +15,7 @@ function StatusSelector({ row, value, bookings, setBookings }) {
         variables: {
           id: bookingId,
           status: newStatus,
-          updatedAt: moment().format()
+          updatedAt: new Date()
         }
       })
       const bkng = BOOKING_STATUS.find((sts) => sts.value === newStatus)
@@ -26,8 +25,8 @@ function StatusSelector({ row, value, bookings, setBookings }) {
       })
 
       // Update bookings object
-      const updatedBooking = resultUpdateBooking.data.updateBooking
-      const oldBookingIndex = bookings.findIndex((bkn) => bkn.id === updatedBooking.id)
+      const updatedBooking = resultUpdateBooking.data.updateOneBooking
+      const oldBookingIndex = bookings.findIndex((bkn) => bkn._id === updatedBooking._id)
       const newBookings = [...bookings]
       newBookings[oldBookingIndex] = updatedBooking
       setBookings(newBookings)
@@ -48,7 +47,7 @@ function StatusSelector({ row, value, bookings, setBookings }) {
           label: bkng.label
         }
       })}
-      onChange={(option) => handleStatusChange(row.id, option.value)}
+      onChange={(option) => handleStatusChange(row._id, option.value)}
     />
   )
 }

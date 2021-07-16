@@ -5,14 +5,13 @@ import {useParams} from "react-router-dom"
 
 const Booking = () => {
 
-
     const {id} = useParams()
 
     return (
         <Fragment>
             <Row>
                 <Col sm='12'>
-                    <WizardClassBooking oneStepOnly={false}/>
+                    <WizardClassBooking/>
                 </Col>
             </Row>
         </Fragment>

@@ -1,9 +1,9 @@
 import {gql} from "@apollo/client"
 
 export default gql`
-query GetCustomer($customerId:ID!) {
-  getCustomer(id: $customerId) {
-      id
+query GetCustomer($customerId:String!) {
+  customer(query : { _id: $customerId} ) {
+      _id
       name
       email
       phone

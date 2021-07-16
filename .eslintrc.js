@@ -28,7 +28,7 @@ module.exports = {
 
     // Variable
     // 'init-declarations': 'error',
-    'no-use-before-define': 'error',
+    //'no-use-before-define': 'error',
 
     // Stylistic Issues
     'array-bracket-newline': ['error', { multiline: true, minItems: null }],

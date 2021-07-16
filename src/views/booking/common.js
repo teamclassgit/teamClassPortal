@@ -1,29 +1,29 @@
 import moment from 'moment'
 import { toAmPm } from '../../utility/Utils'
-import { BOOKING_STATUS } from '../../utility/constants'
+import { BOOKING_STATUS } from '../../utility/Constants'
 
 export const getCustomerName = (customerId, customers) => {
-  const result = customers.filter((element) => element.id === customerId)
+  const result = customers.filter((element) => element._id === customerId)
   return result && result.length > 0 ? result[0].name : ''
 }
 
 export const getCustomerEmail = (customerId, customers) => {
-  const result = customers.filter((element) => element.id === customerId)
+  const result = customers.filter((element) => element._id === customerId)
   return result && result.length > 0 ? result[0].email : ''
 }
 
 export const getClassTitle = (teamClassId, classes) => {
-  const result = classes.filter((element) => element.id === teamClassId)
+  const result = classes.filter((element) => element._id === teamClassId)
   return result && result.length > 0 ? result[0].title : ''
 }
 
 export const getCustomerPhone = (customerId, customers) => {
-  const result = customers.filter((element) => element.id === customerId)
+  const result = customers.filter((element) => element._id === customerId)
   return result && result.length > 0 ? result[0].phone : ''
 }
 
 export const getCustomerCompany = (customerId, customers) => {
-  const result = customers.filter((element) => element.id === customerId)
+  const result = customers.filter((element) => element._id === customerId)
   return result && result.length > 0 ? result[0].company : ''
 }
 

@@ -5,18 +5,20 @@ import { Calendar, Edit2, ShoppingCart, Repeat } from 'react-feather'
 import { toAmPm } from '../../../../utility/Utils'
 import './BoardCard.scss'
 import Avatar from '@components/avatar'
+import {RUSH_FEE} from "../../../../utility/Constants"
 
 function BoardCard({
   setCurrentElement,
   content: {
     customerName,
-    id,
+    _id,
     attendees,
     teamClassId,
     createdAt,
     status,
     classTitle,
     scheduled,
+    eventDurationHours,
     email,
     phone,
     company,
@@ -35,18 +37,22 @@ function BoardCard({
   const [time, setTime] = useState(null)
   const [totalWithoutFee, setTotalWithoutFee] = useState(0)
   const [totalTax, setTotalTax] = useState(0)
+  const [totalRushFee, setTotalTotalRushFee] = React.useState(0)
   const [totalServiceFee, setTotalServiceFee] = useState(0)
   const [total, setTotal] = useState(0)
 
   const getTotals = () => {
+
     const withoutFee = attendees > minimum ? pricePerson * attendees : pricePerson * minimum
+    const rushFee = calendarEvent && calendarEvent.rushFee ? withoutFee * RUSH_FEE : 0
     const fee = withoutFee * serviceFee
-    const tax = (withoutFee + additionals + fee) * salesTax
-    const finalValue = withoutFee + additionals + fee + tax
+    const tax = (withoutFee + fee + additionals + rushFee) * salesTax
+    const finalValue = withoutFee + additionals + fee + rushFee + tax
 
     setTotalTax(tax.toFixed(2))
     setTotalWithoutFee(withoutFee.toFixed(2))
     setTotalServiceFee(fee.toFixed(2))
+    setTotalTotalRushFee(rushFee.toFixed(2))
     setTotal(finalValue.toFixed(2))
   }
 
@@ -67,13 +73,10 @@ function BoardCard({
         <div className="pb-2">
           <p className="text-truncate">
             <small>
-              # {id} - {classTitle}
+              # {_id} - {classTitle}
             </small>
           </p>
           <p className="text-truncate p-0 m-0">{teamClass.title}</p>
-          <p className="text-muted text-sm mb-0">
-            {teamClass.duration * 60} Minutes | {teamClass.hasKit ? 'Kit included' : ''}
-          </p>
         </div>
         {date && time && (
           <Media className="pb-1">
@@ -107,6 +110,13 @@ function BoardCard({
                 <th className="font-weight-normal text-sm">Booking fee ({serviceFee * 100}%)</th>
                 <td className="text-right text-sm">${totalServiceFee}</td>
               </tr>
+              {calendarEvent && calendarEvent.rushFee &&
+              <tr>
+                <th className="font-weight-normal text-sm pb-1">Rush fee
+                  ({RUSH_FEE * 100}%)
+                </th>
+                <td className="text-right pb-1 text-sm">${totalRushFee}</td>
+              </tr>}
               <tr>
                 <th className="font-weight-normal text-sm">Sales Tax ({salesTax * 100}%)</th>
                 <td className="text-right text-sm">${totalTax}</td>
@@ -169,14 +179,14 @@ function BoardCard({
               class: teamClassId,
               attendees,
               editMode: true,
-              id
+              _id
             }
             setCurrentElement(newElement)
           }}
         >
           <Avatar color="light-primary" className="rounded mr-1" icon={<Edit2 size={18} />} />
         </Button>
-        <CardLink href={`/booking/${id}`} target={'blank'}>
+        <CardLink href={`/booking/${_id}`} target={'_blank'}>
           <Avatar color="light-secondary" className="rounded mr-1" icon={<ShoppingCart size={18} />} />
         </CardLink>
       </CardFooter>

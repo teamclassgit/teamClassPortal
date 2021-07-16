@@ -21,6 +21,7 @@ import '@styles/react/libs/flatpickr/flatpickr.scss'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import {isValidEmail} from "../../../utility/Utils"
+import {v4 as uuid} from 'uuid'
 
 const AddNewAttendee = ({
                          open,
@@ -58,7 +59,7 @@ const AddNewAttendee = ({
         try {
 
             const newElement = {
-                id: currentElement ? currentElement.id : null,
+                id: currentElement && currentElement._id ? currentElement._id : uuid(),
                 city: newCity,
                 phone: newPhone,
                 bookingId: currentBookingId,
@@ -73,7 +74,7 @@ const AddNewAttendee = ({
             }
 
             const savedRow = await saveAttendee(newElement)
-            const newData = data.filter(element => element.id !== savedRow.id)
+            const newData = data.filter(element => element._id !== savedRow._id)
             newData.push(savedRow)
             setData(newData)
             updateAttendeesCount(newData.length)

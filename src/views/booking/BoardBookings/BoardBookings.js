@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { useMutation } from '@apollo/client'
-import moment from 'moment'
 import { Row } from 'reactstrap'
 import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus'
 import BoardCard from './BoardCard/BoardCard'
 import Board from '@lourenci/react-kanban'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
-import { BOOKING_STATUS } from '../../../utility/constants'
+import { BOOKING_STATUS } from '../../../utility/Constants'
 import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getCustomerName, getClassTitle, getFormattedEventDate } from '../common'
 import './BoardBookings.scss'
 import '@lourenci/react-kanban/dist/styles.css'
@@ -35,17 +34,18 @@ const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurren
   }
 
   const bookingCards = filteredBookings.map(
-    ({ id, teamClassId, customerId, customerName, attendees, classMinimum, pricePerson, serviceFee, salesTax, status, createdAt }) => {
+    ({ _id, teamClassId, customerId, customerName, attendees, eventDurationHours, classMinimum, pricePerson, serviceFee, salesTax, status, createdAt }) => {
       return {
         customerName: getCustomerName(customerId, customers),
-        id,
+        _id,
         attendees,
         teamClassId,
         createdAt,
         status,
         customerId,
+        eventDurationHours,
         classTitle: getClassTitle(teamClassId, classes),
-        scheduled: getFormattedEventDate(id, calendarEvents),
+        scheduled: getFormattedEventDate(_id, calendarEvents),
         email: getCustomerEmail(customerId, customers),
         phone: getCustomerPhone(customerId, customers),
         company: getCustomerCompany(customerId, customers),
@@ -55,8 +55,8 @@ const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurren
         salesTax,
         attendeesAdded: 0, // ????
         additionals: 0, // ?????
-        calendarEvent: calendarEvents.filter((element) => element.bookingId === id)[0],
-        teamClass: classes.filter((element) => element.id === teamClassId)[0]
+        calendarEvent: calendarEvents.filter((element) => element.bookingId === _id)[0],
+        teamClass: classes.filter((element) => element._id === teamClassId)[0]
       }
     }
   )
@@ -124,14 +124,14 @@ const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurren
   const handleDragCard = async (booking, source, destination) => {
     const sourceStatus = BOOKING_STATUS[source.fromColumnId].value
     const newStatus = BOOKING_STATUS[destination.toColumnId].value
-    const bookingId = booking.id
+    const bookingId = booking._id
 
     try {
       await updateBookingStatus({
         variables: {
           id: bookingId,
           status: newStatus,
-          updatedAt: moment().format()
+          updatedAt: new Date()
         }
       })
     } catch (error) {
