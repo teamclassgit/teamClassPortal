@@ -3,18 +3,15 @@ import {ArrowLeft, ArrowRight} from 'react-feather'
 import {Button, Col, Form, Row} from 'reactstrap'
 import TableAttendees from "./TableAttendees"
 import {useMutation} from "@apollo/client"
-import mutationCreateAttendee from "../../../graphql/MutationCreateAttendee"
-import mutationUpdateAttendee from "../../../graphql/MutationUpdateAttendee"
+import mutationUpsertAttendee from "../../../graphql/MutationUpsertAttendee"
 import mutationDeleteAttendee from "../../../graphql/MutationDeleteAttendee"
 // ** Styles
 import '@styles/react/libs/tables/react-dataTable-component.scss'
 
 const Attendees = ({stepper, type, teamClass, booking, attendees, setRealCountAttendees}) => {
 
-    const [createAttendee] = useMutation(mutationCreateAttendee, {})
-    const [updateAttendee] = useMutation(mutationUpdateAttendee, {})
+    const [upsertAttendee] = useMutation(mutationUpsertAttendee, {})
     const [removeAttendee] = useMutation(mutationDeleteAttendee, {})
-
 
     const updateAttendeesCount = (newCount) => {
         setRealCountAttendees(newCount)
@@ -22,40 +19,19 @@ const Attendees = ({stepper, type, teamClass, booking, attendees, setRealCountAt
 
     const saveAttendee = async (attendee) => {
 
-        if (attendee.id) {
-
-            const resultUpdate = await updateAttendee(
-                {
-                    variables: attendee
-                }
-            )
-
-            if (!resultUpdate || !resultUpdate.data || !resultUpdate.data.updateAttendee) {
-                console.log("Error updating attendee", resultUpdate)
-                return
+        const result = await upsertAttendee(
+            {
+                variables: attendee
             }
+        )
 
-            console.log("1. attendee updated:", resultUpdate.data.updateAttendee.id)
-            return resultUpdate.data.updateAttendee
-
-        } else {
-
-            const resultCreate = await createAttendee(
-                {
-                    variables: attendee
-                }
-            )
-
-            if (!resultCreate || !resultCreate.data ||
-                !resultCreate.data.createAttendee || !resultCreate.data.createAttendee.id) {
-                console.log("Error creating attendee", resultCreate)
-                return
-            }
-
-            console.log("1. New attendee created: ", resultCreate.data.createAttendee.id)
-            return resultCreate.data.createAttendee
+        if (!result || !result.data || !result.data.upsertOneAttendee) {
+            console.log("Error creating attendee", result)
+            return
         }
 
+        console.log("1. New attendee created: ", result.data.upsertOneAttendee._id)
+        return result.data.upsertOneAttendee
     }
 
     const deleteAttendee = async (attendeeId) => {
@@ -73,7 +49,7 @@ const Attendees = ({stepper, type, teamClass, booking, attendees, setRealCountAt
             <Form onSubmit={e => e.preventDefault()}>
                 <Row>
                     <Col sm='12'>
-                        <TableAttendees hasKit={teamClass && teamClass.hasKit} currentBookingId={booking && booking.id}
+                        <TableAttendees hasKit={teamClass && teamClass.hasKit} currentBookingId={booking && booking._id}
                                         attendees={attendees} saveAttendee={saveAttendee}
                                         deleteAttendee={deleteAttendee} updateAttendeesCount={updateAttendeesCount}/>
                     </Col>

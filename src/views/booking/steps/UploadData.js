@@ -1,9 +1,8 @@
 // ** React Imports
 import React, {useState} from 'react'
-import readXlsxFile from 'read-excel-file'
+import readXlsxFile, {Email} from 'read-excel-file'
 import {X} from 'react-feather'
 import {Alert, Button, Card, CardBody, CardHeader, CardTitle, Modal, ModalBody, ModalHeader} from 'reactstrap'
-
 import Uppy from '@uppy/core'
 import {DragDrop} from '@uppy/react'
 // ** Styles
@@ -11,6 +10,7 @@ import '@styles/react/libs/flatpickr/flatpickr.scss'
 import 'uppy/dist/uppy.css'
 import '@uppy/status-bar/dist/style.css'
 import '@styles/react/libs/file-uploader/file-uploader.scss'
+import {v4 as uuid} from 'uuid'
 
 const UploadData = ({open, handleModal, currentBookingId, saveAttendee, data, setData, updateAttendeesCount}) => {
 
@@ -23,13 +23,21 @@ const UploadData = ({open, handleModal, currentBookingId, saveAttendee, data, se
 
         try {
             setProcessing(true)
-            const newRows = []
+
+            let newData = data.map(element => element)
             for (let i = 0; i < fileData.length; i++) {
+
+                const result = newData.find((element) => element.email && fileData[i].email && element.email.toLowerCase() === fileData[i].email.toLowerCase())
+
+                if (result && result._id) {
+                    fileData[i].id = result._id
+                    newData = newData.filter(element => element._id !== result._id)
+                } else fileData[i].id = uuid()
+
                 const row = await saveAttendee(fileData[i])
-                newRows.push(row)
+                newData.push(row)
             }
 
-            const newData = data.concat(newRows)
             setData(newData)
             updateAttendeesCount(newData.length)
 
@@ -63,24 +71,66 @@ const UploadData = ({open, handleModal, currentBookingId, saveAttendee, data, se
         autoProceed: true
     })
 
-    const map = {
-        Name: 'name',
-        Email: 'email',
-        Phone: 'phone',
-        AddressLine1: 'addressLine1',
-        AddressLine: 'addressLine2',
-        City: 'city',
-        State: 'state',
-        Zip: 'zip',
-        Country: 'country',
-        'Dietary Restrictions': 'dietaryRestrictions'
+    const schema = {
+        Name: {
+            prop: 'name',
+            type: String,
+            required: true
+        },
+        Email: {
+            prop: 'email',
+            type: Email,
+            required: true
+        },
+
+        Phone: {
+            prop: 'phone',
+            type: String,
+            required: false
+        },
+        AddressLine1: {
+            prop: 'addressLine1',
+            type: String,
+            required: false
+        },
+        AddressLine2: {
+            prop: 'AddressLine2',
+            type: String,
+            required: false
+        },
+        City: {
+            prop: 'city',
+            type: String,
+            required: false
+        },
+        State: {
+            prop: 'state',
+            type: String,
+            required: false
+        },
+        Zip: {
+            prop: 'zip',
+            type: String,
+            required: false
+        },
+        Country: {
+            prop: 'country',
+            type: String,
+            required: false
+        },
+        'Dietary Restrictions': {
+            prop: 'dietaryRestrictions',
+            type: String,
+            required: false
+        }
     }
 
     uppy.on('complete', (result) => {
         if (result && result.successful && result.successful.length > 0) {
             setFile(result.successful[0].data)
-            readXlsxFile(result.successful[0].data, {map}).then((rows) => {
+            readXlsxFile(result.successful[0].data, {schema}).then((rows) => {
                 setErrors(rows.errors)
+                console.log(rows.errors)
                 setFileData(rows.rows.map((element) => {
                     element.bookingId = currentBookingId
                     return element

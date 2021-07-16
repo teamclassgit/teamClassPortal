@@ -1,9 +1,10 @@
 import {gql} from "@apollo/client"
 
 export default gql`
-mutation createCalendarEvent(
-  $classId: ID!, 
-  $bookingId: ID!,
+mutation requestPreferredTime(
+  $id: String!,
+  $classId: String!, 
+  $bookingId: String!,
   $year: Int!, 
   $month: Int!, 
   $day: Int!,
@@ -12,9 +13,15 @@ mutation createCalendarEvent(
   $toHour: Int!,
   $toMinutes: Int!,
   $status: String!,
+  $bookingStatus: String!,
+  $isRushFee: Boolean!,
+  $rushFee: Float!,
+  $updatedAt: DateTime!
 ) {
-   createCalendarEvent(
-     input: {
+   upsertOneCalendarEvent(
+     query: {_id:$id},
+     data: {
+              _id: $id,
               classId:$classId,
               bookingId:$bookingId,
               year:$year, 
@@ -25,8 +32,9 @@ mutation createCalendarEvent(
               toHour:$toHour
               toMinutes:$toMinutes
               status:$status
+              rushFee:$isRushFee
           }) {
-      id
+      _id
       classId
       bookingId
       year 
@@ -38,5 +46,10 @@ mutation createCalendarEvent(
       toMinutes
       status
       rushFee
+  }
+  updateOneBooking(query: {_id: $bookingId}, set: {updatedAt: $updatedAt, status: $bookingStatus, rushFee:$rushFee}) {
+     _id
+     status
+     rushFee
   }
 }`

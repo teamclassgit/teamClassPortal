@@ -1,17 +1,26 @@
 import {gql} from "@apollo/client"
 
 export default gql`
-query GetBooking($bookingId:ID!) {
-  getBooking(id: $bookingId) {
-     id
+query GetBooking($bookingId:String!) {
+  booking(query: {_id: $bookingId}) {
+     _id
      date
      expirationHours
      teamClassId
+     classVariant {
+         title
+         notes
+         minimum
+         duration
+         pricePerson
+         hasKit
+         order
+         active
+     }
      instructorId
      instructorName
      customerId
      customerName
-     customerIntro
      eventDate 
      eventDurationHours
      attendees
@@ -21,7 +30,6 @@ query GetBooking($bookingId:ID!) {
      salesTax
      discount
      status
-     rushFee
      createdAt 
      updatedAt
   }

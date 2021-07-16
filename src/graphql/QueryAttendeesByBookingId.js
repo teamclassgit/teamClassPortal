@@ -1,10 +1,9 @@
 import {gql} from "@apollo/client"
 
 export default gql`
-query ListAttendees($bookingId:ID!) {
-  listAttendees(filter: {bookingId: {eq: $bookingId}}, limit: 10000) {
-    items {
-      id
+query ListAttendees($bookingId:String!) {
+  attendees(query: {bookingId: $bookingId}, limit: 10000) {
+      _id
       bookingId
       name
       addressLine1
@@ -16,6 +15,5 @@ query ListAttendees($bookingId:ID!) {
       email
       phone
       dietaryRestrictions
-    }
   }
 }`

@@ -1,9 +1,9 @@
-import { gql } from '@apollo/client'
+import {gql} from '@apollo/client'
 
 export default gql`
-  mutation updateBookingStatus($id: ID!, $status: String!, $updatedAt: AWSDateTime!) {
-    updateBooking(input: { id: $id, status: $status, updatedAt: $updatedAt }) {
-      id
+  mutation updateBookingStatus($id: String!, $status: String!, $updatedAt: DateTime!) {
+    updateOneBooking(query: {_id: $id}, set: { status: $status, updatedAt: $updatedAt }) {
+      _id
       date
       expirationHours
       teamClassId
@@ -11,7 +11,6 @@ export default gql`
       instructorName
       customerId
       customerName
-      customerIntro
       eventDate
       eventDurationHours
       attendees

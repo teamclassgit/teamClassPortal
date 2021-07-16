@@ -147,12 +147,12 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
     },
     {
       name: 'Event Date',
-      selector: 'id',
+      selector: '_id',
       sortable: true,
       maxWidth: '150px',
       cell: (row) => (
         <div className="user-info text-truncate ml-1">
-          <span className="d-block font-weight-bold text-truncate">{getFormattedEventDate(row.id, calendarEvents)}</span>
+          <span className="d-block font-weight-bold text-truncate">{getFormattedEventDate(row._id, calendarEvents)}</span>
         </div>
       )
     },
@@ -174,8 +174,9 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
               color="link"
               className="m-0 p-0"
               onClick={() => {
-                const { customerId, customerName, teamClassId, attendees, id } = row
+                const { customerId, customerName, teamClassId, attendees, _id } = row
                 const newElement = {
+                  _id,
                   customerId,
                   name: customerName,
                   email: getCustomerEmail(customerId, customers),
@@ -183,15 +184,14 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
                   company: getCustomerCompany(customerId, customers),
                   class: teamClassId,
                   attendees,
-                  editMode: true,
-                  id
+                  editMode: true
                 }
                 setCurrentElement(newElement)
               }}
             >
               <Avatar color="light-primary" className="rounded mr-1" icon={<Edit2 size={18} />} />
             </Button>
-            <a href={`/booking/${row.id}`} target={'blank'}>
+            <a href={`/booking/${row._id}`} target={'_blank'}>
               <Avatar color="light-secondary" className="rounded mr-1" icon={<ShoppingCart size={18} />} />
             </a>
           </div>

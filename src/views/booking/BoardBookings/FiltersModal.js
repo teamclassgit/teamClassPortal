@@ -9,7 +9,7 @@ function FiltersModal({ open, handleModal, classes }) {
     type: null,
     value: null
   })
-  const classOptions = classes.map(({ title, id }) => ({ value: id, label: title }))
+  const classOptions = classes.map(({ title, _id }) => ({ value: _id, label: title }))
   const getClassFilterDefaultValue = () => {
     if (classFilterContext) {
       return classOptions.filter((opt) => opt.value === classFilterContext.value)[0]

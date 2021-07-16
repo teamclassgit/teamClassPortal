@@ -2,15 +2,17 @@ import {gql} from "@apollo/client"
 
 export default gql`
 mutation createCustomer(
+  $id: String!,
   $name: String!, 
   $email: String!, 
   $phone: String!, 
   $company: String, 
-  $createdAt: AWSDateTime!,
-  $updatedAt: AWSDateTime!,
+  $createdAt: DateTime!,
+  $updatedAt: DateTime!
 ) {
-   createCustomer(
-     input: {
+   insertOneCustomer(
+     data: {
+              _id: $id,
               name: $name, 
               email: $email, 
               phone: $phone, 
@@ -18,7 +20,7 @@ mutation createCustomer(
               createdAt: $createdAt,
               updatedAt: $updatedAt
           }) {
-     id
+     _id
      name
      email
      phone

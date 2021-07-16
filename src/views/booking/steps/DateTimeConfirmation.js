@@ -4,69 +4,15 @@ import {Alert, Button, Col, Form, FormGroup, Row, Badge} from 'reactstrap'
 import Flatpickr from "react-flatpickr"
 import moment from "moment"
 import {toAmPm} from '../../../utility/Utils'
+import {
+    DEFAULT_AVAILABILITY_ALWAYS, DEFAULT_AVAILABILITY,
+    DAYS_AFTER_CURRENT_DATE_NOT_AVAILABLE_TO_SCHEDULE,
+    DAYS_AFTER_CURRENT_DATE_CONSIDERED_RUSH_DATE,
+    BREAK_BETWEEN_CLASSES_HOURS
+} from '../../../utility/Constants'
 import {useMutation} from "@apollo/client"
-import mutationRequestPreferredTimeNew from "../../../graphql/MutationRequestPreferredTimeNew"
-import mutationRequestPreferredTimeUpdate from "../../../graphql/MutationRequestPreferredTimeUpdate"
-
-const DEFAULT_AVAILABILITY_ALWAYS = true
-const DEFAULT_AVAILABILITY = [
-    {
-        increment: 30,
-        toMinutes: 0,
-        dayOfWeek: 1,
-        fromHour: 7,
-        fromMinutes: 0,
-        toHour: 21
-    },
-    {
-        increment: 30,
-        toMinutes: 0,
-        dayOfWeek: 2,
-        fromHour: 7,
-        fromMinutes: 0,
-        toHour: 21
-    },
-    {
-        increment: 30,
-        toMinutes: 0,
-        dayOfWeek: 3,
-        fromHour: 7,
-        fromMinutes: 0,
-        toHour: 21
-    },
-    {
-        increment: 30,
-        toMinutes: 0,
-        dayOfWeek: 4,
-        fromHour: 7,
-        fromMinutes: 0,
-        toHour: 21
-    },
-    {
-        increment: 30,
-        toMinutes: 0,
-        dayOfWeek: 5,
-        fromHour: 7,
-        fromMinutes: 0,
-        toHour: 21
-    },
-    {
-        increment: 30,
-        toMinutes: 0,
-        dayOfWeek: 6,
-        fromHour: 7,
-        fromMinutes: 0,
-        toHour: 21
-    },
-    {
-        increment: 30,
-        toMinutes: 0,
-        dayOfWeek: 7,
-        fromHour: 7,
-        fromMinutes: 0,
-        toHour: 21
-    }
-]
+import mutationRequestPreferredTime from "../../../graphql/MutationRequestPreferredTime"
+import {v4 as uuid} from 'uuid'
 
 const DateTimeConfirmation = ({
                                   stepper,
@@ -83,18 +29,13 @@ const DateTimeConfirmation = ({
     const [time, setTime] = React.useState(null)
     const [availableTimes, setAvailableTimes] = React.useState(null)
     const [processing, setProcessing] = React.useState(false)
-    const [createCalendarEvent, {...calendarEventData}] = useMutation(mutationRequestPreferredTimeNew, {})
-    const [updateCalendarEvent, {...UpdatedCalendarEventData}] = useMutation(mutationRequestPreferredTimeUpdate, {})
-
-    const isDayBlocked = (day) => {
-        return false
-    }
+    const [createOrUpdateCalendarEvent, {...calendarEventData}] = useMutation(mutationRequestPreferredTime, {})
 
     const isDateTooEarly = () => {
 
         const today = new Date()
         const reference = new Date()
-        reference.setDate(today.getDate() + 5)//5 days
+        reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_NOT_AVAILABLE_TO_SCHEDULE)//5 days
 
         return date && date.length > 0 && date[0] > today && date[0] <= reference
     }
@@ -105,17 +46,11 @@ const DateTimeConfirmation = ({
     }
 
     const isRushDate = () => {
+
         const today = new Date()
         const reference = new Date()
-        reference.setDate(today.getDate() + 15)//15 days
+        reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_CONSIDERED_RUSH_DATE)//15 days
         return !isDateTooEarly() && date && date.length > 0 && date[0] > today && date[0] <= reference
-    }
-
-    const isScheduledDate = () => {
-        return date && calendarEvent &&
-            date[0].getMonth() === calendarEvent.month - 1 &&
-            date[0].getDay() === calendarEvent.day &&
-            date[0].getFullYear() === calendarEvent.year
     }
 
     React.useEffect(() => {
@@ -139,7 +74,7 @@ const DateTimeConfirmation = ({
             const eventFullStartHour = (element.fromHour + (element.fromMinutes / 60)) - breakBetweenClasses
             const eventFullEndHour = (element.toHour + (element.toMinutes / 60)) + breakBetweenClasses
 
-            return element.bookingId !== booking.id && element.day === day &&
+            return element.bookingId !== booking._id && element.day === day &&
                 element.month === month && element.year === year && (
                     (fullStartHour >= eventFullStartHour && fullStartHour < eventFullEndHour) ||
                     (fullEndHour >= eventFullStartHour && fullEndHour < eventFullEndHour))
@@ -147,8 +82,6 @@ const DateTimeConfirmation = ({
 
         return calendarEvents && calendarEvents.length > 0
     }
-
-    console.log(time)
 
     const getAvailableTimes = (selectedDate) => {
 
@@ -159,7 +92,7 @@ const DateTimeConfirmation = ({
 
             for (let j = 0; j < availabilities.length; j++) {
                 const availability = availabilities[j]
-                const breakBetweenClasses = availability.break ? (availability.break / 60) : .5
+                const breakBetweenClasses = BREAK_BETWEEN_CLASSES_HOURS
                 const incrementInHours = availability.increment / 60
                 const fromHourAndMinutes = availability.fromHour + (availability.fromMinutes / 60)
                 const toHourAndMinutes = availability.toHour + (availability.toMinutes / 60)
@@ -209,7 +142,7 @@ const DateTimeConfirmation = ({
         const newToHour = eventEnd.hour()
         const newToMinutes = eventEnd.minutes()
 
-        const sameEventDate = calendarEvent && calendarEvent.id
+        const sameEventDate = calendarEvent && calendarEvent._id
             && selectedDate.year() === calendarEvent.year
             && selectedDate.month() + 1 === calendarEvent.month
             && selectedDate.date() === calendarEvent.day
@@ -225,9 +158,9 @@ const DateTimeConfirmation = ({
         try {
 
             const calendarEventData = {
-                id: calendarEvent ? calendarEvent.id : null,
-                classId: teamClass.id,
-                bookingId: booking.id,
+                id: calendarEvent ? calendarEvent._id : uuid(),
+                classId: teamClass._id,
+                bookingId: booking._id,
                 year: selectedDate.year(),
                 month: selectedDate.month() + 1,
                 day: selectedDate.date(),
@@ -239,32 +172,18 @@ const DateTimeConfirmation = ({
                 isRushFee: isRushDate(),
                 rushFee: classRushFee,
                 bookingStatus: "date-requested",
-                updatedAt: moment().format()
+                updatedAt: new Date()
             }
 
-            if (calendarEvent && calendarEvent.id) {
+            const result = await createOrUpdateCalendarEvent(
+                {
+                    variables: calendarEventData
+                }
+            )
 
-                const result = await updateCalendarEvent(
-                    {
-                        variables: calendarEventData
-                    }
-                )
+            if (result && result.data) setCalendarEvent(result.data.upsertOneCalendarEvent)
 
-                if (result && result.data) setCalendarEvent(result.data.updateCalendarEvent)
-
-                console.log("calendar event updated")
-
-            } else {
-                const result = await createCalendarEvent(
-                    {
-                        variables: calendarEventData
-                    }
-                )
-
-                if (result && result.data) setCalendarEvent(result.data.createCalendarEvent)
-
-                console.log("calendar event created")
-            }
+            console.log("calendar event saved")
 
             setProcessing(false)
 

@@ -1,15 +1,15 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  query GetBookings($filter: TableBookingFilterInput!) {
-    listBookings(limit: 10000, filter: $filter) {
-      items {
-        id
+  query GetBookings($filter: BookingQueryInput!) {
+    bookings(limit: 10000, query: $filter, sortBy: CREATEDAT_DESC) {
+        _id
         teamClassId
         customerId
         customerName
         attendees
         classMinimum
+        eventDurationHours
         pricePerson
         serviceFee
         salesTax
@@ -18,7 +18,6 @@ export default gql`
         status
         createdAt
         updatedAt
-      }
     }
   }
 `

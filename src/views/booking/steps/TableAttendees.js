@@ -133,8 +133,8 @@ const DataTableAttendees = ({
                     <div className='d-flex'>
                         <a onClick={e => {
 
-                            deleteAttendee(row.id).then((result) => {
-                                const newData = data.filter(element => element.id !== row.id)
+                            deleteAttendee(row._id).then((result) => {
+                                const newData = data.filter(element => element._id !== row._id)
                                 setData(newData)
                                 updateAttendeesCount(newData.length)
                             })

@@ -10,24 +10,17 @@ import {
   Button,
   ButtonGroup,
   Input,
-  Col
+  Col,
+  InputGroup,
+  InputGroupAddon
 } from 'reactstrap'
-import { Share, FileText, Filter, Plus, List, Trello } from 'react-feather'
+import { Share, FileText, Filter, Plus, List, Trello, Search } from 'react-feather'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 
 function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAddModal, setCurrentElement, bookings, classes, customers }) {
   const [filteredData, setFilteredData] = useState([])
   const [searchValue, setSearchValue] = useState('')
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
-
-  useEffect(() => {
-    // if (searchValue !== '') {
-    setClassFilterContext({
-      type: 'text',
-      value: searchValue
-    })
-    // }
-  }, [searchValue])
 
   useEffect(() => {
     setSearchValue('')
@@ -56,12 +49,12 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
   }, [classFilterContext])
 
   const getCustomerEmail = (customerId) => {
-    const result = customers.filter((element) => element.id === customerId)
+    const result = customers.filter((element) => element._id === customerId)
     return result && result.length > 0 ? result[0].email : ''
   }
 
   const getClassTitle = (teamClassId) => {
-    const result = classes.filter((element) => element.id === teamClassId)
+    const result = classes.filter((element) => element._id === teamClassId)
     return result && result.length > 0 ? result[0].title : ''
   }
 
@@ -138,14 +131,23 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
           </CardTitle>
         </Col>
         <Col className="mb-1 d-flex" lg="6" md="12">
-          <Input
-            className="mr-2"
-            type="text"
-            id="search-input"
-            placeholder="Search"
-            value={searchValue}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
+          <InputGroup className="mr-2">
+            <Input type="text" onChange={(e) => handleSearch(e.target.value)} />
+            <InputGroupAddon addonType="append">
+              <Button
+                color="primary"
+                outline
+                onClick={() => {
+                  setClassFilterContext({
+                    type: 'text',
+                    value: searchValue
+                  })
+                }}
+              >
+                <Search size={12} />
+              </Button>
+            </InputGroupAddon>
+          </InputGroup>
           <ButtonGroup>
             <UncontrolledButtonDropdown>
               <DropdownToggle color="primary" caret outline>

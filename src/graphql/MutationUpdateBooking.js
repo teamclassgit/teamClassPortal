@@ -1,66 +1,65 @@
-import { gql } from '@apollo/client'
+import {gql} from '@apollo/client'
 
 export default gql`
   mutation updateBooking(
-    $bookingId: ID!
-    $customerId: ID!
+    $bookingId: String!
+    $customerId: String!
     $name: String!
     $phone: String!
     $email: String
     $company: String
-    $updatedAt: AWSDateTime!
+    $updatedAt: DateTime!
     $attendees: Int!
-    $instructorId: ID!
+    $instructorId: String!
     $instructorName: String!
     $pricePerson: Float!
     $classMinimum: Int!
-    $teamClassId: ID!
+    $teamClassId: String!
     $duration: Float!
   ) {
-    updateCustomer(input: { id: $customerId, name: $name, phone: $phone, email: $email, company: $company, updatedAt: $updatedAt }) {
-      id
-      name
-      email
-      phone
-      company
-      createdAt
-      updatedAt
-    }
-    updateBooking(
-      input: {
-        id: $bookingId
-        customerName: $name
-        updatedAt: $updatedAt
-        attendees: $attendees
-        classMinimum: $classMinimum
-        pricePerson: $pricePerson
-        teamClassId: $teamClassId
-        instructorId: $instructorId
-        instructorName: $instructorName
-        eventDurationHours: $duration
-      }
-    ) {
-      id
-      date
-      expirationHours
-      teamClassId
-      instructorId
-      instructorName
-      customerId
-      customerName
-      customerIntro
-      eventDate
-      eventDurationHours
-      attendees
-      classMinimum
-      pricePerson
-      serviceFee
-      salesTax
-      discount
-      status
-      rushFee
-      createdAt
-      updatedAt
-    }
+        updateOneCustomer(query: { _id: $customerId }, set: { name: $name, phone: $phone, email: $email, company: $company, updatedAt: $updatedAt }) {
+          _id
+          name
+          email
+          phone
+          company
+          createdAt
+          updatedAt
+        }
+        updateOneBooking(
+          query: { _id: $bookingId }
+          set: {
+            customerName: $name
+            updatedAt: $updatedAt
+            attendees: $attendees
+            classMinimum: $classMinimum
+            pricePerson: $pricePerson
+            teamClassId: $teamClassId
+            instructorId: $instructorId
+            instructorName: $instructorName
+            eventDurationHours: $duration
+          }
+        ) {
+          _id
+          date
+          expirationHours
+          teamClassId
+          instructorId
+          instructorName
+          customerId
+          customerName
+          eventDate
+          eventDurationHours
+          attendees
+          classMinimum
+          pricePerson
+          serviceFee
+          salesTax
+          discount
+          status
+          rushFee
+          createdAt
+          updatedAt
+        }
   }
 `

@@ -1,19 +1,20 @@
 import {gql} from "@apollo/client"
 
 export default gql`
-query GetTeamClass($classId:ID!) {
-  getTeamClass(id: $classId) {
-      id
+query GetTeamClass($classId: String!) {
+    teamClass(query: { _id : $classId }) {
+      _id
       title
       category
       minimum
       hasKit
+      shippingIncluded
+      shippingCountries
       isVirtual
       duration
       pricePerson
       instructorId
       location
-      stars
       instructorAvatarImage
       instructorName
       instructorIntro
@@ -21,16 +22,30 @@ query GetTeamClass($classId:ID!) {
       description
       included
       isActive
-      requestQuotaEmailTemplate
       order
       timeZone
       timeZoneLabel
       crmId
+      notes
+      requiredFromAttendees
+      kitIncludes
+      firstTimeCustomerRequestQuoteCampaignId
+      requestQuoteTemplateId
+      addons {
+        icon
+        color
+        name
+        description
+        multipleUnits
+        unitPrice
+        unit
+        order
+        active
+      }
       gallery {
-        alt
         img
         title
-      }    
+      }
       tags {
         icon
         value
@@ -42,7 +57,16 @@ query GetTeamClass($classId:ID!) {
         toMinutes
         dayOfWeek
         increment
-        break
       }
-  }
-}`
+      variants {
+         title
+         notes
+         minimum
+         duration
+         pricePerson
+         hasKit
+         order
+         active
+      }
+    }
+  }`

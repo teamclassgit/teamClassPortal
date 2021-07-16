@@ -1,10 +1,9 @@
 import {gql} from "@apollo/client"
 
 export default gql`
-query ListCalendarEvents($bookingId:ID!) {
-  listCalendarEvents(filter: {bookingId: {eq: $bookingId}}, limit: 100) {
-    items {
-      id
+query ListCalendarEvents($bookingId:String!) {
+  calendarEvents(filter: {bookingId: $bookingId}, limit: 100) {
+      _id
       classId
       bookingId
       status
@@ -16,6 +15,5 @@ query ListCalendarEvents($bookingId:ID!) {
       fromMinutes
       month
       rushFee
-    }
   }
 }`

@@ -2,7 +2,8 @@ import {gql} from "@apollo/client"
 
 export default gql`
 mutation createAttendee(
-  $bookingId: ID!, 
+  $id: String!,
+  $bookingId: String!, 
   $name: String, 
   $email: String!, 
   $phone: String, 
@@ -14,8 +15,10 @@ mutation createAttendee(
   $country: String, 
   $dietaryRestrictions: String
 ) {
-   createAttendee(
-     input: {
+   upsertOneAttendee(
+         query:{_id: $id},
+         data: {
+              _id: $id,
               bookingId: $bookingId, 
               name: $name
               email: $email, 
@@ -28,7 +31,7 @@ mutation createAttendee(
               country: $country,
               dietaryRestrictions: $dietaryRestrictions
           }) {
-                id
+                _id
                 bookingId
                 name
                 addressLine1

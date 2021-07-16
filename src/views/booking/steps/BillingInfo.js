@@ -6,12 +6,8 @@ import CreditCardMask from "../../forms/input-mask/CreditCardMask"
 import ExpCreditCardMask from "../../forms/input-mask/ExpCreditCardMask"
 import Cleave from "cleave.js/react"
 import 'cleave.js/dist/addons/cleave-phone.us'
-import moment from "moment"
 import {useMutation} from "@apollo/client"
-import mutationUpdateQuota from "../../../graphql/MutationUpdateQuota"
-import mutationCreateCalendarEvent from "../../../graphql/MutationCreateCalendarEvent"
-import mutationUpdateCalendarEvent from "../../../graphql/MutationUpdateCalendarEvent"
-import mutationUpdateCustomer from "../../../graphql/MutationUpdateCustomer"
+import mutationUpdateQuote from "../../../graphql/MutationUpdateQuote"
 import {isValidEmail} from "../../../utility/Utils"
 
 const BillingInfo = ({
@@ -31,10 +27,7 @@ const BillingInfo = ({
     const [email, setEmail] = React.useState("")
     const [emailValid, setEmailValid] = React.useState(true)
     const [processing, setProcessing] = React.useState(false)
-    const [updateQuota, {...finalQuotaData}] = useMutation(mutationUpdateQuota, {})
-    const [createCalendarEvent, {...calendarEventData}] = useMutation(mutationCreateCalendarEvent, {})
-    const [updateCalendarEvent, {...UpdatedCalendarEventData}] = useMutation(mutationUpdateCalendarEvent, {})
-    const [updateCustomer, {...updateCustomerData}] = useMutation(mutationUpdateCustomer, {})
+    const [updateBooking, {...finalQuotaData}] = useMutation(mutationUpdateQuote, {})
 
     const emailValidation = (email) => {
         setEmailValid(isValidEmail(email))
@@ -58,84 +51,29 @@ const BillingInfo = ({
         setProcessing(true)
 
         try {
-            const date = moment(new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day))
-            const eventDate = moment(`${date.format("DD/MM/YYYY")} ${calendarEvent.fromHour}:${calendarEvent.fromMinutes}`, 'DD/MM/YYYY HH:mm')
 
-            await updateQuota(
+            const resultUpdate = await updateBooking(
                 {
                     variables: {
-                        id: booking.id,
-                        customerName: name,
-                        eventDate: eventDate.format(), // combine with quotaTime
-                        attendees: attendeesListCount > 0 ? attendeesListCount : booking.attendees,
-                        updatedAt: moment().format(),
-                        status: "confirmed",
-                        serviceFee: booking.serviceFee,
-                        salesTax: booking.salesTax,
-                        instructorId: booking.instructorId,
-                        instructorName: booking.instructorName,
+                        bookingId: booking._id,
                         customerId: booking.customerId,
-                        discount: 0
+                        calendarEventId: calendarEvent._id,
+                        name,
+                        phone,
+                        email,
+                        company,
+                        updatedAt: new Date(),
+                        status: "confirmed"
                     }
                 }
             )
 
             console.log("booking updated")
 
-            const newName = name
-            const newPhone = phone
-            const newEmail = email
-            const newCompany = company
-
-            await updateCustomer(
-                {
-                    variables: {
-                        id: customer.id,
-                        name: newName, // combine with quotaTime
-                        phone: newPhone,
-                        email: newEmail,
-                        company: newCompany,
-                        updatedAt: moment().format()
-                    }
-                }
-            )
-
-            console.log("customer updated")
-
-
-            if (calendarEvent.id) {
-
-                const calendarEventUpdated = {
-                    id: calendarEvent.id,
-                    classId: calendarEvent.classId,
-                    bookingId: calendarEvent.bookingId,
-                    year: calendarEvent.year,
-                    month: calendarEvent.month,
-                    day: calendarEvent.day,
-                    fromHour: calendarEvent.fromHour,
-                    fromMinutes: calendarEvent.fromMinutes,
-                    toHour: calendarEvent.toHour,
-                    toMinutes: calendarEvent.toMinutes,
-                    status: "confirmed",
-                    isRushFee : calendarEvent.rushFee
-                }
-
-                await updateCalendarEvent(
-                    {
-                        variables: calendarEventUpdated
-                    }
-                )
-
-                setCalendarEvent(calendarEventUpdated)
-
-                console.log("calendar event updated")
-
-            }
+            if (resultUpdate && resultUpdate.data && resultUpdate.data.updateOneCalendarEvent) setCalendarEvent(resultUpdate.data.updateOneCalendarEvent)
 
             setProcessing(false)
-
             setConfirmation(true)
-            //stepper.next()
 
         } catch (ex) {
 
