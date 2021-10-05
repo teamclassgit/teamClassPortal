@@ -34,7 +34,21 @@ const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurren
   }
 
   const bookingCards = filteredBookings.map(
-    ({ _id, teamClassId, customerId, customerName, attendees, eventDurationHours, classMinimum, pricePerson, serviceFee, salesTax, status, createdAt }) => {
+    ({
+      _id,
+      teamClassId,
+      customerId,
+      customerName,
+      attendees,
+      eventDurationHours,
+      classMinimum,
+      pricePerson,
+      serviceFee,
+      salesTax,
+      status,
+      payments,
+      createdAt
+    }) => {
       return {
         customerName: getCustomerName(customerId, customers),
         _id,
@@ -42,6 +56,7 @@ const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurren
         teamClassId,
         createdAt,
         status,
+        payments,
         customerId,
         eventDurationHours,
         classTitle: getClassTitle(teamClassId, classes),
@@ -55,8 +70,8 @@ const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurren
         salesTax,
         attendeesAdded: 0, // ????
         additionals: 0, // ?????
-        calendarEvent: calendarEvents.filter((element) => element.bookingId === _id)[0],
-        teamClass: classes.filter((element) => element._id === teamClassId)[0]
+        calendarEvent: calendarEvents.find((element) => element.bookingId === _id),
+        teamClass: classes.find((element) => element._id === teamClassId)
       }
     }
   )
@@ -66,9 +81,45 @@ const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurren
       columns: BOOKING_STATUS.map(({ label, value }, index) => ({
         id: index,
         title: label,
-        cards: bookingCards.filter(({ status }) => status.indexOf(value) > -1)
+        cards: getColumnData(value)
       }))
     }
+  }
+
+  const getColumnData = (column) => {
+    if (column === 'quote' || column === 'canceled') return bookingCards.filter(({ status }) => status.indexOf(column) > -1)
+
+    if (column === 'date-requested') {
+      return bookingCards.filter(({ status, calendarEvent }) => {
+        return status.indexOf(column) > -1 && calendarEvent && calendarEvent.status === 'reserved'
+      })
+    }
+
+    if (column === 'accepted') {
+      return bookingCards.filter(({ status, calendarEvent }) => {
+        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'confirmed'
+      })
+    }
+
+    if (column === 'rejected') {
+      return bookingCards.filter(({ status, calendarEvent }) => {
+        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'rejected'
+      })
+    }
+
+    if (column === 'confirmed') {
+      return bookingCards.filter(({ status, payments }) => {
+        return status.indexOf(column) > -1 && payments && payments.length > 0
+      })
+    }
+
+    if (column === 'reviews') {
+      return bookingCards.filter(({ status, payments }) => {
+        return status.indexOf('confirmed') > -1 && (!payments || payments.length === 0)
+      })
+    }
+
+    return []
   }
 
   const handleSearch = (value) => {
@@ -144,7 +195,7 @@ const BoardBookings = ({ bookings, customers, classes, calendarEvents, setCurren
       <Row>
         {!loading && filteredBookings.length ? (
           <Board
-            disableColumnDrag
+            disableColumnDrag={true}
             initialBoard={getBoard()}
             onNewCardConfirm={(draftCard) => ({
               id: new Date().getTime(),
