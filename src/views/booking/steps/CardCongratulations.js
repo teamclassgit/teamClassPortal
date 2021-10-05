@@ -13,16 +13,14 @@ const CardCongratulations = ({firstName, stepper, setConfirmation}) => {
         <img className='congratulations-img-right' src={decorationRight} alt='decor-right' />
         <Avatar icon={<Award size={28} />} className='shadow' color='primary' size='xl' />
         <div className='text-center'>
-          <h1 className='mb-1 text-white'>Congratulations {firstName}!</h1>
-          <CardText className='m-auto w-75'>
-            Your event is confirmed.
-          </CardText>
+          <h1 className='mb-1 text-white'>Changes saved!</h1>
+        
         </div>
       </CardBody>
       <CardFooter>
         <div className='text-center'>
         <Button.Ripple color='secondary' className='btn-submit' onClick={() => setConfirmation(false) } >
-          Change my booking
+          Change this booking
         </Button.Ripple>
         </div>
       </CardFooter>

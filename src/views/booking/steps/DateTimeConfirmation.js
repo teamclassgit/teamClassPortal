@@ -33,16 +33,19 @@ const DateTimeConfirmation = ({
 
     const isDateTooEarly = () => {
 
-        const today = new Date()
+      /*  const today = new Date()
         const reference = new Date()
         reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_NOT_AVAILABLE_TO_SCHEDULE)//5 days
 
-        return date && date.length > 0 && date[0] > today && date[0] <= reference
+        return date && date.length > 0 && date[0] > today && date[0] <= reference */
+
+        return false
     }
 
     const isDateInThePast = () => {
 
-        return !date || date.length === 0 ? false : date[0] <= new Date()
+        //This validation can be added if want to avoid dates in the past !date || date.length === 0 ? false : date[0] <= new Date()
+        return false
     }
 
     const isRushDate = () => {
@@ -168,10 +171,10 @@ const DateTimeConfirmation = ({
                 fromMinutes: newFromMinutes,
                 toHour: newToHour,
                 toMinutes: newToMinutes,
-                status: "reserved",
+                status: "confirmed",
                 isRushFee: isRushDate(),
                 rushFee: classRushFee,
-                bookingStatus: "date-requested",
+                bookingStatus: booking.status === 'quote' || (calendarEvent && calendarEvent.status === 'rejected') ? "date-requested" : booking.status,
                 updatedAt: new Date()
             }
 
@@ -243,7 +246,7 @@ const DateTimeConfirmation = ({
                             {date && date.length > 0 && (<Alert color='danger' isOpen={isRushDate()}>
                                 <div className='alert-body'>
                                     <AlertCircle size={15}/>
-                                    <span className='ml-1'>{classRushFee * 100}% Rush fee will be included. Additional shipping may be required.
+                                    <span className='ml-1'>Rush fee may be required.
                                   </span>
                                 </div>
                             </Alert>)}
@@ -256,7 +259,7 @@ const DateTimeConfirmation = ({
                     <Button.Ripple color='primary' className='btn-next' onClick={() => saveCalendarEvent()}
                                    disabled={!time || !date || processing}>
                         <span
-                            className='align-middle d-sm-inline-block d-none'>{processing ? "Processing..." : "Request date"}</span>
+                            className='align-middle d-sm-inline-block d-none'>{processing ? "Processing..." : "Save date"}</span>
                         <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>
                     </Button.Ripple>
                 </div>

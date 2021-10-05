@@ -166,7 +166,7 @@ function BoardCard({
       <CardFooter className="card-board-footer pr-1">
         {status === 'quote' ? (
           <div align="right">
-            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time Page'}>
+            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time link'}>
               <Avatar color="light-primary" icon={<Calendar size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
@@ -175,13 +175,13 @@ function BoardCard({
           </div>
         ) : status !== 'canceled' ? (
           <div align="right">
-            <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up page'}>
+            <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
               <Avatar color="light-primary" icon={<User size={18} />} />
             </CardLink>
             <CardLink href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
               <Avatar color="light-primary" icon={<Users size={18} />} />
             </CardLink>
-            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Checkout status'}>
+            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
               <Avatar color="light-primary" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>

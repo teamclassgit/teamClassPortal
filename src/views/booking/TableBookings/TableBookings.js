@@ -172,7 +172,7 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
       cell: (row) => {
         return row.status === 'quote' ? (
           <div className="d-flex">
-            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time Page'}>
+            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
               <Avatar color="light-primary" icon={<Calendar size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
@@ -181,13 +181,13 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
           </div>
         ) : row.status !== 'canceled' ? (
           <div className="d-flex">
-            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up page'}>
+            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
               <Avatar color="light-primary" icon={<User size={18} />} />
             </CardLink>
             <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
               <Avatar color="light-primary" icon={<Users size={18} />} />
             </CardLink>
-            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Checkout status'}>
+            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
               <Avatar color="light-primary" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
