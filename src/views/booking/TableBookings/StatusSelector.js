@@ -1,55 +1,25 @@
-import React, { useState } from 'react'
-import Select from 'react-select'
-import { useMutation } from '@apollo/client'
-import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus'
-import { BOOKING_STATUS } from '../../../utility/Constants'
+import React from 'react'
 
-function StatusSelector({ row, value, bookings, setBookings }) {
-  const [currentValue, setCurrentValue] = useState(value)
-  const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {})
+function StatusSelector({ row, calendarEvent }) {
+  const getColumnData = () => {
+    if (!row) return
 
-  // Here we change the status of the dragged card
-  const handleStatusChange = async (bookingId, newStatus) => {
-    try {
-      const resultUpdateBooking = await updateBookingStatus({
-        variables: {
-          id: bookingId,
-          status: newStatus,
-          updatedAt: new Date()
-        }
-      })
-      const bkng = BOOKING_STATUS.find((sts) => sts.value === newStatus)
-      setCurrentValue({
-        value: bkng.value,
-        label: bkng.label
-      })
+    if (row.status.indexOf('quote') > -1) return 'quote'
 
-      // Update bookings object
-      const updatedBooking = resultUpdateBooking.data.updateOneBooking
-      const oldBookingIndex = bookings.findIndex((bkn) => bkn._id === updatedBooking._id)
-      const newBookings = [...bookings]
-      newBookings[oldBookingIndex] = updatedBooking
-      setBookings(newBookings)
-    } catch (error) {
-      console.error(error)
-    }
+    if (row.status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'reserved') return 'Date requested'
+
+    if (row.status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'confirmed') return 'Accepted'
+
+    if (row.status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'rejected') return 'Rejected'
+
+    if (row.status.indexOf('confirmed') > -1 && row.payments && row.payments.length > 0) return 'Deposit paid'
+
+    if (row.status.indexOf('confirmed') > -1 && (!row.payments || row.payments.length === 0)) return 'Reviews'
+
+    return 'Unknown'
   }
 
-  return (
-    <Select
-      className="react-select-status"
-      menuPortalTarget={document.querySelector('body')}
-      value={currentValue}
-      placeholder="Status"
-      options={BOOKING_STATUS.map((bkng) => {
-        return {
-          value: bkng.value,
-          label: bkng.label
-        }
-      })}
-      onChange={(option) => handleStatusChange(row._id, option.value)}
-    />
-  )
+  return <span>{`${getColumnData()}`}</span>
 }
 
 export default StatusSelector

@@ -162,8 +162,8 @@ const WizardClassBooking = () => {
 
         {
             id: 'personal-info',
-            title: 'Reservation',
-            subtitle: 'Billing details',
+            title: 'Customer',
+            subtitle: 'Basic info',
             icon: <CreditCard size={18}/>,
             content: <BillingInfo stepper={stepper} type='wizard-horizontal' calendarEvent={calendarEvent}
                                   setCalendarEvent={setCalendarEvent} customer={customer} booking={bookingInfo}

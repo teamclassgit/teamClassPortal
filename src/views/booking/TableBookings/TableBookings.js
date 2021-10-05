@@ -4,7 +4,7 @@ import React, { Fragment, useState, useEffect, useContext } from 'react'
 import moment from 'moment'
 import Avatar from '@components/avatar'
 import DataTable from 'react-data-table-component'
-import { Edit2, ShoppingCart, ChevronDown } from 'react-feather'
+import { Edit2, ShoppingCart, ChevronDown, User, Users, DollarSign, Calendar } from 'react-feather'
 import ReactPaginate from 'react-paginate'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import { Button, Card } from 'reactstrap'
@@ -19,6 +19,7 @@ import {
   getFormattedEventDate
 } from '../common'
 import './TableBookings.scss'
+import CardLink from 'reactstrap/lib/CardLink'
 
 const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement, classes, calendarEvents, changeView }) => {
   const { classFilterContext } = useContext(FiltersContext)
@@ -67,6 +68,7 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
         break
       case 'text':
         handleSearch(value)
+        break
       default:
         break
     }
@@ -107,7 +109,7 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
       name: 'Customer',
       selector: 'customerName',
       sortable: true,
-      maxWidth: '180px',
+      maxWidth: '250px',
       cell: (row) => (
         <div className="d-flex align-items-center">
           <Avatar color={getBookingColor(row.status)} content={row.customerName} initials />
@@ -132,7 +134,7 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
       name: 'Class',
       selector: 'teamClassId',
       sortable: true,
-      maxWidth: '170px',
+      maxWidth: '250px',
       cell: (row) => (
         <div className="user-info text-truncate ml-1">
           <span className="d-block font-weight-bold text-truncate">{getClassTitle(row.teamClassId, classes)}</span>
@@ -149,7 +151,7 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
       name: 'Event Date',
       selector: '_id',
       sortable: true,
-      maxWidth: '150px',
+      maxWidth: '300px',
       cell: (row) => (
         <div className="user-info text-truncate ml-1">
           <span className="d-block font-weight-bold text-truncate">{getFormattedEventDate(row._id, calendarEvents)}</span>
@@ -161,40 +163,39 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
       selector: 'status',
       sortable: true,
       maxWidth: '200px',
-      cell: (row) => <StatusSelector value={getBookingValue(row.status)} row={row} bookings={bookings} setBookings={setBookings} />
+      cell: (row) => <StatusSelector row={row} calendarEvent={calendarEvents.find((element) => element.bookingId === row._id)} />
     },
     {
       name: 'Actions',
       allowOverflow: true,
       maxWidth: '20px',
       cell: (row) => {
-        return (
+        return row.status === 'quote' ? (
           <div className="d-flex">
-            <Button
-              color="link"
-              className="m-0 p-0"
-              onClick={() => {
-                const { customerId, customerName, teamClassId, attendees, _id } = row
-                const newElement = {
-                  _id,
-                  customerId,
-                  name: customerName,
-                  email: getCustomerEmail(customerId, customers),
-                  phone: getCustomerPhone(customerId, customers),
-                  company: getCustomerCompany(customerId, customers),
-                  class: teamClassId,
-                  attendees,
-                  editMode: true
-                }
-                setCurrentElement(newElement)
-              }}
-            >
-              <Avatar color="light-primary" className="rounded mr-1" icon={<Edit2 size={18} />} />
-            </Button>
-            <a href={`/booking/${row._id}`} target={'_blank'}>
-              <Avatar color="light-secondary" className="rounded mr-1" icon={<ShoppingCart size={18} />} />
-            </a>
+            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
+              <Avatar color="light-primary" icon={<Calendar size={18} />} />
+            </CardLink>
+            <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
+              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+            </CardLink>
           </div>
+        ) : row.status !== 'canceled' ? (
+          <div className="d-flex">
+            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+              <Avatar color="light-primary" icon={<User size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+              <Avatar color="light-primary" icon={<Users size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+              <Avatar color="light-primary" icon={<DollarSign size={18} />} />
+            </CardLink>
+            <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
+              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+            </CardLink>
+          </div>
+        ) : (
+          <></>
         )
       }
     }
@@ -238,7 +239,7 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
           noHeader
           pagination
           columns={columns}
-          defaultSortField={'createdAt'}
+          defaultSortField={'updatedAt'}
           defaultSortAsc={false}
           paginationPerPage={8}
           className="react-dataTable"

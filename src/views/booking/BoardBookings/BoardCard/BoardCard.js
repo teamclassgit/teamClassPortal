@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import { Card, CardBody, CardFooter, Button, Media, CardLink, FormText, Badge } from 'reactstrap'
-import { Calendar, Edit2, ShoppingCart, Repeat } from 'react-feather'
+import { Calendar, Edit2, ShoppingCart, Repeat, User, Users, Check, DollarSign } from 'react-feather'
 import { toAmPm } from '../../../../utility/Utils'
 import './BoardCard.scss'
 import Avatar from '@components/avatar'
-import {RUSH_FEE} from "../../../../utility/Constants"
+import { RUSH_FEE } from '../../../../utility/Constants'
 
 function BoardCard({
   setCurrentElement,
@@ -42,7 +42,6 @@ function BoardCard({
   const [total, setTotal] = useState(0)
 
   const getTotals = () => {
-
     const withoutFee = attendees > minimum ? pricePerson * attendees : pricePerson * minimum
     const rushFee = calendarEvent && calendarEvent.rushFee ? withoutFee * RUSH_FEE : 0
     const fee = withoutFee * serviceFee
@@ -110,13 +109,12 @@ function BoardCard({
                 <th className="font-weight-normal text-sm">Booking fee ({serviceFee * 100}%)</th>
                 <td className="text-right text-sm">${totalServiceFee}</td>
               </tr>
-              {calendarEvent && calendarEvent.rushFee &&
-              <tr>
-                <th className="font-weight-normal text-sm pb-1">Rush fee
-                  ({RUSH_FEE * 100}%)
-                </th>
-                <td className="text-right pb-1 text-sm">${totalRushFee}</td>
-              </tr>}
+              {calendarEvent && calendarEvent.rushFee && (
+                <tr>
+                  <th className="font-weight-normal text-sm pb-1">Rush fee ({RUSH_FEE * 100}%)</th>
+                  <td className="text-right pb-1 text-sm">${totalRushFee}</td>
+                </tr>
+              )}
               <tr>
                 <th className="font-weight-normal text-sm">Sales Tax ({salesTax * 100}%)</th>
                 <td className="text-right text-sm">${totalTax}</td>
@@ -165,30 +163,34 @@ function BoardCard({
         </Button>
         {flippedCard ? cardBack() : cardFront()}
       </CardBody>
-      <CardFooter className="card-board-footer">
-        <Button
-          color="link"
-          className="m-0 p-0"
-          onClick={() => {
-            const newElement = {
-              customerId,
-              name: customerName,
-              email,
-              phone,
-              company,
-              class: teamClassId,
-              attendees,
-              editMode: true,
-              _id
-            }
-            setCurrentElement(newElement)
-          }}
-        >
-          <Avatar color="light-primary" className="rounded mr-1" icon={<Edit2 size={18} />} />
-        </Button>
-        <CardLink href={`/booking/${_id}`} target={'_blank'}>
-          <Avatar color="light-secondary" className="rounded mr-1" icon={<ShoppingCart size={18} />} />
-        </CardLink>
+      <CardFooter className="card-board-footer pr-1">
+        {status === 'quote' ? (
+          <div align="right">
+            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time link'}>
+              <Avatar color="light-primary" icon={<Calendar size={18} />} />
+            </CardLink>
+            <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
+              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+            </CardLink>
+          </div>
+        ) : status !== 'canceled' ? (
+          <div align="right">
+            <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+              <Avatar color="light-primary" icon={<User size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+              <Avatar color="light-primary" icon={<Users size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+              <Avatar color="light-primary" icon={<DollarSign size={18} />} />
+            </CardLink>
+            <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
+              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+            </CardLink>
+          </div>
+        ) : (
+          <></>
+        )}
       </CardFooter>
     </Card>
   )
