@@ -170,10 +170,24 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
       allowOverflow: true,
       maxWidth: '20px',
       cell: (row) => {
+        const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id)
+
         return row.status === 'quote' ? (
           <div className="d-flex">
             <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
               <Avatar color="light-primary" icon={<Calendar size={18} />} />
+            </CardLink>
+            <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
+              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+            </CardLink>
+          </div>
+        ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
+          <div className="d-flex">
+            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
+              <Avatar color="light-primary" icon={<Calendar size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
+              <Avatar color="light-primary" icon={<User size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
               <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
