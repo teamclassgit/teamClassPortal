@@ -32,7 +32,8 @@ const BookingList = () => {
     variables: {
       filter: genericFilter,
       limit
-    }
+    },
+    pollInterval: 300000
   })
 
   useEffect(() => {
@@ -47,7 +48,8 @@ const BookingList = () => {
     fetchPolicy: 'no-cache',
     variables: {
       filter: genericFilter
-    }
+    },
+    pollInterval: 300000
   })
 
   useEffect(() => {
@@ -58,7 +60,8 @@ const BookingList = () => {
     fetchPolicy: 'no-cache',
     variables: {
       filter: genericFilter
-    }
+    },
+    pollInterval: 300000
   })
 
   useEffect(() => {
@@ -69,7 +72,8 @@ const BookingList = () => {
     fetchPolicy: 'no-cache',
     variables: {
       filter: genericFilter
-    }
+    },
+    pollInterval: 300000
   })
 
   useEffect(() => {
