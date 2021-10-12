@@ -127,7 +127,8 @@ function BoardCard({
     return (
       <>
         <p className="text-truncate m-0 p-0">
-          <strong>{capitalizeString(customerName)}</strong>
+          <strong>{capitalizeString(customerName && customerName.split(' ')[0])}</strong>
+          <span className="text-primary small">{` ~ $${total}`}</span>
           <br />
           <small className="text-xs">{classTitle}</small>
         </p>
@@ -135,7 +136,7 @@ function BoardCard({
         <p className="m-0 p-0">
           <small className="">
             <strong>Updated: </strong>
-            {moment(updatedAt).fromNow()} | <span className="text-primary">~ ${total}</span>
+            {moment(updatedAt).fromNow()}
           </small>
         </p>
       </>

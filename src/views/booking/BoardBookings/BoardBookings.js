@@ -89,7 +89,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
         updatedAt
       }) => {
         return {
-          customerName: getCustomerName(customerId, customers),
+          customerName,
           _id,
           attendees,
           teamClassId,
