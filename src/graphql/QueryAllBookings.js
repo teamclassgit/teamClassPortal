@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  query GetBookings($filter: BookingQueryInput!) {
-    bookings(limit: 10000, query: $filter, sortBy: UPDATEDAT_DESC) {
+  query GetBookings($filter: BookingQueryInput!, $limit: Int!) {
+    bookings(limit: $limit, query: $filter, sortBy: UPDATEDAT_DESC) {
       _id
       teamClassId
       customerId
@@ -22,6 +22,9 @@ export default gql`
       payments {
         amount
         paymentId
+      }
+      classVariant {
+        title
       }
       createdAt
       updatedAt

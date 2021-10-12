@@ -17,6 +17,15 @@ const isToday = (date) => {
   )
 }
 
+export const capitalizeString = (str) => {
+  if (!str) return
+  const strComponents = str.toLowerCase().split(' ')
+  strComponents.forEach((element, index) => {
+    if (element && element[0] && element[0].length > 0) strComponents[index] = element.replace(element[0], element[0].toUpperCase())
+  })
+  return strComponents.join(' ')
+}
+
 /**
  ** Format and return date in Humanize format
  ** Intl docs: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/format
@@ -64,8 +73,8 @@ export const getHomeRouteForLoggedInUser = (userRole) => {
 }
 
 export const toAmPm = (hour, minutes, timeZoneLabel) => {
-  const suffix = hour >= 12 ? "PM" : "AM"
-  const hours = `${hour >= 12 ? (((hour + 11) % 12) + 1) : hour}:${minutes === 0 ? '00' : minutes} ${suffix} ${timeZoneLabel}`
+  const suffix = hour >= 12 ? 'PM' : 'AM'
+  const hours = `${hour >= 12 ? ((hour + 11) % 12) + 1 : hour}:${minutes === 0 ? '00' : minutes} ${suffix} ${timeZoneLabel}`
 
   return hours
 }
