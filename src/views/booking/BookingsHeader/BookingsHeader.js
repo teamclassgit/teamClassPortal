@@ -22,10 +22,6 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
   const [limit, setLimit] = useState(defaultLimit)
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
 
-  useEffect(() => {
-    setSearchValue('')
-  }, [bookings])
-
   // ** Converts table to CSV
   function convertArrayOfObjectsToCSV(array) {
     let result
