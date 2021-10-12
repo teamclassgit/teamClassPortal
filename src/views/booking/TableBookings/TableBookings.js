@@ -6,87 +6,14 @@ import Avatar from '@components/avatar'
 import DataTable from 'react-data-table-component'
 import { Edit2, ShoppingCart, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather'
 import ReactPaginate from 'react-paginate'
-import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import { Button, Card } from 'reactstrap'
 import StatusSelector from './StatusSelector'
-import {
-  getCustomerEmail,
-  getClassTitle,
-  getBookingValue,
-  getCustomerPhone,
-  getCustomerCompany,
-  getBookingColor,
-  getFormattedEventDate
-} from '../common'
+import { getCustomerEmail, getClassTitle, getBookingColor, getFormattedEventDate } from '../common'
 import './TableBookings.scss'
 import CardLink from 'reactstrap/lib/CardLink'
 
-const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement, classes, calendarEvents, changeView }) => {
-  const { classFilterContext } = useContext(FiltersContext)
-  const [data, setData] = useState(bookings)
+const DataTableBookings = ({ filteredData, customers, classes, calendarEvents }) => {
   const [currentPage, setCurrentPage] = useState(0)
-  const [searchValue, setSearchValue] = useState('')
-  const [filteredData, setFilteredData] = useState([])
-
-  const handleFilterByClass = (classId) => {
-    const newBookings = bookings.filter(({ teamClassId }) => teamClassId === classId)
-    setFilteredData(newBookings)
-    setSearchValue(classId)
-  }
-
-  const handleSearch = (value) => {
-    let updatedData = []
-    if (value.length) {
-      updatedData = bookings.filter((item) => {
-        const startsWith =
-          (item.customerName && item.customerName.toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.customerId && getCustomerEmail(item.customerId, customers).toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().startsWith(value.toLowerCase()))
-
-        const includes =
-          (item.customerName && item.customerName.toLowerCase().includes(value.toLowerCase())) ||
-          (item.customerId && getCustomerEmail(item.customerId, customers).toLowerCase().includes(value.toLowerCase())) ||
-          (item.teamClassId && getClassTitle(item.teamClassIdm, classes).toLowerCase().includes(value.toLowerCase()))
-
-        if (startsWith) {
-          return startsWith
-        } else if (!startsWith && includes) {
-          return includes
-        } else return null
-      })
-      setFilteredData(updatedData)
-      setSearchValue(value)
-    } else {
-      setFilteredData(bookings)
-    }
-  }
-
-  const handleFilterType = ({ type, value }) => {
-    switch (type) {
-      case 'class':
-        handleFilterByClass(value)
-        break
-      case 'text':
-        handleSearch(value)
-        break
-      default:
-        break
-    }
-  }
-
-  useEffect(() => {
-    if (classFilterContext) {
-      handleFilterType(classFilterContext)
-    } else {
-      setFilteredData(data)
-      setSearchValue('')
-    }
-  }, [classFilterContext])
-
-  useEffect(() => {
-    setData(bookings)
-  }, [bookings])
-
   // ** Table Common Column
   const columns = [
     {
@@ -175,58 +102,79 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
         return row.status === 'quote' ? (
           <div className="d-flex">
             <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
-              <Avatar color="light-primary" icon={<Calendar size={18} />} />
+              <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
           <div className="d-flex">
-            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
-              <Avatar color="light-primary" icon={<Calendar size={18} />} />
-            </CardLink>
             <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
-              <Avatar color="light-primary" icon={<Check size={18} />} />
+              <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
           <div className="d-flex">
             <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
-              <Avatar color="light-primary" icon={<Check size={18} />} />
+              <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
             </CardLink>
             <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-              <Avatar color="light-primary" icon={<DollarSign size={18} />} />
+              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
           <div className="d-flex">
             <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
-              <Avatar color="light-primary" icon={<Check size={18} />} />
+              <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status !== 'canceled' ? (
           <div className="d-flex">
             <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-              <Avatar color="light-primary" icon={<User size={18} />} />
+              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
             </CardLink>
             <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-              <Avatar color="light-primary" icon={<Users size={18} />} />
+              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
             </CardLink>
             <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-              <Avatar color="light-primary" icon={<DollarSign size={18} />} />
+              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" icon={<Edit2 size={18} />} />
+              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : (
@@ -248,7 +196,7 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
       nextLabel=""
       forcePage={currentPage}
       onPageChange={(page) => handlePagination(page)}
-      pageCount={searchValue.length ? filteredData.length / 7 : data.length / 7 || 1}
+      pageCount={filteredData.length / 7 || 1}
       breakLabel="..."
       pageRangeDisplayed={2}
       marginPagesDisplayed={2}
@@ -281,7 +229,7 @@ const DataTableBookings = ({ bookings, customers, setBookings, setCurrentElement
           sortIcon={<ChevronDown size={10} />}
           paginationDefaultPage={currentPage + 1}
           paginationComponent={CustomPagination}
-          data={searchValue.length ? filteredData : data}
+          data={filteredData}
         />
       </Card>
     </Fragment>
