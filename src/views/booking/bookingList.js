@@ -1,138 +1,140 @@
-import React, {Fragment, useState, useEffect} from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import DataTableBookings from './TableBookings/TableBookings'
 import BoardBookings from './BoardBookings/BoardBookings'
 import queryAllBookings from '../../graphql/QueryAllBookings'
 import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents'
 import queryAllCustomers from '../../graphql/QueryAllCustomers'
 import queryAllClasses from '../../graphql/QueryAllClasses'
-import {useQuery} from '@apollo/client'
-import {Col, Spinner} from 'reactstrap'
+import { useQuery } from '@apollo/client'
+import { Col, Spinner } from 'reactstrap'
 import BookingsHeader from './BookingsHeader/BookingsHeader'
 import FiltersModal from './BoardBookings/FiltersModal'
 import AddNewBooking from './AddNewBooking'
 
 const BookingList = () => {
-    const [genericFilter, setGenericFilter] = useState({_id_ne: ''})
-    const [bookings, setBookings] = useState([])
-    const [customers, setCustomers] = useState([])
-    const [classes, setClasses] = useState([])
-    const [calendarEvents, setCalendarEvents] = useState([])
-    const [switchView, setSwitchView] = useState(false)
-    const [showFiltersModal, setShowFiltersModal] = useState(false)
-    const [showAddModal, setShowAddModal] = useState(false)
-    const [currentElement, setCurrentElement] = useState(null)
+  const [genericFilter, setGenericFilter] = useState({})
+  const [bookings, setBookings] = useState([])
+  const [customers, setCustomers] = useState([])
+  const [classes, setClasses] = useState([])
+  const [calendarEvents, setCalendarEvents] = useState([])
+  const [switchView, setSwitchView] = useState(false)
+  const [showFiltersModal, setShowFiltersModal] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [currentElement, setCurrentElement] = useState(null)
 
-    const {...allBookingsResult} = useQuery(queryAllBookings, {
-        fetchPolicy: 'no-cache',
-        variables: {
-            filter: genericFilter
-        }
-    })
+  const { ...allBookingsResult } = useQuery(queryAllBookings, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    }
+  })
 
-    useEffect(() => {
-        if (allBookingsResult.data) setBookings(allBookingsResult.data.bookings.map((element) => element))
-    }, [allBookingsResult.data])
+  useEffect(() => {
+    if (allBookingsResult.data) setBookings(allBookingsResult.data.bookings.map((element) => element))
+  }, [allBookingsResult.data])
 
-    const {...allCalendarEventsResults} = useQuery(queryAllCalendarEvents, {
-        fetchPolicy: 'no-cache',
-        variables: {
-            filter: genericFilter
-        }
-    })
+  const { ...allCalendarEventsResults } = useQuery(queryAllCalendarEvents, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    }
+  })
 
-    useEffect(() => {
-        if (allCalendarEventsResults.data) setCalendarEvents(allCalendarEventsResults.data.calendarEvents)
-    }, [allCalendarEventsResults.data])
+  useEffect(() => {
+    if (allCalendarEventsResults.data) setCalendarEvents(allCalendarEventsResults.data.calendarEvents)
+  }, [allCalendarEventsResults.data])
 
-    const {...allCustomersResult} = useQuery(queryAllCustomers, {
-        fetchPolicy: 'no-cache',
-        variables: {
-            filter: genericFilter
-        }
-    })
+  const { ...allCustomersResult } = useQuery(queryAllCustomers, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    }
+  })
 
-    useEffect(() => {
-        if (allCustomersResult.data) setCustomers(allCustomersResult.data.customers)
-    }, [allCustomersResult.data])
+  useEffect(() => {
+    if (allCustomersResult.data) setCustomers(allCustomersResult.data.customers)
+  }, [allCustomersResult.data])
 
-    const {...allClasses} = useQuery(queryAllClasses, {
-        fetchPolicy: 'no-cache',
-        variables: {
-            filter: genericFilter
-        }
-    })
+  const { ...allClasses } = useQuery(queryAllClasses, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    }
+  })
 
-    useEffect(() => {
-        if (allClasses.data) setClasses(allClasses.data.teamClasses)
-    }, [allClasses.data])
+  useEffect(() => {
+    if (allClasses.data) setClasses(allClasses.data.teamClasses)
+  }, [allClasses.data])
 
-    const handleModal = () => setShowAddModal(!showAddModal)
+  const handleModal = () => setShowAddModal(!showAddModal)
 
-    // ** Function to handle Modal toggle
-    return (
-        <Fragment>
-            {(allClasses.loading || allBookingsResult.loading || allCalendarEventsResults.loading || allCustomersResult.loading) ? (
-                <div>
-                    <Spinner className="mr-25"/>
-                    <Spinner type="grow"/>
-                </div>
-            ) : allBookingsResult && allBookingsResult.data && (
-                <>
-                    <BookingsHeader
-                        setShowFiltersModal={(val) => setShowFiltersModal(val)}
-                        switchView={switchView}
-                        setSwitchView={() => setSwitchView(!switchView)}
-                        showAddModal={() => handleModal()}
-                        setCurrentElement={(d) => setCurrentElement(d)}
-                        classes={classes}
-                        customers={customers}
-                        bookings={bookings}
-                    />
-                    <Col sm="12">
-                        {bookings && bookings.length > 0 && switchView ? (
-                            <DataTableBookings
-                                bookings={bookings}
-                                setBookings={setBookings}
-                                customers={customers}
-                                calendarEvents={calendarEvents}
-                                classes={classes}
-                                changeView={() => setSwitchView(!switchView)}
-                                setCurrentElement={(d) => {
-                                    setCurrentElement(d)
-                                    handleModal()
-                                }}
-                            />
-                        ) : (
-                            <BoardBookings
-                                bookings={bookings}
-                                customers={customers}
-                                setCustomers={setCustomers}
-                                calendarEvents={calendarEvents}
-                                classes={classes}
-                                changeView={() => setSwitchView(!switchView)}
-                                setCurrentElement={(d) => {
-                                    setCurrentElement(d)
-                                    handleModal()
-                                }}
-                            />
-                        )}
-                    </Col>
-                    <FiltersModal open={showFiltersModal} handleModal={() => setShowFiltersModal(!showFiltersModal)}
-                                  classes={classes}/>
-                    <AddNewBooking
-                        open={showAddModal}
-                        handleModal={handleModal}
-                        bookings={bookings}
-                        classes={classes}
-                        setCustomers={setCustomers}
-                        customers={customers}
-                        currentElement={currentElement}
-                        editMode={currentElement?.editMode}
-                        setBookings={setBookings}
-                    />
-                </>
-            )}
-        </Fragment>
-    )
+  // ** Function to handle Modal toggle
+  return (
+    <Fragment>
+      {allClasses.loading || allBookingsResult.loading || allCalendarEventsResults.loading || allCustomersResult.loading ? (
+        <div>
+          <Spinner className="mr-25" />
+          <Spinner type="grow" />
+        </div>
+      ) : (
+        allBookingsResult &&
+        allBookingsResult.data && (
+          <>
+            <BookingsHeader
+              setShowFiltersModal={(val) => setShowFiltersModal(val)}
+              switchView={switchView}
+              setSwitchView={() => setSwitchView(!switchView)}
+              showAddModal={() => handleModal()}
+              setCurrentElement={(d) => setCurrentElement(d)}
+              classes={classes}
+              customers={customers}
+              bookings={bookings}
+            />
+            <Col sm="12">
+              {bookings && bookings.length > 0 && switchView ? (
+                <DataTableBookings
+                  bookings={bookings}
+                  setBookings={setBookings}
+                  customers={customers}
+                  calendarEvents={calendarEvents}
+                  classes={classes}
+                  changeView={() => setSwitchView(!switchView)}
+                  setCurrentElement={(d) => {
+                    setCurrentElement(d)
+                    handleModal()
+                  }}
+                />
+              ) : (
+                <BoardBookings
+                  bookings={bookings}
+                  customers={customers}
+                  setCustomers={setCustomers}
+                  calendarEvents={calendarEvents}
+                  classes={classes}
+                  changeView={() => setSwitchView(!switchView)}
+                  setCurrentElement={(d) => {
+                    setCurrentElement(d)
+                    handleModal()
+                  }}
+                />
+              )}
+            </Col>
+            <FiltersModal open={showFiltersModal} handleModal={() => setShowFiltersModal(!showFiltersModal)} classes={classes} />
+            <AddNewBooking
+              open={showAddModal}
+              handleModal={handleModal}
+              bookings={bookings}
+              classes={classes}
+              setCustomers={setCustomers}
+              customers={customers}
+              currentElement={currentElement}
+              editMode={currentElement?.editMode}
+              setBookings={setBookings}
+            />
+          </>
+        )
+      )}
+    </Fragment>
+  )
 }
 export default BookingList
