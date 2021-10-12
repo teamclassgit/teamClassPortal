@@ -155,8 +155,10 @@ const BookingList = () => {
           <Spinner type="grow" />
         </div>
       ) : (
-        allBookingsResult &&
-        allBookingsResult.data && (
+        filteredBookings &&
+        customers &&
+        calendarEvents &&
+        classes && (
           <>
             <Col sm="12">
               {bookings && bookings.length > 0 && switchView ? (
