@@ -20,8 +20,6 @@ import {RUSH_FEE, SERVICE_FEE} from "../../utility/Constants"
 const WizardClassBooking = () => {
 
     const [bookingInfo, setBookingInfo] = React.useState(null)
-    const [bookingAdditions, setBookingAdditions] = React.useState([])
-    const [totalAdditions, setTotalAdditions] = React.useState(0)
     const [confirmation, setConfirmation] = React.useState(false)
     const [teamClass, setTeamClass] = React.useState(null)
     const [customer, setCustomer] = React.useState(null)
@@ -111,23 +109,6 @@ const WizardClassBooking = () => {
         }
 
     }, [calendarEventsByClassResult.data])
-
-    React.useEffect(() => {
-
-        let total = 0
-
-        if (bookingAdditions && bookingInfo) {
-            total = bookingAdditions.reduce((accumulator, current) => {
-                if (current.unit === "Class") return accumulator + (current.unitPrice * (current.quantity ? current.quantity : 0))
-                else if (current.unit === "Attendee") return accumulator + (current.unitPrice * bookingInfo.attendees * (current.quantity ? current.quantity : 0))
-                else return 0
-            }, 0)
-        }
-
-        setTotalAdditions(total)
-
-    }, [bookingAdditions])
-
 
     const steps = [
         {
@@ -225,8 +206,7 @@ const WizardClassBooking = () => {
                                                                 pricePerson={bookingInfo.pricePerson}
                                                                 minimum={bookingInfo.classMinimum}
                                                                 salesTax={bookingInfo.salesTax}
-                                                                bookingId={id}
-                                                                additionals={totalAdditions}/>)}
+                                                                bookingId={id}/>)}
                 </div>
             </Col>
         </Row>

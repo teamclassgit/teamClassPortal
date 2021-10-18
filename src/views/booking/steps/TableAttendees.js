@@ -1,5 +1,5 @@
 // ** React Imports
-import React, {forwardRef, Fragment, useState} from 'react'
+import React, { forwardRef, Fragment, useState } from 'react'
 // ** Add New Modal Component
 import AddNewAttendee from './AddNewAttendee'
 import UploadData from "./UploadData"
@@ -8,7 +8,7 @@ import Avatar from '@components/avatar'
 // ** Third Party Components
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
-import {AlertTriangle, ChevronDown, Download, Edit, Grid, Plus, Share, Trash} from 'react-feather'
+import { Users, ChevronDown, Download, Edit, Grid, Plus, Share, Trash } from 'react-feather'
 import {
     Badge,
     Button,
@@ -27,21 +27,21 @@ import {
 
 
 // ** Bootstrap Checkbox Component
-const BootstrapCheckbox = forwardRef(({onClick, ...rest}, ref) => (
+const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
     <div className='custom-control custom-checkbox'>
         <input type='checkbox' className='custom-control-input' ref={ref} {...rest} />
-        <label className='custom-control-label' onClick={onClick}/>
+        <label className='custom-control-label' onClick={onClick} />
     </div>
 ))
 
 const DataTableAttendees = ({
-                                hasKit,
-                                currentBookingId,
-                                attendees,
-                                saveAttendee,
-                                deleteAttendee,
-                                updateAttendeesCount
-                            }) => {
+    hasKit,
+    currentBookingId,
+    attendees,
+    saveAttendee,
+    deleteAttendee,
+    updateAttendeesCount
+}) => {
 
     // ** States
     const [currentElement, setCurrentElement] = useState(null)
@@ -60,7 +60,7 @@ const DataTableAttendees = ({
 
     React.useEffect(() => {
 
-       setData(attendees)
+        setData(attendees)
 
     }, [attendees])
 
@@ -68,8 +68,8 @@ const DataTableAttendees = ({
     const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']
 
     const status = {
-        1: {title: 'Waiting', color: 'light-warning'},
-        2: {title: 'Completed', color: 'light-success'}
+        1: { title: 'Waiting', color: 'light-warning' },
+        2: { title: 'Completed', color: 'light-success' }
     }
 
     const getStatus = (row) => {
@@ -85,7 +85,7 @@ const DataTableAttendees = ({
             maxWidth: '250px',
             cell: row => (
                 <div className='d-flex align-items-center'>
-                    <Avatar color={`${status[getStatus(row)].color}`} content={row.name} initials/>
+                    <Avatar color={`${status[getStatus(row)].color}`} content={row.name} initials />
                     <div className='user-info text-truncate ml-1'>
                         <span className='d-block font-weight-bold text-truncate'>{row.name}</span>
                     </div>
@@ -99,7 +99,7 @@ const DataTableAttendees = ({
             maxWidth: '250px'
         },
         {
-            name: 'Shipping Address',
+            name: 'Address',
             selector: 'addressLine1',
             sortable: true,
             maxWidth: '300px',
@@ -140,13 +140,13 @@ const DataTableAttendees = ({
                             })
 
                         }} href="#" title="Remove from list">
-                            <Trash size={15}/>
+                            <Trash size={18} />
                         </a>
                         <a onClick={e => {
                             setCurrentElement(row)
                             handleModal()
                         }} href="#">
-                            <Edit size={15} title="Edit"/>
+                            <Edit size={18} title="Edit" />
                         </a>
                     </div>
                 )
@@ -166,7 +166,6 @@ const DataTableAttendees = ({
                     (item.name && item.name.toLowerCase().startsWith(value.toLowerCase())) ||
                     (item.phone && item.phone.toLowerCase().startsWith(value.toLowerCase())) ||
                     (item.email && item.email.toLowerCase().startsWith(value.toLowerCase())) ||
-                    (item.dietaryRestrictions && item.dietaryRestrictions.toLowerCase().startsWith(value.toLowerCase())) ||
                     (item.address1 && item.address1.toLowerCase().startsWith(value.toLowerCase())) ||
                     (item.address2 && item.address2.toLowerCase().startsWith(value.toLowerCase())) ||
                     (item.city && item.city.toLowerCase().startsWith(value.toLowerCase())) ||
@@ -178,7 +177,6 @@ const DataTableAttendees = ({
                     (item.name && item.name.toLowerCase().includes(value.toLowerCase())) ||
                     (item.phone && item.phone.toLowerCase().includes(value.toLowerCase())) ||
                     (item.email && item.email.toLowerCase().includes(value.toLowerCase())) ||
-                    (item.dietaryRestrictions && item.dietaryRestrictions.toLowerCase().includes(value.toLowerCase())) ||
                     (item.address1 && item.address1.toLowerCase().includes(value.toLowerCase())) ||
                     (item.address2 && item.address2.toLowerCase().includes(value.toLowerCase())) ||
                     (item.city && item.city.toLowerCase().includes(value.toLowerCase())) ||
@@ -286,23 +284,21 @@ const DataTableAttendees = ({
             <Card>
                 <CardHeader className='flex-md-row flex-column align-md-items-center align-items-start border-bottom'>
                     <CardTitle tag='h4'>Your list of attendees<br></br>{hasKit && (
-                        <small><AlertTriangle size={15}/> This event includes delivery. We'll email your attendees to
-                            collect
-                            shipping information.</small>)}</CardTitle>
+                        <small>{` Attendees registered: `}<Badge color="primary"> {`${data.length}`}</Badge></small>)}</CardTitle>
 
                     <div className='d-flex mt-md-0 mt-1'>
                         <UncontrolledButtonDropdown>
                             <DropdownToggle color='secondary' caret outline>
-                                <Share size={15}/>
+                                <Share size={15} />
                                 <span className='align-middle ml-50'>Bulk actions</span>
                             </DropdownToggle>
                             <DropdownMenu right>
                                 <DropdownItem className='w-100' onClick={downloadTemplate}>
-                                    <Download size={15}/>
+                                    <Download size={15} />
                                     <span className='align-middle ml-50'>Download template<br></br><small>Use this template to build your list</small></span>
                                 </DropdownItem>
                                 <DropdownItem className='w-100' onClick={handleModalUpload}>
-                                    <Grid size={15}/>
+                                    <Grid size={15} />
                                     <span className='align-middle ml-50'>Upload data<br></br><small>Excel file with your attendees</small></span>
                                 </DropdownItem>
                             </DropdownMenu>
@@ -319,14 +315,13 @@ const DataTableAttendees = ({
                                 email: "",
                                 country: "",
                                 name: "",
-                                state: "",
-                                dietaryRestrictions: ""
+                                state: ""
                             }
 
                             setCurrentElement(newElementTemplate)
                             handleModal()
                         }}>
-                            <Plus size={15}/>
+                            <Plus size={15} />
                             <span className='align-middle ml-50'>Add Attendee</span>
                         </Button>
                     </div>
@@ -352,7 +347,7 @@ const DataTableAttendees = ({
                     columns={columns}
                     paginationPerPage={7}
                     className='react-dataTable'
-                    sortIcon={<ChevronDown size={10}/>}
+                    sortIcon={<ChevronDown size={10} />}
                     paginationDefaultPage={currentPage + 1}
                     paginationComponent={CustomPagination}
                     data={searchValue.length ? filteredData : data}
@@ -360,9 +355,9 @@ const DataTableAttendees = ({
                 />
             </Card>
             <AddNewAttendee open={modal} handleModal={handleModal} currentBookingId={currentBookingId}
-                            currentElement={currentElement} saveAttendee={saveAttendee} data={data} setData={setData} updateAttendeesCount={updateAttendeesCount}/>
+                currentElement={currentElement} saveAttendee={saveAttendee} data={data} setData={setData} updateAttendeesCount={updateAttendeesCount} />
             <UploadData open={modalUpload} handleModal={handleModalUpload} currentBookingId={currentBookingId}
-                        saveAttendee={saveAttendee} data={data} setData={setData} updateAttendeesCount={updateAttendeesCount}/>
+                saveAttendee={saveAttendee} data={data} setData={setData} updateAttendeesCount={updateAttendeesCount} />
         </Fragment>
     )
 }

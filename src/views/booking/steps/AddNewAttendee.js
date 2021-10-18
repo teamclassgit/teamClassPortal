@@ -43,7 +43,6 @@ const AddNewAttendee = ({
     const [newState, setNewState] = React.useState("")
     const [newZip, setNewZip] = React.useState("")
     const [newCountry, setNewCountry] = React.useState("")
-    const [newDiet, setNewDiet] = React.useState("")
     const [processing, setProcessing] = React.useState(false)
     const [emailValid, setEmailValid] = React.useState(true)
 
@@ -69,8 +68,7 @@ const AddNewAttendee = ({
                 email: newEmail,
                 country: newCountry,
                 name: newName,
-                state: newState,
-                dietaryRestrictions: newDiet
+                state: newState
             }
 
             const savedRow = await saveAttendee(newElement)
@@ -108,7 +106,6 @@ const AddNewAttendee = ({
             setNewState(currentElement.state)
             setNewZip(currentElement.zip)
             setNewCountry(currentElement.country)
-            setNewDiet(currentElement.dietaryRestrictions)
         }
 
     }, [currentElement])
@@ -192,13 +189,7 @@ const AddNewAttendee = ({
                                onChange={e => setNewZip(e.target.value)}/>
                     </InputGroup>
                 </FormGroup>
-                <FormGroup>
-                    <Label for='diet'>Diet Restrictions</Label>
-                    <InputGroup>
-                        <Input type='textarea' name='diet' id='diet' rows='3' value={newDiet}
-                               onChange={e => setNewDiet(e.target.value)} placeholder=''/>
-                    </InputGroup>
-                </FormGroup>
+                
                 <Button className='mr-1' color='primary' onClick={saveNewAttendee}
                         disabled={!newName || !newEmail || processing || !emailValid}>
                     {processing ? "Saving..." : "Save"}
