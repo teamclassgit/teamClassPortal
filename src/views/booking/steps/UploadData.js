@@ -1,18 +1,18 @@
 // ** React Imports
-import React, {useState} from 'react'
-import readXlsxFile, {Email} from 'read-excel-file'
-import {X} from 'react-feather'
-import {Alert, Button, Card, CardBody, CardHeader, CardTitle, Modal, ModalBody, ModalHeader} from 'reactstrap'
+import React, { useState } from 'react'
+import readXlsxFile, { Email } from 'read-excel-file'
+import { X } from 'react-feather'
+import { Alert, Button, Card, CardBody, CardHeader, CardTitle, Modal, ModalBody, ModalHeader } from 'reactstrap'
 import Uppy from '@uppy/core'
-import {DragDrop} from '@uppy/react'
+import { DragDrop } from '@uppy/react'
 // ** Styles
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import 'uppy/dist/uppy.css'
 import '@uppy/status-bar/dist/style.css'
 import '@styles/react/libs/file-uploader/file-uploader.scss'
-import {v4 as uuid} from 'uuid'
+import { v4 as uuid } from 'uuid'
 
-const UploadData = ({open, handleModal, currentBookingId, saveAttendee, data, setData, updateAttendeesCount}) => {
+const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, setData, updateAttendeesCount }) => {
 
     const [file, setFile] = useState(null)
     const [errors, setErrors] = useState([])
@@ -63,11 +63,11 @@ const UploadData = ({open, handleModal, currentBookingId, saveAttendee, data, se
     }
 
     // ** Custom close btn
-    const CloseBtn = <X className='cursor-pointer' size={15} onClick={cancel}/>
+    const CloseBtn = <X className='cursor-pointer' size={15} onClick={cancel} />
 
     const uppy = new Uppy({
-        meta: {type: 'avatar'},
-        restrictions: {maxNumberOfFiles: 1, allowedFileTypes: ['.xlsx']},
+        meta: { type: 'avatar' },
+        restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ['.xlsx'] },
         autoProceed: true
     })
 
@@ -117,18 +117,13 @@ const UploadData = ({open, handleModal, currentBookingId, saveAttendee, data, se
             prop: 'country',
             type: String,
             required: false
-        },
-        'Dietary Restrictions': {
-            prop: 'dietaryRestrictions',
-            type: String,
-            required: false
         }
     }
 
     uppy.on('complete', (result) => {
         if (result && result.successful && result.successful.length > 0) {
             setFile(result.successful[0].data)
-            readXlsxFile(result.successful[0].data, {schema}).then((rows) => {
+            readXlsxFile(result.successful[0].data, { schema }).then((rows) => {
                 setErrors(rows.errors)
                 console.log(rows.errors)
                 setFileData(rows.rows.map((element) => {
@@ -157,22 +152,22 @@ const UploadData = ({open, handleModal, currentBookingId, saveAttendee, data, se
                         <CardTitle tag='h4'> Attendees file </CardTitle>
                     </CardHeader>
                     <CardBody>
-                        <DragDrop uppy={uppy}/>
+                        <DragDrop uppy={uppy} />
                         {file && (<span>{file.name}</span>)}
                         {file && fileData && errors && (<Alert color='primary' isOpen={true}>
                             <div className='alert-body'>
                                 <span>
-                                    Number of rows: {fileData.length}<br/>
-                                    Errors: {errors.length}<br/>
+                                    Number of rows: {fileData.length}<br />
+                                    Errors: {errors.length}<br />
                                     <small>ProTip: Your file should match our template's structure</small>
-                                  </span>
+                                </span>
                             </div>
                         </Alert>)}
                     </CardBody>
                 </Card>
 
                 <Button className='mr-1' color='primary' onClick={save}
-                        disabled={processing || !file || !fileData || (errors && errors.length > 0)}>
+                    disabled={processing || !file || !fileData || (errors && errors.length > 0)}>
                     {processing ? "Loading..." : "Load"}
                 </Button>
                 <Button color='secondary' onClick={cancel} outline disabled={processing}>

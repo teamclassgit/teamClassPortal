@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client"
+import { gql } from "@apollo/client"
 
 export default gql`
 mutation createAttendee(
@@ -12,8 +12,7 @@ mutation createAttendee(
   $city: String, 
   $state: String, 
   $zip: String,
-  $country: String, 
-  $dietaryRestrictions: String
+  $country: String
 ) {
    upsertOneAttendee(
          query:{_id: $id},
@@ -28,8 +27,7 @@ mutation createAttendee(
               city: $city,
               state: $state,
               zip: $zip,
-              country: $country,
-              dietaryRestrictions: $dietaryRestrictions
+              country: $country
           }) {
                 _id
                 bookingId
@@ -42,6 +40,5 @@ mutation createAttendee(
                 country
                 email
                 phone
-                dietaryRestrictions
             }
 }`
