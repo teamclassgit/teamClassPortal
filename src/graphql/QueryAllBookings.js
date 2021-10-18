@@ -22,6 +22,7 @@ export default gql`
       payments {
         amount
         paymentId
+        paymentName
       }
       classVariant {
         title
