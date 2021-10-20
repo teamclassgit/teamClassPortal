@@ -1,26 +1,29 @@
-import {gql} from "@apollo/client"
+import { gql } from '@apollo/client'
 
 export default gql`
-query GetTeamClass($classId: String!) {
+  query GetTeamClass($classId: String!) {
     teamClass(query: { _id : $classId }) {
       _id
       title
       category
       minimum
       hasKit
+      instantBooking
       shippingIncluded
       shippingCountries
       isVirtual
+      internationalShipping
       duration
       pricePerson
       instructorId
       location
+      listingFriendlyId
       instructorAvatarImage
       instructorName
       instructorIntro
       catalogImage
       description
-      included
+      highlights
       isActive
       order
       timeZone
@@ -29,6 +32,7 @@ query GetTeamClass($classId: String!) {
       notes
       requiredFromAttendees
       kitIncludes
+      additionalCategories
       firstTimeCustomerRequestQuoteCampaignId
       requestQuoteTemplateId
       addons {
@@ -62,11 +66,23 @@ query GetTeamClass($classId: String!) {
          title
          notes
          minimum
+         maximum
          duration
          pricePerson
          hasKit
          order
          active
+         groupEvent
+      }
+      registrationFields {
+        label
+        placeholder
+        type
+        listItems
+        required
+        active
+        order
       }
     }
-  }`
+  }
+`
