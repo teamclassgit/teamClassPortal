@@ -17,8 +17,8 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
   // ** Table Common Column
   const columns = [
     {
-      name: 'Created',
-      selector: 'createdAt',
+      name: 'Updated',
+      selector: 'updatedAt',
       sortable: true,
       maxWidth: '120px',
       cell: (row) => (
@@ -89,13 +89,13 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
       name: 'Status',
       selector: 'status',
       sortable: true,
-      maxWidth: '200px',
+      maxWidth: '120px',
       cell: (row) => <StatusSelector row={row} calendarEvent={calendarEvents.find((element) => element.bookingId === row._id)} />
     },
     {
       name: 'Actions',
       allowOverflow: true,
-      maxWidth: '20px',
+      maxWidth: '200px',
       cell: (row) => {
         const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id)
 

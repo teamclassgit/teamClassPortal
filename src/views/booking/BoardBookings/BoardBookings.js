@@ -60,6 +60,12 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
       })
     }
 
+    if (column === 'paid') {
+      return bookingCards.filter(({ status, payments }) => {
+        return status.indexOf(column) > -1 && payments && payments.length > 1
+      })
+    }
+
     if (column === 'reviews') {
       return bookingCards.filter(({ status, payments }) => {
         return status.indexOf('confirmed') > -1 && (!payments || payments.length === 0)
