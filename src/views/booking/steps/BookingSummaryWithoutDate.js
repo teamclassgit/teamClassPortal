@@ -13,11 +13,9 @@ const BookingSummaryWithoutDate = ({
   pricePerson,
   minimum,
   salesTax,
-  additionals,
   calendarEvent,
   teamClass,
-  bookingId,
-  flipCard
+  bookingId
 }) => {
   const [totalWithoutFee, setTotalWithoutFee] = React.useState(0)
   const [totalUnderGroupFee, setTotalUnderGroupFee] = React.useState(0)
@@ -33,8 +31,8 @@ const BookingSummaryWithoutDate = ({
     const underGroupFee = attendees > minimum ? 0 : pricePerson * (minimum - attendees)
     const rushFee = calendarEvent && calendarEvent.rushFee ? withoutFee * classRushFee : 0
     const fee = withoutFee * serviceFee
-    const tax = (withoutFee + fee + additionals + rushFee) * salesTax
-    const finalValue = withoutFee + additionals + fee + rushFee + tax
+    const tax = (withoutFee + fee + rushFee) * salesTax
+    const finalValue = withoutFee + fee + rushFee + tax
 
     setTotalTax(tax.toFixed(2))
     setTotalWithoutFee(withoutFee.toFixed(2))
@@ -46,7 +44,7 @@ const BookingSummaryWithoutDate = ({
 
   React.useEffect(() => {
     getTotals()
-  }, [serviceFee, attendees, pricePerson, minimum, additionals])
+  }, [serviceFee, attendees, pricePerson, minimum])
 
   React.useEffect(() => {
     //setDate([new Date(2021, 4, 10)])
@@ -55,14 +53,9 @@ const BookingSummaryWithoutDate = ({
   }, [calendarEvent, teamClass])
 
   return (
-    <div className={`sticky-top rounded ${!flipCard ? 'py-3' : ''}`}>
+    <div className={`sticky-top rounded py-3`}>
       <Card className="border-0 shadow card-developer-meetup">
         <CardBody className="p-2">
-          {flipCard && (
-            <Button color="link" className="flip-button text-muted" onClick={() => flipCard()}>
-              <Repeat size={14} />
-            </Button>
-          )}
           <div className="text-block pb-2">
             <Media className="align-items-center">
               <Media body>
@@ -72,9 +65,6 @@ const BookingSummaryWithoutDate = ({
                   </p>
                   <a className="text-reset">{teamClass.title}</a>
                 </h6>
-                <p className="text-muted text-sm mb-0">
-                  {teamClass.duration * 60} Minutes | {teamClass.hasKit ? 'Kit included' : ''}
-                </p>
               </Media>
             </Media>
           </div>
@@ -109,10 +99,6 @@ const BookingSummaryWithoutDate = ({
                     {attendees < minimum && <FormText color="muted">Under 10 group fee</FormText>}
                   </th>
                   <td className="text-right pb-1 text-sm">${totalWithoutFee}</td>
-                </tr>
-                <tr>
-                  <th className="font-weight-normal text-sm pb-1 ">Add-ons</th>
-                  <td className="text-right text-sm pb-1 ">${additionals.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <th className="font-weight-normal text-sm pb-1">Booking fee ({serviceFee * 100}%)</th>
