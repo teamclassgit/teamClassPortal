@@ -10,7 +10,7 @@ import { useMutation } from '@apollo/client'
 import mutationUpdateQuote from '../../../graphql/MutationUpdateQuote'
 import { isValidEmail } from '../../../utility/Utils'
 
-const BillingInfo = ({ stepper, type, booking, attendeesListCount, customer, calendarEvent, setCalendarEvent, setConfirmation }) => {
+const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
   const [phone, setPhone] = React.useState('')
   const [name, setName] = React.useState('')
   const [company, setCompany] = React.useState('')
@@ -120,8 +120,7 @@ const BillingInfo = ({ stepper, type, booking, attendeesListCount, customer, cal
           </Col>
         </Row>
         <div className="d-flex justify-content-between">
-          <span>
-          </span>
+          <span></span>
           <Button.Ripple
             color="primary"
             className="btn-submit"

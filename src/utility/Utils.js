@@ -1,4 +1,4 @@
-import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from "./Constants"
+import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from './Constants'
 
 // ** Checks if an object is empty (returns boolean)
 export const isObjEmpty = (obj) => Object.keys(obj).length === 0
@@ -106,52 +106,56 @@ export const selectThemeColors = (theme) => ({
 })
 
 //get totals associated to a booking
-export const getBookingTotals = (
-  bookingInfo,
-  isRushDate,
-  salesTax = SALES_TAX,
-  isCardFeeIncluded = false
-) => {
-  const minimum = bookingInfo.classVariant
-    ? bookingInfo.classVariant.minimum
-    : bookingInfo.classMinimum
+export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false) => {
+  const minimum = bookingInfo.classVariant ? bookingInfo.classVariant.minimum : bookingInfo.classMinimum
 
   //pricePerson is currently in use for group based pricing too
-  const price = bookingInfo.classVariant
-    ? bookingInfo.classVariant.pricePerson
-    : bookingInfo.pricePerson
+  const price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson
 
-  const attendees = bookingInfo.attendees
+  let totalTaxableAdditionalItems = 0
+  let totalNoTaxableAdditionalItems = 0
+  let customDeposit,
+    customAttendees = undefined
+
+  if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
+    customDeposit = bookingInfo.invoiceDetails[0].unitPrice
+    customAttendees = bookingInfo.invoiceDetails[1].units
+
+    const items = bookingInfo.invoiceDetails.slice(2)
+
+    totalTaxableAdditionalItems = items
+      .filter((element) => element.taxable === true)
+      .reduce((previous, current) => {
+        const currentTotal = current.unitPrice * current.units
+        return previous + currentTotal
+      }, 0)
+
+    totalNoTaxableAdditionalItems = items
+      .filter((element) => element.taxable === false)
+      .reduce((previous, current) => {
+        const currentTotal = current.unitPrice * current.units
+        return previous + currentTotal
+      }, 0)
+  }
+
+  const attendees = customAttendees || bookingInfo.attendees
 
   const addons = bookingInfo.addons
     ? bookingInfo.addons.reduce((previous, current) => {
-      return (
-        previous +
-        (current.unit === "Attendee"
-          ? current.unitPrice * attendees
-          : current.unitPrice)
-      )
-    }, 0)
+        return previous + (current.unit === 'Attendee' ? current.unitPrice * attendees : current.unitPrice)
+      }, 0)
     : 0
 
   const withoutFee =
-    bookingInfo.classVariant && bookingInfo.classVariant.groupEvent
-      ? price
-      : attendees > minimum
-        ? price * attendees
-        : price * minimum
+    bookingInfo.classVariant && bookingInfo.classVariant.groupEvent ? price : attendees > minimum ? price * attendees : price * minimum
 
-  const underGroupFee =
-    attendees > minimum ||
-      (bookingInfo.classVariant && bookingInfo.classVariant.groupEvent)
-      ? 0
-      : price * (minimum - attendees)
+  const underGroupFee = attendees > minimum || (bookingInfo.classVariant && bookingInfo.classVariant.groupEvent) ? 0 : price * (minimum - attendees)
 
   let cardFee = 0
   const rushFee = isRushDate ? withoutFee * RUSH_FEE : 0
-  const fee = withoutFee * SERVICE_FEE
-  const tax = (withoutFee + fee + rushFee + addons) * salesTax
-  let finalValue = withoutFee + fee + rushFee + addons + tax
+  const fee = (withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems) * SERVICE_FEE
+  const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems) * salesTax
+  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + fee + rushFee + addons + tax
 
   if (isCardFeeIncluded) {
     cardFee = finalValue * CREDIT_CARD_FEE
@@ -169,7 +173,10 @@ export const getBookingTotals = (
     addons,
     finalValue,
     initialDeposit,
-    cardFee,
+    customDeposit,
+    customAttendees,
+    totalTaxableAdditionalItems,
+    totalNoTaxableAdditionalItems,
+    cardFee
   }
 }
-

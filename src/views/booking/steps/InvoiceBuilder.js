@@ -29,6 +29,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
   ]
 
   const [processing, setProcessing] = React.useState(false)
+  const [formValid, setFormValid] = React.useState(true)
   const [invoiceItems, setInvoiceItems] = React.useState([])
   const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingInvoiceDetails, {})
 
@@ -59,12 +60,25 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
     }
   }, [booking])
 
+  React.useEffect(() => {
+    if (invoiceItems) {
+      let i = 0
+      let valid = true
+      while (i < invoiceItems.length && valid) {
+        let current = invoiceItems[i++]
+        valid = current.item && current.item.length > 0 && !isNaN(current.unitPrice) && current.units > 0
+      }
+
+      setFormValid(valid)
+    }
+  }, [invoiceItems])
+
   const addNewInvoiceItem = () => {
     const newInvoiceItems = [...invoiceItems]
     newInvoiceItems.push({
       item: '',
       unitPrice: 0,
-      units: 0,
+      units: 1,
       priceEditable: true,
       unitsEditable: true,
       taxable: false,
@@ -83,20 +97,16 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
     setProcessing(true)
 
     try {
-      const itemsToSave = invoiceItems.filter((element) => element.item && element.unitPrice && element.units)
-
-      if (itemsToSave && itemsToSave.length > 0) {
-        const result = await updateBooking({
-          variables: {
-            bookingId: booking._id,
-            invoiceDetails: itemsToSave,
-            updatedAt: new Date()
-          }
-        })
-
-        if (result && result.data && result.data.updateOneBooking) {
-          setBooking(result.data.updateOneBooking)
+      const result = await updateBooking({
+        variables: {
+          bookingId: booking._id,
+          invoiceDetails: invoiceItems,
+          updatedAt: new Date()
         }
+      })
+
+      if (result && result.data && result.data.updateOneBooking) {
+        setBooking(result.data.updateOneBooking)
       }
 
       console.log('booking updated')
@@ -155,6 +165,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                       <div className={`font-weight-bolder ${element.down ? 'text-danger' : 'text-default'}`}>
                         <Input
                           type="number"
+                          required={true}
                           bsSize="sm"
                           disabled={!element.priceEditable}
                           value={element.unitPrice}
@@ -169,12 +180,13 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                     </td>
                     <td align="center">
                       <NumberInput
-                        min={0}
+                        min={1}
                         max={10000}
                         value={element.units}
                         size="sm"
                         className="w-50"
                         disabled={!element.unitsEditable}
+                        required={true}
                         onChange={(newValue) => {
                           element.units = newValue
                           const newInvoiceItems = [...invoiceItems]
@@ -237,8 +249,13 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       </Row>
       <div className="d-flex justify-content-between">
         <span></span>
-        <Button.Ripple disabled={booking.status === BOOKING_PAID_STATUS} color="primary" className="btn-next" onClick={() => saveInvoiceDetails()}>
-          <span className="align-middle d-sm-inline-block d-none">Save</span>
+        <Button.Ripple
+          disabled={booking.status === BOOKING_PAID_STATUS || !formValid}
+          color="primary"
+          className="btn-next"
+          onClick={() => saveInvoiceDetails()}
+        >
+          <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
         </Button.Ripple>
       </div>
     </Fragment>

@@ -21,7 +21,7 @@ import moment from 'moment'
 
 const WizardClassBooking = () => {
   const [bookingInfo, setBookingInfo] = React.useState(null)
-  const [confirmation, setConfirmation] = React.useState(false)
+  const [confirmation, setConfirmation] = React.useState(true)
   const [teamClass, setTeamClass] = React.useState(null)
   const [customer, setCustomer] = React.useState(null)
   const [availableEvents, setAvailableEvents] = React.useState(null)
@@ -31,6 +31,7 @@ const WizardClassBooking = () => {
   const [realCountAttendees, setRealCountAttendees] = React.useState(0)
   const [totalWithoutFee, setTotalWithoutFee] = React.useState(0)
   const [totalUnderGroupFee, setTotalUnderGroupFee] = React.useState(0)
+  const [attendeesToInvoice, setAttendeesToInvoice] = React.useState(null)
   const [tax, setTax] = React.useState(0)
   const [totalTax, setTotalTax] = React.useState(0)
   const [totalServiceFee, setTotalServiceFee] = React.useState(0)
@@ -56,6 +57,7 @@ const WizardClassBooking = () => {
     },
     onCompleted: (data) => {
       setBookingInfo(data.booking)
+      setTax((data.booking && data.booking.salesTax) || 0)
     }
   })
 
@@ -82,8 +84,6 @@ const WizardClassBooking = () => {
           classId: bookingInfo.teamClassId
         }
       })
-
-      setConfirmation(bookingInfo && bookingInfo.status === 'confirmed')
 
       getTotals()
     }
@@ -142,11 +142,12 @@ const WizardClassBooking = () => {
     setTotal(bookingTotals.finalValue.toFixed(2))
     setTotalAddons(bookingTotals.addons.toFixed(2))
     setTotalCardFee(bookingTotals.cardFee.toFixed(2))
+    setAttendeesToInvoice(bookingTotals.customAttendees)
 
     const depositPayment =
       bookingInfo.payments && bookingInfo.payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
 
-    const initialDepositPaid = depositPayment ? depositPayment.amount / 100 : 0 //amount is in cents
+    const initialDepositPaid = !isNaN(bookingTotals.customDeposit) ? bookingTotals.customDeposit : depositPayment ? depositPayment.amount / 100 : 0 //amount is in cents
     const finalPayment = bookingTotals.finalValue - initialDepositPaid
     setInitialDeposit(initialDepositPaid.toFixed(2))
     setPayment(finalPayment.toFixed(2))
@@ -194,18 +195,7 @@ const WizardClassBooking = () => {
       title: 'Customer',
       subtitle: 'Basic info',
       icon: <CreditCard size={18} />,
-      content: (
-        <BillingInfo
-          stepper={stepper}
-          type="wizard-horizontal"
-          calendarEvent={calendarEvent}
-          setCalendarEvent={setCalendarEvent}
-          customer={customer}
-          booking={bookingInfo}
-          attendeesListCount={attendees && attendees.length}
-          setConfirmation={setConfirmation}
-        />
-      )
+      content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
     },
 
     {
@@ -298,6 +288,7 @@ const WizardClassBooking = () => {
               deposit={initialDeposit}
               showFinalPaymentLine={true}
               finalPayment={payment}
+              attendeesToInvoice={attendeesToInvoice || realCountAttendees}
             />
           )}
         </div>

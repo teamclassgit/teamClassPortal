@@ -28,7 +28,8 @@ const BookingCheckoutSummary = ({
   total,
   deposit,
   finalPayment,
-  showFinalPaymentLine
+  showFinalPaymentLine,
+  attendeesToInvoice
 }) => {
   return (
     <div>
@@ -133,17 +134,25 @@ const BookingCheckoutSummary = ({
               <tr>
                 <th className="font-weight-normal pt-1">
                   ${bookingInfo.pricePerson} x
-                  {' ' + (bookingInfo.attendees < bookingInfo.classMinimum ? bookingInfo.classMinimum : bookingInfo.attendees) + ' '} attendees
-                  {bookingInfo.attendees < bookingInfo.classMinimum && <FormText color="muted">Under {bookingInfo.classMinimum} group fee</FormText>}
+                  {' ' + (attendeesToInvoice < bookingInfo.classMinimum ? bookingInfo.classMinimum : attendeesToInvoice) + ' '} attendees
+                  {attendeesToInvoice < bookingInfo.classMinimum && <FormText color="muted">Under {bookingInfo.classMinimum} group fee</FormText>}
                 </th>
                 <td className="text-right pt-1">${totalWithoutFee}</td>
               </tr>
-              {totalAddons > 8 && (
+              {totalAddons > 0 && (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">Add-ons</th>
                   <td className="text-right pt-1 text-sm">${totalAddons}</td>
                 </tr>
               )}
+              {bookingInfo.invoiceDetails &&
+                bookingInfo.invoiceDetails.length > 2 &&
+                bookingInfo.invoiceDetails.slice(2).map((additionalItem) => (
+                  <tr key={additionalItem.item}>
+                    <th className="font-weight-normal text-sm pt-1">{additionalItem.item}</th>
+                    <td className="text-right pt-1 text-sm">${(additionalItem.unitPrice * additionalItem.units).toFixed(2)}</td>
+                  </tr>
+                ))}
               <tr>
                 <th className="font-weight-normal text-sm pt-1">Booking fee ({bookingInfo.serviceFee * 100}%)</th>
                 <td className="text-right pt-1 text-sm">${totalServiceFee}</td>
