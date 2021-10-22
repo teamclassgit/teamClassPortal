@@ -39,8 +39,6 @@ const AddNewAttendee = ({
   const [processing, setProcessing] = React.useState(false)
   const [emailValid, setEmailValid] = React.useState(true)
   const [dinamycValues, setDinamycValues] = React.useState([])
-  const [currentDinamycValues, setCurrentDinamycValues] = React.useState([])
-  const [validationDynamicValues, setValidationDynamicValues] = React.useState(true)
 
   const options = { phone: true, phoneRegionCode: 'US' }
 
@@ -109,18 +107,6 @@ const AddNewAttendee = ({
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
 
   React.useEffect(() => {
-    let validationFields
-
-    if (dinamycValues && teamClassInfo && teamClassInfo.registrationFields) {
-      teamClassInfo.registrationFields.forEach((element) => {
-        validationFields = element.required && !dinamycValues[element.label]
-      })
-    }
-
-    setValidationDynamicValues(validationFields)
-  }, [dinamycValues])
-
-  React.useEffect(() => {
     if (currentElement) {
       setNewName(currentElement.name)
       setNewEmail(currentElement.email)
@@ -131,17 +117,11 @@ const AddNewAttendee = ({
       setNewState(currentElement.state)
       setNewZip(currentElement.zip)
       setNewCountry(currentElement.country)
-      // setCurrentDinamycValues(currentElement.additionalFields)
       setDinamycValues(currentElement.additionalFields)
     }
   }, [currentElement])
 
-  console.log('currentElement', currentElement)
-
   const onChangeDinamyc = (value, additionalField, field) => {
-    console.log('value', value)
-    console.log('additionalField', additionalField)
-    console.log('field', field)
     if (field.type === 'multiSelectionList') {
       const newArr = value.map((element) => element.label)
       value = newArr.join(' | ')
@@ -161,7 +141,6 @@ const AddNewAttendee = ({
     }
   }
 
-  console.log('DinamycValues', dinamycValues)
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">

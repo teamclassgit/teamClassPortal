@@ -8,9 +8,8 @@ import Avatar from '@components/avatar'
 // ** Third Party Components
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
-import { Users, ChevronDown, Download, Edit, Grid, Plus, Share, Trash, X } from 'react-feather'
+import { ChevronDown, Download, Edit, Grid, Plus, Share, Trash, X } from 'react-feather'
 import {
-  Alert,
   Badge,
   Button,
   Card,
@@ -24,7 +23,6 @@ import {
   Label,
   Modal,
   ModalHeader,
-  ModalBody,
   ModalFooter,
   Row,
   UncontrolledButtonDropdown
@@ -49,16 +47,8 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
   const [searchValue, setSearchValue] = useState('')
   const [filteredData, setFilteredData] = useState([])
   const [mode, setMode] = useState(null)
-  const [show, setShow] = useState(false)
-  const [deleteModal, setDeleteModal] = useState(false)
   const [centeredModal, setCenteredModal] = useState(false)
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
-
-  console.log('currentBookingId', currentBookingId)
-  console.log('teamClassInfo', teamClassInfo)
-  console.log('attendees', attendees)
-  console.log('show', show)
-  console.log('modal', modal)
 
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
@@ -141,7 +131,6 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
             <a
               onClick={(e) => {
                 setCurrentElement(row)
-                console.log('row', row)
                 handleModal()
                 setMode('edit')
               }}
