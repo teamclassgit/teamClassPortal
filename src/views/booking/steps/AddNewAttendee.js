@@ -38,7 +38,7 @@ const AddNewAttendee = ({
   const [newCountry, setNewCountry] = React.useState('')
   const [processing, setProcessing] = React.useState(false)
   const [emailValid, setEmailValid] = React.useState(true)
-  const [dinamycValues, setDinamycValues] = React.useState([])
+  const [dynamicValues, setDynamicValues] = React.useState([])
 
   const options = { phone: true, phoneRegionCode: 'US' }
 
@@ -61,7 +61,7 @@ const AddNewAttendee = ({
     additionalFields =
       additionalFields &&
       additionalFields.map((item) => {
-        const dynamicValue = dinamycValues.find((item2) => item2.name === item.label)
+        const dynamicValue = dynamicValues.find((item2) => item2.name === item.label)
         return {
           name: item.label,
           value: (dynamicValue && dynamicValue.value) || '',
@@ -117,11 +117,11 @@ const AddNewAttendee = ({
       setNewState(currentElement.state)
       setNewZip(currentElement.zip)
       setNewCountry(currentElement.country)
-      setDinamycValues(currentElement.additionalFields)
+      setDynamicValues(currentElement.additionalFields)
     }
   }, [currentElement])
 
-  const onChangeDinamyc = (value, additionalField, field) => {
+  const onChangeDynamic = (value, additionalField, field) => {
     if (field.type === 'multiSelectionList') {
       const newArr = value.map((element) => element.label)
       value = newArr.join(' | ')
@@ -129,15 +129,15 @@ const AddNewAttendee = ({
     if (additionalField) {
       const additionalFieldChanged = { ...additionalField }
       additionalFieldChanged.value = value
-      const newDynamicValues = dinamycValues.filter((item) => item.name !== additionalField.name)
+      const newDynamicValues = dynamicValues.filter((item) => item.name !== additionalField.name)
       newDynamicValues.push(additionalFieldChanged)
-      setDinamycValues(newDynamicValues)
+      setDynamicValues(newDynamicValues)
     } else {
-      const newDynamicValues = dinamycValues ? [...dinamycValues] : []
+      const newDynamicValues = dynamicValues ? [...dynamicValues] : []
       const name = field.label
       const order = field.order
       newDynamicValues.push({ order, name, value })
-      setDinamycValues(newDynamicValues)
+      setDynamicValues(newDynamicValues)
     }
   }
 
@@ -257,7 +257,7 @@ const AddNewAttendee = ({
             .filter((element) => element.active === true)
             .sort((field1, field2) => field1.order < field2.order)
             .map((field, index) => {
-              const additionalField = dinamycValues && dinamycValues.find((item) => item.name === field.label)
+              const additionalField = dynamicValues && dynamicValues.find((item) => item.name === field.label)
               return (
                 <FormGroup className="ml-0 pl-0">
                   <Label for={field.label}>{field.label + (field.required ? '*' : '')}</Label>
@@ -268,7 +268,7 @@ const AddNewAttendee = ({
                       id={field.label}
                       required={field.required}
                       value={additionalField && additionalField.value}
-                      onChange={(e) => onChangeDinamyc(e.target.value, additionalField, field)}
+                      onChange={(e) => onChangeDynamic(e.target.value, additionalField, field)}
                     />
                   )}
                   {field.type === 'text' && (
@@ -279,7 +279,7 @@ const AddNewAttendee = ({
                       required={field.required}
                       value={additionalField && additionalField.value}
                       onChange={(e) => {
-                        onChangeDinamyc(e.target.value, additionalField, field)
+                        onChangeDynamic(e.target.value, additionalField, field)
                       }}
                     />
                   )}
@@ -292,7 +292,7 @@ const AddNewAttendee = ({
                       min="0"
                       required={field.required}
                       value={additionalField && additionalField.value}
-                      onChange={(e) => onChangeDinamyc(e.target.value, additionalField, field)}
+                      onChange={(e) => onChangeDynamic(e.target.value, additionalField, field)}
                     />
                   )}
                   {field.type === 'list' && (
@@ -302,7 +302,7 @@ const AddNewAttendee = ({
                       name={field.label}
                       id={field.label}
                       placeholder="Select..."
-                      onChange={(e) => onChangeDinamyc(e.target.value, additionalField, field)}
+                      onChange={(e) => onChangeDynamic(e.target.value, additionalField, field)}
                     >
                       <option defaultValue></option>
                       {field.listItems.map((value) => (
@@ -331,7 +331,7 @@ const AddNewAttendee = ({
                           value: element
                         }
                       })}
-                      onChange={(e) => onChangeDinamyc(e, additionalField, field)}
+                      onChange={(e) => onChangeDynamic(e, additionalField, field)}
                       className="basic-multi-select"
                     ></Select>
                   )}
