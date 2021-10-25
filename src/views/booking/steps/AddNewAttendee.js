@@ -249,7 +249,7 @@ const AddNewAttendee = ({
               }}
             />
           </InputGroup>
-          <small className="form-text text-muted mb-2 ml-2">Select a country*</small>
+          <small className="form-text text-muted mb-2">Select a country*</small>
         </FormGroup>
         {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? <Label for="full-name">Additional information</Label> : ''}
         {teamClassInfo.registrationFields &&
@@ -258,7 +258,6 @@ const AddNewAttendee = ({
             .sort((field1, field2) => field1.order < field2.order)
             .map((field, index) => {
               const additionalField = dinamycValues && dinamycValues.find((item) => item.name === field.label)
-
               return (
                 <FormGroup className="ml-0 pl-0">
                   <Label for={field.label}>{field.label + (field.required ? '*' : '')}</Label>

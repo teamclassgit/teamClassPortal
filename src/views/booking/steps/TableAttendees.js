@@ -49,6 +49,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
   const [mode, setMode] = useState(null)
   const [centeredModal, setCenteredModal] = useState(false)
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
+  const [excelHeadersTemplate, setExcelHeadersTemplate] = useState([])
 
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
@@ -180,11 +181,12 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
     if (attendees && teamClassInfo) {
       const attendeesArray = []
 
-      const headers = ['Name', 'Email', 'Phone', 'Address1', 'Address2', 'City', 'State', 'Zip', 'Country']
+      const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country']
 
       for (const dynamicField in teamClassInfo.registrationFields) {
         headers.push(teamClassInfo.registrationFields[dynamicField].label)
       }
+      setExcelHeadersTemplate([headers])
 
       attendeesArray.push(headers)
 
@@ -285,15 +287,6 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
     />
   )
 
-  // ** Downloads template
-  function downloadTemplate() {
-    const link = document.createElement('a')
-    const filename = 'TeamClassAttendeesTemplate.xlsx'
-    link.setAttribute('href', encodeURI(`/templates/${filename}`))
-    link.setAttribute('download', filename)
-    link.click()
-  }
-
   return (
     <Fragment>
       <Card>
@@ -315,10 +308,11 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
               <span className="align-middle ml-50">Bulk actions</span>
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem className="w-100" onClick={downloadTemplate}>
+              <DropdownItem className="w-100">
                 <Download size={15} />
                 <span className="align-middle ml-50">
-                  Download template<br></br>
+                  <ExportToExcel apiData={excelHeadersTemplate} fileName={'Template'} title={' Download template'} />
+                  <br></br>
                   <small>Use this template to build your list</small>
                 </span>
               </DropdownItem>
@@ -331,8 +325,8 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
               </DropdownItem>
               <DropdownItem className="w-100">
                 <Download size={15} />
-                <ExportToExcel apiData={attendeesExcelTable} fileName={'SignUpStatus'} />
                 <span className="align-middle ml-50">
+                  <ExportToExcel apiData={attendeesExcelTable} fileName={'SignUpStatus'} title={' Excel File'} />
                   <br></br>
                   <small>Download excel file with your attendees</small>
                 </span>
@@ -407,6 +401,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
         data={data}
         setData={setData}
         updateAttendeesCount={updateAttendeesCount}
+        teamClassInfo={teamClassInfo}
       />
     </Fragment>
   )

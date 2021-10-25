@@ -3,7 +3,7 @@ import * as FileSaver from 'file-saver'
 import * as XLSX from 'xlsx'
 import { FileText } from 'react-feather'
 
-const ExportToExcel = ({ apiData, fileName }) => {
+const ExportToExcel = ({ apiData, fileName, title }) => {
   const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
   const fileExtension = '.xlsx'
 
@@ -15,12 +15,7 @@ const ExportToExcel = ({ apiData, fileName }) => {
     FileSaver.saveAs(data, fileName + fileExtension)
   }
 
-  return (
-    <a onClick={(e) => exportToCSV(apiData, fileName)}>
-      <FileText size={13} />
-      <span> Excel File</span>
-    </a>
-  )
+  return <a onClick={(e) => exportToCSV(apiData, fileName)}>{title}</a>
 }
 
 export default ExportToExcel
