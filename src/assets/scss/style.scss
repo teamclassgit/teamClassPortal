@@ -1541,3 +1541,14 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   color: #717171;
 } 
 
+.brand-logo {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  margin: 0;
+  .brand-text {
+    font-weight: 600;
+  }
+}

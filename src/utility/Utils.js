@@ -1,4 +1,5 @@
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from './Constants'
+import { isAnon, userData } from './RealmApolloClient'
 
 // ** Checks if an object is empty (returns boolean)
 export const isObjEmpty = (obj) => Object.keys(obj).length === 0
@@ -57,8 +58,8 @@ export const formatDateToMonthShort = (value, toTimeForCurrentDay = true) => {
  ** This is completely up to you and how you want to store the token in your frontend application
  *  ? e.g. If you are using cookies to store the application please update this function
  */
-export const isUserLoggedIn = () => localStorage.getItem('userData')
-export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
+export const isUserLoggedIn = () => !isAnon()
+export const getUserData = () => userData()
 
 /**
  ** This function is used for demo purpose route navigation
@@ -178,5 +179,22 @@ export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, 
     totalTaxableAdditionalItems,
     totalNoTaxableAdditionalItems,
     cardFee
+  }
+}
+
+//gets the absoluteUrl of the site
+export const absoluteUrl = (req, setLocalhost) => {
+  let protocol = 'https:'
+  let host = req ? req.headers['x-forwarded-host'] || req.headers['host'] : window.location.host
+
+  if (host.indexOf('localhost') > -1) {
+    if (setLocalhost) host = setLocalhost
+    protocol = 'http:'
+  }
+
+  return {
+    protocol: protocol,
+    host: host,
+    origin: protocol + '//' + host
   }
 }

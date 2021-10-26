@@ -144,7 +144,7 @@ const Router = () => {
                         meta: route.meta
                       })
 
-                      return (
+                      return isUserLoggedIn() || (route.meta && route.meta.authRoute) ? (
                         <Suspense fallback={null}>
                           {/* Layout Wrapper to add classes based on route's layout, appLayout and className */}
                           <LayoutWrapper
@@ -174,6 +174,8 @@ const Router = () => {
                             {/* <FinalRoute route={route} {...props} /> */}
                           </LayoutWrapper>
                         </Suspense>
+                      ) : (
+                        <Redirect to="/login" />
                       )
                     }}
                   />
@@ -195,17 +197,9 @@ const Router = () => {
             exact
             path="/"
             render={() => {
-              return <Redirect to={DefaultRoute} />
-              //return isUserLoggedIn() ? <Redirect to={DefaultRoute} /> : <Redirect to='/login' />
+              return isUserLoggedIn() ? <Redirect to={DefaultRoute} /> : <Redirect to="/login" />
             }}
           />
-          {/*<Route
-            exact
-            path="/"
-            render={() => {
-              return <Redirect to={DefaultRoute} />
-            }}
-          />*/}
           {/* Not Auth Route */}
           <Route
             exact

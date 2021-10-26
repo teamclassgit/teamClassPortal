@@ -4,12 +4,18 @@ export const FiltersContext = createContext()
 
 const FiltersContextProvider = (props) => {
   const [classFilterContext, setClassFilterContext] = useState(null)
+  const [coordinatorFilterContext, setCoordinatorFilterContext] = useState(null)
+  const [textFilterContext, setTextFilterContext] = useState(null)
 
   return (
     <FiltersContext.Provider
       value={{
         classFilterContext,
-        setClassFilterContext
+        setClassFilterContext,
+        coordinatorFilterContext,
+        setCoordinatorFilterContext,
+        textFilterContext,
+        setTextFilterContext
       }}
     >
       {props.children}

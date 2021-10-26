@@ -200,13 +200,7 @@ const VerticalLayout = props => {
           themeConfig={themeConfig}
         />
       ) : null}
-      <footer
-        className={classnames(`footer footer-light ${footerClasses[footerType] || 'footer-static'}`, {
-          'd-none': footerType === 'hidden'
-        })}
-      >
-        {footer ? footer : <FooterComponent footerType={footerType} footerClasses={footerClasses} />}
-      </footer>
+     
 
       {themeConfig.layout.scrollTop === true ? (
         <div className='scroll-to-top'>

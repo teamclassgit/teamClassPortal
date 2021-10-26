@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react'
 import NumberInput from '@components/number-input'
-import { ArrowLeft, ArrowRight, Delete, Minus, MinusCircle, PlusCircle } from 'react-feather'
-import { Input, Button, Card, Col, Form, Media, Row, Table } from 'reactstrap'
+import { ArrowLeft, ArrowRight, Delete, DollarSign, Minus, MinusCircle, PlusCircle } from 'react-feather'
+import { Input, Button, Card, Col, Form, Media, Row, Table, CardLink } from 'reactstrap'
 import { BOOKING_PAID_STATUS } from '../../../utility/Constants'
 import { useMutation } from '@apollo/client'
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails'
+import Avatar from '@components/avatar'
 
 const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking }) => {
   const defaultInvoiceItems = [
@@ -248,7 +249,11 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
         </Col>
       </Row>
       <div className="d-flex justify-content-between">
-        <span></span>
+        <span>
+          <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
+            <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
+          </CardLink>
+        </span>
         <Button.Ripple
           disabled={booking.status === BOOKING_PAID_STATUS || !formValid}
           color="primary"
