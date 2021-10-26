@@ -288,7 +288,7 @@ const WizardClassBooking = () => {
               deposit={initialDeposit}
               showFinalPaymentLine={true}
               finalPayment={payment}
-              attendeesToInvoice={attendeesToInvoice || realCountAttendees}
+              attendeesToInvoice={attendeesToInvoice || bookingInfo.attendees}
             />
           )}
         </div>
