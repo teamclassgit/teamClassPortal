@@ -3,31 +3,42 @@ import { Modal, ModalHeader, ModalBody, FormGroup, Label, Input, Button } from '
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import Select from 'react-select'
 
-function FiltersModal({ open, handleModal, classes }) {
+function FiltersModal({ open, handleModal, classes, coordinators }) {
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
-  const [filterBy, setFilterBy] = useState({
-    type: null,
-    value: null
-  })
+  const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
+
+  const [filterByClass, setFilterByClass] = useState(classFilterContext)
+  const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext)
+
   const classOptions = classes.map(({ title, _id }) => ({ value: _id, label: title }))
   const getClassFilterDefaultValue = () => {
     if (classFilterContext) {
-      return classOptions.filter((opt) => opt.value === classFilterContext.value)[0]
+      return classOptions.find((opt) => opt.value === classFilterContext.value)
     }
-    return classOptions[0]
+    return []
+  }
+
+  const coordinatorOptions = coordinators.map(({ name, _id }) => ({ value: _id, label: name }))
+  const getCoordinatorFilterDefaultValue = () => {
+    if (coordinatorFilterContext) {
+      const values = coordinatorFilterContext.value
+      return coordinatorOptions.filter((opt) => values && values.includes(opt.value))
+    }
+
+    return null
   }
 
   const handleApplyFilters = () => {
-    setClassFilterContext(filterBy)
+    setClassFilterContext(filterByClass && filterByClass.value ? filterByClass : null)
+    setCoordinatorFilterContext(filterByCoordinator && filterByCoordinator.value && filterByCoordinator.value.length > 0 ? filterByCoordinator : null)
     handleModal()
   }
 
   const handleClearFilters = () => {
     setClassFilterContext(null)
+    setCoordinatorFilterContext(null)
     handleModal()
   }
-
-  const handleInputChange = (type, value) => setFilterBy({ type, value })
 
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
@@ -45,7 +56,26 @@ function FiltersModal({ open, handleModal, classes }) {
           <Label for="exampleSelect" className="text-dark mt-2">
             Filter by class
           </Label>
-          <Select defaultValue={getClassFilterDefaultValue()} options={classOptions} onChange={(e) => handleInputChange('class', e.value)} />
+          <Select
+            defaultValue={getClassFilterDefaultValue()}
+            options={classOptions}
+            onChange={(e) => {
+              setFilterByClass({ type: 'class', value: e.value, label: e.label })
+            }}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="exampleSelect" className="text-dark">
+            Filter by event coordinator
+          </Label>
+          <Select
+            defaultValue={getCoordinatorFilterDefaultValue()}
+            options={coordinatorOptions}
+            onChange={(e) => {
+              setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
+            }}
+            isMulti={true}
+          />
         </FormGroup>
       </ModalBody>
     </Modal>

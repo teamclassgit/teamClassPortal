@@ -22,7 +22,7 @@ function StatusSelector({ row, calendarEvent }) {
 
     if (row.status.indexOf('confirmed') > -1 && row.payments && row.payments.length > 0) return 'Deposit paid'
 
-    if (row.status.indexOf('paid') > -1 && row.payments && row.payments.length > 1) return 'Paid'
+    if (row.status.indexOf('paid') > -1 && row.payments && row.payments.length > 0) return 'Paid'
 
     if (row.status.indexOf('confirmed') > -1 && (!row.payments || row.payments.length === 0)) return 'Reviews'
 

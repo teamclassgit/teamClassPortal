@@ -215,6 +215,42 @@ function BoardCard({
               <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
+        ) : status === 'confirmed' ? (
+          <div align="right">
+            <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
+              <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+            </CardLink>
+            <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
+              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+            </CardLink>
+          </div>
+        ) : status === 'paid' ? (
+          <div align="right">
+            <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+            </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
+              <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+            </CardLink>
+            <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
+              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+            </CardLink>
+          </div>
         ) : status !== 'canceled' ? (
           <div align="right">
             <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${_id}`} target={'_blank'} title={'Approve/Reject link'}>

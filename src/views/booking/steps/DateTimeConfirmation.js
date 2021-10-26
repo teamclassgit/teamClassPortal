@@ -1,43 +1,43 @@
-import React, {Fragment} from 'react'
-import {AlertCircle, ArrowLeft, ArrowRight} from 'react-feather'
-import {Alert, Button, Col, Form, FormGroup, Row, Badge} from 'reactstrap'
+import React, { Fragment } from 'react'
+import { AlertCircle, ArrowLeft, ArrowRight } from 'react-feather'
+import { Alert, Button, Col, Form, FormGroup, Row, Badge } from 'reactstrap'
 import Flatpickr from "react-flatpickr"
 import moment from "moment"
-import {toAmPm} from '../../../utility/Utils'
+import { toAmPm } from '../../../utility/Utils'
 import {
     DEFAULT_AVAILABILITY_ALWAYS, DEFAULT_AVAILABILITY,
     DAYS_AFTER_CURRENT_DATE_NOT_AVAILABLE_TO_SCHEDULE,
     DAYS_AFTER_CURRENT_DATE_CONSIDERED_RUSH_DATE,
     BREAK_BETWEEN_CLASSES_HOURS
 } from '../../../utility/Constants'
-import {useMutation} from "@apollo/client"
+import { useMutation } from "@apollo/client"
 import mutationRequestPreferredTime from "../../../graphql/MutationRequestPreferredTime"
-import {v4 as uuid} from 'uuid'
+import { v4 as uuid } from 'uuid'
 
 const DateTimeConfirmation = ({
-                                  stepper,
-                                  type,
-                                  classRushFee,
-                                  availableEvents,
-                                  calendarEvent,
-                                  setCalendarEvent,
-                                  booking,
-                                  teamClass
-                              }) => {
+    stepper,
+    type,
+    classRushFee,
+    availableEvents,
+    calendarEvent,
+    setCalendarEvent,
+    booking,
+    teamClass
+}) => {
 
     const [date, setDate] = React.useState(null)
     const [time, setTime] = React.useState(null)
     const [availableTimes, setAvailableTimes] = React.useState(null)
     const [processing, setProcessing] = React.useState(false)
-    const [createOrUpdateCalendarEvent, {...calendarEventData}] = useMutation(mutationRequestPreferredTime, {})
+    const [createOrUpdateCalendarEvent, { ...calendarEventData }] = useMutation(mutationRequestPreferredTime, {})
 
     const isDateTooEarly = () => {
 
-      /*  const today = new Date()
-        const reference = new Date()
-        reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_NOT_AVAILABLE_TO_SCHEDULE)//5 days
-
-        return date && date.length > 0 && date[0] > today && date[0] <= reference */
+        /*  const today = new Date()
+          const reference = new Date()
+          reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_NOT_AVAILABLE_TO_SCHEDULE)//5 days
+  
+          return date && date.length > 0 && date[0] > today && date[0] <= reference */
 
         return false
     }
@@ -154,7 +154,6 @@ const DateTimeConfirmation = ({
 
         if (sameEventDate) {
             setProcessing(false)
-            stepper.next()
             return
         }
 
@@ -190,8 +189,6 @@ const DateTimeConfirmation = ({
 
             setProcessing(false)
 
-            stepper.next()
-
         } catch (ex) {
 
             console.log(ex)
@@ -215,7 +212,7 @@ const DateTimeConfirmation = ({
                             <Flatpickr
                                 className='form-control hidden'
                                 value={date}
-                                options={{inline: true}}
+                                options={{ inline: true }}
                                 onChange={value => {
                                     setDate(value)
                                     setTime(null)
@@ -230,10 +227,10 @@ const DateTimeConfirmation = ({
                         <Row>
                             {availableTimes && availableTimes.map((element, index) => (
                                 <Button.Ripple key={`time${index}`} className="btn-sm"
-                                               disabled={isDateInThePast() || isDateTooEarly()}
-                                               color='primary' tag={Col} lg={4} md={6} sm={12}
-                                               outline={!(time === element.label)}
-                                               onClick={e => setTime(element.label)}
+                                    disabled={isDateInThePast() || isDateTooEarly()}
+                                    color='primary' tag={Col} lg={4} md={6} sm={12}
+                                    outline={!(time === element.label)}
+                                    onClick={e => setTime(element.label)}
                                 >
                                     {element.amPm}
                                 </Button.Ripple>)
@@ -245,9 +242,9 @@ const DateTimeConfirmation = ({
                         <div>
                             {date && date.length > 0 && (<Alert color='danger' isOpen={isRushDate()}>
                                 <div className='alert-body'>
-                                    <AlertCircle size={15}/>
+                                    <AlertCircle size={15} />
                                     <span className='ml-1'>Rush fee may be required.
-                                  </span>
+                                    </span>
                                 </div>
                             </Alert>)}
                         </div>
@@ -257,10 +254,9 @@ const DateTimeConfirmation = ({
 
                 <div className='d-flex justify-content-end'>
                     <Button.Ripple color='primary' className='btn-next' onClick={() => saveCalendarEvent()}
-                                   disabled={!time || !date || processing}>
+                        disabled={!time || !date || processing}>
                         <span
                             className='align-middle d-sm-inline-block d-none'>{processing ? "Processing..." : "Save date"}</span>
-                        <ArrowRight size={14} className='align-middle ml-sm-25 ml-0'></ArrowRight>
                     </Button.Ripple>
                 </div>
             </Form>

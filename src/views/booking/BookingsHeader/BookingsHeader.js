@@ -20,7 +20,7 @@ import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAddModal, setCurrentElement, bookings, defaultLimit, onChangeLimit }) {
   const [searchValue, setSearchValue] = useState('')
   const [limit, setLimit] = useState(defaultLimit)
-  const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
+  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext)
 
   // ** Converts table to CSV
   function convertArrayOfObjectsToCSV(array) {
@@ -67,17 +67,28 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
       <CardHeader>
         <Col md={4}>
           <CardTitle tag="h4" className="mr-4">
-            All Time Bookings
+            Bookings{' '}
+            <small>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  setShowFiltersModal(true)
+                }}
+              >
+                {coordinatorFilterContext ? coordinatorFilterContext.label.join(', ') : 'All Coordinators'}
+              </a>
+            </small>
           </CardTitle>
         </Col>
-        <Col className="mb-1 d-flex" lg="5" md="12">
+        <Col className="mb-1 d-flex" lg="6" md="12">
           <InputGroup className="mr-2">
             <Input type="text" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
             <InputGroupAddon addonType="append">
               <Button
                 color="primary"
                 onClick={() => {
-                  setClassFilterContext({ type: 'text', value: searchValue })
+                  setTextFilterContext({ type: 'text', value: searchValue })
                 }}
               >
                 <Search size={12} />
@@ -176,7 +187,12 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
             >
               <Plus size={13} />
             </Button>
-            <Button outline color="primary" onClick={() => setShowFiltersModal(true)} title="Filters">
+            <Button
+              outline={!(classFilterContext || coordinatorFilterContext)}
+              color="primary"
+              onClick={() => setShowFiltersModal(true)}
+              title="Filters"
+            >
               <Filter size={13} />
             </Button>
             <Button.Ripple outline color="primary" onClick={() => setSwitchView()} title="Switch view">

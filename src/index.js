@@ -1,14 +1,14 @@
 // ** React Imports
-import {Suspense, lazy} from 'react'
+import { Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom'
 
 // ** Redux Imports
-import {Provider} from 'react-redux'
-import {store} from './redux/storeConfig/store'
+import { Provider } from 'react-redux'
+import { store } from './redux/storeConfig/store'
 
 // ** Toast & ThemeColors Context
-import {ToastContainer} from 'react-toastify'
-import {ThemeContext} from './utility/context/ThemeColors'
+import { ToastContainer } from 'react-toastify'
+import { ThemeContext } from './utility/context/ThemeColors'
 
 // ** Spinner (Splash Screen)
 import Spinner from './@core/components/spinner/Fallback-spinner'
@@ -33,30 +33,22 @@ import './@core/scss/core.scss'
 import './assets/scss/style.scss'
 
 // ** Service Worker
-import * as serviceWorker from './serviceWorker'
+import * as serviceWorker from './serviceWorker' // ** Lazy load app
+const LazyApp = lazy(() => import('./App'))
 
 // ** Fake Database
 import './@fake-db'
 
-// ** Apollo client
-import {ApolloProvider} from '@apollo/client'
-import client from './utility/RealmApolloClient'
-
-// ** Lazy load app
-const LazyApp = lazy(() => import('./App'))
-
 ReactDOM.render(
-    <ApolloProvider client={client}>
-        <Provider store={store}>
-            <Suspense fallback={<Spinner/>}>
-                <ThemeContext>
-                    <LazyApp/>
-                    <ToastContainer newestOnTop/>
-                </ThemeContext>
-            </Suspense>
-        </Provider>
-    </ApolloProvider>,
-    document.getElementById('root')
+  <Provider store={store}>
+    <Suspense fallback={<Spinner />}>
+      <ThemeContext>
+        <LazyApp />
+        <ToastContainer newestOnTop />
+      </ThemeContext>
+    </Suspense>
+  </Provider>,
+  document.getElementById('root')
 )
 
 // If you want your app to work offline and load faster, you can change
