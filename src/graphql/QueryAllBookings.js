@@ -10,6 +10,7 @@ export default gql`
       attendees
       classMinimum
       eventDurationHours
+      eventCoordinatorId
       pricePerson
       serviceFee
       salesTax

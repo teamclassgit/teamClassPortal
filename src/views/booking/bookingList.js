@@ -186,7 +186,13 @@ const BookingList = () => {
               {bookings && bookings.length > 0 && switchView ? (
                 <DataTableBookings filteredData={filteredBookings} customers={customers} calendarEvents={calendarEvents} classes={classes} />
               ) : (
-                <BoardBookings filteredBookings={filteredBookings} customers={customers} calendarEvents={calendarEvents} classes={classes} />
+                <BoardBookings
+                  filteredBookings={filteredBookings}
+                  customers={customers}
+                  calendarEvents={calendarEvents}
+                  classes={classes}
+                  coordinators={coordinators}
+                />
               )}
             </Col>
             <FiltersModal

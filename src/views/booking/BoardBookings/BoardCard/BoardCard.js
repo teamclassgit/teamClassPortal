@@ -29,7 +29,8 @@ function BoardCard({
     additionals,
     calendarEvent,
     teamClass,
-    customerId
+    customerId,
+    coordinatorName
   }
 }) {
   const [flippedCard, setFlippedCard] = useState(false)
@@ -114,7 +115,7 @@ function BoardCard({
             <tfoot>
               <tr>
                 <th className="pt-1 small">Coordinator</th>
-                <td className="font-weight-bold small text-right pt-1"></td>
+                <td className="font-weight-bold small text-right pt-1">{coordinatorName}</td>
               </tr>
             </tfoot>
           </table>
