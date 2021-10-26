@@ -22,6 +22,11 @@ export const getCustomerPhone = (customerId, customers) => {
   return result && result.length > 0 ? result[0].phone : ''
 }
 
+export const getCoordinatorName = (coordinatorId, coordinators) => {
+  const result = coordinators.find((element) => element._id === coordinatorId)
+  return (result && result.name) || ''
+}
+
 export const getCustomerCompany = (customerId, customers) => {
   const result = customers.filter((element) => element._id === customerId)
   return result && result.length > 0 ? result[0].company : ''

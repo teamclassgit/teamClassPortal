@@ -5,11 +5,11 @@ import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingS
 import BoardCard from './BoardCard/BoardCard'
 import Board from '@lourenci/react-kanban'
 import { BOOKING_STATUS } from '../../../utility/Constants'
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getCustomerName, getClassTitle, getFormattedEventDate } from '../common'
+import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getFormattedEventDate, getCoordinatorName } from '../common'
 import './BoardBookings.scss'
 import '@lourenci/react-kanban/dist/styles.css'
 
-const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents }) => {
+const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators }) => {
   const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {})
   const [loading, setLoading] = useState(true)
 
@@ -84,6 +84,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
         customerName,
         attendees,
         eventDurationHours,
+        eventCoordinatorId,
         classMinimum,
         pricePerson,
         serviceFee,
@@ -106,6 +107,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
           payments,
           customerId,
           eventDurationHours,
+          coordinatorName: getCoordinatorName(eventCoordinatorId, coordinators),
           classTitle: getClassTitle(teamClassId, classes),
           scheduled: getFormattedEventDate(_id, calendarEvents),
           email: getCustomerEmail(customerId, customers),
