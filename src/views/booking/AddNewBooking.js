@@ -143,6 +143,7 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
   }
 
   const cancel = () => {
+    setClassVariant(null)
     handleModal()
   }
 
