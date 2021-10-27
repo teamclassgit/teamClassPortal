@@ -68,7 +68,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
 
     if (column === 'reviews') {
       return bookingCards.filter(({ status, payments }) => {
-        return status.indexOf('reviews') || (status.indexOf('confirmed') > -1 && (!payments || payments.length === 0))
+        return status.indexOf('reviews') > -1 || (status.indexOf('confirmed') > -1 && (!payments || payments.length === 0))
       })
     }
 
