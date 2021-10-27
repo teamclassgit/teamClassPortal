@@ -79,15 +79,11 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
 
   useEffect(() => {
     const userData = getUserData()
-    console.log('userData.customData', userData.customData)
-    console.log('coordinatorId', userData.customData.coordinatorId)
     if (userData && userData.customData && userData.customData.coordinatorId) {
       setDefaultCoordinatorOption(userData.customData)
       setOneCoordinator(userData.customData.coordinatorId)
     }
   }, [bookings])
-
-  console.log('defaultCoordinatorIdOption', defaultCoordinatorOption)
 
   const saveNewBooking = async () => {
     setProcessing(true)
@@ -186,10 +182,6 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
     const res = classes.find((element) => element._id === selectedClass)
     return res ? res.title : ''
   }
-
-  console.log('coordinators', coordinators)
-  console.log('oneCoordinator', oneCoordinator)
-  console.log('classVariantsOptions', classVariantsOptions)
 
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
