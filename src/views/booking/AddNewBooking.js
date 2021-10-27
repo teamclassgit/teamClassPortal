@@ -27,8 +27,9 @@ import { isValidEmail, isPhoneValid } from '../../utility/Utils'
 import mutationUpsertBooking from '../../graphql/MutationUpsertBooking'
 import { useMutation } from '@apollo/client'
 import { v4 as uuid } from 'uuid'
+import { getUserData } from '../../utility/Utils'
 
-const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers, setCustomers, setBookings, classes, editMode }) => {
+const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers, setCustomers, setBookings, classes, editMode, coordinators }) => {
   const [isOldCustomer, setIsOldCustomer] = useState(false)
   const [newName, setNewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
@@ -45,6 +46,8 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
   const [createBooking] = useMutation(mutationUpsertBooking, {})
   const [classVariantsOptions, setClassVariantsOptions] = useState([])
   const [classVariant, setClassVariant] = useState(null)
+  const [oneCoordinator, setOneCoordinator] = useState(null)
+  const [defaultCoordinatorOption, setDefaultCoordinatorOption] = useState([])
 
   const serviceFeeValue = 0.1
   const salesTaxValue = 0.0825
@@ -74,6 +77,18 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
     }
   }, [selectedClass])
 
+  useEffect(() => {
+    const userData = getUserData()
+    console.log('userData.customData', userData.customData)
+    console.log('coordinatorId', userData.customData.coordinatorId)
+    if (userData && userData.customData && userData.customData.coordinatorId) {
+      setDefaultCoordinatorOption(userData.customData)
+      setOneCoordinator(userData.customData.coordinatorId)
+    }
+  }, [bookings])
+
+  console.log('defaultCoordinatorIdOption', defaultCoordinatorOption)
+
   const saveNewBooking = async () => {
     setProcessing(true)
 
@@ -101,6 +116,7 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
           customerName: customer ? customer.name : newName,
           eventDate: new Date(),
           eventDurationHours: classVariant.duration,
+          eventCoordinatorId: oneCoordinator,
           attendees: newAttendees,
           classMinimum: classVariant.minimum,
           pricePerson: classVariant.pricePerson,
@@ -134,6 +150,7 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
       ])
       setProcessing(false)
       setClassVariant(null)
+      setOneCoordinator(null)
     } catch (ex) {
       console.log(ex)
       setProcessing(false)
@@ -144,6 +161,7 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
 
   const cancel = () => {
     setClassVariant(null)
+    setOneCoordinator(null)
     handleModal()
   }
 
@@ -169,15 +187,19 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
     return res ? res.title : ''
   }
 
+  console.log('coordinators', coordinators)
+  console.log('oneCoordinator', oneCoordinator)
+  console.log('classVariantsOptions', classVariantsOptions)
+
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
-      <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
+      <ModalHeader className="mb-1" toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">{editMode ? 'Edit Booking' : 'New Booking'}</h5>
       </ModalHeader>
       <ModalBody className="flex-grow-1">
         {!editMode ? (
           <FormGroup>
-            <div className="demo-inline-spacing">
+            <div className="demo-inline-spacing ">
               <CustomInput
                 type="radio"
                 id="exampleCustomRadio"
@@ -295,15 +317,35 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
             />
           </FormGroup>
         )}
-
         <FormGroup>
-          <Label for="full-name">Event Details</Label>
+          <Label for="full-name">Event Coordinator*</Label>
 
           <Select
             theme={selectThemeColors}
             className="react-select"
             classNamePrefix="select"
-            placeholder="Select Class *"
+            placeholder="Select..."
+            defaultValue={{ value: defaultCoordinatorOption._id, label: defaultCoordinatorOption.name }}
+            options={
+              coordinators &&
+              coordinators.map((item) => {
+                return {
+                  value: item._id,
+                  label: item.name
+                }
+              })
+            }
+            onChange={(option) => setOneCoordinator(option.value)}
+            isClearable={false}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="full-name">Event Details*</Label>
+          <Select
+            theme={selectThemeColors}
+            className="react-select"
+            classNamePrefix="select"
+            placeholder="Select one class"
             options={
               classes &&
               classes.map((element) => {
@@ -323,7 +365,7 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
         </FormGroup>
         {selectedClass && (
           <FormGroup>
-            <Label for="full-name">Class Variants</Label>
+            <Label for="full-name">Class Variants*</Label>
             <Select
               theme={selectThemeColors}
               className="react-select"
@@ -334,7 +376,7 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
                 classVariantsOptions.map((element) => {
                   return {
                     value: element,
-                    label: element.title + ' $' + element.pricePerson + '/person'
+                    label: element.title + ' $' + element.pricePerson + (element.groupEvent ? '/group' : '/person')
                   }
                 })
               }
@@ -343,8 +385,8 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
             />
           </FormGroup>
         )}
-
         <FormGroup>
+          <Label for="full-name">Group Size*</Label>
           <Input
             id="attendees"
             placeholder="Group Size *"
@@ -366,7 +408,8 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
             processing ||
             !attendeesValid ||
             !selectedClass ||
-            !classVariant
+            !classVariant ||
+            !oneCoordinator
           }
         >
           {processing ? 'Saving...' : 'Save'}
