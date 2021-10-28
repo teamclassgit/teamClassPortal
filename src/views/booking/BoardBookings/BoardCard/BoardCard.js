@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import { Card, CardBody, CardFooter, Button, Media, CardLink, FormText, Badge } from 'reactstrap'
-import { Calendar, Edit2, ShoppingCart, Repeat, User, Users, Check, DollarSign, Mail } from 'react-feather'
-import { capitalizeString, toAmPm } from '../../../../utility/Utils'
+import { Calendar, Edit2, ShoppingCart, Repeat, User, Users, Check, DollarSign, Mail, Phone } from 'react-feather'
+import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils'
 import './BoardCard.scss'
 import Avatar from '@components/avatar'
 
@@ -30,26 +30,43 @@ function BoardCard({
     calendarEvent,
     teamClass,
     customerId,
-    coordinatorName
+    coordinatorName,
+    payments
   }
 }) {
   const [flippedCard, setFlippedCard] = useState(false)
   const [date, setDate] = useState(null)
   const [time, setTime] = useState(null)
   const [total, setTotal] = useState(0)
+  const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null)
 
   const getTotals = () => {
-    const withoutFee = attendees > minimum ? pricePerson * attendees : pricePerson * minimum
-    const fee = withoutFee * serviceFee
-    const tax = (withoutFee + fee + additionals) * salesTax
-    const finalValue = withoutFee + additionals + fee + tax
+    const bookingInfo = {
+      classVariant: variant,
+      classMinimum: minimum,
+      pricePerson,
+      serviceFee,
+      payments,
+      attendees,
+      salesTax
+    }
 
-    setTotal(finalValue.toFixed(2))
+    const bookingTotals = getBookingTotals(bookingInfo, false, salesTax, true)
+    setTotal(bookingTotals.finalValue.toFixed(2))
   }
 
   useEffect(() => {
     getTotals()
-  }, [serviceFee, attendees, pricePerson, minimum, additionals])
+  }, [variant])
+
+  useEffect(() => {
+    const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
+    const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
+
+    if (depositPayment || finalPayment) {
+      setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger')
+    }
+  }, [payments])
 
   const formatTime = () => toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, 'CT')
 
@@ -68,11 +85,16 @@ function BoardCard({
             <small>
               <Mail size={12} /> {email}
             </small>
+            <br />
+            <small>
+              <Phone size={12} /> {phone}
+            </small>
           </p>
-          <p className="small">{classTitle}</p>
+
           <p className="small">
             <strong>ID:</strong> {_id}
           </p>
+          <p className="small text-primary">{classTitle}</p>
         </div>
         {date && time && (
           <Media className="pb-1">
@@ -104,8 +126,12 @@ function BoardCard({
                 <td className="text-right small">{variant && variant.title}</td>
               </tr>
               <tr>
-                <th className="font-weight-normal small">Created</th>
-                <td className="text-right small">{` ${moment(createdAt).format('LL')}`}</td>
+                <th className="font-weight-normal small">Total</th>
+                <td className="text-right small align-top">~ ${total}</td>
+              </tr>
+              <tr>
+                <th className="font-weight-normal small pt-2">Created</th>
+                <td className="text-right small pt-2">{` ${moment(createdAt).format('LL')}`}</td>
               </tr>
               <tr>
                 <th className="font-weight-normal small">Updated</th>
@@ -159,7 +185,7 @@ function BoardCard({
               <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
@@ -177,7 +203,7 @@ function BoardCard({
               <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
@@ -195,7 +221,7 @@ function BoardCard({
               <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
@@ -213,7 +239,7 @@ function BoardCard({
               <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : status === 'confirmed' ? (
@@ -231,7 +257,7 @@ function BoardCard({
               <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : status === 'paid' ? (
@@ -249,14 +275,11 @@ function BoardCard({
               <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : status !== 'canceled' ? (
           <div align="right">
-            <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${_id}`} target={'_blank'} title={'Approve/Reject link'}>
-              <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
-            </CardLink>
             <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
               <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
             </CardLink>
@@ -266,14 +289,25 @@ function BoardCard({
             <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
               <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
+              <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+            </CardLink>
             <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : (
           <></>
         )}
       </CardFooter>
+
+      {showFinalPaymentLabel && (
+        <CardFooter className="card-board-footer pr-1">
+          <Badge size="sm" color={`light-${showFinalPaymentLabel}`} pill>
+            Final Payment
+          </Badge>
+        </CardFooter>
+      )}
     </Card>
   )
 }

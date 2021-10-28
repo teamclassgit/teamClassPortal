@@ -24,9 +24,15 @@ export default gql`
         amount
         paymentId
         paymentName
+        status
       }
       classVariant {
         title
+        minimum
+        maximum
+        pricePerson
+        hasKit
+        groupEvent
       }
       createdAt
       updatedAt
