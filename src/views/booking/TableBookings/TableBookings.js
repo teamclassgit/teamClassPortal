@@ -105,7 +105,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
               <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
@@ -123,7 +123,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
               <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
@@ -141,7 +141,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
               <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
@@ -159,7 +159,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
               <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status === 'confirmed' ? (
@@ -177,7 +177,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
               <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status === 'paid' ? (
@@ -195,7 +195,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
               <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : row.status !== 'canceled' ? (
@@ -209,8 +209,11 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
             <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
               <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
             </CardLink>
+            <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+              <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+            </CardLink>
             <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
+              <Avatar color="light-black" size="sm" icon={<Edit2 size={18} />} />
             </CardLink>
           </div>
         ) : (

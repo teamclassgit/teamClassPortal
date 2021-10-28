@@ -93,7 +93,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
         status,
         payments,
         createdAt,
-        updatedAt
+        updatedAt,
       }) => {
         return {
           customerName,

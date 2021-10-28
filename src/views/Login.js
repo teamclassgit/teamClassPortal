@@ -7,17 +7,17 @@ import InputPasswordToggle from '@components/input-password-toggle'
 import themeConfig from '@configs/themeConfig'
 import { Button, CardText, CardTitle, Col, CustomInput, Form, FormGroup, Input, Label, Row, Alert } from 'reactstrap'
 import '@styles/base/pages/page-auth.scss'
-import { loginWithEmailAndPassword } from '../utility/RealmApolloClient'
+import { loginWithEmailAndPassword, logoutUser } from '../utility/RealmApolloClient'
 import { FiltersContext } from '../context/FiltersContext/FiltersContext'
 import { getUserData } from '../utility/Utils'
 
 const Login = (props) => {
+  
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
 
-  const setDefaultFilters = () => {
-    const userData = getUserData()
+  const setDefaultFilters = (userData) => {
     if (userData && userData.customData && userData.customData.coordinatorId)
       setCoordinatorFilterContext({
         type: 'coordinator',
@@ -33,9 +33,15 @@ const Login = (props) => {
         setLoading(true)
         setError(false)
         await loginWithEmailAndPassword(event.target.email.value, event.target.password.value)
-        setLoading(false)
-        setDefaultFilters()
-        props.history.push('/')
+        const userData = getUserData()
+        if (!userData || !userData.customData || !userData.customData.role) {
+          await logoutUser()
+          setError(true)
+        } else {
+          setDefaultFilters(userData)
+          setLoading(false)
+          props.history.push('/')
+        }
       } catch (ex) {
         setLoading(false)
         setError(true)
