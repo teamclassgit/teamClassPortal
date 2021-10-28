@@ -18,7 +18,6 @@ const Login = (props) => {
 
   const setDefaultFilters = () => {
     const userData = getUserData()
-    console.log(userData)
     if (userData && userData.customData && userData.customData.coordinatorId)
       setCoordinatorFilterContext({
         type: 'coordinator',

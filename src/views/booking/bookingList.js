@@ -211,6 +211,7 @@ const BookingList = () => {
               currentElement={currentElement}
               editMode={currentElement?.editMode}
               setBookings={setBookings}
+              coordinators={coordinators}
             />
           </>
         )
