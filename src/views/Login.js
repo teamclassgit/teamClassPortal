@@ -12,6 +12,7 @@ import { FiltersContext } from '../context/FiltersContext/FiltersContext'
 import { getUserData } from '../utility/Utils'
 
 const Login = (props) => {
+  
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)

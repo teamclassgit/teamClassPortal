@@ -12,6 +12,7 @@ export default gql`
     $customerName: String!
     $eventDate: DateTime!
     $eventDurationHours: Float!
+    $eventCoordinatorId: String!
     $attendees: Int!
     $classMinimum: Int!
     $pricePerson: Float!
@@ -59,6 +60,7 @@ export default gql`
         customerName: $customerName
         eventDate: $eventDate
         eventDurationHours: $eventDurationHours
+        eventCoordinatorId: $eventCoordinatorId
         attendees: $attendees
         classMinimum: $classMinimum
         pricePerson: $pricePerson
