@@ -99,7 +99,7 @@ export const loginAnonymous = async () => {
 }
 
 export const isAnon = () => {
-  return !app || !app.currentUser || !app.currentUser.customData
+  return !app || !app.currentUser || !app.currentUser.customData || !app.currentUser.customData.role
 }
 
 export const userData = () => {
@@ -107,7 +107,7 @@ export const userData = () => {
 }
 
 export const logoutUser = async () => {
-  if (!app) return
+  if (!app || !app.currentUser) return
 
   await app.currentUser.logOut()
 }
