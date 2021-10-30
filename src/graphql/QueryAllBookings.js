@@ -26,6 +26,11 @@ export default gql`
         paymentName
         status
       }
+      notes {
+        note
+        author
+        date
+      }
       classVariant {
         title
         minimum

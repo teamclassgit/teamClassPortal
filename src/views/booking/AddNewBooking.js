@@ -49,6 +49,8 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
   const [oneCoordinator, setOneCoordinator] = useState(null)
   const [defaultCoordinatorOption, setDefaultCoordinatorOption] = useState([])
 
+  console.log('currentElement', currentElement)
+
   const serviceFeeValue = 0.1
   const salesTaxValue = 0.0825
 

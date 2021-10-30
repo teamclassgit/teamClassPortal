@@ -192,6 +192,7 @@ const BookingList = () => {
                   calendarEvents={calendarEvents}
                   classes={classes}
                   coordinators={coordinators}
+                  bookings={bookings}
                 />
               )}
             </Col>

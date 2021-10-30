@@ -20,6 +20,11 @@ export default gql`
         active
         groupEvent
       }
+      notes {
+        note
+        author
+        date
+      }
       addons {
         icon
         color
