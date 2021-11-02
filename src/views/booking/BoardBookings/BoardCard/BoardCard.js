@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
-import { Card, CardBody, CardFooter, Button, Media, CardLink, FormText, Badge } from 'reactstrap'
+import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, FormText, Badge } from 'reactstrap'
 import { Calendar, Edit2, ShoppingCart, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather'
 import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils'
 import './BoardCard.scss'
@@ -11,6 +11,8 @@ function BoardCard({
   coordinators,
   classes,
   bookings,
+  setBookings,
+  setCustomers,
   content: {
     customerName,
     _id,
@@ -47,7 +49,6 @@ function BoardCard({
   const [time, setTime] = useState(null)
   const [total, setTotal] = useState(0)
   const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null)
-  const [showEditBookingModal, setShowEditBookingModal] = useState(false)
   const [modal, setModal] = useState(false)
 
   console.log('signUpDeadline', signUpDeadline)
@@ -171,7 +172,6 @@ function BoardCard({
         <p className="text-truncate m-0 p-0">
           <strong>{capitalizeString(customerName && customerName.split(' ')[0])}</strong>
           <span className="text-primary small">{` ~ $${total}`}</span>
-          <Edit2 className="float-right mr-3 mb-1 cursor-pointer" size={10} onClick={() => handleModal()} />
           <br />
           <small className="text-xs">{classTitle}</small>
         </p>
@@ -189,10 +189,18 @@ function BoardCard({
   return (
     <>
       <Card className="card-board">
-        <CardBody className="p-1">
-          <Button color="link" className="flip-button text-muted" onClick={() => setFlippedCard(!flippedCard)}>
+        <CardHeader className="p-0 m-0">
+          <Button
+            color="link"
+            className="flip-button text-muted"
+            onClick={() => {
+              setFlippedCard(!flippedCard)
+            }}
+          >
             <Repeat size={14} />
           </Button>
+        </CardHeader>
+        <CardBody className="p-1 cursor-pointer" onClick={() => handleModal()} title={'Edit booking info'}>
           {flippedCard ? cardBack() : cardFront()}
         </CardBody>
         <CardFooter className="card-board-footer pr-1">
@@ -353,6 +361,8 @@ function BoardCard({
         currentEventDurationHours={eventDurationHours}
         currentClosedReason={closedReason}
         currentNotes={notes}
+        setBookings={setBookings}
+        setCustomers={setCustomers}
       />
     </>
   )

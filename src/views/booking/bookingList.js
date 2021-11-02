@@ -193,6 +193,8 @@ const BookingList = () => {
                   classes={classes}
                   coordinators={coordinators}
                   bookings={bookings}
+                  setBookings={setBookings}
+                  setCustomers={setCustomers}
                 />
               )}
             </Col>

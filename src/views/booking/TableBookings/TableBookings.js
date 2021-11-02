@@ -1,19 +1,23 @@
 // ** React Imports
-import React, { Fragment, useState, useEffect, useContext } from 'react'
+import React, { Fragment, useState } from 'react'
 // ** Third Party Components
 import moment from 'moment'
 import Avatar from '@components/avatar'
 import DataTable from 'react-data-table-component'
-import { Edit2, ShoppingCart, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather'
+import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather'
 import ReactPaginate from 'react-paginate'
 import { Button, Card } from 'reactstrap'
 import StatusSelector from './StatusSelector'
 import { getCustomerEmail, getClassTitle, getBookingColor, getFormattedEventDate } from '../common'
 import './TableBookings.scss'
 import CardLink from 'reactstrap/lib/CardLink'
+import EditBookingModal from '../../../components/EditBookingModal'
 
 const DataTableBookings = ({ filteredData, customers, classes, calendarEvents }) => {
   const [currentPage, setCurrentPage] = useState(0)
+  const [modal, setModal] = useState(false)
+
+  const handleModal = () => setModal(!modal)
   // ** Table Common Column
   const columns = [
     {
@@ -33,15 +37,31 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
       )
     },
     {
+      name: 'Id',
+      selector: '_id',
+      sortable: false,
+      maxWidth: '200px',
+      cell: (row) => (
+        <>
+          <small>
+            <a href="#" onClick={() => handleModal()} title={'Edit booking info'}>
+              {row._id}
+            </a>
+          </small>
+          <EditBookingModal open={modal} />
+        </>
+      )
+    },
+    {
       name: 'Customer',
       selector: 'customerName',
       sortable: true,
-      maxWidth: '200px',
+      maxWidth: '150px',
       cell: (row) => (
         <div className="d-flex align-items-center">
           <Avatar color={getBookingColor(row.status)} content={row.customerName} initials />
           <div className="user-info text-truncate ml-1">
-            <span className="d-block font-weight-bold text-truncate">{row.customerName}</span>
+            <span className="d-block font-weight-bold text-truncate">{row.customerName && row.customerName.split(' ')[0]}</span>
           </div>
         </div>
       )

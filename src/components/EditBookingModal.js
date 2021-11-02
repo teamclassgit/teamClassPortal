@@ -20,7 +20,7 @@ import {
   NavItem,
   NavLink
 } from 'reactstrap'
-import { Mail, Phone, User, X, Briefcase } from 'react-feather'
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather'
 import Select from 'react-select'
 import { isValidEmail } from '../utility/Utils'
 import Cleave from 'cleave.js/react'
@@ -30,8 +30,8 @@ import mutationUpsertBooking from '../graphql/MutationUpsertBooking'
 import { useMutation } from '@apollo/client'
 import moment from 'moment'
 import Timeline from '@components/timeline'
-import { basicData } from './data'
 import Avatar from '@components/avatar'
+import './EditBookingModal.scss'
 
 const EditBookingModal = ({
   open,
@@ -58,9 +58,9 @@ const EditBookingModal = ({
   currentStatus,
   currentEventDurationHours,
   currentClosedReason,
-  currentNotes
-  // setCustomers,
-  // setBookings,
+  currentNotes,
+  setCustomers,
+  setBookings
 }) => {
   const [customerName, setCustomerName] = useState(null)
   const [customerEmail, setCustomerEmail] = useState(null)
@@ -84,35 +84,26 @@ const EditBookingModal = ({
 
   const closeBookingOptions = [
     {
+      label: '',
+      value: ''
+    },
+    {
       label: 'Won',
-      value: 'won'
+      value: 'Won'
     },
     {
       label: 'Lost',
-      value: 'lost'
+      value: 'Lost'
     },
     {
       label: 'Duplicated',
-      value: 'duplicated'
+      value: 'Duplicated'
     },
     {
       label: 'Mistake',
-      value: 'mistake'
+      value: 'Mistake'
     }
   ]
-
-  // console.log(customerName)
-  // console.log(customerEmail)
-  // console.log('currentCoordinatorId', currentCoordinatorId)
-  // console.log('allCordinators', allCoordinators)
-  // console.log(' currentClassVariants', currentClassVariant)
-  // console.log('coordinatorId', coordinatorId)
-  // console.log('coordinatorName', coordinatorName)
-  // console.log('bookingSignUpDeadline', bookingSignUpDeadline)
-  // console.log('new Date()', new Date())
-  // console.log('closeBookingReason', closedBookingReason)
-  // console.log('processing', processing)
-  console.log('bookingId', bookingId)
 
   useEffect(() => {
     setCustomerName(currentName)
@@ -129,10 +120,6 @@ const EditBookingModal = ({
     setClosedBookingReason(currentClosedReason)
     setBookingNotes(currentNotes)
   }, [allBookings])
-
-  console.log('classVariant', classVariant)
-  console.log('bookingSignUpDeadline', bookingSignUpDeadline)
-
 
   useEffect(() => {
     if (bookingTeamClassId) {
@@ -152,8 +139,8 @@ const EditBookingModal = ({
     handleModal()
   }
 
-  const groupSizeValidation = (groupSize) => {
-    setAttendeesValid(groupSize > 0)
+  const groupSizeValidation = (size) => {
+    setAttendeesValid(size > 0)
   }
   const editBooking = async () => {
     setProcessing(true)
@@ -192,24 +179,22 @@ const EditBookingModal = ({
         }
       })
 
-      console.log('resultCreateBooking', resultCreateBooking)
       if (!resultCreateBooking || !resultCreateBooking.data) {
         setProcessing(false)
         return
       }
 
       // Update customers object
-      // setCustomers([
-      //   resultCreateBooking.data.upsertOneCustomer,
-      //   ...customers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
-      // ])
+      setCustomers([
+        resultCreateBooking.data.upsertOneCustomer,
+        ...customers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
+      ])
 
-      // // Update bookings object
-      // setBookings([
-      //   resultCreateBooking.data.upsertOneBooking,
-      //   ...bookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)
-      // ])
-      console.log('SALIENDO DEL EDITAR')
+      // Update bookings object
+      setBookings([
+        resultCreateBooking.data.upsertOneBooking,
+        ...bookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)
+      ])
       setProcessing(false)
       setClosedBookingReason(null)
     } catch (ex) {
@@ -230,7 +215,7 @@ const EditBookingModal = ({
   }
 
   const onChangeNotes = (e) => {
-    const newArray = [...currentNotes] || []
+    const newArray = currentNotes ? [...currentNotes] : []
     newArray.push({
       note: e.target.value,
       author: coordinatorName,
@@ -239,13 +224,12 @@ const EditBookingModal = ({
     setBookingNotes(newArray)
   }
 
-  console.log('bookingNotes', bookingNotes)
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="mb-2" toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">Edit Booking</h5>
       </ModalHeader>
-      <Nav tabs>
+      <Nav tabs className="d-flex justify-content-around">
         <NavItem>
           <NavLink
             active={active === '1'}
@@ -253,27 +237,17 @@ const EditBookingModal = ({
               toggle('1')
             }}
           >
-            Basic Information
+            <Info />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink
-            active={active === '2'}
-            onClick={() => {
-              toggle('2')
-            }}
-          >
-            Notes
+          <NavLink>
+            <Edit />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink
-            active={active === '3'}
-            onClick={() => {
-              toggle('3')
-            }}
-          >
-            Settings
+          <NavLink>
+            <Settings />
           </NavLink>
         </NavItem>
       </Nav>
@@ -286,7 +260,6 @@ const EditBookingModal = ({
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <User size={15} />
-                    {' *'}
                   </InputGroupText>
                 </InputGroupAddon>
                 <Input id="full-name" placeholder="Full Name *" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
@@ -297,7 +270,6 @@ const EditBookingModal = ({
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Mail size={15} />
-                    {`  *`}
                   </InputGroupText>
                 </InputGroupAddon>
                 <Input
@@ -318,7 +290,6 @@ const EditBookingModal = ({
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Phone size={15} />
-                    {' *'}
                   </InputGroupText>
                 </InputGroupAddon>
                 <Cleave
@@ -445,7 +416,6 @@ const EditBookingModal = ({
                 className="form-control"
                 placeholder="2021-10-28 12:00"
                 onChange={(date) => {
-                  console.log('date', new Date(date))
                   setBookingSignUpDeadline(new Date(date))
                 }}
               />
@@ -453,6 +423,7 @@ const EditBookingModal = ({
             <FormGroup>
               <Label for="full-name">Close Booking</Label>
               <Select
+                styles={{ option: (styles) => ({ minHeight: 40, ...styles }) }}
                 value={{
                   label: closedBookingReason,
                   value: closedBookingReason
@@ -473,7 +444,7 @@ const EditBookingModal = ({
             </FormGroup>
             <Button
               className="mr-1"
-              color={closedBookingReason ? 'warning' : 'primary'}
+              color={closedBookingReason ? 'danger' : 'primary'}
               onClick={editBooking}
               disabled={
                 !customerName ||
@@ -486,52 +457,19 @@ const EditBookingModal = ({
                 !groupSize
               }
             >
-              {closedBookingReason ? 'Close booking?' : 'Save'}
+              {!processing && !closedBookingReason
+                ? 'Save'
+                : closedBookingReason && processing
+                ? 'Saving...'
+                : processing
+                ? 'Saving...'
+                : 'Close booking?'}
             </Button>
             <Button color="secondary" onClick={cancel} outline>
               Cancel
             </Button>
           </ModalBody>
         </TabPane>
-        <TabPane tabId="2">
-          <Card className="ml-2 mr-2">
-            <CardHeader>
-              <CardTitle tag="h4">Booking Notes</CardTitle>
-            </CardHeader>
-            <CardBody>
-              {bookingNotes && bookingNotes.length ? (
-                bookingNotes.map((item, index) => (
-                  <div className="mt-1">
-                    {item.note}
-                    <div className="d-flex justify-content-between">
-                      <p>
-                        <h6>
-                          {' '}
-                          <Avatar color={`light-dark`} content={currentCoordinatorName} initials /> By {item.author}
-                        </h6>
-                      </p>
-                      <p>
-                        <small className="">
-                          {/* <strong>Updated: </strong> */}
-                          {moment(item.date).fromNow()}
-                        </small>
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <h3>There is no Notes for this Booking!</h3>
-              )}
-            </CardBody>
-          </Card>
-          <div className="row ml-2 mr-2">
-            <Input className="col-10" type="text" id="bookingNotes" onChange={(e) => onChangeNotes(e)} />
-            <Button onClick={editBooking} size="sm" className="col-2">
-              {' >'}
-            </Button>
-          </div>
-        </TabPane>
-        <TabPane tabId="3">Settings tab</TabPane>
       </TabContent>
     </Modal>
   )
