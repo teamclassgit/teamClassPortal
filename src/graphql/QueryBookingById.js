@@ -89,6 +89,7 @@ export default gql`
       createdAt
       createdAt
       updatedAt
+      signUpDeadline
     }
   }
 `

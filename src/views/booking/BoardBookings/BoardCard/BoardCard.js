@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import { Card, CardBody, CardFooter, Button, Media, CardLink, FormText, Badge } from 'reactstrap'
-import { Calendar, Edit2, ShoppingCart, Repeat, User, Users, Check, DollarSign, Mail, Phone } from 'react-feather'
+import { Calendar, Edit2, ShoppingCart, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather'
 import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils'
 import './BoardCard.scss'
 import Avatar from '@components/avatar'
@@ -50,6 +50,7 @@ function BoardCard({
   const [showEditBookingModal, setShowEditBookingModal] = useState(false)
   const [modal, setModal] = useState(false)
 
+  console.log('signUpDeadline', signUpDeadline)
   console.log('eventCoordinatorId', eventCoordinatorId)
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
@@ -170,6 +171,7 @@ function BoardCard({
         <p className="text-truncate m-0 p-0">
           <strong>{capitalizeString(customerName && customerName.split(' ')[0])}</strong>
           <span className="text-primary small">{` ~ $${total}`}</span>
+          <Edit2 className="float-right mr-3 mb-1 cursor-pointer" size={10} onClick={() => handleModal()} />
           <br />
           <small className="text-xs">{classTitle}</small>
         </p>
@@ -180,9 +182,6 @@ function BoardCard({
             {moment(updatedAt).fromNow()}
           </small>
         </p>
-        <Button onClick={() => handleModal()}>
-          <Edit2 size={10} />
-        </Button>
       </>
     )
   }

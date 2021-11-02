@@ -112,6 +112,8 @@ const EditBookingModal = ({
   // console.log('new Date()', new Date())
   // console.log('closeBookingReason', closedBookingReason)
   // console.log('processing', processing)
+  console.log('bookingId', bookingId)
+
   useEffect(() => {
     setCustomerName(currentName)
     setCustomerEmail(currentEmail)
@@ -129,6 +131,8 @@ const EditBookingModal = ({
   }, [allBookings])
 
   console.log('classVariant', classVariant)
+  console.log('bookingSignUpDeadline', bookingSignUpDeadline)
+
 
   useEffect(() => {
     if (bookingTeamClassId) {
@@ -188,6 +192,7 @@ const EditBookingModal = ({
         }
       })
 
+      console.log('resultCreateBooking', resultCreateBooking)
       if (!resultCreateBooking || !resultCreateBooking.data) {
         setProcessing(false)
         return
@@ -426,9 +431,9 @@ const EditBookingModal = ({
                 value={groupSize}
                 onChange={(e) => setGroupSize(e.target.value)}
                 type="number"
-                // onBlur={(e) => {
-                //   groupSizeValidation(e.target.value)
-                // }}
+                onBlur={(e) => {
+                  groupSizeValidation(e.target.value)
+                }}
               />
             </FormGroup>
             <FormGroup>
@@ -440,8 +445,8 @@ const EditBookingModal = ({
                 className="form-control"
                 placeholder="2021-10-28 12:00"
                 onChange={(date) => {
-                  console.log('date', date)
-                  setBookingSignUpDeadline(date)
+                  console.log('date', new Date(date))
+                  setBookingSignUpDeadline(new Date(date))
                 }}
               />
             </FormGroup>
