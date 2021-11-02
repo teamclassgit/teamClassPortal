@@ -28,6 +28,7 @@ import Cleave from 'cleave.js/react'
 import { selectThemeColors } from '@utils'
 import Flatpickr from 'react-flatpickr'
 import mutationUpsertBooking from '../graphql/MutationUpsertBooking'
+import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote'
 import { useMutation } from '@apollo/client'
 import moment from 'moment'
 import Timeline from '@components/timeline'
@@ -83,6 +84,8 @@ const EditBookingModal = ({
   const [active, setActive] = useState('1')
   const [processing, setProcessing] = useState(false)
   const [createBooking] = useMutation(mutationUpsertBooking, {})
+
+  const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {})
 
   const closeBookingOptions = [
     {
@@ -184,6 +187,12 @@ const EditBookingModal = ({
       if (!resultCreateBooking || !resultCreateBooking.data) {
         setProcessing(false)
         return
+      }
+      if (closedBookingReason) {
+        const resultEmail = await removeCampaignRequestQuote({
+          variables: { customerEmail: customerEmail.toLowerCase() }
+        })
+        console.log('Remove campaign before redirecting:', resultEmail)
       }
 
       // Update customers object
@@ -412,6 +421,7 @@ const EditBookingModal = ({
               <Label for="date-time-picker">Custom Sign Up Deadline</Label>
               <Flatpickr
                 value={bookingSignUpDeadline}
+                dateFormat="Y-m-d H:i"
                 data-enable-time
                 id="date-time-picker"
                 className="form-control"
