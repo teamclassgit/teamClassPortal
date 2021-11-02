@@ -184,7 +184,14 @@ const BookingList = () => {
           <>
             <Col sm="12">
               {bookings && bookings.length > 0 && switchView ? (
-                <DataTableBookings filteredData={filteredBookings} customers={customers} calendarEvents={calendarEvents} classes={classes} />
+                <DataTableBookings
+                  filteredData={filteredBookings}
+                  customers={customers}
+                  calendarEvents={calendarEvents}
+                  classes={classes}
+                  coordinators={coordinators}
+                  bookings={bookings}
+                />
               ) : (
                 <BoardBookings
                   filteredBookings={filteredBookings}

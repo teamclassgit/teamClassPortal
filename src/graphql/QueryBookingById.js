@@ -74,6 +74,7 @@ export default gql`
       salesTaxState
       discount
       status
+      closedReason
       eventLink
       signUpStatusLink
       checkoutLink

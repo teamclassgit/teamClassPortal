@@ -17,6 +17,7 @@ export default gql`
       rushFee
       discount
       status
+      closedReason
       eventLink
       signUpStatusLink
       checkoutLink

@@ -8,12 +8,20 @@ import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 're
 import ReactPaginate from 'react-paginate'
 import { Button, Card } from 'reactstrap'
 import StatusSelector from './StatusSelector'
-import { getCustomerEmail, getClassTitle, getBookingColor, getFormattedEventDate } from '../common'
+import {
+  getCustomerEmail,
+  getClassTitle,
+  getBookingColor,
+  getFormattedEventDate,
+  getCustomerPhone,
+  getCustomerCompany,
+  getCoordinatorName
+} from '../common'
 import './TableBookings.scss'
 import CardLink from 'reactstrap/lib/CardLink'
 import EditBookingModal from '../../../components/EditBookingModal'
 
-const DataTableBookings = ({ filteredData, customers, classes, calendarEvents }) => {
+const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, bookings }) => {
   const [currentPage, setCurrentPage] = useState(0)
   const [modal, setModal] = useState(false)
 
@@ -43,12 +51,48 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
       maxWidth: '200px',
       cell: (row) => (
         <>
+          {console.log('row', row._id)}
           <small>
-            <a href="#" onClick={() => handleModal()} title={'Edit booking info'}>
+            <a
+              href="#"
+              onClick={() => {
+                handleModal()
+              }}
+              title={`Edit booking info ${row._id}`}
+            >
               {row._id}
             </a>
           </small>
-          <EditBookingModal open={modal} />
+          <EditBookingModal
+            open={modal}
+            handleModal={handleModal}
+            bookingId={row._id}
+            currentCustomerId={row.customerId}
+            currentName={row.customerName}
+            currentEmail={getCustomerEmail(row.customerId, customers)}
+            currentPhone={getCustomerPhone(row.customerId, customers)}
+            currentCompany={getCustomerCompany(row.customerId, customers)}
+            allCoordinators={coordinators}
+            allClasses={classes}
+            allBookings={bookings}
+            currentCoordinatorId={row.eventCoordinatorId}
+            currentCoordinatorName={getCoordinatorName(row.eventCoordinatorId, coordinators)}
+            currentTeamclassId={row.teamClassId}
+            currentTeamclassName={getClassTitle(row.teamClassId, classes)}
+            currentGroupSize={row.attendees}
+            currentSignUpDeadline={row.signUpDeadline}
+            currentClassVariant={row.classVariant}
+            currentServiceFee={row.serviceFee}
+            currentSalesTax={row.salesTax}
+            createdAt={row.createdAt}
+            updatedAt={row.updatedAt}
+            currentStatus={row.status}
+            currentEventDurationHours={row.eventDurationHours}
+            currentClosedReason={row.closedReason}
+            currentNotes={row.notes}
+            // setBookings={setBookings}
+            // setCustomers={setCustomers}
+          />
         </>
       )
     },
