@@ -46,6 +46,7 @@ const EditBookingModal = ({
   allCoordinators,
   allClasses,
   allBookings,
+  allCustomers,
   currentCoordinatorName,
   currentCoordinatorId,
   currentTeamclassId,
@@ -188,13 +189,13 @@ const EditBookingModal = ({
       // Update customers object
       setCustomers([
         resultCreateBooking.data.upsertOneCustomer,
-        ...customers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
+        ...allCustomers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
       ])
 
       // Update bookings object
       setBookings([
         resultCreateBooking.data.upsertOneBooking,
-        ...bookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)
+        ...allBookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)
       ])
       setProcessing(false)
       setClosedBookingReason(null)

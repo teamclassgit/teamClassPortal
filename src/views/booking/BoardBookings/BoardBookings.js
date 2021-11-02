@@ -182,6 +182,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           renderCard={(cardConTent) => (
             <BoardCard
               content={cardConTent}
+              customers={customers}
               coordinators={coordinators}
               classes={classes}
               bookings={bookings}

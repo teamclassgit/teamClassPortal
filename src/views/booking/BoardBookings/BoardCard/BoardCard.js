@@ -11,6 +11,7 @@ function BoardCard({
   coordinators,
   classes,
   bookings,
+  customers,
   setBookings,
   setCustomers,
   content: {
@@ -344,6 +345,7 @@ function BoardCard({
         allCoordinators={coordinators}
         allClasses={classes}
         allBookings={bookings}
+        allCustomers={customers}
         currentCoordinatorId={eventCoordinatorId}
         currentCoordinatorName={coordinatorName}
         currentTeamclassId={teamClassId}
