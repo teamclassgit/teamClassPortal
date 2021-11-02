@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
+  Alert,
   Button,
   Card,
   CardBody,
@@ -227,7 +228,7 @@ const EditBookingModal = ({
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="mb-2" toggle={handleModal} close={CloseBtn} tag="div">
-        <h5 className="modal-title">Edit Booking</h5>
+        <h5 className="modal-title">Edit Booking{bookingId}</h5>
       </ModalHeader>
       <Nav tabs className="d-flex justify-content-around">
         <NavItem>
@@ -323,7 +324,6 @@ const EditBookingModal = ({
                   label: coordinatorName,
                   value: coordinatorId
                 }}
-                // defaultValue={{ value: defaultCoordinatorOption._id, label: defaultCoordinatorOption.name }}
                 options={
                   allCoordinators &&
                   allCoordinators.map((item) => {
