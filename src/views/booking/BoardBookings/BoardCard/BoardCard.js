@@ -51,8 +51,6 @@ function BoardCard({
   const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null)
   const [modal, setModal] = useState(false)
 
-  console.log('signUpDeadline', signUpDeadline)
-  console.log('eventCoordinatorId', eventCoordinatorId)
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
 
