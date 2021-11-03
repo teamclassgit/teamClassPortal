@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
-  Alert,
   Button,
-  Card,
-  CardBody,
   FormGroup,
   Input,
   InputGroup,
@@ -25,11 +22,10 @@ import { isValidEmail } from '../utility/Utils'
 import Cleave from 'cleave.js/react'
 import { selectThemeColors } from '@utils'
 import Flatpickr from 'react-flatpickr'
-import mutationUpsertBooking from '../graphql/MutationUpsertBooking'
+import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer'
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote'
 import { useMutation } from '@apollo/client'
-import moment from 'moment'
-import Avatar from '@components/avatar'
+
 import './EditBookingModal.scss'
 
 const EditBookingModal = ({
@@ -62,7 +58,8 @@ const EditBookingModal = ({
   allCoordinators,
   allClasses,
   allBookings,
-  allCustomers
+  allCustomers,
+  handleClose
 }) => {
   const [customerName, setCustomerName] = useState(null)
   const [customerEmail, setCustomerEmail] = useState(null)
@@ -77,12 +74,12 @@ const EditBookingModal = ({
   const [classVariant, setClassVariant] = useState(null)
   const [groupSize, setGroupSize] = useState(null)
   const [attendeesValid, setAttendeesValid] = useState(true)
-  const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState(new Date())
+  const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([])
   const [closedBookingReason, setClosedBookingReason] = useState(null)
   const [bookingNotes, setBookingNotes] = useState([])
   const [active, setActive] = useState('1')
   const [processing, setProcessing] = useState(false)
-  const [createBooking] = useMutation(mutationUpsertBooking, {})
+  const [updateBooking] = useMutation(mutationUpdateBooking, {})
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {})
   const closeBookingOptions = [
@@ -119,7 +116,7 @@ const EditBookingModal = ({
     setBookingTeamClassName(currentTeamclassName)
     setClassVariant(currentClassVariant)
     setGroupSize(currentGroupSize)
-    setBookingSignUpDeadline(currentSignUpDeadline)
+    setBookingSignUpDeadline([currentSignUpDeadline])
     setClosedBookingReason(currentClosedReason)
     setBookingNotes(currentNotes)
   }, [bookingId])
@@ -150,7 +147,7 @@ const EditBookingModal = ({
 
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId)
-      const resultCreateBooking = await createBooking({
+      const resultUpdateBooking = await updateBooking({
         variables: {
           bookingId: bookingId,
           date: new Date(), // combine with quotaTime
@@ -175,21 +172,21 @@ const EditBookingModal = ({
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
-          signUpDeadline: bookingSignUpDeadline, // todavía queda pendiente de guardar la fecha
+          signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : null,
           closedReason: closedBookingReason,
           notes: bookingNotes
         }
       })
 
-      if (!resultCreateBooking || !resultCreateBooking.data) {
+      if (!resultUpdateBooking || !resultUpdateBooking.data) {
         setProcessing(false)
         return
       }
 
       // Update customers object
       setCustomers([
-        resultCreateBooking.data.upsertOneCustomer,
-        ...allCustomers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
+        resultUpdateBooking.data.upsertOneCustomer,
+        ...allCustomers.filter((element) => element._id !== resultUpdateBooking.data.upsertOneCustomer._id)
       ])
 
       if (closedBookingReason) {
@@ -197,12 +194,12 @@ const EditBookingModal = ({
           variables: { customerEmail: customerEmail.toLowerCase() }
         })
         console.log('Remove campaign before redirecting:', resultEmail)
-        setBookings([...allBookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)])
+        setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)])
       } else {
         // Update bookings object
         setBookings([
-          resultCreateBooking.data.upsertOneBooking,
-          ...allBookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)
+          resultUpdateBooking.data.updateOneBooking,
+          ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
         ])
       }
 
@@ -236,7 +233,14 @@ const EditBookingModal = ({
   }
 
   return (
-    <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
+    <Modal
+      isOpen={open}
+      toggle={handleModal}
+      className="sidebar-sm"
+      modalClassName="modal-slide-in"
+      contentClassName="pt-0"
+      onClosed={(e) => handleClose()}
+    >
       <ModalHeader className="mb-2" toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">Edit Booking</h5>
       </ModalHeader>
@@ -265,6 +269,11 @@ const EditBookingModal = ({
       <TabContent className="py-50" activeTab={active} color="primary">
         <TabPane tabId="1">
           <ModalBody className="flex-grow-1">
+            <FormGroup>
+              <Label for="full-name">
+                <strong>Id:</strong> <span className="text-primary">{`${bookingId}`}</span>
+              </Label>
+            </FormGroup>
             <FormGroup>
               <Label for="full-name">Customer Information</Label>
               <InputGroup>
@@ -421,15 +430,24 @@ const EditBookingModal = ({
               <Label for="date-time-picker">Custom Sign Up Deadline</Label>
               <Flatpickr
                 value={bookingSignUpDeadline}
-                dateFormat="Y-m-d H:i"
+                dateformat="Y-m-d H:i"
                 data-enable-time
-                id="date-time-picker"
+                id="signUpDateLine"
                 className="form-control"
-                placeholder="2021-10-28 12:00"
-                onChange={(date) => {
-                  setBookingSignUpDeadline(new Date(date))
+                placeholder="Select Date..."
+                onChange={(selectedDates, dateStr, instance) => {
+                  setBookingSignUpDeadline(selectedDates)
                 }}
               />
+              {bookingSignUpDeadline && (
+                <dt className="text-right">
+                  <small>
+                    <a href="#" onClick={(e) => setBookingSignUpDeadline([])}>
+                      Clear
+                    </a>
+                  </small>
+                </dt>
+              )}
             </FormGroup>
             <FormGroup>
               <Label for="full-name">Close Booking</Label>

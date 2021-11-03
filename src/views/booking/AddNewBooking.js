@@ -24,11 +24,11 @@ import '@styles/react/libs/flatpickr/flatpickr.scss'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import { isValidEmail, getUserData } from '../../utility/Utils'
-import mutationUpsertBooking from '../../graphql/MutationUpsertBooking'
+import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer'
 import { useMutation } from '@apollo/client'
 import { v4 as uuid } from 'uuid'
 
-const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers, setCustomers, setBookings, classes, editMode, coordinators }) => {
+const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, setCustomers, setBookings, classes, coordinators }) => {
   const [isOldCustomer, setIsOldCustomer] = useState(false)
   const [newName, setNewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
@@ -42,7 +42,7 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
   const [phoneValid, setPhoneValid] = useState(true)
   const [attendeesValid, setAttendeesValid] = useState(true)
   const [warning, setWarning] = useState({ open: false, message: '' })
-  const [createBooking] = useMutation(mutationUpsertBooking, {})
+  const [createBooking] = useMutation(mutationNewBooking, {})
   const [classVariantsOptions, setClassVariantsOptions] = useState([])
   const [classVariant, setClassVariant] = useState(null)
   const [oneCoordinator, setOneCoordinator] = useState(null)
@@ -101,7 +101,7 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
 
       const resultCreateBooking = await createBooking({
         variables: {
-          bookingId: currentElement && currentElement._id ? currentElement._id : uuid(),
+          bookingId: uuid(),
           date: new Date(), // combine with quotaTime
           teamClassId: selectedClass,
           classVariant: classVariant,
@@ -118,11 +118,12 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
           serviceFee: serviceFeeValue,
           salesTax: salesTaxValue,
           discount: 0,
-          createdAt: currentElement && currentElement.createdAt ? currentElement.createdAt : new Date(),
+          createdAt: new Date(),
           updatedAt: new Date(),
-          status: currentElement && currentElement.status ? currentElement.status : 'quote',
+          status: 'quote',
           email: customer ? customer.email : newEmail,
           phone: customer ? customer.phone : newPhone,
+          billingAddress: customer ? customer.billingAddress : null,
           company: customer ? customer.company : newCompany
         }
       })
@@ -140,8 +141,8 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
 
       // Update bookings object
       setBookings([
-        resultCreateBooking.data.upsertOneBooking,
-        ...bookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)
+        resultCreateBooking.data.insertOneBooking,
+        ...bookings.filter((element) => element._id !== resultCreateBooking.data.insertOneBooking._id)
       ])
       setProcessing(false)
       setClassVariant(null)
@@ -164,18 +165,18 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
 
   useEffect(() => {
-    if (currentElement) {
-      setNewName(currentElement.name)
-      setNewEmail(currentElement.email)
-      setNewPhone(currentElement.phone)
-      setNewCompany(currentElement.company)
-      setNewAttendees(currentElement.attendees)
-      setSelectedClass(currentElement.class)
+    if (baseElement) {
+      setNewName(baseElement.name)
+      setNewEmail(baseElement.email)
+      setNewPhone(baseElement.phone)
+      setNewCompany(baseElement.company)
+      setNewAttendees(baseElement.attendees)
+      setSelectedClass(baseElement.class)
       setSelectedCustomer(null)
       setIsOldCustomer(false)
       setWarning({ open: false, message: '' })
     }
-  }, [currentElement])
+  }, [baseElement])
 
   const getClassName = (id) => {
     const res = classes.find((element) => element._id === selectedClass)
@@ -185,40 +186,36 @@ const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers,
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="mb-1" toggle={handleModal} close={CloseBtn} tag="div">
-        <h5 className="modal-title">{editMode ? 'Edit Booking' : 'New Booking'}</h5>
+        <h5 className="modal-title">{'New Booking'}</h5>
       </ModalHeader>
       <ModalBody className="flex-grow-1">
-        {!editMode ? (
-          <FormGroup>
-            <div className="demo-inline-spacing ">
-              <CustomInput
-                type="radio"
-                id="exampleCustomRadio"
-                name="customRadio"
-                inline
-                label="New Customer"
-                onClick={(e) => {
-                  setIsOldCustomer(false)
-                  setSelectedCustomer(null)
-                }}
-                defaultChecked
-              />
-              <CustomInput
-                type="radio"
-                id="exampleCustomRadio2"
-                name="customRadio"
-                inline
-                label="Old Customer"
-                onClick={(e) => {
-                  setIsOldCustomer(true)
-                  setWarning({ open: false, message: '' })
-                }}
-              />
-            </div>
-          </FormGroup>
-        ) : (
-          ''
-        )}
+        <FormGroup>
+          <div className="demo-inline-spacing ">
+            <CustomInput
+              type="radio"
+              id="exampleCustomRadio"
+              name="customRadio"
+              inline
+              label="New Customer"
+              onClick={(e) => {
+                setIsOldCustomer(false)
+                setSelectedCustomer(null)
+              }}
+              defaultChecked
+            />
+            <CustomInput
+              type="radio"
+              id="exampleCustomRadio2"
+              name="customRadio"
+              inline
+              label="Old Customer"
+              onClick={(e) => {
+                setIsOldCustomer(true)
+                setWarning({ open: false, message: '' })
+              }}
+            />
+          </div>
+        </FormGroup>
 
         {!isOldCustomer && (
           <div>

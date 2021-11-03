@@ -213,13 +213,6 @@ const WizardClassBooking = () => {
           realCountAttendees={realCountAttendees}
         ></InvoiceBuilder>
       )
-    },
-    {
-      id: 'Custom-settings',
-      title: 'Settings',
-      subtitle: 'Custom settings',
-      icon: <Settings size={18} />,
-      content: <></>
     }
   ]
 

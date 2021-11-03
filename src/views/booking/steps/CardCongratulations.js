@@ -13,7 +13,7 @@ const CardCongratulations = ({firstName, stepper, setConfirmation}) => {
         <img className='congratulations-img-right' src={decorationRight} alt='decor-right' />
         <Avatar icon={<Award size={28} />} className='shadow' color='primary' size='xl' />
         <div className='text-center'>
-          <h1 className='mb-1 text-white'>Changes saved!</h1>
+          <h1 className='mb-1 text-white'>Welcome back!</h1>
         
         </div>
       </CardBody>

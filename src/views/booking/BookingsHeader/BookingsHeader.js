@@ -17,7 +17,7 @@ import {
 import { Share, FileText, Filter, Plus, List, Trello, Search } from 'react-feather'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 
-function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAddModal, setCurrentElement, bookings, defaultLimit, onChangeLimit }) {
+function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAddModal, setElementToAdd, bookings, defaultLimit, onChangeLimit }) {
   const [searchValue, setSearchValue] = useState('')
   const [limit, setLimit] = useState(defaultLimit)
   const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext)
@@ -180,7 +180,7 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
                   company: '',
                   attendees: ''
                 }
-                setCurrentElement(newElement)
+                setElementToAdd(newElement)
                 showAddModal()
               }}
               title="Add Booking"

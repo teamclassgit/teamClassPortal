@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  mutation upsertBooking(
+  mutation updateBookingAndCustomer(
     $bookingId: String!
     $date: DateTime!
     $teamClassId: String!
-    $classVariant: BookingClassVariantInsertInput!
-    $notes: [BookingNoteInsertInput]
+    $classVariant: BookingClassVariantUpdateInput!
+    $notes: [BookingNoteUpdateInput]
     $instructorId: String
     $instructorName: String
     $customerId: String!
@@ -25,13 +25,22 @@ export default gql`
     $signUpDeadline: DateTime
     $status: String!
     $phone: String!
-    $email: String
+    $email: String!
+    $billingAddress: CustomerBillingAddressInsertInput
     $company: String
     $closedReason: String
   ) {
     upsertOneCustomer(
       query: { _id: $customerId }
-      data: { _id: $customerId, name: $customerName, phone: $phone, email: $email, company: $company, updatedAt: $updatedAt }
+      data: {
+        _id: $customerId
+        name: $customerName
+        phone: $phone
+        email: $email
+        company: $company
+        updatedAt: $updatedAt
+        billingAddress: $billingAddress
+      }
     ) {
       _id
       name
@@ -49,9 +58,9 @@ export default gql`
       createdAt
       updatedAt
     }
-    upsertOneBooking(
+    updateOneBooking(
       query: { _id: $bookingId }
-      data: {
+      set: {
         _id: $bookingId
         date: $date
         expirationHours: 48

@@ -30,6 +30,7 @@ const BookingList = () => {
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
   const [currentElement, setCurrentElement] = useState({})
+  const [elementToAdd, setElementToAdd] = useState({})
   const { classFilterContext, coordinatorFilterContext, textFilterContext } = useContext(FiltersContext)
   const [filteredBookings, setFilteredBookings] = useState([])
   const [editModal, setEditModal] = useState(false)
@@ -169,7 +170,7 @@ const BookingList = () => {
         switchView={switchView}
         setSwitchView={() => setSwitchView(!switchView)}
         showAddModal={() => handleModal()}
-        setCurrentElement={(d) => setCurrentElement(d)}
+        setElementToAdd={(d) => setElementToAdd(d)}
         onChangeLimit={(newLimit) => {
           setLimit(newLimit)
         }}
@@ -235,8 +236,7 @@ const BookingList = () => {
               classes={classes}
               setCustomers={setCustomers}
               customers={customers}
-              currentElement={currentElement}
-              editMode={currentElement?.editMode}
+              baseElement={elementToAdd}
               setBookings={setBookings}
               coordinators={coordinators}
             />
@@ -250,6 +250,7 @@ const BookingList = () => {
               allCustomers={customers}
               setBookings={setBookings}
               setCustomers={setCustomers}
+              handleClose={() => setCurrentElement({})}
             />
           </>
         )
