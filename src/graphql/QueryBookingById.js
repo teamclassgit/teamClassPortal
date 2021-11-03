@@ -20,6 +20,11 @@ export default gql`
         active
         groupEvent
       }
+      notes {
+        note
+        author
+        date
+      }
       addons {
         icon
         color
@@ -69,6 +74,7 @@ export default gql`
       salesTaxState
       discount
       status
+      closedReason
       eventLink
       signUpStatusLink
       checkoutLink
@@ -84,6 +90,7 @@ export default gql`
       createdAt
       createdAt
       updatedAt
+      signUpDeadline
     }
   }
 `

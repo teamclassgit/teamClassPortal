@@ -9,7 +9,7 @@ import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, 
 import './BoardBookings.scss'
 import '@lourenci/react-kanban/dist/styles.css'
 
-const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators }) => {
+const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {})
   const [loading, setLoading] = useState(true)
 
@@ -94,6 +94,9 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
         payments,
         createdAt,
         updatedAt,
+        signUpDeadline,
+        closedReason,
+        notes
       }) => {
         return {
           customerName,
@@ -102,11 +105,13 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           teamClassId,
           createdAt,
           updatedAt,
-          variant: classVariant,
+          signUpDeadline,
+          classVariant,
           status,
           payments,
           customerId,
           eventDurationHours,
+          eventCoordinatorId,
           coordinatorName: getCoordinatorName(eventCoordinatorId, coordinators),
           classTitle: getClassTitle(teamClassId, classes),
           scheduled: getFormattedEventDate(_id, calendarEvents),
@@ -120,11 +125,12 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           attendeesAdded: 0, // ????
           additionals: 0, // ?????
           calendarEvent: calendarEvents.find((element) => element.bookingId === _id),
-          teamClass: classes.find((element) => element._id === teamClassId)
+          teamClass: classes.find((element) => element._id === teamClassId),
+          closedReason,
+          notes
         }
       }
     )
-
     return {
       columns: BOOKING_STATUS.map(({ label, value }, index) => ({
         id: index,
@@ -173,7 +179,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
             ...draftCard
           })}
           onCardDragEnd={(a, card, source, destination) => handleDragCard(card, source, destination)}
-          renderCard={(cardConTent) => <BoardCard content={cardConTent} />}
+          renderCard={(cardConTent) => <BoardCard content={cardConTent} handleEditModal={handleEditModal} />}
         >
           {(!loading && board) || loadingBoard}
         </Board>

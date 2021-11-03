@@ -17,6 +17,7 @@ export default gql`
       rushFee
       discount
       status
+      closedReason
       eventLink
       signUpStatusLink
       checkoutLink
@@ -25,6 +26,11 @@ export default gql`
         paymentId
         paymentName
         status
+      }
+      notes {
+        note
+        author
+        date
       }
       classVariant {
         title
@@ -36,6 +42,7 @@ export default gql`
       }
       createdAt
       updatedAt
+      signUpDeadline
     }
   }
 `
