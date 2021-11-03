@@ -172,7 +172,7 @@ const EditBookingModal = ({
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
-          signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : null,
+          signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
           closedReason: closedBookingReason,
           notes: bookingNotes
         }
