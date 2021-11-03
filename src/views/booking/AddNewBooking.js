@@ -23,11 +23,10 @@ import {
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
-import { isValidEmail, isPhoneValid } from '../../utility/Utils'
+import { isValidEmail, getUserData } from '../../utility/Utils'
 import mutationUpsertBooking from '../../graphql/MutationUpsertBooking'
 import { useMutation } from '@apollo/client'
 import { v4 as uuid } from 'uuid'
-import { getUserData } from '../../utility/Utils'
 
 const AddNewBooking = ({ open, handleModal, bookings, currentElement, customers, setCustomers, setBookings, classes, editMode, coordinators }) => {
   const [isOldCustomer, setIsOldCustomer] = useState(false)

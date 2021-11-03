@@ -1,24 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
-import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, FormText, Badge } from 'reactstrap'
-import { Calendar, Edit2, ShoppingCart, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather'
+import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap'
+import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather'
 import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils'
 import './BoardCard.scss'
 import Avatar from '@components/avatar'
-import EditBookingModal from '../../../../components/EditBookingModal'
 
 function BoardCard({
-  coordinators,
-  classes,
-  bookings,
-  customers,
-  setBookings,
-  setCustomers,
+  handleEditModal,
   content: {
     customerName,
     _id,
     attendees,
-    variant,
+    classVariant,
     teamClassId,
     createdAt,
     updatedAt,
@@ -50,14 +44,10 @@ function BoardCard({
   const [time, setTime] = useState(null)
   const [total, setTotal] = useState(0)
   const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null)
-  const [modal, setModal] = useState(false)
-
-  // ** Function to handle Modal toggle
-  const handleModal = () => setModal(!modal)
 
   const getTotals = () => {
     const bookingInfo = {
-      classVariant: variant,
+      classVariant,
       classMinimum: minimum,
       pricePerson,
       serviceFee,
@@ -72,7 +62,7 @@ function BoardCard({
 
   useEffect(() => {
     getTotals()
-  }, [variant])
+  }, [classVariant])
 
   useEffect(() => {
     const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
@@ -138,7 +128,7 @@ function BoardCard({
               </tr>
               <tr>
                 <th className="font-weight-normal small">Option</th>
-                <td className="text-right small">{variant && variant.title}</td>
+                <td className="text-right small">{classVariant && classVariant.title}</td>
               </tr>
               <tr>
                 <th className="font-weight-normal small">Total</th>
@@ -199,7 +189,35 @@ function BoardCard({
             <Repeat size={14} />
           </Button>
         </CardHeader>
-        <CardBody className="p-1 cursor-pointer" onClick={() => handleModal()} title={'Edit booking info'}>
+        <CardBody
+          className="p-1 cursor-pointer"
+          onClick={() =>
+            handleEditModal({
+              bookingId: _id,
+              currentCustomerId: customerId,
+              currentName: customerName,
+              currentEmail: email,
+              currentPhone: phone,
+              currentCompany: company,
+              currentCoordinatorId: eventCoordinatorId,
+              currentCoordinatorName: coordinatorName,
+              currentTeamclassId: teamClassId,
+              currentTeamclassName: classTitle,
+              currentGroupSize: attendees,
+              currentSignUpDeadline: signUpDeadline,
+              currentClassVariant: classVariant,
+              currentServiceFee: serviceFee,
+              currentSalesTax: salesTax,
+              createdAt: createdAt,
+              updatedAt: updatedAt,
+              currentStatus: status,
+              currentEventDurationHours: eventDurationHours,
+              currentClosedReason: closedReason,
+              currentNotes: notes
+            })
+          }
+          title={'Edit booking info'}
+        >
           {flippedCard ? cardBack() : cardFront()}
         </CardBody>
         <CardFooter className="card-board-footer pr-1">
@@ -333,37 +351,6 @@ function BoardCard({
           </CardFooter>
         )}
       </Card>
-      <EditBookingModal
-        open={modal}
-        handleModal={handleModal}
-        bookingId={_id}
-        currentCustomerId={customerId}
-        currentName={customerName}
-        currentEmail={email}
-        currentPhone={phone}
-        currentCompany={company}
-        allCoordinators={coordinators}
-        allClasses={classes}
-        allBookings={bookings}
-        allCustomers={customers}
-        currentCoordinatorId={eventCoordinatorId}
-        currentCoordinatorName={coordinatorName}
-        currentTeamclassId={teamClassId}
-        currentTeamclassName={classTitle}
-        currentGroupSize={attendees}
-        currentSignUpDeadline={signUpDeadline}
-        currentClassVariant={variant}
-        currentServiceFee={serviceFee}
-        currentSalesTax={salesTax}
-        createdAt={createdAt}
-        updatedAt={updatedAt}
-        currentStatus={status}
-        currentEventDurationHours={eventDurationHours}
-        currentClosedReason={closedReason}
-        currentNotes={notes}
-        setBookings={setBookings}
-        setCustomers={setCustomers}
-      />
     </>
   )
 }

@@ -8,6 +8,8 @@ function StatusSelector({ row, calendarEvent }) {
 
     if (row.status.indexOf('canceled') > -1) return 'Canceled'
 
+    if (row.status.indexOf('closed') > -1) return 'Closed'
+
     if (row.status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'reserved') return 'Date requested'
 
     if (row.status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'confirmed') return 'Accepted'

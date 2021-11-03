@@ -9,7 +9,7 @@ import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, 
 import './BoardBookings.scss'
 import '@lourenci/react-kanban/dist/styles.css'
 
-const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, bookings, setBookings, setCustomers }) => {
+const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {})
   const [loading, setLoading] = useState(true)
 
@@ -106,7 +106,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           createdAt,
           updatedAt,
           signUpDeadline,
-          variant: classVariant,
+          classVariant,
           status,
           payments,
           customerId,
@@ -179,17 +179,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
             ...draftCard
           })}
           onCardDragEnd={(a, card, source, destination) => handleDragCard(card, source, destination)}
-          renderCard={(cardConTent) => (
-            <BoardCard
-              content={cardConTent}
-              customers={customers}
-              coordinators={coordinators}
-              classes={classes}
-              bookings={bookings}
-              setBookings={setBookings}
-              setCustomers={setCustomers}
-            />
-          )}
+          renderCard={(cardConTent) => <BoardCard content={cardConTent} handleEditModal={handleEditModal} />}
         >
           {(!loading && board) || loadingBoard}
         </Board>

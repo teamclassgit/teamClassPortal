@@ -19,13 +19,10 @@ import {
 } from '../common'
 import './TableBookings.scss'
 import CardLink from 'reactstrap/lib/CardLink'
-import EditBookingModal from '../../../components/EditBookingModal'
 
-const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, bookings }) => {
+const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [currentPage, setCurrentPage] = useState(0)
-  const [modal, setModal] = useState(false)
 
-  const handleModal = () => setModal(!modal)
   // ** Table Common Column
   const columns = [
     {
@@ -51,48 +48,39 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, c
       maxWidth: '200px',
       cell: (row) => (
         <>
-          {console.log('row', row._id)}
           <small>
             <a
               href="#"
               onClick={() => {
-                handleModal()
+                handleEditModal({
+                  bookingId: row._id,
+                  currentCustomerId: row.customerId,
+                  currentName: row.customerName,
+                  currentEmail: getCustomerEmail(row.customerId, customers),
+                  currentPhone: getCustomerPhone(row.customerId, customers),
+                  currentCompany: getCustomerCompany(row.customerId, customers),
+                  currentCoordinatorId: row.eventCoordinatorId,
+                  currentCoordinatorName: getCoordinatorName(row.eventCoordinatorId, coordinators),
+                  currentTeamclassId: row.teamClassId,
+                  currentTeamclassName: getClassTitle(row.teamClassId, classes),
+                  currentGroupSize: row.attendees,
+                  currentSignUpDeadline: row.signUpDeadline,
+                  currentClassVariant: row.classVariant,
+                  currentServiceFee: row.serviceFee,
+                  currentSalesTax: row.salesTax,
+                  createdAt: row.createdAt,
+                  updatedAt: row.updatedAt,
+                  currentStatus: row.status,
+                  currentEventDurationHours: row.eventDurationHours,
+                  currentClosedReason: row.closedReason,
+                  currentNotes: row.notes
+                })
               }}
               title={`Edit booking info ${row._id}`}
             >
               {row._id}
             </a>
           </small>
-          <EditBookingModal
-            open={modal}
-            handleModal={handleModal}
-            bookingId={row._id}
-            currentCustomerId={row.customerId}
-            currentName={row.customerName}
-            currentEmail={getCustomerEmail(row.customerId, customers)}
-            currentPhone={getCustomerPhone(row.customerId, customers)}
-            currentCompany={getCustomerCompany(row.customerId, customers)}
-            allCoordinators={coordinators}
-            allClasses={classes}
-            allBookings={bookings}
-            currentCoordinatorId={row.eventCoordinatorId}
-            currentCoordinatorName={getCoordinatorName(row.eventCoordinatorId, coordinators)}
-            currentTeamclassId={row.teamClassId}
-            currentTeamclassName={getClassTitle(row.teamClassId, classes)}
-            currentGroupSize={row.attendees}
-            currentSignUpDeadline={row.signUpDeadline}
-            currentClassVariant={row.classVariant}
-            currentServiceFee={row.serviceFee}
-            currentSalesTax={row.salesTax}
-            createdAt={row.createdAt}
-            updatedAt={row.updatedAt}
-            currentStatus={row.status}
-            currentEventDurationHours={row.eventDurationHours}
-            currentClosedReason={row.closedReason}
-            currentNotes={row.notes}
-            // setBookings={setBookings}
-            // setCustomers={setCustomers}
-          />
         </>
       )
     },

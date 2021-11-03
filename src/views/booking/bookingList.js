@@ -12,12 +12,14 @@ import BookingsHeader from './BookingsHeader/BookingsHeader'
 import FiltersModal from './BoardBookings/FiltersModal'
 import AddNewBooking from './AddNewBooking'
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext'
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle } from './common'
-import { absoluteUrl } from '../../utility/Utils'
+import EditBookingModal from '../../components/EditBookingModal'
+import { getCustomerEmail, getClassTitle } from './common'
 
 const BookingList = () => {
+  const excludedBookings = ['closed', 'canceled']
+
   const [genericFilter, setGenericFilter] = useState({})
-  const [bookingsFilter, setBookingsFilter] = useState({})
+  const [bookingsFilter, setBookingsFilter] = useState({ status_nin: excludedBookings })
   const [bookings, setBookings] = useState([])
   const [limit, setLimit] = useState(600)
   const [customers, setCustomers] = useState([])
@@ -27,9 +29,13 @@ const BookingList = () => {
   const [switchView, setSwitchView] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [currentElement, setCurrentElement] = useState(null)
+  const [currentElement, setCurrentElement] = useState({})
   const { classFilterContext, coordinatorFilterContext, textFilterContext } = useContext(FiltersContext)
   const [filteredBookings, setFilteredBookings] = useState([])
+  const [editModal, setEditModal] = useState(false)
+
+  // ** Function to handle Modal toggle
+  const handleEditModal = () => setEditModal(!editModal)
 
   const { ...allBookingsResult } = useQuery(queryAllBookings, {
     fetchPolicy: 'no-cache',
@@ -130,21 +136,24 @@ const BookingList = () => {
     if (classFilterContext && coordinatorFilterContext) {
       const query = {
         eventCoordinatorId_in: coordinatorFilterContext.value,
-        teamClassId: classFilterContext.value
+        teamClassId: classFilterContext.value,
+        status_nin: excludedBookings
       }
       setBookingsFilter(query)
     } else if (classFilterContext) {
       const query = {
-        teamClassId: classFilterContext.value
+        teamClassId: classFilterContext.value,
+        status_nin: excludedBookings
       }
       setBookingsFilter(query)
     } else if (coordinatorFilterContext) {
       const query = {
-        eventCoordinatorId_in: coordinatorFilterContext.value
+        eventCoordinatorId_in: coordinatorFilterContext.value,
+        status_nin: excludedBookings
       }
       setBookingsFilter(query)
     } else {
-      setBookingsFilter({})
+      setBookingsFilter({ status_nin: excludedBookings })
     }
   }, [classFilterContext, coordinatorFilterContext])
 
@@ -186,6 +195,10 @@ const BookingList = () => {
               {bookings && bookings.length > 0 && switchView ? (
                 <DataTableBookings
                   filteredData={filteredBookings}
+                  handleEditModal={(element) => {
+                    setCurrentElement(element)
+                    handleEditModal()
+                  }}
                   customers={customers}
                   calendarEvents={calendarEvents}
                   classes={classes}
@@ -195,6 +208,10 @@ const BookingList = () => {
               ) : (
                 <BoardBookings
                   filteredBookings={filteredBookings}
+                  handleEditModal={(element) => {
+                    setCurrentElement(element)
+                    handleEditModal()
+                  }}
                   customers={customers}
                   calendarEvents={calendarEvents}
                   classes={classes}
@@ -222,6 +239,17 @@ const BookingList = () => {
               editMode={currentElement?.editMode}
               setBookings={setBookings}
               coordinators={coordinators}
+            />
+            <EditBookingModal
+              open={editModal}
+              handleModal={handleEditModal}
+              currentElement={currentElement}
+              allCoordinators={coordinators}
+              allClasses={classes}
+              allBookings={bookings}
+              allCustomers={customers}
+              setBookings={setBookings}
+              setCustomers={setCustomers}
             />
           </>
         )

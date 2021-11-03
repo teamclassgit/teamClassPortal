@@ -4,8 +4,6 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader,
-  CardTitle,
   FormGroup,
   Input,
   InputGroup,
@@ -31,39 +29,40 @@ import mutationUpsertBooking from '../graphql/MutationUpsertBooking'
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote'
 import { useMutation } from '@apollo/client'
 import moment from 'moment'
-import Timeline from '@components/timeline'
 import Avatar from '@components/avatar'
 import './EditBookingModal.scss'
 
 const EditBookingModal = ({
+  currentElement: {
+    bookingId,
+    currentCustomerId,
+    currentName,
+    currentEmail,
+    currentPhone,
+    currentCompany,
+    currentCoordinatorName,
+    currentCoordinatorId,
+    currentTeamclassId,
+    currentTeamclassName,
+    currentGroupSize,
+    currentSignUpDeadline,
+    currentClassVariant,
+    currentServiceFee,
+    currentSalesTax,
+    createdAt,
+    currentStatus,
+    currentEventDurationHours,
+    currentClosedReason,
+    currentNotes
+  },
   open,
   handleModal,
-  bookingId,
-  currentCustomerId,
-  currentName,
-  currentEmail,
-  currentPhone,
-  currentCompany,
+  setCustomers,
+  setBookings,
   allCoordinators,
   allClasses,
   allBookings,
-  allCustomers,
-  currentCoordinatorName,
-  currentCoordinatorId,
-  currentTeamclassId,
-  currentTeamclassName,
-  currentGroupSize,
-  currentSignUpDeadline,
-  currentClassVariant,
-  currentServiceFee,
-  currentSalesTax,
-  createdAt,
-  currentStatus,
-  currentEventDurationHours,
-  currentClosedReason,
-  currentNotes,
-  setCustomers,
-  setBookings
+  allCustomers
 }) => {
   const [customerName, setCustomerName] = useState(null)
   const [customerEmail, setCustomerEmail] = useState(null)
@@ -86,7 +85,6 @@ const EditBookingModal = ({
   const [createBooking] = useMutation(mutationUpsertBooking, {})
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {})
-
   const closeBookingOptions = [
     {
       label: '',
@@ -124,7 +122,7 @@ const EditBookingModal = ({
     setBookingSignUpDeadline(currentSignUpDeadline)
     setClosedBookingReason(currentClosedReason)
     setBookingNotes(currentNotes)
-  }, [allBookings])
+  }, [bookingId])
 
   useEffect(() => {
     if (bookingTeamClassId) {
@@ -152,7 +150,6 @@ const EditBookingModal = ({
 
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId)
-
       const resultCreateBooking = await createBooking({
         variables: {
           bookingId: bookingId,
@@ -188,12 +185,6 @@ const EditBookingModal = ({
         setProcessing(false)
         return
       }
-      if (closedBookingReason) {
-        const resultEmail = await removeCampaignRequestQuote({
-          variables: { customerEmail: customerEmail.toLowerCase() }
-        })
-        console.log('Remove campaign before redirecting:', resultEmail)
-      }
 
       // Update customers object
       setCustomers([
@@ -201,11 +192,20 @@ const EditBookingModal = ({
         ...allCustomers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
       ])
 
-      // Update bookings object
-      setBookings([
-        resultCreateBooking.data.upsertOneBooking,
-        ...allBookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)
-      ])
+      if (closedBookingReason) {
+        const resultEmail = await removeCampaignRequestQuote({
+          variables: { customerEmail: customerEmail.toLowerCase() }
+        })
+        console.log('Remove campaign before redirecting:', resultEmail)
+        setBookings([...allBookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)])
+      } else {
+        // Update bookings object
+        setBookings([
+          resultCreateBooking.data.upsertOneBooking,
+          ...allBookings.filter((element) => element._id !== resultCreateBooking.data.upsertOneBooking._id)
+        ])
+      }
+
       setProcessing(false)
       setClosedBookingReason(null)
     } catch (ex) {
