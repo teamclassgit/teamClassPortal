@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import {
+  Alert,
   Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
   FormGroup,
   Input,
   InputGroup,
@@ -23,8 +28,11 @@ import Cleave from 'cleave.js/react'
 import { selectThemeColors } from '@utils'
 import Flatpickr from 'react-flatpickr'
 import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer'
+import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId'
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote'
 import { useMutation } from '@apollo/client'
+import Avatar from '@components/avatar'
+import moment from 'moment'
 
 import './EditBookingModal.scss'
 
@@ -59,6 +67,7 @@ const EditBookingModal = ({
   allClasses,
   allBookings,
   allCustomers,
+  allCalendarEvents,
   handleClose
 }) => {
   const [customerName, setCustomerName] = useState(null)
@@ -79,9 +88,13 @@ const EditBookingModal = ({
   const [bookingNotes, setBookingNotes] = useState([])
   const [active, setActive] = useState('1')
   const [processing, setProcessing] = useState(false)
+
   const [updateBooking] = useMutation(mutationUpdateBooking, {})
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {})
+
+  const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {})
+
   const closeBookingOptions = [
     {
       label: '',
@@ -203,6 +216,18 @@ const EditBookingModal = ({
         ])
       }
 
+      if (closedBookingReason === 'Lost' || closedBookingReason === 'Duplicated' || closedBookingReason === 'Mistake') {
+        const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId)
+        if (calendarEventObject) {
+          const resultStatusUpdated = await updateCalendarEventStatus({
+            variables: {
+              calendarEventId: calendarEventObject._id,
+              status: 'canceled'
+            }
+          })
+          console.log('Changing calendar event status', resultStatusUpdated)
+        }
+      }
       setProcessing(false)
       setClosedBookingReason(null)
     } catch (ex) {
@@ -256,7 +281,12 @@ const EditBookingModal = ({
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink>
+          <NavLink
+            active={active === '2'}
+            onClick={() => {
+              toggle('2')
+            }}
+          >
             <Edit />
           </NavLink>
         </NavItem>
@@ -499,6 +529,47 @@ const EditBookingModal = ({
             </Button>
           </ModalBody>
         </TabPane>
+        <TabPane tabId="2">
+          <b className="text-primary ml-2">Booking Notes</b>
+          <Card className="notes-card mt-1">
+            <CardBody>
+              {currentNotes && currentNotes.length > 0 ? (
+                currentNotes
+                  .sort((a, b) => (a.date > b.date ? -1 : 1))
+                  .map((item, index) => (
+                    <div className="text-justify ">
+                      <p className="">
+                        <small>{item.note}</small>
+                      </p>
+                      <div className="d-flex justify-content-between">
+                        <p className="text-primary font-italic">
+                          <small>{item.author}</small>
+                        </p>
+                        <p>
+                          <small className="">
+                            {/* <strong>Updated: </strong> */}
+                            {moment(item.date).fromNow()}
+                          </small>
+                        </p>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <h6>Write your first note below...</h6>
+              )}
+            </CardBody>
+          </Card>
+          <div className=" ml-2 mr-2">
+            <Input className="" type="textarea" id="bookingNotes" onChange={(e) => onChangeNotes(e)} />
+            <Button onClick={editBooking} size="sm" className="mt-1" color="primary">
+              {processing ? 'Saving note...' : 'Save Note'}
+            </Button>
+            <Button className="mt-1 ml-1" size="sm" color="secondary" onClick={cancel} outline>
+              Cancel
+            </Button>
+          </div>
+        </TabPane>
+        <TabPane tabId="3">Settings tab</TabPane>
       </TabContent>
     </Modal>
   )

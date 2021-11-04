@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap'
-import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather'
+import { Calendar, Copy, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather'
 import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils'
 import './BoardCard.scss'
 import Avatar from '@components/avatar'
+import CopyClipboard from '../../../../components/CopyClipboard'
 
 function BoardCard({
   handleEditModal,
@@ -88,18 +89,22 @@ function BoardCard({
             <strong>{capitalizeString(customerName)}</strong>
             <br />
             <small>
-              <Mail size={12} /> {email}
+              <Mail size={12} /> {`${email}  `}
+              <CopyClipboard text={email} />
             </small>
+
             <br />
             <small>
-              <Phone size={12} /> {phone}
+              <Phone size={12} /> {`${phone}  `}
+              <CopyClipboard text={phone} />
             </small>
           </p>
 
           <p className="small">
-            <strong>ID:</strong> {_id}
+            <strong>ID:</strong> {`${_id}  `}
+            <CopyClipboard text={_id} />
           </p>
-          <p className="small text-primary">{classTitle}</p>
+          <p className="small text-primary">{`${classTitle}  `}</p>
         </div>
         {date && time && (
           <Media className="pb-1">
@@ -157,7 +162,35 @@ function BoardCard({
 
   const cardFront = () => {
     return (
-      <>
+      <div
+        className=" cursor-pointer"
+        onClick={() =>
+          handleEditModal({
+            bookingId: _id,
+            currentCustomerId: customerId,
+            currentName: customerName,
+            currentEmail: email,
+            currentPhone: phone,
+            currentCompany: company,
+            currentCoordinatorId: eventCoordinatorId,
+            currentCoordinatorName: coordinatorName,
+            currentTeamclassId: teamClassId,
+            currentTeamclassName: classTitle,
+            currentGroupSize: attendees,
+            currentSignUpDeadline: signUpDeadline,
+            currentClassVariant: classVariant,
+            currentServiceFee: serviceFee,
+            currentSalesTax: salesTax,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            currentStatus: status,
+            currentEventDurationHours: eventDurationHours,
+            currentClosedReason: closedReason,
+            currentNotes: notes
+          })
+        }
+        title={'Edit booking info'}
+      >
         <p className="text-truncate m-0 p-0">
           <strong>{capitalizeString(customerName && customerName.split(' ')[0])}</strong>
           <span className="text-primary small">{` ~ $${total}`}</span>
@@ -171,7 +204,7 @@ function BoardCard({
             {moment(updatedAt).fromNow()}
           </small>
         </p>
-      </>
+      </div>
     )
   }
 
@@ -189,37 +222,7 @@ function BoardCard({
             <Repeat size={14} />
           </Button>
         </CardHeader>
-        <CardBody
-          className="p-1 cursor-pointer"
-          onClick={() =>
-            handleEditModal({
-              bookingId: _id,
-              currentCustomerId: customerId,
-              currentName: customerName,
-              currentEmail: email,
-              currentPhone: phone,
-              currentCompany: company,
-              currentCoordinatorId: eventCoordinatorId,
-              currentCoordinatorName: coordinatorName,
-              currentTeamclassId: teamClassId,
-              currentTeamclassName: classTitle,
-              currentGroupSize: attendees,
-              currentSignUpDeadline: signUpDeadline,
-              currentClassVariant: classVariant,
-              currentServiceFee: serviceFee,
-              currentSalesTax: salesTax,
-              createdAt: createdAt,
-              updatedAt: updatedAt,
-              currentStatus: status,
-              currentEventDurationHours: eventDurationHours,
-              currentClosedReason: closedReason,
-              currentNotes: notes
-            })
-          }
-          title={'Edit booking info'}
-        >
-          {flippedCard ? cardBack() : cardFront()}
-        </CardBody>
+        <CardBody className="p-1">{flippedCard ? cardBack() : cardFront()}</CardBody>
         <CardFooter className="card-board-footer pr-1">
           {status === 'quote' ? (
             <div align="right">
