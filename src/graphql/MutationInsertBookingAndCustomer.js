@@ -21,6 +21,7 @@ export default gql`
     $serviceFee: Float!
     $discount: Float!
     $createdAt: DateTime!
+    $customerCreatedAt: DateTime!
     $updatedAt: DateTime!
     $signUpDeadline: DateTime
     $status: String!
@@ -39,6 +40,7 @@ export default gql`
         email: $email
         company: $company
         updatedAt: $updatedAt
+        createdAt: $customerCreatedAt
         billingAddress: $billingAddress
       }
     ) {

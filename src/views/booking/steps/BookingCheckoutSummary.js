@@ -40,7 +40,8 @@ const BookingCheckoutSummary = ({
             <br />
             <br />
             <Badge className="booking-checkout-summary-priceBadge">
-              ${bookingInfo.classVariant.pricePerson} / {bookingInfo.classVariant.groupEvent ? 'group' : 'person'}
+              ${bookingInfo.classVariant && bookingInfo.classVariant.pricePerson} /{' '}
+              {bookingInfo.classVariant && bookingInfo.classVariant.groupEvent ? 'group' : 'person'}
             </Badge>
           </h4>
         </CardHeader>
