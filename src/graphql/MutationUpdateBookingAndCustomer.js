@@ -26,21 +26,12 @@ export default gql`
     $status: String!
     $phone: String!
     $email: String!
-    $billingAddress: CustomerBillingAddressInsertInput
     $company: String
     $closedReason: String
   ) {
-    upsertOneCustomer(
+    updateOneCustomer(
       query: { _id: $customerId }
-      data: {
-        _id: $customerId
-        name: $customerName
-        phone: $phone
-        email: $email
-        company: $company
-        updatedAt: $updatedAt
-        billingAddress: $billingAddress
-      }
+      set: { _id: $customerId, name: $customerName, phone: $phone, email: $email, company: $company, updatedAt: $updatedAt }
     ) {
       _id
       name

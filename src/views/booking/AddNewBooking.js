@@ -118,6 +118,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
           serviceFee: serviceFeeValue,
           salesTax: salesTaxValue,
           discount: 0,
+          customerCreatedAt: customer && customer.createdAt ? customer.createdAt : new Date(),
           createdAt: new Date(),
           updatedAt: new Date(),
           status: 'quote',

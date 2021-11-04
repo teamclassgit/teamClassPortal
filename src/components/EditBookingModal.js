@@ -185,8 +185,8 @@ const EditBookingModal = ({
 
       // Update customers object
       setCustomers([
-        resultUpdateBooking.data.upsertOneCustomer,
-        ...allCustomers.filter((element) => element._id !== resultUpdateBooking.data.upsertOneCustomer._id)
+        resultUpdateBooking.data.updateOneCustomer,
+        ...allCustomers.filter((element) => element._id !== resultUpdateBooking.data.updateOneCustomer._id)
       ])
 
       if (closedBookingReason) {

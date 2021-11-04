@@ -20,9 +20,9 @@ function StatusSelector({ row, calendarEvent }) {
 
     const finalPayment = row.payments && row.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
 
-    if (row.status.indexOf('confirmed') > -1 && row.payments && row.payments.length > 0) return 'Deposit paid'
+    if (row.status.indexOf('confirmed') > -1 && depositPayment) return 'Deposit paid'
 
-    if (row.status.indexOf('paid') > -1 && row.payments && row.payments.length > 0) return 'Paid'
+    if (row.status.indexOf('paid') > -1 && finalPayment) return 'Paid'
 
     if (row.status.indexOf('reviews') > -1 || (row.status.indexOf('confirmed') > -1 && (!row.payments || row.payments.length === 0))) return 'Reviews'
 
