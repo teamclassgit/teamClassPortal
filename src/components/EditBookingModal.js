@@ -242,8 +242,7 @@ const EditBookingModal = ({
     // Hide modal
     handleModal()
   }
-  console.log('currentNotes', currentNotes)
-  console.log('bookingNotes', bookingNotes)
+
   const editNotes = async () => {
     setProcessing(true)
     const newArray = bookingNotes ? [...bookingNotes] : []
@@ -262,15 +261,12 @@ const EditBookingModal = ({
         }
       })
       setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)))
-      console.log('Changing booking Notes', resultNotesUpdates)
       setProcessing(false)
-      setInputNote('')
     } catch (ex) {
       console.log(ex)
       setProcessing(false)
     }
   }
-  // console.log('allBookings', allBookings)
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
 
   const toggle = (tab) => {
@@ -588,7 +584,7 @@ const EditBookingModal = ({
           </Card>
           <div className=" ml-2 mr-2">
             <Input className="" type="textarea" id="bookingNotes" value={inputNote} onChange={(e) => setInputNote(e.target.value)} />
-            <Button onClick={onChangeNotes} size="sm" className="mt-1" color="primary">
+            <Button onClick={onChangeNotes} size="sm" className="mt-1" color="primary" disabled={!inputNote}>
               {processing ? 'Saving note...' : 'Save Note'}
             </Button>
             <Button className="mt-1 ml-1" size="sm" color="secondary" onClick={cancel} outline>
