@@ -158,7 +158,7 @@ const EditBookingModal = ({
           customerId: currentCustomerId,
           customerName: customerName,
           eventDate: new Date(),
-          eventDurationHours: classVariant.duration,
+          eventDurationHours: classVariant.duration ? classVariant.duration : currentEventDurationHours,
           eventCoordinatorId: coordinatorId,
           attendees: groupSize,
           classMinimum: classVariant.minimum,
