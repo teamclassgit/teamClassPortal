@@ -14,7 +14,7 @@ import {
   InputGroup,
   InputGroupAddon
 } from 'reactstrap'
-import { Share, FileText, Filter, Plus, List, Trello, Search } from 'react-feather'
+import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import ExportToExcel from '../../../components/ExportToExcel'
 import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName } from '../common'
@@ -44,14 +44,14 @@ function BookingsHeader({
       const headers = [
         'Updated',
         'BookingId',
-        'Booking Status',
-        'Customer Name',
-        'Customer Email',
-        'Customer Phone',
-        'Customer Company',
+        'Status',
+        'Name',
+        'Email',
+        'Phone',
+        'Company',
         'Coordinator Name',
-        'Team classId',
-        'Team Class Title',
+        'ClassId',
+        'Class Title',
         'Class Variants',
         'Price',
         'Group Size',
@@ -188,13 +188,18 @@ function BookingsHeader({
                 <Share size={13} />
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem className="w-100">
-                  <FileText size={13} />
-                  <span className="align-middle ml-50">
-                    <ExportToExcel apiData={attendeesExcelTable} fileName={'Bookings'} title={' Excel File'} />
-                    <br></br>
-                    <small>Download excel file with bookings</small>
-                  </span>
+                <DropdownItem className="align-middle w-100">
+                  <ExportToExcel
+                    apiData={attendeesExcelTable}
+                    fileName={'Bookings'}
+                    title={
+                      <h6>
+                        <FileText size={13} />
+                        {' Excel File'}
+                      </h6>
+                    }
+                    smallText={<h6 className="small m-0 p-0">Download</h6>}
+                  />
                 </DropdownItem>
               </DropdownMenu>
             </UncontrolledButtonDropdown>

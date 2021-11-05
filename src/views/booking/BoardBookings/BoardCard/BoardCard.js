@@ -84,13 +84,13 @@ function BoardCard({
   const cardBack = () => {
     return (
       <div>
-        <div>
+        <div className="z-index-1">
           <p className="mb-1 p-0">
             <strong>{capitalizeString(customerName)}</strong>
             <br />
             <small>
               <Mail size={12} /> {`${email}  `}
-              <CopyClipboard text={email} />
+              <CopyClipboard className="z-index-2" text={email} />
             </small>
 
             <br />
@@ -162,35 +162,7 @@ function BoardCard({
 
   const cardFront = () => {
     return (
-      <div
-        className=" cursor-pointer"
-        onClick={() =>
-          handleEditModal({
-            bookingId: _id,
-            currentCustomerId: customerId,
-            currentName: customerName,
-            currentEmail: email,
-            currentPhone: phone,
-            currentCompany: company,
-            currentCoordinatorId: eventCoordinatorId,
-            currentCoordinatorName: coordinatorName,
-            currentTeamclassId: teamClassId,
-            currentTeamclassName: classTitle,
-            currentGroupSize: attendees,
-            currentSignUpDeadline: signUpDeadline,
-            currentClassVariant: classVariant,
-            currentServiceFee: serviceFee,
-            currentSalesTax: salesTax,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            currentStatus: status,
-            currentEventDurationHours: eventDurationHours,
-            currentClosedReason: closedReason,
-            currentNotes: notes
-          })
-        }
-        title={'Edit booking info'}
-      >
+      <div>
         <p className="text-truncate m-0 p-0">
           <strong>{capitalizeString(customerName && customerName.split(' ')[0])}</strong>
           <span className="text-primary small">{` ~ $${total}`}</span>
@@ -222,7 +194,37 @@ function BoardCard({
             <Repeat size={14} />
           </Button>
         </CardHeader>
-        <CardBody className="p-1">{flippedCard ? cardBack() : cardFront()}</CardBody>
+        <CardBody
+          className="p-1 cursor-pointer"
+          onClick={() =>
+            handleEditModal({
+              bookingId: _id,
+              currentCustomerId: customerId,
+              currentName: customerName,
+              currentEmail: email,
+              currentPhone: phone,
+              currentCompany: company,
+              currentCoordinatorId: eventCoordinatorId,
+              currentCoordinatorName: coordinatorName,
+              currentTeamclassId: teamClassId,
+              currentTeamclassName: classTitle,
+              currentGroupSize: attendees,
+              currentSignUpDeadline: signUpDeadline,
+              currentClassVariant: classVariant,
+              currentServiceFee: serviceFee,
+              currentSalesTax: salesTax,
+              createdAt: createdAt,
+              updatedAt: updatedAt,
+              currentStatus: status,
+              currentEventDurationHours: eventDurationHours,
+              currentClosedReason: closedReason,
+              currentNotes: notes
+            })
+          }
+          title={'Edit booking info'}
+        >
+          {flippedCard ? cardBack() : cardFront()}
+        </CardBody>
         <CardFooter className="card-board-footer pr-1">
           {status === 'quote' ? (
             <div align="right">

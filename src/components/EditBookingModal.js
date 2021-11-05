@@ -30,6 +30,7 @@ import Flatpickr from 'react-flatpickr'
 import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer'
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId'
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote'
+import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes'
 import { useMutation } from '@apollo/client'
 import Avatar from '@components/avatar'
 import moment from 'moment'
@@ -88,12 +89,15 @@ const EditBookingModal = ({
   const [bookingNotes, setBookingNotes] = useState([])
   const [active, setActive] = useState('1')
   const [processing, setProcessing] = useState(false)
+  const [inputNote, setInputNote] = useState('')
 
   const [updateBooking] = useMutation(mutationUpdateBooking, {})
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {})
 
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {})
+
+  const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {})
 
   const closeBookingOptions = [
     {
@@ -238,7 +242,35 @@ const EditBookingModal = ({
     // Hide modal
     handleModal()
   }
+  console.log('currentNotes', currentNotes)
+  console.log('bookingNotes', bookingNotes)
+  const editNotes = async () => {
+    setProcessing(true)
+    const newArray = bookingNotes ? [...bookingNotes] : []
+    newArray.unshift({
+      note: inputNote,
+      author: coordinatorName,
+      date: new Date()
+    })
 
+    try {
+      const resultNotesUpdates = await updateBookingNotes({
+        variables: {
+          id: bookingId,
+          notes: newArray,
+          updatedAt: new Date()
+        }
+      })
+      setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)))
+      console.log('Changing booking Notes', resultNotesUpdates)
+      setProcessing(false)
+      setInputNote('')
+    } catch (ex) {
+      console.log(ex)
+      setProcessing(false)
+    }
+  }
+  // console.log('allBookings', allBookings)
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
 
   const toggle = (tab) => {
@@ -247,14 +279,9 @@ const EditBookingModal = ({
     }
   }
 
-  const onChangeNotes = (e) => {
-    const newArray = currentNotes ? [...currentNotes] : []
-    newArray.push({
-      note: e.target.value,
-      author: coordinatorName,
-      date: new Date()
-    })
-    setBookingNotes(newArray)
+  const onChangeNotes = () => {
+    editNotes()
+    setInputNote('')
   }
 
   return (
@@ -533,8 +560,8 @@ const EditBookingModal = ({
           <b className="text-primary ml-2">Booking Notes</b>
           <Card className="notes-card mt-1">
             <CardBody>
-              {currentNotes && currentNotes.length > 0 ? (
-                currentNotes
+              {bookingNotes && bookingNotes.length > 0 ? (
+                bookingNotes
                   .sort((a, b) => (a.date > b.date ? -1 : 1))
                   .map((item, index) => (
                     <div className="text-justify ">
@@ -560,8 +587,8 @@ const EditBookingModal = ({
             </CardBody>
           </Card>
           <div className=" ml-2 mr-2">
-            <Input className="" type="textarea" id="bookingNotes" onChange={(e) => onChangeNotes(e)} />
-            <Button onClick={editBooking} size="sm" className="mt-1" color="primary">
+            <Input className="" type="textarea" id="bookingNotes" value={inputNote} onChange={(e) => setInputNote(e.target.value)} />
+            <Button onClick={onChangeNotes} size="sm" className="mt-1" color="primary">
               {processing ? 'Saving note...' : 'Save Note'}
             </Button>
             <Button className="mt-1 ml-1" size="sm" color="secondary" onClick={cancel} outline>
