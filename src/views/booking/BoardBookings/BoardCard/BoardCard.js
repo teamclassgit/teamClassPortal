@@ -99,7 +99,6 @@ function BoardCard({
               <CopyClipboard text={phone} />
             </small>
           </p>
-
           <p className="small">
             <strong>ID: </strong>
             <a

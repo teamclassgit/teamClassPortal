@@ -232,6 +232,7 @@ const EditBookingModal = ({
           console.log('Changing calendar event status', resultStatusUpdated)
         }
       }
+
       setProcessing(false)
       setClosedBookingReason(null)
     } catch (ex) {
@@ -253,7 +254,7 @@ const EditBookingModal = ({
     })
 
     try {
-      const resultNotesUpdates = await updateBookingNotes({
+      const resultNotesUpdated = await updateBookingNotes({
         variables: {
           id: bookingId,
           notes: newArray,
@@ -261,6 +262,10 @@ const EditBookingModal = ({
         }
       })
       setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)))
+      setBookings([
+        resultNotesUpdated.data.updateOneBooking,
+        ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
+      ])
       setProcessing(false)
     } catch (ex) {
       console.log(ex)
@@ -557,26 +562,24 @@ const EditBookingModal = ({
           <Card className="notes-card mt-1">
             <CardBody>
               {bookingNotes && bookingNotes.length > 0 ? (
-                bookingNotes
-                  .sort((a, b) => (a.date > b.date ? -1 : 1))
-                  .map((item, index) => (
-                    <div className="text-justify ">
-                      <p className="">
-                        <small>{item.note}</small>
+                bookingNotes.map((item, index) => (
+                  <div className="text-justify ">
+                    <p className="">
+                      <small>{item.note}</small>
+                    </p>
+                    <div className="d-flex justify-content-between">
+                      <p className="text-primary font-italic">
+                        <small>{item.author}</small>
                       </p>
-                      <div className="d-flex justify-content-between">
-                        <p className="text-primary font-italic">
-                          <small>{item.author}</small>
-                        </p>
-                        <p>
-                          <small className="">
-                            {/* <strong>Updated: </strong> */}
-                            {moment(item.date).fromNow()}
-                          </small>
-                        </p>
-                      </div>
+                      <p>
+                        <small className="">
+                          {/* <strong>Updated: </strong> */}
+                          {moment(item.date).fromNow()}
+                        </small>
+                      </p>
                     </div>
-                  ))
+                  </div>
+                ))
               ) : (
                 <h6>Write your first note below...</h6>
               )}
