@@ -49,6 +49,20 @@ export default gql`
       createdAt
       updatedAt
     }
+    updateOneCalendarEvent(query: { bookingId: $bookingId }, set: { classId: $teamClassId }) {
+      _id
+      classId
+      bookingId
+      year
+      month
+      day
+      fromHour
+      fromMinutes
+      toHour
+      toMinutes
+      status
+      rushFee
+    }
     updateOneBooking(
       query: { _id: $bookingId }
       set: {
