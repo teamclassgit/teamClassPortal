@@ -34,10 +34,14 @@ export default gql`
       }
       classVariant {
         title
+        notes
         minimum
         maximum
+        duration
         pricePerson
         hasKit
+        order
+        active
         groupEvent
       }
       createdAt
