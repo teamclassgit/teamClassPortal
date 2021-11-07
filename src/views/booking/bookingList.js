@@ -175,6 +175,9 @@ const BookingList = () => {
           setLimit(newLimit)
         }}
         bookings={filteredBookings}
+        customers={customers}
+        coordinators={coordinators}
+        classes={classes}
         defaultLimit={limit}
       />
       {allClasses.loading ||
@@ -248,6 +251,7 @@ const BookingList = () => {
               allClasses={classes}
               allBookings={bookings}
               allCustomers={customers}
+              allCalendarEvents={calendarEvents}
               setBookings={setBookings}
               setCustomers={setCustomers}
               handleClose={() => setCurrentElement({})}

@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import {
+  Alert,
   Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
   FormGroup,
   Input,
   InputGroup,
@@ -18,13 +23,18 @@ import {
 } from 'reactstrap'
 import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather'
 import Select from 'react-select'
-import { isValidEmail } from '../utility/Utils'
+import { getUserData, isValidEmail } from '../utility/Utils'
 import Cleave from 'cleave.js/react'
 import { selectThemeColors } from '@utils'
 import Flatpickr from 'react-flatpickr'
 import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer'
+import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId'
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote'
+import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes'
 import { useMutation } from '@apollo/client'
+import Avatar from '@components/avatar'
+import moment from 'moment'
+import classnames from 'classnames'
 
 import './EditBookingModal.scss'
 
@@ -59,6 +69,7 @@ const EditBookingModal = ({
   allClasses,
   allBookings,
   allCustomers,
+  allCalendarEvents,
   handleClose
 }) => {
   const [customerName, setCustomerName] = useState(null)
@@ -79,9 +90,16 @@ const EditBookingModal = ({
   const [bookingNotes, setBookingNotes] = useState([])
   const [active, setActive] = useState('1')
   const [processing, setProcessing] = useState(false)
+  const [inputNote, setInputNote] = useState('')
+
   const [updateBooking] = useMutation(mutationUpdateBooking, {})
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {})
+
+  const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {})
+
+  const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {})
+
   const closeBookingOptions = [
     {
       label: '',
@@ -203,6 +221,19 @@ const EditBookingModal = ({
         ])
       }
 
+      if (closedBookingReason === 'Lost' || closedBookingReason === 'Duplicated' || closedBookingReason === 'Mistake') {
+        const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId)
+        if (calendarEventObject) {
+          const resultStatusUpdated = await updateCalendarEventStatus({
+            variables: {
+              calendarEventId: calendarEventObject._id,
+              status: 'canceled'
+            }
+          })
+          console.log('Changing calendar event status', resultStatusUpdated)
+        }
+      }
+
       setProcessing(false)
       setClosedBookingReason(null)
     } catch (ex) {
@@ -214,6 +245,35 @@ const EditBookingModal = ({
     handleModal()
   }
 
+  const editNotes = async () => {
+    setProcessing(true)
+    const newArray = bookingNotes ? [...bookingNotes] : []
+    const userData = getUserData()
+    newArray.unshift({
+      note: inputNote,
+      author: (userData && userData.customData && userData.customData['name']) || 'Unknown',
+      date: new Date()
+    })
+
+    try {
+      const resultNotesUpdated = await updateBookingNotes({
+        variables: {
+          id: bookingId,
+          notes: newArray,
+          updatedAt: new Date()
+        }
+      })
+      setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)))
+      setBookings([
+        resultNotesUpdated.data.updateOneBooking,
+        ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
+      ])
+      setProcessing(false)
+    } catch (ex) {
+      console.log(ex)
+      setProcessing(false)
+    }
+  }
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
 
   const toggle = (tab) => {
@@ -222,14 +282,29 @@ const EditBookingModal = ({
     }
   }
 
-  const onChangeNotes = (e) => {
-    const newArray = currentNotes ? [...currentNotes] : []
-    newArray.push({
-      note: e.target.value,
-      author: coordinatorName,
-      date: new Date()
+  const onChangeNotes = () => {
+    editNotes()
+    setInputNote('')
+  }
+
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      height: 30,
+      minHeight: 30,
+      fontSize: 12
+    }),
+    option: (provided) => ({
+      ...provided,
+      borderBottom: '1px dotted',
+      padding: 10,
+      fontSize: 12
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      padding: 0,
+      fontSize: 12
     })
-    setBookingNotes(newArray)
   }
 
   return (
@@ -241,28 +316,35 @@ const EditBookingModal = ({
       contentClassName="pt-0"
       onClosed={(e) => handleClose()}
     >
-      <ModalHeader className="mb-2" toggle={handleModal} close={CloseBtn} tag="div">
+      <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">Edit Booking</h5>
       </ModalHeader>
-      <Nav tabs className="d-flex justify-content-around">
+      <Nav tabs className="d-flex justify-content-around mt-1">
         <NavItem>
           <NavLink
+            title="Basic information"
             active={active === '1'}
             onClick={() => {
               toggle('1')
             }}
           >
-            <Info />
+            <Info size="18" />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink>
-            <Edit />
+          <NavLink
+            title="Notes"
+            active={active === '2'}
+            onClick={() => {
+              toggle('2')
+            }}
+          >
+            <Edit size="18" />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink>
-            <Settings />
+          <NavLink title="Settings">
+            <Settings size="18" />
           </NavLink>
         </NavItem>
       </Nav>
@@ -276,7 +358,7 @@ const EditBookingModal = ({
             </FormGroup>
             <FormGroup>
               <Label for="full-name">Customer Information</Label>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <User size={15} />
@@ -286,7 +368,7 @@ const EditBookingModal = ({
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Mail size={15} />
@@ -306,7 +388,7 @@ const EditBookingModal = ({
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Phone size={15} />
@@ -323,7 +405,7 @@ const EditBookingModal = ({
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Briefcase size={15} />
@@ -336,6 +418,7 @@ const EditBookingModal = ({
               <Label for="full-name">Event Coordinator*</Label>
               <Select
                 theme={selectThemeColors}
+                styles={selectStyles}
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
@@ -362,6 +445,7 @@ const EditBookingModal = ({
             <FormGroup>
               <Label for="full-name">Event Details*</Label>
               <Select
+                styles={selectStyles}
                 theme={selectThemeColors}
                 className="react-select"
                 classNamePrefix="select"
@@ -389,9 +473,10 @@ const EditBookingModal = ({
             </FormGroup>
 
             <FormGroup>
-              <Label for="full-name">Class Variants*</Label>
+              <Label for="full-name">Class Variant*</Label>
               <Select
                 theme={selectThemeColors}
+                styles={selectStyles}
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
@@ -415,35 +500,39 @@ const EditBookingModal = ({
 
             <FormGroup>
               <Label for="full-name">Group Size*</Label>
-              <Input
-                id="attendees"
-                placeholder="Group Size *"
-                value={groupSize}
-                onChange={(e) => setGroupSize(e.target.value)}
-                type="number"
-                onBlur={(e) => {
-                  groupSizeValidation(e.target.value)
-                }}
-              />
+              <InputGroup size="sm">
+                <Input
+                  id="attendees"
+                  placeholder="Group Size *"
+                  value={groupSize}
+                  onChange={(e) => setGroupSize(e.target.value)}
+                  type="number"
+                  onBlur={(e) => {
+                    groupSizeValidation(e.target.value)
+                  }}
+                />
+              </InputGroup>
             </FormGroup>
             <FormGroup>
-              <Label for="date-time-picker">Custom Sign Up Deadline</Label>
-              <Flatpickr
-                value={bookingSignUpDeadline}
-                dateformat="Y-m-d H:i"
-                data-enable-time
-                id="signUpDateLine"
-                className="form-control"
-                placeholder="Select Date..."
-                onChange={(selectedDates, dateStr, instance) => {
-                  setBookingSignUpDeadline(selectedDates)
-                }}
-              />
+              <Label for="date-time-picker">Sign Up Deadline (Custom)</Label>
+              <InputGroup size="sm">
+                <Flatpickr
+                  value={bookingSignUpDeadline}
+                  dateformat="Y-m-d H:i"
+                  data-enable-time
+                  id="signUpDateLine"
+                  className="form-control"
+                  placeholder="Select Date..."
+                  onChange={(selectedDates, dateStr, instance) => {
+                    setBookingSignUpDeadline(selectedDates)
+                  }}
+                />
+              </InputGroup>
               {bookingSignUpDeadline && (
                 <dt className="text-right">
                   <small>
                     <a href="#" onClick={(e) => setBookingSignUpDeadline([])}>
-                      Clear
+                      clear
                     </a>
                   </small>
                 </dt>
@@ -452,7 +541,7 @@ const EditBookingModal = ({
             <FormGroup>
               <Label for="full-name">Close Booking</Label>
               <Select
-                styles={{ option: (styles) => ({ minHeight: 40, ...styles }) }}
+                styles={selectStyles}
                 value={{
                   label: closedBookingReason,
                   value: closedBookingReason
@@ -471,34 +560,85 @@ const EditBookingModal = ({
                 isClearable={false}
               />
             </FormGroup>
-            <Button
-              className="mr-1"
-              color={closedBookingReason ? 'danger' : 'primary'}
-              onClick={editBooking}
-              disabled={
-                !customerName ||
-                !customerEmail ||
-                !emailValid ||
-                !customerPhone ||
-                !coordinatorId ||
-                !bookingTeamClassId ||
-                !classVariant ||
-                !groupSize
-              }
-            >
-              {!processing && !closedBookingReason
-                ? 'Save'
-                : closedBookingReason && processing
-                ? 'Saving...'
-                : processing
-                ? 'Saving...'
-                : 'Close booking?'}
-            </Button>
-            <Button color="secondary" onClick={cancel} outline>
-              Cancel
-            </Button>
+            <div align="center">
+              <Button
+                className="mr-1"
+                size="sm"
+                color={closedBookingReason ? 'danger' : 'primary'}
+                onClick={editBooking}
+                disabled={
+                  !customerName ||
+                  !customerEmail ||
+                  !emailValid ||
+                  !customerPhone ||
+                  !coordinatorId ||
+                  !bookingTeamClassId ||
+                  !classVariant ||
+                  !groupSize
+                }
+              >
+                {!processing && !closedBookingReason
+                  ? 'Save'
+                  : closedBookingReason && processing
+                  ? 'Saving...'
+                  : processing
+                  ? 'Saving...'
+                  : 'Close booking?'}
+              </Button>
+              <Button color="secondary" size="sm" onClick={cancel} outline>
+                Cancel
+              </Button>
+            </div>
           </ModalBody>
         </TabPane>
+        <TabPane tabId="2">
+          <b className="text-primary ml-2">Notes</b>
+          <Card className="notes-card mt-1">
+            <CardBody>
+              <ul className="timeline p-0 m-0">
+                {bookingNotes && bookingNotes.length > 0 ? (
+                  bookingNotes.map((item, index) => {
+                    return (
+                      <li key={index} className="timeline-item">
+                        <span className={classnames('timeline-point timeline-point-secondary timeline-point-indicator')}>
+                          {item.icon ? item.icon : null}
+                        </span>
+                        <div className="timeline-event">
+                          <div className={classnames('d-flex justify-content-between flex-sm-row flex-column')}>
+                            <small>
+                              <strong>{item.author && item.author.split(' ')[0]}</strong>
+                            </small>
+                            <span className="timeline-event-time">
+                              <small>{moment(item.date).fromNow()}</small>
+                            </span>
+                          </div>
+                          <p
+                            className={classnames({
+                              'mb-0': index === bookingNotes.length - 1 && !item.customContent
+                            })}
+                          >
+                            <small>{item.note}</small>
+                          </p>
+                        </div>
+                      </li>
+                    )
+                  })
+                ) : (
+                  <li>
+                    <p>Write your first note below...</p>
+                  </li>
+                )}
+              </ul>
+            </CardBody>
+          </Card>
+          <div className=" ml-2 mr-2" align="right">
+            <Input className="" type="textarea" id="bookingNotes" value={inputNote} onChange={(e) => setInputNote(e.target.value)} />
+            <Button onClick={onChangeNotes} size="sm" className="mt-1" color="primary" disabled={!inputNote}>
+              {processing ? 'Saving note...' : 'Add Note'}
+            </Button>
+          </div>
+        </TabPane>
+        <TabPane tabId="3">Settings tab</TabPane>
       </TabContent>
     </Modal>
   )
