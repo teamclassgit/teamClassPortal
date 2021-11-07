@@ -5,11 +5,11 @@ import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingS
 import BoardCard from './BoardCard/BoardCard'
 import Board from '@lourenci/react-kanban'
 import { BOOKING_STATUS } from '../../../utility/Constants'
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getCustomerName, getClassTitle, getFormattedEventDate } from '../common'
+import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getFormattedEventDate, getCoordinatorName } from '../common'
 import './BoardBookings.scss'
 import '@lourenci/react-kanban/dist/styles.css'
 
-const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents }) => {
+const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {})
   const [loading, setLoading] = useState(true)
 
@@ -60,9 +60,15 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
       })
     }
 
+    if (column === 'paid') {
+      return bookingCards.filter(({ status, payments }) => {
+        return status.indexOf(column) > -1 && payments && payments.length > 1
+      })
+    }
+
     if (column === 'reviews') {
       return bookingCards.filter(({ status, payments }) => {
-        return status.indexOf('confirmed') > -1 && (!payments || payments.length === 0)
+        return status.indexOf('reviews') > -1 || (status.indexOf('confirmed') > -1 && (!payments || payments.length === 0))
       })
     }
 
@@ -78,6 +84,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
         customerName,
         attendees,
         eventDurationHours,
+        eventCoordinatorId,
         classMinimum,
         pricePerson,
         serviceFee,
@@ -86,7 +93,10 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
         status,
         payments,
         createdAt,
-        updatedAt
+        updatedAt,
+        signUpDeadline,
+        closedReason,
+        notes
       }) => {
         return {
           customerName,
@@ -95,11 +105,14 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
           teamClassId,
           createdAt,
           updatedAt,
-          variant: classVariant,
+          signUpDeadline,
+          classVariant,
           status,
           payments,
           customerId,
           eventDurationHours,
+          eventCoordinatorId,
+          coordinatorName: getCoordinatorName(eventCoordinatorId, coordinators),
           classTitle: getClassTitle(teamClassId, classes),
           scheduled: getFormattedEventDate(_id, calendarEvents),
           email: getCustomerEmail(customerId, customers),
@@ -112,11 +125,12 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
           attendeesAdded: 0, // ????
           additionals: 0, // ?????
           calendarEvent: calendarEvents.find((element) => element.bookingId === _id),
-          teamClass: classes.find((element) => element._id === teamClassId)
+          teamClass: classes.find((element) => element._id === teamClassId),
+          closedReason,
+          notes
         }
       }
     )
-
     return {
       columns: BOOKING_STATUS.map(({ label, value }, index) => ({
         id: index,
@@ -165,7 +179,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents })
             ...draftCard
           })}
           onCardDragEnd={(a, card, source, destination) => handleDragCard(card, source, destination)}
-          renderCard={(cardConTent) => <BoardCard content={cardConTent} />}
+          renderCard={(cardConTent) => <BoardCard content={cardConTent} handleEditModal={handleEditModal} />}
         >
           {(!loading && board) || loadingBoard}
         </Board>

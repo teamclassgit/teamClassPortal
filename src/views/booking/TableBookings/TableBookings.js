@@ -1,24 +1,33 @@
 // ** React Imports
-import React, { Fragment, useState, useEffect, useContext } from 'react'
+import React, { Fragment, useState } from 'react'
 // ** Third Party Components
 import moment from 'moment'
 import Avatar from '@components/avatar'
 import DataTable from 'react-data-table-component'
-import { Edit2, ShoppingCart, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather'
+import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather'
 import ReactPaginate from 'react-paginate'
 import { Button, Card } from 'reactstrap'
 import StatusSelector from './StatusSelector'
-import { getCustomerEmail, getClassTitle, getBookingColor, getFormattedEventDate } from '../common'
+import {
+  getCustomerEmail,
+  getClassTitle,
+  getBookingColor,
+  getFormattedEventDate,
+  getCustomerPhone,
+  getCustomerCompany,
+  getCoordinatorName
+} from '../common'
 import './TableBookings.scss'
 import CardLink from 'reactstrap/lib/CardLink'
 
-const DataTableBookings = ({ filteredData, customers, classes, calendarEvents }) => {
+const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [currentPage, setCurrentPage] = useState(0)
+
   // ** Table Common Column
   const columns = [
     {
-      name: 'Created',
-      selector: 'createdAt',
+      name: 'Updated',
+      selector: 'updatedAt',
       sortable: true,
       maxWidth: '120px',
       cell: (row) => (
@@ -33,28 +42,84 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
       )
     },
     {
+      name: 'Id',
+      selector: '_id',
+      sortable: false,
+      maxWidth: '200px',
+      cell: (row) => (
+        <>
+          <small>
+            <a
+              href="#"
+              onClick={() => {
+                handleEditModal({
+                  bookingId: row._id,
+                  currentCustomerId: row.customerId,
+                  currentName: row.customerName,
+                  currentEmail: getCustomerEmail(row.customerId, customers),
+                  currentPhone: getCustomerPhone(row.customerId, customers),
+                  currentCompany: getCustomerCompany(row.customerId, customers),
+                  currentCoordinatorId: row.eventCoordinatorId,
+                  currentCoordinatorName: getCoordinatorName(row.eventCoordinatorId, coordinators),
+                  currentTeamclassId: row.teamClassId,
+                  currentTeamclassName: getClassTitle(row.teamClassId, classes),
+                  currentGroupSize: row.attendees,
+                  currentSignUpDeadline: row.signUpDeadline,
+                  currentClassVariant: row.classVariant,
+                  currentServiceFee: row.serviceFee,
+                  currentSalesTax: row.salesTax,
+                  createdAt: row.createdAt,
+                  updatedAt: row.updatedAt,
+                  currentStatus: row.status,
+                  currentEventDurationHours: row.eventDurationHours,
+                  currentClosedReason: row.closedReason,
+                  currentNotes: row.notes
+                })
+              }}
+              title={`Edit booking info ${row._id}`}
+            >
+              {row._id}
+            </a>
+          </small>
+        </>
+      )
+    },
+    {
+      name: 'Status',
+      selector: 'status',
+      sortable: true,
+      maxWidth: '100px',
+      cell: (row) => (
+        <small>
+          <StatusSelector row={row} calendarEvent={calendarEvents.find((element) => element.bookingId === row._id)} />
+        </small>
+      )
+    },
+    {
       name: 'Customer',
       selector: 'customerName',
       sortable: true,
-      maxWidth: '250px',
+      maxWidth: '200px',
       cell: (row) => (
-        <div className="d-flex align-items-center">
-          <Avatar color={getBookingColor(row.status)} content={row.customerName} initials />
-          <div className="user-info text-truncate ml-1">
-            <span className="d-block font-weight-bold text-truncate">{row.customerName}</span>
+        <small>
+          <div className="d-flex align-items-center">
+            <Avatar color={getBookingColor(row.status)} content={row.customerName} initials />
+            <div className="user-info text-truncate ml-1">
+              <span className="d-block font-weight-bold">{row.customerName && row.customerName.split(' ')[0]}</span>
+            </div>
           </div>
-        </div>
+        </small>
       )
     },
     {
       name: 'Email',
       selector: 'customer.email',
       sortable: true,
-      maxWidth: '280px',
+      maxWidth: '320px',
       cell: (row) => (
-        <div className="user-info text-truncate ml-1">
-          <span className="d-block font-weight-bold text-truncate">{getCustomerEmail(row.customerId, customers)}</span>
-        </div>
+        <small>
+          <span className="d-block font-weight-bold">{getCustomerEmail(row.customerId, customers)}</span>
+        </small>
       )
     },
     {
@@ -63,120 +128,172 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents })
       sortable: true,
       maxWidth: '250px',
       cell: (row) => (
-        <div className="user-info text-truncate ml-1">
-          <span className="d-block font-weight-bold text-truncate">{getClassTitle(row.teamClassId, classes)}</span>
-        </div>
+        <small>
+          <span className="d-block font-weight-bold">{getClassTitle(row.teamClassId, classes)}</span>
+        </small>
       )
     },
     {
-      name: 'Attendees',
+      name: '#',
       selector: 'attendees',
       sortable: true,
-      maxWidth: '20px'
+      maxWidth: '5px',
+      cell: (row) => (
+        <small>
+          <span className="d-block font-weight-bold">{row.attendees}</span>
+        </small>
+      )
     },
     {
       name: 'Event Date',
       selector: '_id',
       sortable: true,
-      maxWidth: '300px',
+      maxWidth: '140px',
       cell: (row) => (
-        <div className="user-info text-truncate ml-1">
-          <span className="d-block font-weight-bold text-truncate">{getFormattedEventDate(row._id, calendarEvents)}</span>
-        </div>
+        <small>
+          <span className="d-block font-weight-bold">{getFormattedEventDate(row._id, calendarEvents)}</span>
+        </small>
       )
     },
-    {
-      name: 'Status',
-      selector: 'status',
-      sortable: true,
-      maxWidth: '200px',
-      cell: (row) => <StatusSelector row={row} calendarEvent={calendarEvents.find((element) => element.bookingId === row._id)} />
-    },
+
     {
       name: 'Actions',
       allowOverflow: true,
-      maxWidth: '20px',
+      maxWidth: '400px',
       cell: (row) => {
         const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id)
 
         return row.status === 'quote' ? (
-          <div className="d-flex">
-            <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
-              <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
-            </CardLink>
-            <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
-            </CardLink>
-          </div>
+          <small>
+            <div className="d-flex">
+              <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
+                <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
+              </CardLink>
+              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+              </CardLink>
+            </div>
+          </small>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
-          <div className="d-flex">
-            <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
-              <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-            </CardLink>
-            <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
-            </CardLink>
-          </div>
+          <small>
+            <div className="d-flex">
+              <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
+                <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+              </CardLink>
+            </div>
+          </small>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
-          <div className="d-flex">
-            <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
-              <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-            </CardLink>
-            <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
-            </CardLink>
-          </div>
+          <small>
+            <div className="d-flex">
+              <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
+                <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+              </CardLink>
+            </div>
+          </small>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
-          <div className="d-flex">
-            <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
-              <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-            </CardLink>
-            <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
-            </CardLink>
-          </div>
+          <small>
+            <div className="d-flex">
+              <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
+                <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+              </CardLink>
+            </div>
+          </small>
+        ) : row.status === 'confirmed' ? (
+          <small>
+            <div className="d-flex">
+              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+              </CardLink>
+            </div>
+          </small>
+        ) : row.status === 'paid' ? (
+          <small>
+            <div className="d-flex">
+              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+              </CardLink>
+            </div>
+          </small>
         ) : row.status !== 'canceled' ? (
-          <div className="d-flex">
-            <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-              <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-              <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-            </CardLink>
-            <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-              <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-            </CardLink>
-            <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Edit booking'}>
-              <Avatar color="light-secondary" size="sm" icon={<Edit2 size={18} />} />
-            </CardLink>
-          </div>
+          <small>
+            <div className="d-flex">
+              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+              </CardLink>
+              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+              </CardLink>
+            </div>
+          </small>
         ) : (
           <></>
         )

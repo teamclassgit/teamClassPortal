@@ -18,6 +18,8 @@ import { User, Mail, CheckSquare, MessageSquare, Settings, CreditCard, HelpCircl
 
 // ** Default Avatar Image
 import defaultAvatar from '@src/assets/images/portrait/small/avatar-s-11.jpg'
+import { getUserData } from '../../../../utility/Utils'
+import { logoutUser } from '../../../../utility/RealmApolloClient'
 
 const UserDropdown = () => {
   // ** Store Vars
@@ -29,42 +31,39 @@ const UserDropdown = () => {
   //** ComponentDidMount
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
-      setUserData(JSON.parse(localStorage.getItem('userData')))
+      setUserData(getUserData())
     }
   }, [])
 
-  //** Vars
-  const userAvatar = (userData && userData.avatar) || defaultAvatar
-
   return (
-    <UncontrolledDropdown tag='li' className='dropdown-user nav-item'>
-      <DropdownToggle href='/' tag='a' className='nav-link dropdown-user-link' onClick={e => e.preventDefault()}>
-        <div className='user-nav d-sm-flex d-none'>
-          <span className='user-name font-weight-bold'>{(userData && userData['username']) || 'Admin'}</span>
-          <span className='user-status'>{(userData && userData.role) || 'TeamClass'}</span>
+    <UncontrolledDropdown tag="li" className="dropdown-user nav-item">
+      <DropdownToggle href="/" tag="a" className="nav-link dropdown-user-link" onClick={(e) => e.preventDefault()}>
+        <div className="user-nav d-sm-flex d-none">
+          <span className="user-name font-weight-bold">{(userData && userData.customData && userData.customData['name']) || 'Unknown'}</span>
+          <span className="user-status">{(userData && userData.customData && userData.customData['role']) || ''}</span>
         </div>
-        <Avatar color={`light-dark`} content={`Admin`} initials/>
+        <Avatar color={`light-dark`} content={(userData && userData.customData && userData.customData['name']) || 'Unknown'} initials />
       </DropdownToggle>
       <DropdownMenu right>
-        <DropdownItem tag={Link} to='#' onClick={e => e.preventDefault()}>
-          <User size={14} className='mr-75' />
-          <span className='align-middle'>Profile</span>
+        {/**<DropdownItem tag={Link} to="#" onClick={(e) => e.preventDefault()}>
+          <User size={14} className="mr-75" />
+          <span className="align-middle">Profile</span>
         </DropdownItem>
-        <DropdownItem tag={Link} to='#' onClick={e => e.preventDefault()}>
-          <Mail size={14} className='mr-75' />
-          <span className='align-middle'>Inbox</span>
+        <DropdownItem tag={Link} to="#" onClick={(e) => e.preventDefault()}>
+          <Mail size={14} className="mr-75" />
+          <span className="align-middle">Inbox</span>
         </DropdownItem>
-        <DropdownItem tag={Link} to='#' onClick={e => e.preventDefault()}>
-          <CheckSquare size={14} className='mr-75' />
-          <span className='align-middle'>Tasks</span>
+        <DropdownItem tag={Link} to="#" onClick={(e) => e.preventDefault()}>
+          <CheckSquare size={14} className="mr-75" />
+          <span className="align-middle">Tasks</span>
         </DropdownItem>
-        <DropdownItem tag={Link} to='#' onClick={e => e.preventDefault()}>
-          <MessageSquare size={14} className='mr-75' />
-          <span className='align-middle'>Chats</span>
-        </DropdownItem>
-        <DropdownItem tag={Link} to='/login' onClick={() => dispatch(handleLogout())}>
-          <Power size={14} className='mr-75' />
-          <span className='align-middle'>Logout</span>
+        <DropdownItem tag={Link} to="#" onClick={(e) => e.preventDefault()}>
+          <MessageSquare size={14} className="mr-75" />
+          <span className="align-middle">Chats</span>
+        </DropdownItem>**/}
+        <DropdownItem tag={Link} to="/login" onClick={() => logoutUser()}>
+          <Power size={14} className="mr-75" />
+          <span className="align-middle">Logout</span>
         </DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown>

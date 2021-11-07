@@ -3,10 +3,10 @@ import Wizard from '@components/wizard'
 import Attendees from './steps/Attendees'
 import Confirmation from './steps/Confirmation'
 import BillingInfo from './steps/BillingInfo'
-import SpecialRequests from './steps/SpecialRequests'
+import InvoiceBuilder from './steps/InvoiceBuilder'
 import DateTimeConfirmation from './steps/DateTimeConfirmation'
 import { Col, Row, Spinner } from 'reactstrap'
-import { Calendar, Check, CreditCard, Users, List } from 'react-feather'
+import { Calendar, Check, CreditCard, Users, List, DollarSign, Settings } from 'react-feather'
 import { useParams } from 'react-router-dom'
 import queryBookingById from '../../graphql/QueryBookingById'
 import queryClassById from '../../graphql/QueryClassById'
@@ -14,12 +14,14 @@ import queryCustomerById from '../../graphql/QueryCustomerById'
 import queryAttendeesByBookingId from '../../graphql/QueryAttendeesByBookingId'
 import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByClassId'
 import { useLazyQuery, useQuery } from '@apollo/client'
-import BookingSummaryWithoutDate from './steps/BookingSummaryWithoutDate'
-import { RUSH_FEE, SERVICE_FEE } from '../../utility/Constants'
+import BookingCheckoutSummary from './steps/BookingCheckoutSummary'
+import { RUSH_FEE } from '../../utility/Constants'
+import { getBookingTotals } from '../../utility/Utils'
+import moment from 'moment'
 
 const WizardClassBooking = () => {
   const [bookingInfo, setBookingInfo] = React.useState(null)
-  const [confirmation, setConfirmation] = React.useState(false)
+  const [confirmation, setConfirmation] = React.useState(true)
   const [teamClass, setTeamClass] = React.useState(null)
   const [customer, setCustomer] = React.useState(null)
   const [availableEvents, setAvailableEvents] = React.useState(null)
@@ -27,6 +29,20 @@ const WizardClassBooking = () => {
   const [calendarEvent, setCalendarEvent] = React.useState(null)
   const [attendees, setAttendees] = React.useState([])
   const [realCountAttendees, setRealCountAttendees] = React.useState(0)
+  const [totalWithoutFee, setTotalWithoutFee] = React.useState(0)
+  const [totalUnderGroupFee, setTotalUnderGroupFee] = React.useState(0)
+  const [attendeesToInvoice, setAttendeesToInvoice] = React.useState(null)
+  const [tax, setTax] = React.useState(0)
+  const [totalTax, setTotalTax] = React.useState(0)
+  const [totalServiceFee, setTotalServiceFee] = React.useState(0)
+  const [totalRushFee, setTotalTotalRushFee] = React.useState(0)
+  const [totalCardFee, setTotalCardFee] = React.useState(0)
+  const [totalAddons, setTotalAddons] = React.useState(0)
+  const [total, setTotal] = React.useState(0)
+  const [payment, setPayment] = React.useState(0)
+  const [initialDeposit, setInitialDeposit] = React.useState(0)
+  const [requestEventDate, setRequestEventDate] = React.useState(null)
+
   const [getTeamClass, { ...classResult }] = useLazyQuery(queryClassById)
   const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById)
   const [getClassEvents, { ...calendarEventsByClassResult }] = useLazyQuery(queryCalendarEventsByClassId)
@@ -41,6 +57,7 @@ const WizardClassBooking = () => {
     },
     onCompleted: (data) => {
       setBookingInfo(data.booking)
+      setTax((data.booking && data.booking.salesTax) || 0)
     }
   })
 
@@ -68,7 +85,7 @@ const WizardClassBooking = () => {
         }
       })
 
-      setConfirmation(bookingInfo && bookingInfo.status === 'confirmed')
+      getTotals()
     }
   }, [bookingInfo])
 
@@ -96,6 +113,46 @@ const WizardClassBooking = () => {
     }
   }, [calendarEventsByClassResult.data])
 
+  React.useEffect(() => {
+    if (calendarEvent) {
+      const eventDate = [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)]
+      const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}`
+      const eventNewDate = moment(`${moment(eventDate[0]).format('DD/MM/YYYY')} ${eventTime}`, 'DD/MM/YYYY HH:mm')
+
+      const newCalendarEventOption = {
+        dateOption: eventDate[0],
+        timeOption: eventTime,
+        fullEventDate: eventNewDate.valueOf()
+      }
+
+      setRequestEventDate(newCalendarEventOption)
+    }
+  }, [calendarEvent])
+
+  const getTotals = () => {
+    if (!bookingInfo) return
+
+    const bookingTotals = getBookingTotals(bookingInfo, false, tax, true)
+
+    setTotalTax(bookingTotals.tax.toFixed(2))
+    setTotalWithoutFee(bookingTotals.withoutFee.toFixed(2))
+    setTotalServiceFee(bookingTotals.fee.toFixed(2))
+    setTotalTotalRushFee(bookingTotals.rushFee.toFixed(2))
+    setTotalUnderGroupFee(bookingTotals.underGroupFee.toFixed(2))
+    setTotal(bookingTotals.finalValue.toFixed(2))
+    setTotalAddons(bookingTotals.addons.toFixed(2))
+    setTotalCardFee(bookingTotals.cardFee.toFixed(2))
+    setAttendeesToInvoice(bookingTotals.customAttendees)
+
+    const depositPayment =
+      bookingInfo.payments && bookingInfo.payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
+
+    const initialDepositPaid = !isNaN(bookingTotals.customDeposit) ? bookingTotals.customDeposit : depositPayment ? depositPayment.amount / 100 : 0 //amount is in cents
+    const finalPayment = bookingTotals.finalValue - initialDepositPaid
+    setInitialDeposit(initialDepositPaid.toFixed(2))
+    setPayment(finalPayment.toFixed(2))
+  }
+
   const steps = [
     {
       id: 'account-details',
@@ -115,15 +172,6 @@ const WizardClassBooking = () => {
         />
       )
     },
-
-    /* {
-             id: 'additions',
-             title: 'Additionals',
-             subtitle: 'Special requests',
-             icon: <List size={18}/>,
-             content: <SpecialRequests stepper={stepper} type='wizard-horizontal' booking={bookingInfo}
-                                       teamClass={teamClass} setBookingAdditions={setBookingAdditions}/>
-         }, */
 
     {
       id: 'step-address',
@@ -147,17 +195,23 @@ const WizardClassBooking = () => {
       title: 'Customer',
       subtitle: 'Basic info',
       icon: <CreditCard size={18} />,
+      content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
+    },
+
+    {
+      id: 'final-invoice',
+      title: 'Invoice',
+      subtitle: 'Final invoice',
+      icon: <DollarSign size={18} />,
       content: (
-        <BillingInfo
+        <InvoiceBuilder
           stepper={stepper}
           type="wizard-horizontal"
-          calendarEvent={calendarEvent}
-          setCalendarEvent={setCalendarEvent}
-          customer={customer}
           booking={bookingInfo}
-          attendeesListCount={attendees && attendees.length}
-          setConfirmation={setConfirmation}
-        />
+          setBooking={setBookingInfo}
+          teamClass={teamClass}
+          realCountAttendees={realCountAttendees}
+        ></InvoiceBuilder>
       )
     }
   ]
@@ -210,19 +264,24 @@ const WizardClassBooking = () => {
       </Col>
 
       <Col lg={3} md={12} sm={12}>
-        <div className="py-3">
+        <div>
           {bookingInfo && (
-            <BookingSummaryWithoutDate
-              calendarEvent={calendarEvent}
-              classRushFee={RUSH_FEE}
+            <BookingCheckoutSummary
               teamClass={teamClass}
-              serviceFee={SERVICE_FEE}
-              attendeesAdded={realCountAttendees}
-              attendees={bookingInfo.attendees}
-              pricePerson={bookingInfo.pricePerson}
-              minimum={bookingInfo.classMinimum}
-              salesTax={bookingInfo.salesTax}
-              bookingId={id}
+              bookingInfo={bookingInfo}
+              requestEventDate={requestEventDate}
+              calendarEvent={calendarEvent}
+              totalWithoutFee={totalWithoutFee}
+              totalAddons={totalAddons}
+              totalServiceFee={totalServiceFee}
+              totalCardFee={totalCardFee}
+              tax={tax}
+              totalTax={totalTax}
+              total={total}
+              deposit={initialDeposit}
+              showFinalPaymentLine={true}
+              finalPayment={payment}
+              attendeesToInvoice={attendeesToInvoice || bookingInfo.attendees}
             />
           )}
         </div>

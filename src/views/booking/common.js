@@ -47,3 +47,8 @@ export const getBookingValue = (rowStatus) => {
   const resBookingValue = BOOKING_STATUS.find((bng) => bng.value === rowStatus)
   return resBookingValue
 }
+
+export const getCoordinatorName = (coordinatorId, coordinators) => {
+  const result = coordinators.find((element) => element._id === coordinatorId)
+  return (result && result.name) || ''
+}

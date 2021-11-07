@@ -8,7 +8,9 @@ import Avatar from '@components/avatar'
 // ** Third Party Components
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
+
 import { ChevronDown, Download, Edit, Grid, Plus, Share, Trash, X } from 'react-feather'
+
 import {
   Badge,
   Button,

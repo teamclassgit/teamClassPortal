@@ -4,6 +4,7 @@ import BoardBookings from './BoardBookings/BoardBookings'
 import queryAllBookings from '../../graphql/QueryAllBookings'
 import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents'
 import queryAllCustomers from '../../graphql/QueryAllCustomers'
+import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators'
 import queryAllClasses from '../../graphql/QueryAllClasses'
 import { useQuery } from '@apollo/client'
 import { Col, Spinner } from 'reactstrap'
@@ -11,37 +12,49 @@ import BookingsHeader from './BookingsHeader/BookingsHeader'
 import FiltersModal from './BoardBookings/FiltersModal'
 import AddNewBooking from './AddNewBooking'
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext'
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getCustomerName, getClassTitle, getFormattedEventDate } from './common'
+import EditBookingModal from '../../components/EditBookingModal'
+import { getCustomerEmail, getClassTitle } from './common'
 
 const BookingList = () => {
+  const excludedBookings = ['closed', 'canceled']
+
   const [genericFilter, setGenericFilter] = useState({})
+  const [bookingsFilter, setBookingsFilter] = useState({ status_nin: excludedBookings })
   const [bookings, setBookings] = useState([])
   const [limit, setLimit] = useState(600)
   const [customers, setCustomers] = useState([])
+  const [coordinators, setCoordinators] = useState([])
   const [classes, setClasses] = useState([])
   const [calendarEvents, setCalendarEvents] = useState([])
   const [switchView, setSwitchView] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [currentElement, setCurrentElement] = useState(null)
-  const { classFilterContext } = useContext(FiltersContext)
+  const [currentElement, setCurrentElement] = useState({})
+  const [elementToAdd, setElementToAdd] = useState({})
+  const { classFilterContext, coordinatorFilterContext, textFilterContext } = useContext(FiltersContext)
   const [filteredBookings, setFilteredBookings] = useState([])
+  const [editModal, setEditModal] = useState(false)
+
+  // ** Function to handle Modal toggle
+  const handleEditModal = () => setEditModal(!editModal)
 
   const { ...allBookingsResult } = useQuery(queryAllBookings, {
     fetchPolicy: 'no-cache',
     variables: {
-      filter: genericFilter,
+      filter: bookingsFilter,
       limit
     },
     pollInterval: 300000
   })
 
   useEffect(() => {
-    if (allBookingsResult.data) setBookings(allBookingsResult.data.bookings.map((element) => element))
+    if (allBookingsResult.data) {
+      setBookings(allBookingsResult.data.bookings.map((element) => element))
+    }
   }, [allBookingsResult.data])
 
   useEffect(() => {
-    setFilteredBookings(bookings)
+    handleSearch((textFilterContext && textFilterContext.value) || '')
   }, [bookings])
 
   const { ...allCalendarEventsResults } = useQuery(queryAllCalendarEvents, {
@@ -64,9 +77,21 @@ const BookingList = () => {
     pollInterval: 300000
   })
 
+  const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    },
+    pollInterval: 300000
+  })
+
   useEffect(() => {
     if (allCustomersResult.data) setCustomers(allCustomersResult.data.customers)
   }, [allCustomersResult.data])
+
+  useEffect(() => {
+    if (allCoordinatorResult.data) setCoordinators(allCoordinatorResult.data.eventCoordinators)
+  }, [allCoordinatorResult.data])
 
   const { ...allClasses } = useQuery(queryAllClasses, {
     fetchPolicy: 'no-cache',
@@ -81,11 +106,6 @@ const BookingList = () => {
   }, [allClasses.data])
 
   const handleModal = () => setShowAddModal(!showAddModal)
-
-  const handleFilterByClass = (classId) => {
-    const newBookings = bookings.filter(({ teamClassId }) => teamClassId === classId)
-    setFilteredBookings(newBookings)
-  }
 
   const handleSearch = (value) => {
     if (value.length) {
@@ -113,26 +133,34 @@ const BookingList = () => {
     }
   }
 
-  const handleFilterType = ({ type, value }) => {
-    switch (type) {
-      case 'class':
-        handleFilterByClass(value)
-        break
-      case 'text':
-        handleSearch(value)
-        break
-      default:
-        break
+  useEffect(() => {
+    if (classFilterContext && coordinatorFilterContext) {
+      const query = {
+        eventCoordinatorId_in: coordinatorFilterContext.value,
+        teamClassId: classFilterContext.value,
+        status_nin: excludedBookings
+      }
+      setBookingsFilter(query)
+    } else if (classFilterContext) {
+      const query = {
+        teamClassId: classFilterContext.value,
+        status_nin: excludedBookings
+      }
+      setBookingsFilter(query)
+    } else if (coordinatorFilterContext) {
+      const query = {
+        eventCoordinatorId_in: coordinatorFilterContext.value,
+        status_nin: excludedBookings
+      }
+      setBookingsFilter(query)
+    } else {
+      setBookingsFilter({ status_nin: excludedBookings })
     }
-  }
+  }, [classFilterContext, coordinatorFilterContext])
 
   useEffect(() => {
-    if (classFilterContext) {
-      handleFilterType(classFilterContext)
-    } else {
-      setFilteredBookings(bookings)
-    }
-  }, [classFilterContext])
+    handleSearch((textFilterContext && textFilterContext.value) || '')
+  }, [textFilterContext])
 
   // ** Function to handle Modal toggle
   return (
@@ -142,14 +170,18 @@ const BookingList = () => {
         switchView={switchView}
         setSwitchView={() => setSwitchView(!switchView)}
         showAddModal={() => handleModal()}
-        setCurrentElement={(d) => setCurrentElement(d)}
+        setElementToAdd={(d) => setElementToAdd(d)}
         onChangeLimit={(newLimit) => {
           setLimit(newLimit)
         }}
         bookings={filteredBookings}
         defaultLimit={limit}
       />
-      {allClasses.loading || allBookingsResult.loading || allCalendarEventsResults.loading || allCustomersResult.loading ? (
+      {allClasses.loading ||
+      allCoordinatorResult.loading ||
+      allBookingsResult.loading ||
+      allCalendarEventsResults.loading ||
+      allCustomersResult.loading ? (
         <div>
           <Spinner className="mr-25" />
           <Spinner type="grow" />
@@ -162,12 +194,41 @@ const BookingList = () => {
           <>
             <Col sm="12">
               {bookings && bookings.length > 0 && switchView ? (
-                <DataTableBookings filteredData={filteredBookings} customers={customers} calendarEvents={calendarEvents} classes={classes} />
+                <DataTableBookings
+                  filteredData={filteredBookings}
+                  handleEditModal={(element) => {
+                    setCurrentElement(element)
+                    handleEditModal()
+                  }}
+                  customers={customers}
+                  calendarEvents={calendarEvents}
+                  classes={classes}
+                  coordinators={coordinators}
+                  bookings={bookings}
+                />
               ) : (
-                <BoardBookings filteredBookings={filteredBookings} customers={customers} calendarEvents={calendarEvents} classes={classes} />
+                <BoardBookings
+                  filteredBookings={filteredBookings}
+                  handleEditModal={(element) => {
+                    setCurrentElement(element)
+                    handleEditModal()
+                  }}
+                  customers={customers}
+                  calendarEvents={calendarEvents}
+                  classes={classes}
+                  coordinators={coordinators}
+                  bookings={bookings}
+                  setBookings={setBookings}
+                  setCustomers={setCustomers}
+                />
               )}
             </Col>
-            <FiltersModal open={showFiltersModal} handleModal={() => setShowFiltersModal(!showFiltersModal)} classes={classes} />
+            <FiltersModal
+              open={showFiltersModal}
+              handleModal={() => setShowFiltersModal(!showFiltersModal)}
+              classes={classes}
+              coordinators={coordinators}
+            />
             <AddNewBooking
               open={showAddModal}
               handleModal={handleModal}
@@ -175,9 +236,21 @@ const BookingList = () => {
               classes={classes}
               setCustomers={setCustomers}
               customers={customers}
-              currentElement={currentElement}
-              editMode={currentElement?.editMode}
+              baseElement={elementToAdd}
               setBookings={setBookings}
+              coordinators={coordinators}
+            />
+            <EditBookingModal
+              open={editModal}
+              handleModal={handleEditModal}
+              currentElement={currentElement}
+              allCoordinators={coordinators}
+              allClasses={classes}
+              allBookings={bookings}
+              allCustomers={customers}
+              setBookings={setBookings}
+              setCustomers={setCustomers}
+              handleClose={() => setCurrentElement({})}
             />
           </>
         )

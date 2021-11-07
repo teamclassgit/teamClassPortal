@@ -1,23 +1,47 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  mutation updateBooking(
+  mutation updateBookingAndCustomer(
     $bookingId: String!
-    $customerId: String!
-    $name: String!
-    $phone: String!
-    $email: String
-    $company: String
-    $updatedAt: DateTime!
-    $attendees: Int!
-    $instructorId: String!
-    $instructorName: String!
-    $pricePerson: Float!
-    $classMinimum: Int!
+    $date: DateTime!
     $teamClassId: String!
-    $duration: Float!
+    $classVariant: BookingClassVariantUpdateInput!
+    $notes: [BookingNoteUpdateInput]
+    $instructorId: String
+    $instructorName: String
+    $customerId: String!
+    $customerName: String!
+    $eventDate: DateTime!
+    $eventDurationHours: Float!
+    $eventCoordinatorId: String!
+    $attendees: Int!
+    $classMinimum: Int!
+    $pricePerson: Float!
+    $salesTax: Float!
+    $serviceFee: Float!
+    $discount: Float!
+    $createdAt: DateTime!
+    $updatedAt: DateTime!
+    $signUpDeadline: DateTime
+    $status: String!
+    $phone: String!
+    $email: String!
+    $billingAddress: CustomerBillingAddressInsertInput
+    $company: String
+    $closedReason: String
   ) {
-    updateOneCustomer(query: { _id: $customerId }, set: { name: $name, phone: $phone, email: $email, company: $company, updatedAt: $updatedAt }) {
+    upsertOneCustomer(
+      query: { _id: $customerId }
+      data: {
+        _id: $customerId
+        name: $customerName
+        phone: $phone
+        email: $email
+        company: $company
+        updatedAt: $updatedAt
+        billingAddress: $billingAddress
+      }
+    ) {
       _id
       name
       email
@@ -37,15 +61,30 @@ export default gql`
     updateOneBooking(
       query: { _id: $bookingId }
       set: {
-        customerName: $name
-        updatedAt: $updatedAt
-        attendees: $attendees
-        classMinimum: $classMinimum
-        pricePerson: $pricePerson
+        _id: $bookingId
+        date: $date
+        expirationHours: 48
+        classVariant: $classVariant
+        notes: $notes
         teamClassId: $teamClassId
         instructorId: $instructorId
         instructorName: $instructorName
-        eventDurationHours: $duration
+        customerId: $customerId
+        customerName: $customerName
+        eventDate: $eventDate
+        eventDurationHours: $eventDurationHours
+        eventCoordinatorId: $eventCoordinatorId
+        attendees: $attendees
+        classMinimum: $classMinimum
+        pricePerson: $pricePerson
+        serviceFee: $serviceFee
+        salesTax: $salesTax
+        discount: $discount
+        status: $status
+        createdAt: $createdAt
+        updatedAt: $updatedAt
+        signUpDeadline: $signUpDeadline
+        closedReason: $closedReason
       }
     ) {
       _id
@@ -64,6 +103,11 @@ export default gql`
         order
         active
         groupEvent
+      }
+      notes {
+        note
+        author
+        date
       }
       addons {
         icon
@@ -127,7 +171,10 @@ export default gql`
         readOnly
       }
       createdAt
+      createdAt
       updatedAt
+      signUpDeadline
+      closedReason
     }
   }
 `

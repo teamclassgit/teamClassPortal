@@ -10,24 +10,39 @@ export default gql`
       attendees
       classMinimum
       eventDurationHours
+      eventCoordinatorId
       pricePerson
       serviceFee
       salesTax
       rushFee
       discount
       status
+      closedReason
       eventLink
       signUpStatusLink
       checkoutLink
       payments {
         amount
         paymentId
+        paymentName
+        status
+      }
+      notes {
+        note
+        author
+        date
       }
       classVariant {
         title
+        minimum
+        maximum
+        pricePerson
+        hasKit
+        groupEvent
       }
       createdAt
       updatedAt
+      signUpDeadline
     }
   }
 `
