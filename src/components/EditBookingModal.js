@@ -23,7 +23,7 @@ import {
 } from 'reactstrap'
 import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather'
 import Select from 'react-select'
-import { isValidEmail } from '../utility/Utils'
+import { getUserData, isValidEmail } from '../utility/Utils'
 import Cleave from 'cleave.js/react'
 import { selectThemeColors } from '@utils'
 import Flatpickr from 'react-flatpickr'
@@ -248,9 +248,10 @@ const EditBookingModal = ({
   const editNotes = async () => {
     setProcessing(true)
     const newArray = bookingNotes ? [...bookingNotes] : []
+    const userData = getUserData()
     newArray.unshift({
       note: inputNote,
-      author: coordinatorName,
+      author: (userData && userData.customData && userData.customData['name']) || 'Unknown',
       date: new Date()
     })
 
@@ -599,11 +600,13 @@ const EditBookingModal = ({
                   bookingNotes.map((item, index) => {
                     return (
                       <li key={index} className="timeline-item">
-                        <span className={classnames('timeline-point timeline-point-secondary timeline-point-indicator')}>{item.icon ? item.icon : null}</span>
+                        <span className={classnames('timeline-point timeline-point-secondary timeline-point-indicator')}>
+                          {item.icon ? item.icon : null}
+                        </span>
                         <div className="timeline-event">
                           <div className={classnames('d-flex justify-content-between flex-sm-row flex-column')}>
                             <small>
-                              <strong>{item.author}</strong>
+                              <strong>{item.author && item.author.split(' ')[0]}</strong>
                             </small>
                             <span className="timeline-event-time">
                               <small>{moment(item.date).fromNow()}</small>
