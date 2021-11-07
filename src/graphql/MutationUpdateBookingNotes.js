@@ -4,49 +4,45 @@ export default gql`
   mutation updateBookingNotes($id: String!, $notes: [BookingNoteUpdateInput], $updatedAt: DateTime!) {
     updateOneBooking(query: { _id: $id }, set: { notes: $notes, updatedAt: $updatedAt }) {
       _id
-      date
-      expirationHours
       teamClassId
+      customerId
+      customerName
+      attendees
+      classMinimum
+      eventDurationHours
       eventCoordinatorId
-      classVariant {
-        title
-        notes
-        minimum
-        maximum
-        duration
-        pricePerson
-        hasKit
-        order
-        active
-        groupEvent
+      pricePerson
+      serviceFee
+      salesTax
+      rushFee
+      discount
+      status
+      closedReason
+      eventLink
+      signUpStatusLink
+      checkoutLink
+      payments {
+        amount
+        paymentId
+        paymentName
+        status
       }
       notes {
         note
         author
         date
       }
-      instructorId
-      instructorName
-      customerId
-      customerName
-      eventDate
-      eventDurationHours
-      attendees
-      classMinimum
-      pricePerson
-      serviceFee
-      salesTax
-      salesTaxState
-      discount
-      status
-      eventLink
-      signUpStatusLink
-      checkoutLink
-      createdAt
+      classVariant {
+        title
+        minimum
+        maximum
+        pricePerson
+        hasKit
+        groupEvent
+      }
       createdAt
       updatedAt
       signUpDeadline
-      closedReason
     }
   }
 `

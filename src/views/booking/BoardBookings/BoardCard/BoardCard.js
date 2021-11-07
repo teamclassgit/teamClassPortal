@@ -135,7 +135,7 @@ function BoardCard({
             </a>
             <CopyClipboard text={_id} />
           </p>
-          <p className="small text-primary">{`${classTitle}  `}</p>
+          <p className="small">{`${classTitle}  `}</p>
         </div>
         {date && time && (
           <Media className="pb-1">
@@ -223,14 +223,16 @@ function BoardCard({
         title={'Edit booking info'}
       >
         <p className="text-truncate m-0 p-0">
-          <strong>{capitalizeString(customerName && customerName.split(' ')[0])}</strong>
+          <small>
+            <strong>{capitalizeString(customerName)}</strong>
+          </small>
           <span className="text-primary small">{` ~ $${total}`}</span>
           <br />
           <small className="text-xs">{classTitle}</small>
         </p>
 
         <p className="m-0 p-0">
-          <small className="">
+          <small>
             <strong>Updated: </strong>
             {moment(updatedAt).fromNow()}
           </small>

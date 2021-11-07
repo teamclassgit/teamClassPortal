@@ -183,45 +183,69 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
     return res ? res.title : ''
   }
 
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      height: 30,
+      minHeight: 30,
+      fontSize: 12
+    }),
+    option: (provided) => ({
+      ...provided,
+      borderBottom: '1px dotted',
+      padding: 10,
+      fontSize: 12
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      padding: 0,
+      fontSize: 12
+    })
+  }
+
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
-      <ModalHeader className="mb-1" toggle={handleModal} close={CloseBtn} tag="div">
+      <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">{'New Booking'}</h5>
       </ModalHeader>
       <ModalBody className="flex-grow-1">
-        <FormGroup>
-          <div className="demo-inline-spacing ">
-            <CustomInput
-              type="radio"
-              id="exampleCustomRadio"
-              name="customRadio"
-              inline
-              label="New Customer"
-              onClick={(e) => {
-                setIsOldCustomer(false)
-                setSelectedCustomer(null)
-              }}
-              defaultChecked
-            />
-            <CustomInput
-              type="radio"
-              id="exampleCustomRadio2"
-              name="customRadio"
-              inline
-              label="Old Customer"
-              onClick={(e) => {
-                setIsOldCustomer(true)
-                setWarning({ open: false, message: '' })
-              }}
-            />
-          </div>
-        </FormGroup>
+        <div className="demo-inline-spacing ">
+          <FormGroup check inline>
+            <Label check>
+              <Input
+                type="radio"
+                id="exampleCustomRadio"
+                name="customRadio"
+                onClick={(e) => {
+                  setIsOldCustomer(false)
+                  setSelectedCustomer(null)
+                }}
+                defaultChecked
+              />{' '}
+              New Customer
+            </Label>
+          </FormGroup>
+          <FormGroup check inline>
+            <Label check>
+              <Input
+                type="radio"
+                id="exampleCustomRadio2"
+                name="customRadio"
+                onClick={(e) => {
+                  setIsOldCustomer(true)
+                  setWarning({ open: false, message: '' })
+                }}
+              />{' '}
+              Old Customer
+            </Label>
+          </FormGroup>
+        </div>
 
         {!isOldCustomer && (
           <div>
             <FormGroup>
               <Label for="full-name">Customer Information</Label>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <User size={15} />
@@ -231,7 +255,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Mail size={15} />
@@ -251,7 +275,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Phone size={15} />
@@ -271,7 +295,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Briefcase size={15} />
@@ -285,7 +309,6 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
         {isOldCustomer && (
           <FormGroup>
             <Label for="selectedCustomer">Select Customer</Label>
-
             <Select
               theme={selectThemeColors}
               className="react-select"
@@ -302,6 +325,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
               }
               onChange={(option) => setSelectedCustomer(option.value)}
               isClearable={false}
+              styles={selectStyles}
             />
           </FormGroup>
         )}
@@ -325,6 +349,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
             }
             onChange={(option) => setOneCoordinator(option.value)}
             isClearable={false}
+            styles={selectStyles}
           />
         </FormGroup>
         <FormGroup>
@@ -349,6 +374,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
             }}
             onChange={(option) => setSelectedClass(option.value)}
             isClearable={false}
+            styles={selectStyles}
           />
         </FormGroup>
         {selectedClass && (
@@ -370,41 +396,47 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
               }
               onChange={(option) => setClassVariant(option.value)}
               isClearable={false}
+              styles={selectStyles}
             />
           </FormGroup>
         )}
         <FormGroup>
           <Label for="full-name">Group Size*</Label>
-          <Input
-            id="attendees"
-            placeholder="Group Size *"
-            value={newAttendees}
-            onChange={(e) => setNewAttendees(e.target.value)}
-            type="number"
-            onBlur={(e) => {
-              groupSizeValidation(e.target.value)
-            }}
-          />
+          <InputGroup size="sm">
+            <Input
+              id="attendees"
+              placeholder="Group Size *"
+              value={newAttendees}
+              onChange={(e) => setNewAttendees(e.target.value)}
+              type="number"
+              onBlur={(e) => {
+                groupSizeValidation(e.target.value)
+              }}
+            />
+          </InputGroup>
         </FormGroup>
-        <Button
-          className="mr-1"
-          color="primary"
-          onClick={saveNewBooking}
-          disabled={
-            (!selectedCustomer && (!newName || !newEmail || !newPhone || !emailValid || !phoneValid)) ||
-            !newAttendees ||
-            processing ||
-            !attendeesValid ||
-            !selectedClass ||
-            !classVariant ||
-            !oneCoordinator
-          }
-        >
-          {processing ? 'Saving...' : 'Save'}
-        </Button>
-        <Button color="secondary" onClick={cancel} outline>
-          Cancel
-        </Button>
+        <div align="center">
+          <Button
+            className="mr-1"
+            color="primary"
+            size="sm"
+            onClick={saveNewBooking}
+            disabled={
+              (!selectedCustomer && (!newName || !newEmail || !newPhone || !emailValid || !phoneValid)) ||
+              !newAttendees ||
+              processing ||
+              !attendeesValid ||
+              !selectedClass ||
+              !classVariant ||
+              !oneCoordinator
+            }
+          >
+            {processing ? 'Saving...' : 'Save'}
+          </Button>
+          <Button color="secondary" onClick={cancel} outline size="sm">
+            Cancel
+          </Button>
+        </div>
         {warning.open && (
           <div>
             <br />

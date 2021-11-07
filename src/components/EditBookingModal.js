@@ -34,6 +34,7 @@ import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes'
 import { useMutation } from '@apollo/client'
 import Avatar from '@components/avatar'
 import moment from 'moment'
+import classnames from 'classnames'
 
 import './EditBookingModal.scss'
 
@@ -285,6 +286,26 @@ const EditBookingModal = ({
     setInputNote('')
   }
 
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      height: 30,
+      minHeight: 30,
+      fontSize: 12
+    }),
+    option: (provided) => ({
+      ...provided,
+      borderBottom: '1px dotted',
+      padding: 10,
+      fontSize: 12
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      padding: 0,
+      fontSize: 12
+    })
+  }
+
   return (
     <Modal
       isOpen={open}
@@ -294,33 +315,35 @@ const EditBookingModal = ({
       contentClassName="pt-0"
       onClosed={(e) => handleClose()}
     >
-      <ModalHeader className="mb-2" toggle={handleModal} close={CloseBtn} tag="div">
+      <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">Edit Booking</h5>
       </ModalHeader>
-      <Nav tabs className="d-flex justify-content-around">
+      <Nav tabs className="d-flex justify-content-around mt-1">
         <NavItem>
           <NavLink
+            title="Basic information"
             active={active === '1'}
             onClick={() => {
               toggle('1')
             }}
           >
-            <Info />
+            <Info size="18" />
           </NavLink>
         </NavItem>
         <NavItem>
           <NavLink
+            title="Notes"
             active={active === '2'}
             onClick={() => {
               toggle('2')
             }}
           >
-            <Edit />
+            <Edit size="18" />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink>
-            <Settings />
+          <NavLink title="Settings">
+            <Settings size="18" />
           </NavLink>
         </NavItem>
       </Nav>
@@ -334,7 +357,7 @@ const EditBookingModal = ({
             </FormGroup>
             <FormGroup>
               <Label for="full-name">Customer Information</Label>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <User size={15} />
@@ -344,7 +367,7 @@ const EditBookingModal = ({
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Mail size={15} />
@@ -364,7 +387,7 @@ const EditBookingModal = ({
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Phone size={15} />
@@ -381,7 +404,7 @@ const EditBookingModal = ({
               </InputGroup>
             </FormGroup>
             <FormGroup>
-              <InputGroup>
+              <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <Briefcase size={15} />
@@ -394,6 +417,7 @@ const EditBookingModal = ({
               <Label for="full-name">Event Coordinator*</Label>
               <Select
                 theme={selectThemeColors}
+                styles={selectStyles}
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
@@ -420,6 +444,7 @@ const EditBookingModal = ({
             <FormGroup>
               <Label for="full-name">Event Details*</Label>
               <Select
+                styles={selectStyles}
                 theme={selectThemeColors}
                 className="react-select"
                 classNamePrefix="select"
@@ -447,9 +472,10 @@ const EditBookingModal = ({
             </FormGroup>
 
             <FormGroup>
-              <Label for="full-name">Class Variants*</Label>
+              <Label for="full-name">Class Variant*</Label>
               <Select
                 theme={selectThemeColors}
+                styles={selectStyles}
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
@@ -473,35 +499,39 @@ const EditBookingModal = ({
 
             <FormGroup>
               <Label for="full-name">Group Size*</Label>
-              <Input
-                id="attendees"
-                placeholder="Group Size *"
-                value={groupSize}
-                onChange={(e) => setGroupSize(e.target.value)}
-                type="number"
-                onBlur={(e) => {
-                  groupSizeValidation(e.target.value)
-                }}
-              />
+              <InputGroup size="sm">
+                <Input
+                  id="attendees"
+                  placeholder="Group Size *"
+                  value={groupSize}
+                  onChange={(e) => setGroupSize(e.target.value)}
+                  type="number"
+                  onBlur={(e) => {
+                    groupSizeValidation(e.target.value)
+                  }}
+                />
+              </InputGroup>
             </FormGroup>
             <FormGroup>
-              <Label for="date-time-picker">Custom Sign Up Deadline</Label>
-              <Flatpickr
-                value={bookingSignUpDeadline}
-                dateformat="Y-m-d H:i"
-                data-enable-time
-                id="signUpDateLine"
-                className="form-control"
-                placeholder="Select Date..."
-                onChange={(selectedDates, dateStr, instance) => {
-                  setBookingSignUpDeadline(selectedDates)
-                }}
-              />
+              <Label for="date-time-picker">Sign Up Deadline (Custom)</Label>
+              <InputGroup size="sm">
+                <Flatpickr
+                  value={bookingSignUpDeadline}
+                  dateformat="Y-m-d H:i"
+                  data-enable-time
+                  id="signUpDateLine"
+                  className="form-control"
+                  placeholder="Select Date..."
+                  onChange={(selectedDates, dateStr, instance) => {
+                    setBookingSignUpDeadline(selectedDates)
+                  }}
+                />
+              </InputGroup>
               {bookingSignUpDeadline && (
                 <dt className="text-right">
                   <small>
                     <a href="#" onClick={(e) => setBookingSignUpDeadline([])}>
-                      Clear
+                      clear
                     </a>
                   </small>
                 </dt>
@@ -510,7 +540,7 @@ const EditBookingModal = ({
             <FormGroup>
               <Label for="full-name">Close Booking</Label>
               <Select
-                styles={{ option: (styles) => ({ minHeight: 40, ...styles }) }}
+                styles={selectStyles}
                 value={{
                   label: closedBookingReason,
                   value: closedBookingReason
@@ -529,69 +559,79 @@ const EditBookingModal = ({
                 isClearable={false}
               />
             </FormGroup>
-            <Button
-              className="mr-1"
-              color={closedBookingReason ? 'danger' : 'primary'}
-              onClick={editBooking}
-              disabled={
-                !customerName ||
-                !customerEmail ||
-                !emailValid ||
-                !customerPhone ||
-                !coordinatorId ||
-                !bookingTeamClassId ||
-                !classVariant ||
-                !groupSize
-              }
-            >
-              {!processing && !closedBookingReason
-                ? 'Save'
-                : closedBookingReason && processing
-                ? 'Saving...'
-                : processing
-                ? 'Saving...'
-                : 'Close booking?'}
-            </Button>
-            <Button color="secondary" onClick={cancel} outline>
-              Cancel
-            </Button>
+            <div align="center">
+              <Button
+                className="mr-1"
+                size="sm"
+                color={closedBookingReason ? 'danger' : 'primary'}
+                onClick={editBooking}
+                disabled={
+                  !customerName ||
+                  !customerEmail ||
+                  !emailValid ||
+                  !customerPhone ||
+                  !coordinatorId ||
+                  !bookingTeamClassId ||
+                  !classVariant ||
+                  !groupSize
+                }
+              >
+                {!processing && !closedBookingReason
+                  ? 'Save'
+                  : closedBookingReason && processing
+                  ? 'Saving...'
+                  : processing
+                  ? 'Saving...'
+                  : 'Close booking?'}
+              </Button>
+              <Button color="secondary" size="sm" onClick={cancel} outline>
+                Cancel
+              </Button>
+            </div>
           </ModalBody>
         </TabPane>
         <TabPane tabId="2">
-          <b className="text-primary ml-2">Booking Notes</b>
+          <b className="text-primary ml-2">Notes</b>
           <Card className="notes-card mt-1">
             <CardBody>
-              {bookingNotes && bookingNotes.length > 0 ? (
-                bookingNotes.map((item, index) => (
-                  <div className="text-justify ">
-                    <p className="">
-                      <small>{item.note}</small>
-                    </p>
-                    <div className="d-flex justify-content-between">
-                      <p className="text-primary font-italic">
-                        <small>{item.author}</small>
-                      </p>
-                      <p>
-                        <small className="">
-                          {/* <strong>Updated: </strong> */}
-                          {moment(item.date).fromNow()}
-                        </small>
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <h6>Write your first note below...</h6>
-              )}
+              <ul className="timeline p-0 m-0">
+                {bookingNotes && bookingNotes.length > 0 ? (
+                  bookingNotes.map((item, index) => {
+                    return (
+                      <li key={index} className="timeline-item">
+                        <span className={classnames('timeline-point timeline-point-secondary timeline-point-indicator')}>{item.icon ? item.icon : null}</span>
+                        <div className="timeline-event">
+                          <div className={classnames('d-flex justify-content-between flex-sm-row flex-column')}>
+                            <small>
+                              <strong>{item.author}</strong>
+                            </small>
+                            <span className="timeline-event-time">
+                              <small>{moment(item.date).fromNow()}</small>
+                            </span>
+                          </div>
+                          <p
+                            className={classnames({
+                              'mb-0': index === bookingNotes.length - 1 && !item.customContent
+                            })}
+                          >
+                            <small>{item.note}</small>
+                          </p>
+                        </div>
+                      </li>
+                    )
+                  })
+                ) : (
+                  <li>
+                    <p>Write your first note below...</p>
+                  </li>
+                )}
+              </ul>
             </CardBody>
           </Card>
-          <div className=" ml-2 mr-2">
+          <div className=" ml-2 mr-2" align="right">
             <Input className="" type="textarea" id="bookingNotes" value={inputNote} onChange={(e) => setInputNote(e.target.value)} />
             <Button onClick={onChangeNotes} size="sm" className="mt-1" color="primary" disabled={!inputNote}>
-              {processing ? 'Saving note...' : 'Save Note'}
-            </Button>
-            <Button className="mt-1 ml-1" size="sm" color="secondary" onClick={cancel} outline>
-              Cancel
+              {processing ? 'Saving note...' : 'Add Note'}
             </Button>
           </div>
         </TabPane>
