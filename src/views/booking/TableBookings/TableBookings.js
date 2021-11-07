@@ -103,10 +103,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, c
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
-            <Avatar color={getBookingColor(row.status)} content={row.customerName} initials />
-            <div className="user-info text-truncate ml-1">
-              <span className="d-block font-weight-bold">{row.customerName && row.customerName.split(' ')[0]}</span>
-            </div>
+            <span className="d-block font-weight-bold">{row.customerName}</span>
           </div>
         </small>
       )

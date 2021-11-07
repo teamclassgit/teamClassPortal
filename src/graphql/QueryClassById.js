@@ -9,6 +9,7 @@ export default gql`
       minimum
       hasKit
       instantBooking
+      multipleInstructors
       shippingIncluded
       shippingCountries
       isVirtual

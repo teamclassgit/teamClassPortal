@@ -56,13 +56,15 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
 
     if (column === 'confirmed') {
       return bookingCards.filter(({ status, payments }) => {
-        return status.indexOf(column) > -1 && payments && payments.length > 0
+        const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
+        return status.indexOf(column) > -1 && depositPayment
       })
     }
 
     if (column === 'paid') {
       return bookingCards.filter(({ status, payments }) => {
-        return status.indexOf(column) > -1 && payments && payments.length > 1
+        const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
+        return status.indexOf(column) > -1 && finalPayment
       })
     }
 

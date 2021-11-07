@@ -4,6 +4,7 @@ import * as XLSX from 'xlsx'
 import { FileText } from 'react-feather'
 
 const ExportToExcel = ({ apiData, fileName, title }) => {
+
   const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
   const fileExtension = '.xlsx'
 

@@ -14,53 +14,78 @@ import {
   InputGroup,
   InputGroupAddon
 } from 'reactstrap'
-import { Share, FileText, Filter, Plus, List, Trello, Search } from 'react-feather'
+import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
+import ExportToExcel from '../../../components/ExportToExcel'
+import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName } from '../common'
 
-function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAddModal, setElementToAdd, bookings, defaultLimit, onChangeLimit }) {
+function BookingsHeader({
+  setShowFiltersModal,
+  setSwitchView,
+  switchView,
+  showAddModal,
+  setElementToAdd,
+  bookings,
+  defaultLimit,
+  onChangeLimit,
+  customers,
+  coordinators,
+  classes
+}) {
   const [searchValue, setSearchValue] = useState('')
   const [limit, setLimit] = useState(defaultLimit)
   const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext)
+  const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
 
-  // ** Converts table to CSV
-  function convertArrayOfObjectsToCSV(array) {
-    let result
-    const columnDelimiter = ','
-    const lineDelimiter = '\n'
-    const keys = Object.keys(array[0])
-    result = ''
-    result += keys.join(columnDelimiter)
-    result += lineDelimiter
+  useEffect(() => {
+    if (bookings) {
+      const bookingsArray = []
 
-    array.forEach((item) => {
-      let ctr = 0
-      keys.forEach((key) => {
-        if (ctr > 0) result += columnDelimiter
-        result += item[key] || ''
-        ctr++
-      })
-      result += lineDelimiter
-    })
+      const headers = [
+        'Updated',
+        'BookingId',
+        'Status',
+        'Name',
+        'Email',
+        'Phone',
+        'Company',
+        'Coordinator Name',
+        'ClassId',
+        'Class Title',
+        'Class Variants',
+        'Price',
+        'Group Size',
+        'Sign Up Deadline',
+        'Close Booking Reason'
+      ]
 
-    return result
-  }
+      bookingsArray.push(headers)
 
-  // ** Downloads CSV
-  function downloadCSV(array) {
-    const link = document.createElement('a')
-    let csv = convertArrayOfObjectsToCSV(array)
-    if (csv === null) return
+      for (const i in bookings) {
+        const bookingInfo = bookings[i]
+        const row = [
+          bookingInfo.updatedAt,
+          bookingInfo._id,
+          bookingInfo.status,
+          bookingInfo.customerName,
+          getCustomerEmail(bookingInfo.customerId, customers),
+          getCustomerPhone(bookingInfo.customerId, customers),
+          getCustomerCompany(bookingInfo.customerId, customers),
+          getCoordinatorName(bookingInfo.eventCoordinatorId, coordinators),
+          bookingInfo.teamClassId,
+          getClassTitle(bookingInfo.teamClassId, classes),
+          bookingInfo.classVariant && bookingInfo.classVariant.title,
+          bookingInfo.classVariant && bookingInfo.classVariant.pricePerson + (bookingInfo.classVariant.groupEvent ? ' /Group' : ' /Person'),
+          bookingInfo.attendees,
+          bookingInfo.signUpDeadline,
+          bookingInfo.closedReason
+        ]
+        bookingsArray.push(row)
+      }
 
-    const filename = 'export.csv'
-
-    if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`
+      setAttendeesExcelTable(bookingsArray)
     }
-
-    link.setAttribute('href', encodeURI(csv))
-    link.setAttribute('download', filename)
-    link.click()
-  }
+  }, [bookings])
 
   return (
     <Card className="w-100  shadow-none bg-transparent m-0">
@@ -163,9 +188,18 @@ function BookingsHeader({ setShowFiltersModal, setSwitchView, switchView, showAd
                 <Share size={13} />
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem className="w-100" onClick={() => downloadCSV(bookings)}>
-                  <FileText size={13} />
-                  <span className="align-middle ml-50">CSV</span>
+                <DropdownItem className="align-middle w-100">
+                  <ExportToExcel
+                    apiData={attendeesExcelTable}
+                    fileName={'Bookings'}
+                    title={
+                      <h6>
+                        <FileText size={13} />
+                        {' Excel File'}
+                      </h6>
+                    }
+                    smallText={<h6 className="small m-0 p-0">Download</h6>}
+                  />
                 </DropdownItem>
               </DropdownMenu>
             </UncontrolledButtonDropdown>

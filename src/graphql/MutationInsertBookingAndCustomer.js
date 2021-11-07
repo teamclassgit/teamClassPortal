@@ -21,6 +21,7 @@ export default gql`
     $serviceFee: Float!
     $discount: Float!
     $createdAt: DateTime!
+    $customerCreatedAt: DateTime!
     $updatedAt: DateTime!
     $signUpDeadline: DateTime
     $status: String!
@@ -39,6 +40,7 @@ export default gql`
         email: $email
         company: $company
         updatedAt: $updatedAt
+        createdAt: $customerCreatedAt
         billingAddress: $billingAddress
       }
     ) {
@@ -87,93 +89,45 @@ export default gql`
       }
     ) {
       _id
-      date
-      expirationHours
       teamClassId
+      customerId
+      customerName
+      attendees
+      classMinimum
+      eventDurationHours
       eventCoordinatorId
-      classVariant {
-        title
-        notes
-        minimum
-        maximum
-        duration
-        pricePerson
-        hasKit
-        order
-        active
-        groupEvent
+      pricePerson
+      serviceFee
+      salesTax
+      rushFee
+      discount
+      status
+      closedReason
+      eventLink
+      signUpStatusLink
+      checkoutLink
+      payments {
+        amount
+        paymentId
+        paymentName
+        status
       }
       notes {
         note
         author
         date
       }
-      addons {
-        icon
-        color
-        name
-        description
-        multipleUnits
-        unitPrice
-        unit
-        order
-        active
+      classVariant {
+        title
+        minimum
+        maximum
+        pricePerson
+        hasKit
+        groupEvent
       }
-      payments {
-        addressLine1
-        addressLine2
-        amount
-        cardBrand
-        cardExpMonth
-        cardExpYear
-        cardLast4
-        cardFunding
-        cardCountry
-        chargeUrl
-        city
-        country
-        createdAt
-        email
-        livemode
-        name
-        paymentId
-        paymentName
-        paymentMethod
-        phone
-        state
-        status
-      }
-      instructorId
-      instructorName
-      customerId
-      customerName
-      eventDate
-      eventDurationHours
-      attendees
-      classMinimum
-      pricePerson
-      serviceFee
-      salesTax
-      salesTaxState
-      discount
-      status
-      eventLink
-      signUpStatusLink
-      checkoutLink
-      invoiceDetails {
-        item
-        unitPrice
-        units
-        priceEditable
-        unitsEditable
-        taxable
-        readOnly
-      }
-      createdAt
       createdAt
       updatedAt
       signUpDeadline
-      closedReason
     }
   }
 `

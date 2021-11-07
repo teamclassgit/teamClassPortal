@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  query GetBookings($filter: BookingQueryInput!, $limit: Int!) {
-    bookings(limit: $limit, query: $filter, sortBy: UPDATEDAT_DESC) {
+  mutation updateBookingNotes($id: String!, $notes: [BookingNoteUpdateInput], $updatedAt: DateTime!) {
+    updateOneBooking(query: { _id: $id }, set: { notes: $notes, updatedAt: $updatedAt }) {
       _id
       teamClassId
       customerId
@@ -34,14 +34,10 @@ export default gql`
       }
       classVariant {
         title
-        notes
         minimum
         maximum
-        duration
         pricePerson
         hasKit
-        order
-        active
         groupEvent
       }
       createdAt
