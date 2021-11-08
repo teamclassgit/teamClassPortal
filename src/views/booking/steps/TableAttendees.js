@@ -294,7 +294,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
       <Card>
         <CardHeader tag="h4" className="border-bottom ">
           <div className="d-flex flex-column bd-highlight">
-            <p className="bd-highlight">Your list of attendees</p>
+            <p className="bd-highlight mb-0">Your list of attendees</p>
             <p className="bd-highlight">
               {hasKit && (
                 <small>
@@ -305,9 +305,9 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
             </p>
           </div>
           <CardTitle className="d-flex justify-content-end">
-            <div className="d-flex justify-content-end ">
+            <div className="d-flex justify-content-end">
               <div>
-                <UncontrolledButtonDropdown className="">
+                <UncontrolledButtonDropdown>
                   <DropdownToggle color="secondary" caret outline>
                     <Share size={15} />
                     <span className="align-middle ml-50">Bulk actions</span>
