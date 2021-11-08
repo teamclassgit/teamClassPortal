@@ -225,13 +225,14 @@ const AddNewAttendee = ({
               type="select"
               name="country"
               id="country"
-              placeholder="Select..."
               required={true}
               value={newCountry}
-              placeholder="Country*"
+              placeholder=""
               onChange={(e) => setNewCountry(e.target.value)}
             >
-              <option value={''}>{''}</option>
+              <option className="text-muted" disabled={true} value="" hidden>
+                Country*
+              </option>
               {shippingCountries.map((option) => (
                 <option key={`${option.value}-option-key-shipping-countries`} value={option.label}>
                   {option.label}
@@ -249,9 +250,14 @@ const AddNewAttendee = ({
               }}
             />
           </InputGroup>
-          <small className="form-text text-muted mb-2">Select a country*</small>
         </FormGroup>
-        {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? <Label for="full-name">Additional information</Label> : ''}
+        {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? (
+          <Label className="mb-1" for="full-name">
+            Additional information
+          </Label>
+        ) : (
+          ''
+        )}
         {teamClassInfo.registrationFields &&
           teamClassInfo.registrationFields
             .filter((element) => element.active === true)

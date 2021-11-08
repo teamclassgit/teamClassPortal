@@ -9,7 +9,7 @@ import Avatar from '@components/avatar'
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
 
-import { ChevronDown, Download, Edit, Grid, Plus, Share, Trash, X } from 'react-feather'
+import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather'
 
 import {
   Badge,
@@ -292,75 +292,94 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
   return (
     <Fragment>
       <Card>
-        <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start border-bottom">
-          <CardTitle tag="h4">
-            Your list of attendees<br></br>
-            {hasKit && (
-              <small>
-                {` Attendees registered: `}
-                <Badge color="primary"> {`${data.length}`}</Badge>
-              </small>
-            )}
+        <CardHeader tag="h4" className="border-bottom ">
+          <div className="d-flex flex-column bd-highlight">
+            <p className="bd-highlight">Your list of attendees</p>
+            <p className="bd-highlight">
+              {hasKit && (
+                <small>
+                  {` Attendees registered: `}
+                  <Badge color="primary"> {`${data.length}`}</Badge>
+                </small>
+              )}
+            </p>
+          </div>
+          <CardTitle className="d-flex justify-content-end">
+            <div className="d-flex justify-content-end ">
+              <div>
+                <UncontrolledButtonDropdown className="">
+                  <DropdownToggle color="secondary" caret outline>
+                    <Share size={15} />
+                    <span className="align-middle ml-50">Bulk actions</span>
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem className="align-middle w-100">
+                      <ExportToExcel
+                        apiData={excelHeadersTemplate}
+                        fileName={'Template'}
+                        title={
+                          <h6>
+                            <FileText size={13} />
+                            {'  Download template'}
+                          </h6>
+                        }
+                        smallText={<h6 className="small m-0 p-0">Use this template to build your list</h6>}
+                      />
+                    </DropdownItem>
+                    <DropdownItem className="w-100" onClick={handleModalUpload}>
+                      <Grid size={15} />
+                      <span className="align-middle ml-50">
+                        Upload data<br></br>
+                        <small>Excel file with your attendees</small>
+                      </span>
+                    </DropdownItem>
+                    <DropdownItem className="align-middle w-100">
+                      <ExportToExcel
+                        apiData={attendeesExcelTable}
+                        fileName={'SignUpStatus'}
+                        title={
+                          <h6>
+                            <FileText size={13} />
+                            {'   Excel File'}
+                          </h6>
+                        }
+                        smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
+                      />
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledButtonDropdown>
+              </div>
+              <div className>
+                <Button
+                  className="ml-2"
+                  color="primary"
+                  onClick={(e) => {
+                    setMode('new')
+                    const newElementTemplate = {
+                      city: '',
+                      phone: '',
+                      bookingId: currentBookingId,
+                      zip: '',
+                      addressLine1: '',
+                      addressLine2: '',
+                      email: '',
+                      country: '',
+                      name: '',
+                      state: '',
+                      dinamycValues: []
+                    }
+                    setCurrentElement(newElementTemplate)
+                    handleModal()
+                  }}
+                >
+                  <Plus size={15} />
+                  <span className="align-middle ml-50">Add Attendee</span>
+                </Button>
+              </div>
+            </div>
           </CardTitle>
         </CardHeader>
-        <div className="d-flex justify-content-end mt-2 mr-2">
-          <UncontrolledButtonDropdown>
-            <DropdownToggle color="secondary" caret outline>
-              <Share size={15} />
-              <span className="align-middle ml-50">Bulk actions</span>
-            </DropdownToggle>
-            <DropdownMenu right>
-              <DropdownItem className="w-100">
-                <Download size={15} />
-                <span className="align-middle ml-50">
-                  <ExportToExcel apiData={excelHeadersTemplate} fileName={'Template'} title={' Download template'} />
-                  <br></br>
-                  <small>Use this template to build your list</small>
-                </span>
-              </DropdownItem>
-              <DropdownItem className="w-100" onClick={handleModalUpload}>
-                <Grid size={15} />
-                <span className="align-middle ml-50">
-                  Upload data<br></br>
-                  <small>Excel file with your attendees</small>
-                </span>
-              </DropdownItem>
-              <DropdownItem className="w-100">
-                <Download size={15} />
-                <span className="align-middle ml-50">
-                  <ExportToExcel apiData={attendeesExcelTable} fileName={'SignUpStatus'} title={' Excel File'} />
-                  <br></br>
-                  <small>Download excel file with your attendees</small>
-                </span>
-              </DropdownItem>
-            </DropdownMenu>
-          </UncontrolledButtonDropdown>
-          <Button
-            className="ml-2"
-            color="primary"
-            onClick={(e) => {
-              setMode('new')
-              const newElementTemplate = {
-                city: '',
-                phone: '',
-                bookingId: currentBookingId,
-                zip: '',
-                addressLine1: '',
-                addressLine2: '',
-                email: '',
-                country: '',
-                name: '',
-                state: '',
-                dinamycValues: []
-              }
-              setCurrentElement(newElementTemplate)
-              handleModal()
-            }}
-          >
-            <Plus size={15} />
-            <span className="align-middle ml-50">Add Attendee</span>
-          </Button>
-        </div>
+
         <Row className="justify-content-end mx-0">
           <Col className="d-flex align-items-center justify-content-end mt-1 mb-1" md="6" sm="12">
             <Label className="mr-1" for="search-input">
