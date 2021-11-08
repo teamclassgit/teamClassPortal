@@ -211,34 +211,12 @@ const AddNewAttendee = ({
         <FormGroup>
           <InputGroup>
             <Input id="addressLine2" placeholder="Address Line 2" value={newAddress2} onChange={(e) => setNewAddress2(e.target.value)} />
-          </InputGroup>
-        </FormGroup>
-        <FormGroup>
-          <InputGroup>
             <Input id="city" placeholder="City*" required={true} value={newCity} onChange={(e) => setNewCity(e.target.value)} />
-            <Input id="state" placeholder="State*" value={newState} onChange={(e) => setNewState(e.target.value)} />
           </InputGroup>
         </FormGroup>
         <FormGroup>
           <InputGroup>
-            <Input
-              type="select"
-              name="country"
-              id="country"
-              required={true}
-              value={newCountry}
-              placeholder=""
-              onChange={(e) => setNewCountry(e.target.value)}
-            >
-              <option className="text-muted" disabled={true} value="" hidden>
-                Country*
-              </option>
-              {shippingCountries.map((option) => (
-                <option key={`${option.value}-option-key-shipping-countries`} value={option.label}>
-                  {option.label}
-                </option>
-              ))}
-            </Input>
+            <Input id="state" placeholder="State*" value={newState} onChange={(e) => setNewState(e.target.value)} />
             <Input
               id="zip"
               type="number"
@@ -250,6 +228,20 @@ const AddNewAttendee = ({
               }}
             />
           </InputGroup>
+        </FormGroup>
+        <FormGroup className="">
+          <Select
+            className="selectpicker"
+            classNamePrefix="selectpicker"
+            name="country"
+            options={shippingCountries}
+            id="country"
+            required={true}
+            value={{ label: newCountry, value: newCountry }}
+            placeholder="Select.."
+            onChange={(option) => setNewCountry(option.label)}
+          />
+          <small className="form-text text-muted">Country*</small>
         </FormGroup>
         {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? (
           <Label className="mb-1" for="full-name">
