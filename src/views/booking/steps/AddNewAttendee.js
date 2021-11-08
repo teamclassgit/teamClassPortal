@@ -39,6 +39,7 @@ const AddNewAttendee = ({
   const [processing, setProcessing] = React.useState(false)
   const [emailValid, setEmailValid] = React.useState(true)
   const [dynamicValues, setDynamicValues] = React.useState([])
+  const [dynamicValuesValidation, setDynamicValuesValidation] = React.useState(true)
 
   const options = { phone: true, phoneRegionCode: 'US' }
 
@@ -46,7 +47,7 @@ const AddNewAttendee = ({
     countriesData &&
     countriesData.countries.map((country) => ({
       label: country.name,
-      value: country.alpha2Code
+      value: country.name
     }))
 
   const emailValidation = (email) => {
@@ -120,6 +121,20 @@ const AddNewAttendee = ({
       setDynamicValues(currentElement.additionalFields)
     }
   }, [currentElement])
+
+  React.useEffect(() => {
+    let validationFields = true
+    if (newName && newEmail && newAddress1 && newCity && newState && newZip && newCountry) {
+      validationFields = !newName || !newEmail || !newAddress1 || !newCity || !newState || !newZip || !newCountry
+    }
+    if (teamClassInfo.registrationFields) {
+      teamClassInfo.registrationFields.map((field) => {
+        const filteredFields = dynamicValues ? dynamicValues.find((item) => item.name === field.label) : []
+        validationFields = validationFields || (field.required && filteredFields && !filteredFields.value)
+      })
+    }
+    setDynamicValuesValidation(validationFields)
+  }, [dynamicValues, newName, newEmail, newAddress1, newCity, newState, newZip, newCountry])
 
   const onChangeDynamic = (value, additionalField, field) => {
     if (field.type === 'multiSelectionList') {
@@ -256,6 +271,7 @@ const AddNewAttendee = ({
             .sort((field1, field2) => field1.order < field2.order)
             .map((field, index) => {
               const additionalField = dynamicValues && dynamicValues.find((item) => item.name === field.label)
+
               return (
                 <FormGroup className="ml-0 pl-0">
                   <Label for={field.label}>{field.label + (field.required ? '*' : '')}</Label>
@@ -336,12 +352,7 @@ const AddNewAttendee = ({
                 </FormGroup>
               )
             })}
-        <Button
-          className="mr-1 mt-1"
-          color="primary"
-          onClick={saveNewAttendee}
-          disabled={!newName || !newEmail || processing || !emailValid || !newAddress1 || !newCity || !newState || !newZip || !newCountry}
-        >
+        <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || dynamicValuesValidation}>
           {processing ? 'Saving...' : 'Save'}
         </Button>
         <Button className="mt-1" color="secondary" onClick={cancel} outline>
