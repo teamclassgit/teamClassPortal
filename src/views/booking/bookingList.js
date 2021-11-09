@@ -14,6 +14,7 @@ import AddNewBooking from './AddNewBooking'
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext'
 import EditBookingModal from '../../components/EditBookingModal'
 import { getCustomerEmail, getClassTitle } from './common'
+import moment from 'moment'
 
 const BookingList = () => {
   const excludedBookings = ['closed', 'canceled']
@@ -139,8 +140,8 @@ const BookingList = () => {
         eventCoordinatorId_in: coordinatorFilterContext.value,
         teamClassId: classFilterContext.value,
         status_nin: excludedBookings,
-        createdAt_gte: dateFilterContext.value[0],
-        createdAt_lte: dateFilterContext.value[1]
+        createdAt_gte: moment(dateFilterContext.value[0]).format(),
+        createdAt_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
       }
       setBookingsFilter(query)
     } else if (classFilterContext) {
@@ -157,8 +158,8 @@ const BookingList = () => {
       setBookingsFilter(query)
     } else if (dateFilterContext) {
       const query = {
-        createdAt_gte: dateFilterContext.value[0],
-        createdAt_lte: dateFilterContext.value[1],
+        createdAt_gte: moment(dateFilterContext.value[0]).format(),
+        createdAt_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format(),
         status_nin: excludedBookings
       }
       setBookingsFilter(query)

@@ -3,9 +3,8 @@ import { Modal, ModalHeader, ModalBody, FormGroup, InputGroup, Label, Input, But
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import Select from 'react-select'
 import Flatpickr from 'react-flatpickr'
-import moment from 'moment'
 
-function FiltersModal({ open, handleModal, classes, coordinators, calendarEvents }) {
+function FiltersModal({ open, handleModal, classes, coordinators }) {
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
   const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext)
@@ -85,14 +84,19 @@ function FiltersModal({ open, handleModal, classes, coordinators, calendarEvents
         </FormGroup>
         <FormGroup>
           <Label for="exampleSelect" className="text-dark">
-            Filter by date
+            Filter by creation date
           </Label>
           <Flatpickr
             value={dateFilterContext && dateFilterContext.value}
             placeholder="Select Date Range..."
             id="range-picker"
             className="form-control"
-            onChange={(dates) => setFilterByDate({ type: 'date', value: dates.map((item) => moment(item).format()) })}
+            onChange={(dates) =>
+              setFilterByDate({
+                type: 'date',
+                value: dates
+              })
+            }
             options={{
               mode: 'range'
             }}
