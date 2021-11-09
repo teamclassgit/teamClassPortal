@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export default gql`
   query GetTeamClass($classId: String!) {
-    teamClass(query: { _id : $classId }) {
+    teamClass(query: { _id: $classId }) {
       _id
       title
       category
@@ -64,16 +64,16 @@ export default gql`
         increment
       }
       variants {
-         title
-         notes
-         minimum
-         maximum
-         duration
-         pricePerson
-         hasKit
-         order
-         active
-         groupEvent
+        title
+        notes
+        minimum
+        maximum
+        duration
+        pricePerson
+        hasKit
+        order
+        active
+        groupEvent
       }
       registrationFields {
         label

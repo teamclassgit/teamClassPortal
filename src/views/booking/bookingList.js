@@ -188,6 +188,7 @@ const BookingList = () => {
         customers={customers}
         coordinators={coordinators}
         classes={classes}
+        calendarEvents={calendarEvents}
         defaultLimit={limit}
       />
       {allClasses.loading ||
