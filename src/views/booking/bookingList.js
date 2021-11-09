@@ -167,10 +167,6 @@ const BookingList = () => {
     }
   }, [classFilterContext, coordinatorFilterContext, dateFilterContext])
 
-  console.log('bookingsFilter', bookingsFilter)
-  // ,bookings
-  console.log('filteredBookings', filteredBookings)
-
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '')
   }, [textFilterContext])

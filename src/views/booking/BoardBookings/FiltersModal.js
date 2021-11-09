@@ -14,11 +14,6 @@ function FiltersModal({ open, handleModal, classes, coordinators, calendarEvents
   const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext)
   const [filterByDate, setFilterByDate] = useState(dateFilterContext)
 
-  const [picker, setPicker] = useState(new Date())
-
-  const [date, setDate] = useState(null)
-  const [time, setTime] = useState(null)
-
   const classOptions = classes.map(({ title, _id }) => ({ value: _id, label: title }))
   const getClassFilterDefaultValue = () => {
     if (classFilterContext) {
@@ -50,19 +45,7 @@ function FiltersModal({ open, handleModal, classes, coordinators, calendarEvents
     setDateFilterContext(null)
     handleModal()
   }
-  // const formatTime = () => toAmPm(calendarEvents.fromHour, calendarEvents.fromMinutes, 'CT')
-  // useEffect(() => {
-  //   setDate(calendarEvents ? new Date(calendarEvents.year, calendarEvents.month - 1, calendarEvents.day) : null)
-  //   setTime(calendarEvents ? formatTime() : null)
-  // }, [filterByDate])
 
-  console.log('filterByClass', filterByClass)
-  console.log('filterByCoordinator', filterByCoordinator)
-  console.log('filterByDate', filterByDate && filterByDate.value)
-
-  console.log('classFilterContext', classFilterContext)
-  console.log('coordinatorFilterContext', coordinatorFilterContext)
-  console.log('dateFilterContext', dateFilterContext)
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="" toggle={handleModal} tag="div">
@@ -106,6 +89,7 @@ function FiltersModal({ open, handleModal, classes, coordinators, calendarEvents
           </Label>
           <Flatpickr
             value={dateFilterContext && dateFilterContext.value}
+            placeholder="Select Date Range..."
             id="range-picker"
             className="form-control"
             onChange={(dates) => setFilterByDate({ type: 'date', value: dates.map((item) => moment(item).format()) })}
