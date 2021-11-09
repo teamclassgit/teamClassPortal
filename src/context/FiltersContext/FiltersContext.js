@@ -6,6 +6,7 @@ const FiltersContextProvider = (props) => {
   const [classFilterContext, setClassFilterContext] = useState(null)
   const [coordinatorFilterContext, setCoordinatorFilterContext] = useState(null)
   const [textFilterContext, setTextFilterContext] = useState(null)
+  const [dateFilterContext, setDateFilterContext] = useState(null)
 
   return (
     <FiltersContext.Provider
@@ -15,7 +16,9 @@ const FiltersContextProvider = (props) => {
         coordinatorFilterContext,
         setCoordinatorFilterContext,
         textFilterContext,
-        setTextFilterContext
+        setTextFilterContext,
+        dateFilterContext,
+        setDateFilterContext
       }}
     >
       {props.children}

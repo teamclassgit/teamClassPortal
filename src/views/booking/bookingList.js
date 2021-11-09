@@ -31,7 +31,7 @@ const BookingList = () => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [currentElement, setCurrentElement] = useState({})
   const [elementToAdd, setElementToAdd] = useState({})
-  const { classFilterContext, coordinatorFilterContext, textFilterContext } = useContext(FiltersContext)
+  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext)
   const [filteredBookings, setFilteredBookings] = useState([])
   const [editModal, setEditModal] = useState(false)
 
@@ -134,11 +134,13 @@ const BookingList = () => {
   }
 
   useEffect(() => {
-    if (classFilterContext && coordinatorFilterContext) {
+    if (classFilterContext && coordinatorFilterContext && dateFilterContext) {
       const query = {
         eventCoordinatorId_in: coordinatorFilterContext.value,
         teamClassId: classFilterContext.value,
-        status_nin: excludedBookings
+        status_nin: excludedBookings,
+        createdAt_gte: dateFilterContext.value[0],
+        createdAt_lte: dateFilterContext.value[1]
       }
       setBookingsFilter(query)
     } else if (classFilterContext) {
@@ -153,10 +155,21 @@ const BookingList = () => {
         status_nin: excludedBookings
       }
       setBookingsFilter(query)
+    } else if (dateFilterContext) {
+      const query = {
+        createdAt_gte: dateFilterContext.value[0],
+        createdAt_lte: dateFilterContext.value[1],
+        status_nin: excludedBookings
+      }
+      setBookingsFilter(query)
     } else {
       setBookingsFilter({ status_nin: excludedBookings })
     }
-  }, [classFilterContext, coordinatorFilterContext])
+  }, [classFilterContext, coordinatorFilterContext, dateFilterContext])
+
+  console.log('bookingsFilter', bookingsFilter)
+  // ,bookings
+  console.log('filteredBookings', filteredBookings)
 
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '')
@@ -231,6 +244,7 @@ const BookingList = () => {
               handleModal={() => setShowFiltersModal(!showFiltersModal)}
               classes={classes}
               coordinators={coordinators}
+              calendarEvents={calendarEvents}
             />
             <AddNewBooking
               open={showAddModal}

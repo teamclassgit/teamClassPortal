@@ -1,14 +1,23 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Modal, ModalHeader, ModalBody, FormGroup, Label, Input, Button } from 'reactstrap'
+import { Modal, ModalHeader, ModalBody, FormGroup, InputGroup, Label, Input, Button } from 'reactstrap'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import Select from 'react-select'
+import Flatpickr from 'react-flatpickr'
+import moment from 'moment'
 
-function FiltersModal({ open, handleModal, classes, coordinators }) {
+function FiltersModal({ open, handleModal, classes, coordinators, calendarEvents }) {
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
+  const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext)
 
   const [filterByClass, setFilterByClass] = useState(classFilterContext)
   const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext)
+  const [filterByDate, setFilterByDate] = useState(dateFilterContext)
+
+  const [picker, setPicker] = useState(new Date())
+
+  const [date, setDate] = useState(null)
+  const [time, setTime] = useState(null)
 
   const classOptions = classes.map(({ title, _id }) => ({ value: _id, label: title }))
   const getClassFilterDefaultValue = () => {
@@ -31,15 +40,29 @@ function FiltersModal({ open, handleModal, classes, coordinators }) {
   const handleApplyFilters = () => {
     setClassFilterContext(filterByClass && filterByClass.value ? filterByClass : null)
     setCoordinatorFilterContext(filterByCoordinator && filterByCoordinator.value && filterByCoordinator.value.length > 0 ? filterByCoordinator : null)
+    setDateFilterContext(filterByDate && filterByDate.value ? filterByDate : null)
     handleModal()
   }
 
   const handleClearFilters = () => {
     setClassFilterContext(null)
     setCoordinatorFilterContext(null)
+    setDateFilterContext(null)
     handleModal()
   }
+  // const formatTime = () => toAmPm(calendarEvents.fromHour, calendarEvents.fromMinutes, 'CT')
+  // useEffect(() => {
+  //   setDate(calendarEvents ? new Date(calendarEvents.year, calendarEvents.month - 1, calendarEvents.day) : null)
+  //   setTime(calendarEvents ? formatTime() : null)
+  // }, [filterByDate])
 
+  console.log('filterByClass', filterByClass)
+  console.log('filterByCoordinator', filterByCoordinator)
+  console.log('filterByDate', filterByDate && filterByDate.value)
+
+  console.log('classFilterContext', classFilterContext)
+  console.log('coordinatorFilterContext', coordinatorFilterContext)
+  console.log('dateFilterContext', dateFilterContext)
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="" toggle={handleModal} tag="div">
@@ -75,6 +98,19 @@ function FiltersModal({ open, handleModal, classes, coordinators }) {
               setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
             }}
             isMulti={true}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="exampleSelect" className="text-dark">
+            Filter by date
+          </Label>
+          <Flatpickr
+            id="range-picker"
+            className="form-control"
+            onChange={(dates) => setFilterByDate({ type: 'date', value: dates.map((item) => moment(item).format()) })}
+            options={{
+              mode: 'range'
+            }}
           />
         </FormGroup>
       </ModalBody>
