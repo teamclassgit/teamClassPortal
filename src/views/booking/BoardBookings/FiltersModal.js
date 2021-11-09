@@ -105,6 +105,7 @@ function FiltersModal({ open, handleModal, classes, coordinators, calendarEvents
             Filter by date
           </Label>
           <Flatpickr
+            value={dateFilterContext && dateFilterContext.value}
             id="range-picker"
             className="form-control"
             onChange={(dates) => setFilterByDate({ type: 'date', value: dates.map((item) => moment(item).format()) })}
