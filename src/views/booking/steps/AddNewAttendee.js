@@ -2,204 +2,365 @@
 import React from 'react'
 
 // ** Third Party Components
-import {Mail, Phone, User, X} from 'react-feather'
-import {
-    Button,
-    FormGroup,
-    Input,
-    InputGroup,
-    InputGroupAddon,
-    InputGroupText,
-    Label,
-    Modal,
-    ModalBody,
-    ModalHeader
-} from 'reactstrap'
-
+import { Mail, Phone, User, X } from 'react-feather'
+import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from 'reactstrap'
+import Select from 'react-select'
 // ** Styles
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
-import {isValidEmail} from "../../../utility/Utils"
-import {v4 as uuid} from 'uuid'
+import { isValidEmail } from '../../../utility/Utils'
+import { v4 as uuid } from 'uuid'
+
+import countriesData from '../../../data/countries.json'
 
 const AddNewAttendee = ({
-                         open,
-                         handleModal,
-                         currentBookingId,
-                         currentElement,
-                         saveAttendee,
-                         data,
-                         setData,
-                         updateAttendeesCount
-                     }) => {
+  open,
+  handleModal,
+  currentBookingId,
+  currentElement,
+  saveAttendee,
+  data,
+  setData,
+  updateAttendeesCount,
+  mode,
+  teamClassInfo,
+  hasKit
+}) => {
+  const [newName, setNewName] = React.useState('')
+  const [newEmail, setNewEmail] = React.useState('')
+  const [newPhone, setNewPhone] = React.useState('')
+  const [newAddress1, setNewAddress1] = React.useState('')
+  const [newAddress2, setNewAddress2] = React.useState('')
+  const [newCity, setNewCity] = React.useState('')
+  const [newState, setNewState] = React.useState('')
+  const [newZip, setNewZip] = React.useState('')
+  const [newCountry, setNewCountry] = React.useState('')
+  const [processing, setProcessing] = React.useState(false)
+  const [emailValid, setEmailValid] = React.useState(true)
+  const [dynamicValues, setDynamicValues] = React.useState([])
+  const [dynamicValuesValidation, setDynamicValuesValidation] = React.useState(true)
 
-    const [newName, setNewName] = React.useState("")
-    const [newEmail, setNewEmail] = React.useState("")
-    const [newPhone, setNewPhone] = React.useState("")
-    const [newAddress1, setNewAddress1] = React.useState("")
-    const [newAddress2, setNewAddress2] = React.useState("")
-    const [newCity, setNewCity] = React.useState("")
-    const [newState, setNewState] = React.useState("")
-    const [newZip, setNewZip] = React.useState("")
-    const [newCountry, setNewCountry] = React.useState("")
-    const [processing, setProcessing] = React.useState(false)
-    const [emailValid, setEmailValid] = React.useState(true)
+  const options = { phone: true, phoneRegionCode: 'US' }
 
-    const options = {phone: true, phoneRegionCode: 'US'}
+  const shippingCountries =
+    countriesData &&
+    countriesData.countries.map((country) => ({
+      label: country.name,
+      value: country.name
+    }))
 
-    const emailValidation = (email) => {
-        setEmailValid(isValidEmail(email))
-    }
+  const emailValidation = (email) => {
+    setEmailValid(isValidEmail(email))
+  }
 
-    const saveNewAttendee = async () => {
+  const saveNewAttendee = async () => {
+    setProcessing(true)
 
-        setProcessing(true)
-        try {
+    let additionalFields = (teamClassInfo.registrationFields && teamClassInfo.registrationFields.filter((element) => element.active === true)) || []
 
-            const newElement = {
-                id: currentElement && currentElement._id ? currentElement._id : uuid(),
-                city: newCity,
-                phone: newPhone,
-                bookingId: currentBookingId,
-                zip: newZip,
-                addressLine1: newAddress1,
-                addressLine2: newAddress2,
-                email: newEmail,
-                country: newCountry,
-                name: newName,
-                state: newState
-            }
-
-            const savedRow = await saveAttendee(newElement)
-            const newData = data.filter(element => element._id !== savedRow._id)
-            newData.push(savedRow)
-            setData(newData)
-            updateAttendeesCount(newData.length)
-
-            setProcessing(false)
-
-            handleModal()
-
-        } catch (ex) {
-            console.log(ex)
-            setProcessing(false)
+    additionalFields =
+      additionalFields &&
+      additionalFields.map((item) => {
+        const dynamicValue = dynamicValues.find((item2) => item2.name === item.label)
+        return {
+          name: item.label,
+          value: (dynamicValue && dynamicValue.value) || '',
+          order: item.order
         }
+      })
+    try {
+      const newElement = {
+        id: currentElement && currentElement._id ? currentElement._id : uuid(),
+        city: newCity,
+        phone: newPhone,
+        bookingId: currentBookingId,
+        zip: newZip,
+        addressLine1: newAddress1,
+        addressLine2: newAddress2,
+        email: newEmail,
+        country: newCountry,
+        name: newName,
+        state: newState,
+        additionalFields
+      }
+
+      const savedRow = await saveAttendee(newElement)
+      const newData = data.filter((element) => element._id !== savedRow._id)
+      newData.push(savedRow)
+      setData(newData)
+      updateAttendeesCount(newData.length)
+
+      setProcessing(false)
+
+      handleModal()
+    } catch (ex) {
+      console.log(ex)
+      setProcessing(false)
     }
+  }
 
-    const cancel = () => {
-        handleModal()
+  const cancel = () => {
+    handleModal()
+  }
+
+  // ** Custom close btn
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
+
+  React.useEffect(() => {
+    if (currentElement) {
+      setNewName(currentElement.name)
+      setNewEmail(currentElement.email)
+      setNewPhone(currentElement.phone)
+      setNewAddress1(currentElement.addressLine1)
+      setNewAddress2(currentElement.addressLine2)
+      setNewCity(currentElement.city)
+      setNewState(currentElement.state)
+      setNewZip(currentElement.zip)
+      setNewCountry(currentElement.country)
+      setDynamicValues(currentElement.additionalFields)
     }
+  }, [currentElement])
 
-    // ** Custom close btn
-    const CloseBtn = <X className='cursor-pointer' size={15} onClick={cancel}/>
+  React.useEffect(() => {
+    let validationFields = true
+    if (newName && newEmail && newAddress1 && newCity && newState && newZip && newCountry) {
+      validationFields = !newName || !newEmail || !newAddress1 || !newCity || !newState || !newZip || !newCountry
+    }
+    if (teamClassInfo.registrationFields) {
+      teamClassInfo.registrationFields.map((field) => {
+        const filteredFields = dynamicValues ? dynamicValues.find((item) => item.name === field.label) : []
+        validationFields = validationFields || (field.required && filteredFields && !filteredFields.value)
+      })
+    }
+    setDynamicValuesValidation(validationFields)
+  }, [dynamicValues, newName, newEmail, newAddress1, newCity, newState, newZip, newCountry])
 
-    React.useEffect(() => {
+  const onChangeDynamic = (value, additionalField, field) => {
+    if (field.type === 'multiSelectionList') {
+      const newArr = value.map((element) => element.label)
+      value = newArr.join(' | ')
+    }
+    if (additionalField) {
+      const additionalFieldChanged = { ...additionalField }
+      additionalFieldChanged.value = value
+      const newDynamicValues = dynamicValues.filter((item) => item.name !== additionalField.name)
+      newDynamicValues.push(additionalFieldChanged)
+      setDynamicValues(newDynamicValues)
+    } else {
+      const newDynamicValues = dynamicValues ? [...dynamicValues] : []
+      const name = field.label
+      const order = field.order
+      newDynamicValues.push({ order, name, value })
+      setDynamicValues(newDynamicValues)
+    }
+  }
 
-        if (currentElement) {
-            setNewName(currentElement.name)
-            setNewEmail(currentElement.email)
-            setNewPhone(currentElement.phone)
-            setNewAddress1(currentElement.addressLine1)
-            setNewAddress2(currentElement.addressLine2)
-            setNewCity(currentElement.city)
-            setNewState(currentElement.state)
-            setNewZip(currentElement.zip)
-            setNewCountry(currentElement.country)
-        }
+  return (
+    <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
+      <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
+        {mode === 'edit' ? <h5 className="modal-title">Edit Attendee</h5> : <h5 className="modal-title">New Attendee</h5>}
+      </ModalHeader>
+      <ModalBody className="flex-grow-1">
+        <FormGroup>
+          <Label for="full-name">Personal Information</Label>
+          <InputGroup>
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                <User size={15} />
+              </InputGroupText>
+            </InputGroupAddon>
+            <Input id="full-name" placeholder="Full Name*" required={true} value={newName} onChange={(e) => setNewName(e.target.value)} />
+          </InputGroup>
+        </FormGroup>
+        <FormGroup>
+          <InputGroup>
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                <Mail size={15} />
+              </InputGroupText>
+            </InputGroupAddon>
+            <Input
+              type="email"
+              id="email"
+              placeholder="Email*"
+              required={true}
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              invalid={!emailValid}
+              onBlur={(e) => {
+                emailValidation(e.target.value)
+              }}
+            />
+          </InputGroup>
+        </FormGroup>
+        <FormGroup>
+          <InputGroup>
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                <Phone size={15} />
+              </InputGroupText>
+            </InputGroupAddon>
+            <Cleave
+              className="form-control"
+              placeholder="Phone"
+              options={options}
+              id="phone"
+              value={newPhone}
+              onChange={(e) => setNewPhone(e.target.value)}
+            />
+          </InputGroup>
+        </FormGroup>
+        <FormGroup>
+          <Label for="addressLine1">Shipping Address</Label>
+          <InputGroup>
+            <Input
+              id="addressLine1"
+              placeholder="Address Line 1*"
+              required={true}
+              value={newAddress1}
+              onChange={(e) => setNewAddress1(e.target.value)}
+            />
+          </InputGroup>
+        </FormGroup>
+        <FormGroup>
+          <InputGroup>
+            <Input id="addressLine2" placeholder="Address Line 2" value={newAddress2} onChange={(e) => setNewAddress2(e.target.value)} />
+            <Input id="city" placeholder="City*" required={true} value={newCity} onChange={(e) => setNewCity(e.target.value)} />
+          </InputGroup>
+        </FormGroup>
+        <FormGroup>
+          <InputGroup>
+            <Input id="state" placeholder="State*" value={newState} onChange={(e) => setNewState(e.target.value)} />
+            <Input
+              id="zip"
+              type="number"
+              placeholder="Zip Code*"
+              required={true}
+              value={newZip}
+              onChange={(e) => {
+                setNewZip(e.target.value)
+              }}
+            />
+          </InputGroup>
+        </FormGroup>
+        <FormGroup className="">
+          <Select
+            className="selectpicker"
+            classNamePrefix="selectpicker"
+            name="country"
+            options={shippingCountries}
+            id="country"
+            required={true}
+            value={{ label: newCountry, value: newCountry }}
+            placeholder="Select.."
+            onChange={(option) => setNewCountry(option.label)}
+          />
+          <small className="form-text text-muted">Country*</small>
+        </FormGroup>
+        {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? (
+          <Label className="mb-1" for="full-name">
+            Additional information
+          </Label>
+        ) : (
+          ''
+        )}
+        {teamClassInfo.registrationFields &&
+          teamClassInfo.registrationFields
+            .filter((element) => element.active === true)
+            .sort((field1, field2) => field1.order < field2.order)
+            .map((field, index) => {
+              const additionalField = dynamicValues && dynamicValues.find((item) => item.name === field.label)
 
-    }, [currentElement])
-
-    return (
-        <Modal
-            isOpen={open}
-            toggle={handleModal}
-            className='sidebar-sm'
-            modalClassName='modal-slide-in'
-            contentClassName='pt-0'
-        >
-            <ModalHeader className='mb-3' toggle={handleModal} close={CloseBtn} tag='div'>
-                <h5 className='modal-title'>New Attendee</h5>
-            </ModalHeader>
-            <ModalBody className='flex-grow-1'>
-                <FormGroup>
-                    <Label for='full-name'>Personal Information</Label>
-                    <InputGroup>
-                        <InputGroupAddon addonType='prepend'>
-                            <InputGroupText>
-                                <User size={15}/>
-                            </InputGroupText>
-                        </InputGroupAddon>
-                        <Input id='full-name' placeholder='Full Name' value={newName}
-                               onChange={e => setNewName(e.target.value)}/>
-                    </InputGroup>
+              return (
+                <FormGroup className="ml-0 pl-0">
+                  <Label for={field.label}>{field.label + (field.required ? '*' : '')}</Label>
+                  {field.type === 'textarea' && (
+                    <Input
+                      type={field.type}
+                      name={field.label}
+                      id={field.label}
+                      required={field.required}
+                      value={additionalField && additionalField.value}
+                      onChange={(e) => onChangeDynamic(e.target.value, additionalField, field)}
+                    />
+                  )}
+                  {field.type === 'text' && (
+                    <Input
+                      type={field.type}
+                      name={field.label}
+                      id={field.label}
+                      required={field.required}
+                      value={additionalField && additionalField.value}
+                      onChange={(e) => {
+                        onChangeDynamic(e.target.value, additionalField, field)
+                      }}
+                    />
+                  )}
+                  {field.type === 'number' && (
+                    <Input
+                      type={field.type}
+                      name={field.label}
+                      id={field.label}
+                      max="1000000"
+                      min="0"
+                      required={field.required}
+                      value={additionalField && additionalField.value}
+                      onChange={(e) => onChangeDynamic(e.target.value, additionalField, field)}
+                    />
+                  )}
+                  {field.type === 'list' && (
+                    <Input
+                      type="select"
+                      value={additionalField && additionalField.value}
+                      name={field.label}
+                      id={field.label}
+                      placeholder="Select..."
+                      onChange={(e) => onChangeDynamic(e.target.value, additionalField, field)}
+                    >
+                      <option defaultValue></option>
+                      {field.listItems.map((value) => (
+                        <option key={value}>{value}</option>
+                      ))}
+                    </Input>
+                  )}
+                  {field.type === 'multiSelectionList' && (
+                    <Select
+                      id={field.label}
+                      value={
+                        additionalField &&
+                        additionalField.value.split(' | ').map((item) => {
+                          return {
+                            label: item,
+                            value: item
+                          }
+                        })
+                      }
+                      isMulti
+                      required={field.required}
+                      name={field.label}
+                      options={field.listItems.map((element) => {
+                        return {
+                          label: element,
+                          value: element
+                        }
+                      })}
+                      onChange={(e) => onChangeDynamic(e, additionalField, field)}
+                      className="basic-multi-select"
+                    ></Select>
+                  )}
                 </FormGroup>
-                <FormGroup>
-                    <InputGroup>
-                        <InputGroupAddon addonType='prepend'>
-                            <InputGroupText>
-                                <Mail size={15}/>
-                            </InputGroupText>
-                        </InputGroupAddon>
-                        <Input type='email' id='email' placeholder='Email' value={newEmail}
-                               onChange={e => setNewEmail(e.target.value)}
-                               invalid={!emailValid}
-                               onBlur={(e) => {
-                                   emailValidation(e.target.value)
-                               }}/>
-                    </InputGroup>
-                </FormGroup>
-                <FormGroup>
-                    <InputGroup>
-                        <InputGroupAddon addonType='prepend'>
-                            <InputGroupText>
-                                <Phone size={15}/>
-                            </InputGroupText>
-                        </InputGroupAddon>
-                        <Cleave className='form-control' placeholder='Phone' options={options} id='phone'
-                                value={newPhone} onChange={e => setNewPhone(e.target.value)}/>
-                    </InputGroup>
-                </FormGroup>
-                <FormGroup>
-                    <Label for='addressLine1'>Shipping Address</Label>
-                    <InputGroup>
-                        <Input id='addressLine1' placeholder='Address Line 1' value={newAddress1}
-                               onChange={e => setNewAddress1(e.target.value)}/>
-                    </InputGroup>
-                </FormGroup>
-                <FormGroup>
-                    <InputGroup>
-                        <Input id='addressLine2' placeholder='Address Line 2' value={newAddress2}
-                               onChange={e => setNewAddress2(e.target.value)}/>
-                    </InputGroup>
-                </FormGroup>
-                <FormGroup>
-                    <InputGroup>
-                        <Input id='city' placeholder='City' value={newCity}
-                               onChange={e => setNewCity(e.target.value)}/>
-                        <Input id='state' placeholder='State' value={newState}
-                               onChange={e => setNewState(e.target.value)}/>
-                    </InputGroup>
-                </FormGroup>
-                <FormGroup>
-                    <InputGroup>
-                        <Input id='country' placeholder='Country' value={newCountry}
-                               onChange={e => setNewCountry(e.target.value)}/>
-                        <Input id='zip' type="number" placeholder='Zip Code' value={newZip}
-                               onChange={e => setNewZip(e.target.value)}/>
-                    </InputGroup>
-                </FormGroup>
-                
-                <Button className='mr-1' color='primary' onClick={saveNewAttendee}
-                        disabled={!newName || !newEmail || processing || !emailValid}>
-                    {processing ? "Saving..." : "Save"}
-                </Button>
-                <Button color='secondary' onClick={cancel} outline>
-                    Cancel
-                </Button>
-            </ModalBody>
-        </Modal>
-    )
+              )
+            })}
+        <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || dynamicValuesValidation}>
+          {processing ? 'Saving...' : 'Save'}
+        </Button>
+        <Button className="mt-1" color="secondary" onClick={cancel} outline>
+          Cancel
+        </Button>
+      </ModalBody>
+    </Modal>
+  )
 }
 
 export default AddNewAttendee
