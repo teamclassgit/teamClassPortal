@@ -1,4 +1,4 @@
-import { Mail, Home, CheckCircle, BookOpen } from 'react-feather'
+import { Mail, Home, CheckCircle, Book, BookOpen } from 'react-feather'
 
 export default [
   {
@@ -10,7 +10,7 @@ export default [
   {
     id: 'checkout',
     title: 'Closed',
-    icon: <BookOpen size={20} />,
+    icon: <Book size={20} />,
     navLink: '/closedBookings'
   }
 ]

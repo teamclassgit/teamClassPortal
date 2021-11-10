@@ -14,8 +14,7 @@ const Routes = [
   },
   {
     path: '/closedBookings',
-    component: lazy(() => import('../../views/booking/BookingClosedList')),
-    layout: 'VerticalLayoutNoMenu'
+    component: lazy(() => import('../../views/booking/BookingClosedList'))
   },
   {
     path: '/booking/:id',

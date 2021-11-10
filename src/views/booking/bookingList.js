@@ -180,6 +180,12 @@ const BookingList = () => {
         classes={classes}
         calendarEvents={calendarEvents}
         defaultLimit={limit}
+        showLimit={true}
+        showExport={true}
+        showAdd={true}
+        showFilter={true}
+        showView={true}
+        titleView={'Bookings '}
       />
       {allClasses.loading ||
       allCoordinatorResult.loading ||
