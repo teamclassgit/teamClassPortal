@@ -5,13 +5,13 @@ import React from 'react'
 import { Mail, Phone, User, X } from 'react-feather'
 import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from 'reactstrap'
 import Select from 'react-select'
+
 // ** Styles
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import { isValidEmail } from '../../../utility/Utils'
 import { v4 as uuid } from 'uuid'
-
 import countriesData from '../../../data/countries.json'
 
 const AddNewAttendee = ({
@@ -27,6 +27,7 @@ const AddNewAttendee = ({
   teamClassInfo,
   hasKit
 }) => {
+
   const [newName, setNewName] = React.useState('')
   const [newEmail, setNewEmail] = React.useState('')
   const [newPhone, setNewPhone] = React.useState('')
@@ -69,6 +70,7 @@ const AddNewAttendee = ({
           order: item.order
         }
       })
+
     try {
       const newElement = {
         id: currentElement && currentElement._id ? currentElement._id : uuid(),

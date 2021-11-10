@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Modal, ModalHeader, ModalBody, FormGroup, Label, Input, Button } from 'reactstrap'
+import { Modal, ModalHeader, ModalBody, FormGroup, InputGroup, Label, Input, Button } from 'reactstrap'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import Select from 'react-select'
+import Flatpickr from 'react-flatpickr'
 
 function FiltersModal({ open, handleModal, classes, coordinators }) {
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
+  const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext)
 
   const [filterByClass, setFilterByClass] = useState(classFilterContext)
   const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext)
+  const [filterByDate, setFilterByDate] = useState(dateFilterContext)
 
   const classOptions = classes.map(({ title, _id }) => ({ value: _id, label: title }))
   const getClassFilterDefaultValue = () => {
@@ -31,12 +34,14 @@ function FiltersModal({ open, handleModal, classes, coordinators }) {
   const handleApplyFilters = () => {
     setClassFilterContext(filterByClass && filterByClass.value ? filterByClass : null)
     setCoordinatorFilterContext(filterByCoordinator && filterByCoordinator.value && filterByCoordinator.value.length > 0 ? filterByCoordinator : null)
+    setDateFilterContext(filterByDate && filterByDate.value ? filterByDate : null)
     handleModal()
   }
 
   const handleClearFilters = () => {
     setClassFilterContext(null)
     setCoordinatorFilterContext(null)
+    setDateFilterContext(null)
     handleModal()
   }
 
@@ -75,6 +80,26 @@ function FiltersModal({ open, handleModal, classes, coordinators }) {
               setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
             }}
             isMulti={true}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="exampleSelect" className="text-dark">
+            Filter by creation date
+          </Label>
+          <Flatpickr
+            value={dateFilterContext && dateFilterContext.value}
+            placeholder="Select Date Range..."
+            id="range-picker"
+            className="form-control"
+            onChange={(dates) =>
+              setFilterByDate({
+                type: 'date',
+                value: dates
+              })
+            }
+            options={{
+              mode: 'range'
+            }}
           />
         </FormGroup>
       </ModalBody>

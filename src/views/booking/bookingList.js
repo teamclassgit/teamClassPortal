@@ -14,6 +14,7 @@ import AddNewBooking from './AddNewBooking'
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext'
 import EditBookingModal from '../../components/EditBookingModal'
 import { getCustomerEmail, getClassTitle } from './common'
+import moment from 'moment'
 
 const BookingList = () => {
   const excludedBookings = ['closed', 'canceled']
@@ -31,7 +32,7 @@ const BookingList = () => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [currentElement, setCurrentElement] = useState({})
   const [elementToAdd, setElementToAdd] = useState({})
-  const { classFilterContext, coordinatorFilterContext, textFilterContext } = useContext(FiltersContext)
+  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext)
   const [filteredBookings, setFilteredBookings] = useState([])
   const [editModal, setEditModal] = useState(false)
 
@@ -134,29 +135,28 @@ const BookingList = () => {
   }
 
   useEffect(() => {
-    if (classFilterContext && coordinatorFilterContext) {
-      const query = {
-        eventCoordinatorId_in: coordinatorFilterContext.value,
-        teamClassId: classFilterContext.value,
-        status_nin: excludedBookings
-      }
-      setBookingsFilter(query)
-    } else if (classFilterContext) {
-      const query = {
-        teamClassId: classFilterContext.value,
-        status_nin: excludedBookings
-      }
-      setBookingsFilter(query)
-    } else if (coordinatorFilterContext) {
-      const query = {
-        eventCoordinatorId_in: coordinatorFilterContext.value,
-        status_nin: excludedBookings
-      }
-      setBookingsFilter(query)
-    } else {
-      setBookingsFilter({ status_nin: excludedBookings })
+    let query = {
+      status_nin: excludedBookings
     }
-  }, [classFilterContext, coordinatorFilterContext])
+
+    if (classFilterContext) {
+      query = { ...query, teamClassId: classFilterContext.value }
+    }
+
+    if (coordinatorFilterContext) {
+      query = { ...query, eventCoordinatorId_in: coordinatorFilterContext.value }
+    }
+
+    if (dateFilterContext) {
+      query = {
+        ...query,
+        createdAt_gte: moment(dateFilterContext.value[0]).format(),
+        createdAt_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
+      }
+    }
+
+    setBookingsFilter(query)
+  }, [classFilterContext, coordinatorFilterContext, dateFilterContext])
 
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '')
@@ -232,6 +232,7 @@ const BookingList = () => {
               handleModal={() => setShowFiltersModal(!showFiltersModal)}
               classes={classes}
               coordinators={coordinators}
+              calendarEvents={calendarEvents}
             />
             <AddNewBooking
               open={showAddModal}

@@ -35,7 +35,7 @@ function BookingsHeader({
 }) {
   const [searchValue, setSearchValue] = useState('')
   const [limit, setLimit] = useState(defaultLimit)
-  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext)
+  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext, dateFilterContext } = useContext(FiltersContext)
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
 
   useEffect(() => {
@@ -225,7 +225,7 @@ function BookingsHeader({
               <Plus size={13} />
             </Button>
             <Button
-              outline={!(classFilterContext || coordinatorFilterContext)}
+              outline={!(classFilterContext || coordinatorFilterContext || dateFilterContext)}
               color="primary"
               onClick={() => setShowFiltersModal(true)}
               title="Filters"
