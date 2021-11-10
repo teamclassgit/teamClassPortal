@@ -135,37 +135,27 @@ const BookingList = () => {
   }
 
   useEffect(() => {
-    if (classFilterContext && coordinatorFilterContext && dateFilterContext) {
-      const query = {
-        eventCoordinatorId_in: coordinatorFilterContext.value,
-        teamClassId: classFilterContext.value,
-        status_nin: excludedBookings,
+    let query = {
+      status_nin: excludedBookings
+    }
+
+    if (classFilterContext) {
+      query = { ...query, teamClassId: classFilterContext.value }
+    }
+
+    if (coordinatorFilterContext) {
+      query = { ...query, eventCoordinatorId_in: coordinatorFilterContext.value }
+    }
+
+    if (dateFilterContext) {
+      query = {
+        ...query,
         createdAt_gte: moment(dateFilterContext.value[0]).format(),
         createdAt_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
       }
-      setBookingsFilter(query)
-    } else if (classFilterContext) {
-      const query = {
-        teamClassId: classFilterContext.value,
-        status_nin: excludedBookings
-      }
-      setBookingsFilter(query)
-    } else if (coordinatorFilterContext) {
-      const query = {
-        eventCoordinatorId_in: coordinatorFilterContext.value,
-        status_nin: excludedBookings
-      }
-      setBookingsFilter(query)
-    } else if (dateFilterContext) {
-      const query = {
-        createdAt_gte: moment(dateFilterContext.value[0]).format(),
-        createdAt_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format(),
-        status_nin: excludedBookings
-      }
-      setBookingsFilter(query)
-    } else {
-      setBookingsFilter({ status_nin: excludedBookings })
     }
+
+    setBookingsFilter(query)
   }, [classFilterContext, coordinatorFilterContext, dateFilterContext])
 
   useEffect(() => {
