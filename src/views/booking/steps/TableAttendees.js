@@ -8,7 +8,9 @@ import Avatar from '@components/avatar'
 // ** Third Party Components
 import ReactPaginate from 'react-paginate'
 import DataTable from 'react-data-table-component'
-import { Users, ChevronDown, Download, Edit, Grid, Plus, Share, Trash } from 'react-feather'
+
+import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather'
+
 import {
   Badge,
   Button,
@@ -21,9 +23,13 @@ import {
   DropdownToggle,
   Input,
   Label,
+  Modal,
+  ModalHeader,
+  ModalFooter,
   Row,
   UncontrolledButtonDropdown
 } from 'reactstrap'
+import ExportToExcel from '../../../components/ExportToExcel'
 
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
@@ -33,7 +39,7 @@ const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
   </div>
 ))
 
-const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee, deleteAttendee, updateAttendeesCount }) => {
+const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee, deleteAttendee, updateAttendeesCount, teamClassInfo }) => {
   // ** States
   const [currentElement, setCurrentElement] = useState(null)
   const [data, setData] = useState(attendees)
@@ -42,6 +48,10 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
   const [currentPage, setCurrentPage] = useState(0)
   const [searchValue, setSearchValue] = useState('')
   const [filteredData, setFilteredData] = useState([])
+  const [mode, setMode] = useState(null)
+  const [centeredModal, setCenteredModal] = useState(false)
+  const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
+  const [excelHeadersTemplate, setExcelHeadersTemplate] = useState([])
 
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
@@ -65,13 +75,16 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
     return row.addressLine1 && row.city && row.state && row.zip && row.country ? 2 : 1
   }
 
+  // ** Custom close btn
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setCenteredModal(!centeredModal)} />
+
   // ** Table Common Column
   const columns = [
     {
       name: 'Name',
       selector: 'name',
       sortable: true,
-      maxWidth: '250px',
+      maxWidth: '260px',
       cell: (row) => (
         <div className="d-flex align-items-center">
           <Avatar color={`${status[getStatus(row)].color}`} content={row.name} initials />
@@ -82,53 +95,36 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
       )
     },
     {
+      name: 'Phone',
+      selector: 'phone',
+      sortable: true,
+      maxWidth: '150px'
+    },
+    {
       name: 'Email',
       selector: 'email',
       sortable: true,
-      maxWidth: '250px'
+      maxWidth: '220px'
     },
     {
       name: 'Address',
       selector: 'addressLine1',
       sortable: true,
-      maxWidth: '300px',
-      cell: (row) => {
-        return (
-          getStatus(row) === 2 && (
-            <div className="user-info text-truncate ml-1">
-              <span className="d-block font-weight-bold text-truncate">{`${row.addressLine1} ...`}</span>
-            </div>
-          )
-        )
-      }
+      maxWidth: '250px'
     },
-    {
-      name: 'Status',
-      selector: 'status',
-      sortable: true,
-      maxWidth: '50px',
-      cell: (row) => {
-        return (
-          <Badge color={status[getStatus(row)].color} pill>
-            {status[getStatus(row)].title}
-          </Badge>
-        )
-      }
-    },
+
     {
       name: 'Actions',
       allowOverflow: true,
-      maxWidth: '50px',
+      maxWidth: '40px',
       cell: (row) => {
         return (
-          <div className="d-flex">
+          <div className="d-flex ">
             <a
+              className="mr-2"
               onClick={(e) => {
-                deleteAttendee(row._id).then((result) => {
-                  const newData = data.filter((element) => element._id !== row._id)
-                  setData(newData)
-                  updateAttendeesCount(newData.length)
-                })
+                e.preventDefault()
+                setCenteredModal(!centeredModal)
               }}
               href="#"
               title="Remove from list"
@@ -139,16 +135,87 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
               onClick={(e) => {
                 setCurrentElement(row)
                 handleModal()
+                setMode('edit')
               }}
               href="#"
+              title="Edit attendee"
             >
               <Edit size={18} title="Edit" />
             </a>
+
+            <Modal isOpen={centeredModal} toggle={() => setCenteredModal(!centeredModal)} backdrop={false} className="modal-dialog-centered border-0">
+              <ModalHeader toggle={() => setCenteredModal(!centeredModal)} close={CloseBtn}>
+                Delete attendee?
+              </ModalHeader>
+              <ModalFooter className="justify-content-center">
+                <Button
+                  color="secondary"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setCenteredModal(!centeredModal)
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    deleteAttendee(row._id).then((result) => {
+                      const newData = data.filter((element) => element._id !== row._id)
+                      setData(newData)
+                      updateAttendeesCount(newData.length)
+                    })
+                    setCenteredModal(!centeredModal)
+                  }}
+                >
+                  Delete
+                </Button>
+              </ModalFooter>
+            </Modal>
           </div>
         )
       }
     }
   ]
+
+  React.useEffect(() => {
+    if (attendees && teamClassInfo) {
+      const attendeesArray = []
+
+      const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country']
+
+      for (const dynamicField in teamClassInfo.registrationFields) {
+        headers.push(teamClassInfo.registrationFields[dynamicField].label)
+      }
+      setExcelHeadersTemplate([headers])
+
+      attendeesArray.push(headers)
+
+      for (const i in attendees) {
+        const attendeeInfo = attendees[i]
+        const row = [
+          attendeeInfo.name,
+          attendeeInfo.email,
+          attendeeInfo.phone,
+          attendeeInfo.addressLine1,
+          attendeeInfo.addressLine2,
+          attendeeInfo.city,
+          attendeeInfo.state,
+          attendeeInfo.zip,
+          attendeeInfo.country
+        ]
+
+        for (const dynamicField in attendeeInfo.additionalFields) {
+          row.push(attendeeInfo.additionalFields[dynamicField].value)
+        }
+
+        attendeesArray.push(row)
+      }
+
+      setAttendeesExcelTable(attendeesArray)
+    }
+  }, [attendees, teamClassInfo])
 
   // ** Function to handle filter
   const handleFilter = (e) => {
@@ -222,124 +289,99 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
     />
   )
 
-  // ** Converts table to CSV
-  function convertArrayOfObjectsToCSV(array) {
-    let result
-
-    const columnDelimiter = ','
-    const lineDelimiter = '\n'
-    const keys = Object.keys(data[0])
-
-    result = ''
-    result += keys.join(columnDelimiter)
-    result += lineDelimiter
-
-    array.forEach((item) => {
-      let ctr = 0
-      keys.forEach((key) => {
-        if (ctr > 0) result += columnDelimiter
-
-        result += item[key]
-
-        ctr++
-      })
-      result += lineDelimiter
-    })
-
-    return result
-  }
-
-  // ** Downloads CSV
-  function downloadCSV(array) {
-    const link = document.createElement('a')
-    let csv = convertArrayOfObjectsToCSV(array)
-    if (csv === null) return
-
-    const filename = 'export.csv'
-
-    if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`
-    }
-
-    link.setAttribute('href', encodeURI(csv))
-    link.setAttribute('download', filename)
-    link.click()
-  }
-
-  // ** Downloads CSV
-  function downloadTemplate() {
-    const link = document.createElement('a')
-    const filename = 'TeamClassAttendeesTemplate.xlsx'
-    link.setAttribute('href', encodeURI(`/templates/${filename}`))
-    link.setAttribute('download', filename)
-    link.click()
-  }
-
   return (
     <Fragment>
       <Card>
-        <CardHeader className="flex-md-row flex-column align-md-items-center align-items-start border-bottom">
-          <CardTitle tag="h4">
-            Your list of attendees<br></br>
-            {hasKit && (
-              <small>
-                {` Attendees registered: `}
-                <Badge color="primary"> {`${data.length}`}</Badge>
-              </small>
-            )}
-          </CardTitle>
-
-          <div className="d-flex mt-md-0 mt-1">
-            <UncontrolledButtonDropdown>
-              <DropdownToggle color="secondary" caret outline>
-                <Share size={15} />
-                <span className="align-middle ml-50">Bulk actions</span>
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem className="w-100" onClick={downloadTemplate}>
-                  <Download size={15} />
-                  <span className="align-middle ml-50">
-                    Download template<br></br>
-                    <small>Use this template to build your list</small>
-                  </span>
-                </DropdownItem>
-                <DropdownItem className="w-100" onClick={handleModalUpload}>
-                  <Grid size={15} />
-                  <span className="align-middle ml-50">
-                    Upload data<br></br>
-                    <small>Excel file with your attendees</small>
-                  </span>
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledButtonDropdown>
-            <Button
-              className="ml-2"
-              color="primary"
-              onClick={(e) => {
-                const newElementTemplate = {
-                  city: '',
-                  phone: '',
-                  bookingId: currentBookingId,
-                  zip: '',
-                  addressLine1: '',
-                  addressLine2: '',
-                  email: '',
-                  country: '',
-                  name: '',
-                  state: ''
-                }
-
-                setCurrentElement(newElementTemplate)
-                handleModal()
-              }}
-            >
-              <Plus size={15} />
-              <span className="align-middle ml-50">Add Attendee</span>
-            </Button>
+        <CardHeader tag="h4" className="border-bottom ">
+          <div className="d-flex flex-column bd-highlight">
+            <p className="bd-highlight mb-0">Your list of attendees</p>
+            <p className="bd-highlight">
+              {hasKit && (
+                <small>
+                  {` Attendees registered: `}
+                  <Badge color="primary"> {`${data.length}`}</Badge>
+                </small>
+              )}
+            </p>
           </div>
+          <CardTitle className="d-flex justify-content-end">
+            <div className="d-flex justify-content-end">
+              <div>
+                <UncontrolledButtonDropdown>
+                  <DropdownToggle color="secondary" caret outline>
+                    <Share size={15} />
+                    <span className="align-middle ml-50">Bulk actions</span>
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem className="align-middle w-100">
+                      <ExportToExcel
+                        apiData={excelHeadersTemplate}
+                        fileName={'Template'}
+                        title={
+                          <h6>
+                            <FileText size={13} />
+                            {'  Download template'}
+                          </h6>
+                        }
+                        smallText={<h6 className="small m-0 p-0">Use this template to build your list</h6>}
+                      />
+                    </DropdownItem>
+                    <DropdownItem className="w-100" onClick={handleModalUpload}>
+                      <Grid size={15} />
+                      <span className="align-middle ml-50">
+                        Upload data<br></br>
+                        <small>Excel file with your attendees</small>
+                      </span>
+                    </DropdownItem>
+                    <DropdownItem className="align-middle w-100">
+                      <ExportToExcel
+                        apiData={attendeesExcelTable}
+                        fileName={'SignUpStatus'}
+                        title={
+                          <h6>
+                            <FileText size={13} />
+                            {'   Excel File'}
+                          </h6>
+                        }
+                        smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
+                      />
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledButtonDropdown>
+              </div>
+              <div className>
+                <Button
+                  className="ml-2"
+                  color="primary"
+                  onClick={(e) => {
+                    setMode('new')
+                    const newElementTemplate = {
+                      city: '',
+                      phone: '',
+                      bookingId: currentBookingId,
+                      zip: '',
+                      addressLine1: '',
+                      addressLine2: '',
+                      email: '',
+                      country: '',
+                      name: '',
+                      state: '',
+                      dinamycValues: []
+                    }
+                    setCurrentElement(newElementTemplate)
+                    handleModal()
+                  }}
+                >
+                  <Plus size={15} />
+                  <span className="align-middle ml-50">Add Attendee</span>
+                </Button>
+              </div>
+            </div>
+          </CardTitle>
         </CardHeader>
+
         <Row className="justify-content-end mx-0">
-          <Col className="d-flex align-items-center justify-content-end mt-1" md="6" sm="12">
+          <Col className="d-flex align-items-center justify-content-end mt-1 mb-1" md="6" sm="12">
             <Label className="mr-1" for="search-input">
               Search
             </Label>
@@ -368,6 +410,9 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
         data={data}
         setData={setData}
         updateAttendeesCount={updateAttendeesCount}
+        mode={mode}
+        teamClassInfo={teamClassInfo}
+        hasKit={hasKit}
       />
       <UploadData
         open={modalUpload}
@@ -377,6 +422,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
         data={data}
         setData={setData}
         updateAttendeesCount={updateAttendeesCount}
+        teamClassInfo={teamClassInfo}
       />
     </Fragment>
   )

@@ -17,7 +17,7 @@ import {
 import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import ExportToExcel from '../../../components/ExportToExcel'
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName } from '../common'
+import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName, getFormattedEventDate } from '../common'
 
 function BookingsHeader({
   setShowFiltersModal,
@@ -30,7 +30,8 @@ function BookingsHeader({
   onChangeLimit,
   customers,
   coordinators,
-  classes
+  classes,
+  calendarEvents
 }) {
   const [searchValue, setSearchValue] = useState('')
   const [limit, setLimit] = useState(defaultLimit)
@@ -56,7 +57,8 @@ function BookingsHeader({
         'Price',
         'Group Size',
         'Sign Up Deadline',
-        'Close Booking Reason'
+        'Close Booking Reason',
+        'Event Date'
       ]
 
       bookingsArray.push(headers)
@@ -78,7 +80,8 @@ function BookingsHeader({
           bookingInfo.classVariant && bookingInfo.classVariant.pricePerson + (bookingInfo.classVariant.groupEvent ? ' /Group' : ' /Person'),
           bookingInfo.attendees,
           bookingInfo.signUpDeadline,
-          bookingInfo.closedReason
+          bookingInfo.closedReason,
+          getFormattedEventDate(bookingInfo._id, calendarEvents)
         ]
         bookingsArray.push(row)
       }
@@ -198,7 +201,7 @@ function BookingsHeader({
                         {' Excel File'}
                       </h6>
                     }
-                    smallText={<h6 className="small m-0 p-0">Download</h6>}
+                    smallText={<h6 className="small m-0 p-0">Download file with Bookings</h6>}
                   />
                 </DropdownItem>
               </DropdownMenu>
