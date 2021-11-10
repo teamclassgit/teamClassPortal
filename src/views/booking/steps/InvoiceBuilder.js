@@ -32,6 +32,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
   const [processing, setProcessing] = React.useState(false)
   const [formValid, setFormValid] = React.useState(true)
   const [invoiceItems, setInvoiceItems] = React.useState([])
+  const [discount, setDiscount] = React.useState(0)
   const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingInvoiceDetails, {})
 
   React.useEffect(() => {
@@ -244,6 +245,29 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                   </tr>
                 ))}
               </tbody>
+            </Table>
+            <Table>
+              <thead>
+                <tr>
+                  <th width="75%"></th>
+                  <th>
+                    <div align="center">
+                      <span>Discount (%)</span>
+                      <NumberInput
+                        min={0}
+                        max={100}
+                        value={discount}
+                        size="sm"
+                        className="w-50"
+                        required={true}
+                        onChange={(newValue) => {
+                          setDiscount(newValue)
+                        }}
+                      />
+                    </div>
+                  </th>
+                </tr>
+              </thead>
             </Table>
           </Card>
         </Col>

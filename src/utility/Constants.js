@@ -19,7 +19,7 @@ export const DEFAULT_AVAILABILITY = [
     dayOfWeek: 1,
     fromHour: 7,
     fromMinutes: 0,
-    toHour: 21
+    toHour: 23
   },
   {
     increment: 30,
@@ -27,7 +27,7 @@ export const DEFAULT_AVAILABILITY = [
     dayOfWeek: 2,
     fromHour: 7,
     fromMinutes: 0,
-    toHour: 21
+    toHour: 23
   },
   {
     increment: 30,
@@ -35,7 +35,7 @@ export const DEFAULT_AVAILABILITY = [
     dayOfWeek: 3,
     fromHour: 7,
     fromMinutes: 0,
-    toHour: 21
+    toHour: 23
   },
   {
     increment: 30,
@@ -43,7 +43,7 @@ export const DEFAULT_AVAILABILITY = [
     dayOfWeek: 4,
     fromHour: 7,
     fromMinutes: 0,
-    toHour: 21
+    toHour: 23
   },
   {
     increment: 30,
@@ -51,7 +51,7 @@ export const DEFAULT_AVAILABILITY = [
     dayOfWeek: 5,
     fromHour: 7,
     fromMinutes: 0,
-    toHour: 21
+    toHour: 23
   },
   {
     increment: 30,
@@ -59,7 +59,7 @@ export const DEFAULT_AVAILABILITY = [
     dayOfWeek: 6,
     fromHour: 7,
     fromMinutes: 0,
-    toHour: 21
+    toHour: 23
   },
   {
     increment: 30,
@@ -67,7 +67,7 @@ export const DEFAULT_AVAILABILITY = [
     dayOfWeek: 7,
     fromHour: 7,
     fromMinutes: 0,
-    toHour: 21
+    toHour: 23
   }
 ]
 
