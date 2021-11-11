@@ -34,6 +34,8 @@ const WizardClassBooking = () => {
   const [attendeesToInvoice, setAttendeesToInvoice] = React.useState(null)
   const [tax, setTax] = React.useState(0)
   const [totalTax, setTotalTax] = React.useState(0)
+  const [discount, setDiscount] = React.useState(0)
+  const [totalDiscount, setTotalDiscount] = React.useState(0)
   const [totalServiceFee, setTotalServiceFee] = React.useState(0)
   const [totalRushFee, setTotalTotalRushFee] = React.useState(0)
   const [totalCardFee, setTotalCardFee] = React.useState(0)
@@ -143,6 +145,8 @@ const WizardClassBooking = () => {
     setTotalAddons(bookingTotals.addons.toFixed(2))
     setTotalCardFee(bookingTotals.cardFee.toFixed(2))
     setAttendeesToInvoice(bookingTotals.customAttendees)
+    setDiscount(bookingTotals.discount * 100)
+    setTotalDiscount(bookingTotals.totalDiscount.toFixed(2))
 
     const depositPayment =
       bookingInfo.payments && bookingInfo.payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
@@ -278,6 +282,8 @@ const WizardClassBooking = () => {
               tax={tax}
               totalTax={totalTax}
               total={total}
+              discount={discount}
+              totalDiscount={totalDiscount}
               deposit={initialDeposit}
               showFinalPaymentLine={true}
               finalPayment={payment}

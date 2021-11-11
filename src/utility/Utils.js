@@ -113,6 +113,7 @@ export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, 
   //pricePerson is currently in use for group based pricing too
   const price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson
 
+  const discount = bookingInfo.discount
   let totalTaxableAdditionalItems = 0
   let totalNoTaxableAdditionalItems = 0
   let customDeposit,
@@ -154,9 +155,12 @@ export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, 
 
   let cardFee = 0
   const rushFee = isRushDate ? withoutFee * RUSH_FEE : 0
-  const fee = (withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems) * SERVICE_FEE
-  const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems) * salesTax
-  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + fee + rushFee + addons + tax
+
+  const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0
+  const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * SERVICE_FEE
+  const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0
+  const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax
+  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + tax - totalDiscount
 
   if (isCardFeeIncluded) {
     cardFee = finalValue * CREDIT_CARD_FEE
@@ -178,7 +182,9 @@ export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, 
     customAttendees,
     totalTaxableAdditionalItems,
     totalNoTaxableAdditionalItems,
-    cardFee
+    cardFee,
+    discount,
+    totalDiscount
   }
 }
 
