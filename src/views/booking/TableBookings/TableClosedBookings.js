@@ -88,7 +88,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       name: 'Reason',
       selector: 'closedReason',
       sortable: true,
-      maxWidth: '150px',
+      maxWidth: '120px',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -101,7 +101,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       name: 'Customer',
       selector: 'customerName',
       sortable: true,
-      maxWidth: '200px',
+      maxWidth: '150px',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -147,7 +147,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       name: 'Event Date',
       selector: '_id',
       sortable: true,
-      maxWidth: '140px',
+      maxWidth: '130px',
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getFormattedEventDate(row._id, calendarEvents)}</span>
@@ -158,7 +158,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
     {
       name: 'Actions',
       allowOverflow: true,
-      maxWidth: '400px',
+      maxWidth: '330px',
       cell: (row) => {
         const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id)
 
@@ -299,8 +299,6 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       }
     }
   ]
-
-  console.log(columns)
 
   // ** Function to handle Pagination
   const handlePagination = (page) => {

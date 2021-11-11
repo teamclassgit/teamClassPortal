@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
 import DataTableClosedBookings from './TableBookings/TableClosedBookings'
-import BoardBookings from './BoardBookings/BoardBookings'
 import queryAllBookings from '../../graphql/QueryAllBookings'
 import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents'
 import queryAllCustomers from '../../graphql/QueryAllCustomers'
@@ -25,7 +24,6 @@ const BookingList = () => {
   const [coordinators, setCoordinators] = useState([])
   const [classes, setClasses] = useState([])
   const [calendarEvents, setCalendarEvents] = useState([])
-  const [switchView, setSwitchView] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
   const [currentElement, setCurrentElement] = useState({})
@@ -156,9 +154,6 @@ const BookingList = () => {
     setBookingsFilter(query)
   }, [classFilterContext, coordinatorFilterContext, dateFilterContext])
 
-  console.log('bookingsFilter', bookingsFilter)
-  console.log('filteredBookings', filteredBookings)
-
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '')
   }, [textFilterContext])
@@ -247,6 +242,7 @@ const BookingList = () => {
               setBookings={setBookings}
               setCustomers={setCustomers}
               handleClose={() => setCurrentElement({})}
+              editMode={false}
             />
           </>
         )

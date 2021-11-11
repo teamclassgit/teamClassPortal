@@ -70,7 +70,8 @@ const EditBookingModal = ({
   allBookings,
   allCustomers,
   allCalendarEvents,
-  handleClose
+  handleClose,
+  editMode
 }) => {
   const [customerName, setCustomerName] = useState(null)
   const [customerEmail, setCustomerEmail] = useState(null)
@@ -574,7 +575,8 @@ const EditBookingModal = ({
                   !coordinatorId ||
                   !bookingTeamClassId ||
                   !classVariant ||
-                  !groupSize
+                  !groupSize ||
+                  !editMode
                 }
               >
                 {!processing && !closedBookingReason
