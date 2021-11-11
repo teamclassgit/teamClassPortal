@@ -71,7 +71,6 @@ function BookingsHeader({
 
       for (const i in bookings) {
         const bookingInfo = bookings[i]
-        console.log(getCustomerEmail(bookingInfo.customerId, customers))
 
         const row = [
           bookingInfo.updatedAt,
@@ -92,12 +91,11 @@ function BookingsHeader({
           getFormattedEventDate(bookingInfo._id, calendarEvents)
         ]
         bookingsArray.push(row)
-        console.log(row)
       }
 
       setAttendeesExcelTable(bookingsArray)
     }
-  }, [bookings])
+  }, [bookings, customers, coordinators, classes, calendarEvents])
 
   return (
     <Card className="w-100  shadow-none bg-transparent m-0">
