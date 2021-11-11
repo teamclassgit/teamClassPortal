@@ -25,6 +25,8 @@ const BookingCheckoutSummary = ({
   totalCardFee,
   tax,
   totalTax,
+  discount = 0,
+  totalDiscount = 0,
   total,
   deposit,
   finalPayment,
@@ -150,10 +152,19 @@ const BookingCheckoutSummary = ({
                 bookingInfo.invoiceDetails.length > 2 &&
                 bookingInfo.invoiceDetails.slice(2).map((additionalItem) => (
                   <tr key={additionalItem.item}>
-                    <th className="font-weight-normal text-sm pt-1">{additionalItem.item}</th>
+                    <th className="font-weight-normal text-sm pt-1">
+                      {additionalItem.item}
+                      {additionalItem.units > 1 ? ` x ${additionalItem.units}` : ``}
+                    </th>
                     <td className="text-right pt-1 text-sm">${(additionalItem.unitPrice * additionalItem.units).toFixed(2)}</td>
                   </tr>
                 ))}
+              {discount > 0 && totalDiscount > 0 && (
+                <tr>
+                  <th className="font-weight-normal text-sm pt-1 text-danger">Discount ({discount}%)</th>
+                  <td className="text-right pt-1 text-sm text-danger">-${totalDiscount}</td>
+                </tr>
+              )}
               <tr>
                 <th className="font-weight-normal text-sm pt-1">Booking fee ({bookingInfo.serviceFee * 100}%)</th>
                 <td className="text-right pt-1 text-sm">${totalServiceFee}</td>

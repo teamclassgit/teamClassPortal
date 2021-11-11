@@ -36,7 +36,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
   const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingInvoiceDetails, {})
 
   React.useEffect(() => {
-    if (booking && booking.invoiceDetails)
+    if (booking && booking.invoiceDetails) {
       setInvoiceItems(
         booking.invoiceDetails.map(({ ...element }) => {
           return {
@@ -44,7 +44,8 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           }
         })
       )
-    else if (booking) {
+      setDiscount(booking.discount ? booking.discount * 100 : 0)
+    } else if (booking) {
       const depositPayment =
         booking.payments && booking.payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
 
@@ -103,6 +104,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
         variables: {
           bookingId: booking._id,
           invoiceDetails: invoiceItems,
+          discount: discount / 100,
           updatedAt: new Date()
         }
       })

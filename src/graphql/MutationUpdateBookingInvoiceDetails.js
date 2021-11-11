@@ -1,8 +1,13 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  mutation updateBookingInvoiceDetails($bookingId: String!, $invoiceDetails: [BookingInvoiceDetailUpdateInput]!, $updatedAt: DateTime!) {
-    updateOneBooking(query: { _id: $bookingId }, set: { invoiceDetails: $invoiceDetails, updatedAt: $updatedAt }) {
+  mutation updateBookingInvoiceDetails(
+    $bookingId: String!
+    $invoiceDetails: [BookingInvoiceDetailUpdateInput]!
+    $discount: Float!
+    $updatedAt: DateTime!
+  ) {
+    updateOneBooking(query: { _id: $bookingId }, set: { discount: $discount, invoiceDetails: $invoiceDetails, updatedAt: $updatedAt }) {
       _id
       date
       expirationHours
