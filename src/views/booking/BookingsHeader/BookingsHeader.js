@@ -90,6 +90,7 @@ function BookingsHeader({
           getFormattedEventDate(bookingInfo._id, calendarEvents)
         ]
         bookingsArray.push(row)
+        console.log(row)
       }
 
       setAttendeesExcelTable(bookingsArray)

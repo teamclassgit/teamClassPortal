@@ -162,7 +162,6 @@ const BookingList = () => {
     handleSearch((textFilterContext && textFilterContext.value) || '')
   }, [textFilterContext])
 
-  console.log('filteredBookings', filteredBookings)
   // ** Function to handle Modal toggle
   return (
     <Fragment>
