@@ -44,7 +44,8 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           }
         })
       )
-      setDiscount(booking.discount ? booking.discount * 100 : 0)
+      const currentDiscount = booking.discount > 0 ? booking.discount * 100 : 0
+      setDiscount(currentDiscount)
     } else if (booking) {
       const depositPayment =
         booking.payments && booking.payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
@@ -258,7 +259,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                       <NumberInput
                         min={0}
                         max={100}
-                        value={discount}
+                        value={booking.discount > 0 ? booking.discount * 100 : 0}
                         size="sm"
                         className="w-50"
                         required={true}
