@@ -71,6 +71,8 @@ function BookingsHeader({
 
       for (const i in bookings) {
         const bookingInfo = bookings[i]
+        console.log(getCustomerEmail(bookingInfo.customerId, customers))
+
         const row = [
           bookingInfo.updatedAt,
           bookingInfo._id,

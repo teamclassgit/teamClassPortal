@@ -88,7 +88,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       name: 'Reason',
       selector: 'closedReason',
       sortable: true,
-      maxWidth: '110px',
+      maxWidth: '105px',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -101,7 +101,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       name: 'Customer',
       selector: 'customerName',
       sortable: true,
-      maxWidth: '150px',
+      maxWidth: '100px',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -114,7 +114,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       name: 'Email',
       selector: 'customer.email',
       sortable: true,
-      maxWidth: '320px',
+      maxWidth: '260px',
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getCustomerEmail(row.customerId, customers)}</span>
@@ -136,7 +136,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       name: 'Class',
       selector: 'teamClassId',
       sortable: true,
-      maxWidth: '300px',
+      maxWidth: '320px',
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getClassTitle(row.teamClassId, classes)}</span>
@@ -158,7 +158,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       name: 'Event Date',
       selector: '_id',
       sortable: true,
-      maxWidth: '130px',
+      maxWidth: '120px',
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getFormattedEventDate(row._id, calendarEvents)}</span>
