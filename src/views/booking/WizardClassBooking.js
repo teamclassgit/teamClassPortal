@@ -18,6 +18,7 @@ import BookingCheckoutSummary from './steps/BookingCheckoutSummary'
 import { RUSH_FEE } from '../../utility/Constants'
 import { getBookingTotals } from '../../utility/Utils'
 import moment from 'moment'
+import Payments from './steps/Payments'
 
 const WizardClassBooking = () => {
   const [bookingInfo, setBookingInfo] = React.useState(null)
@@ -208,6 +209,23 @@ const WizardClassBooking = () => {
       subtitle: 'Basic info',
       icon: <CreditCard size={18} />,
       content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
+    },
+
+    {
+      id: 'payments',
+      title: 'Payments',
+      subtitle: 'Received payments',
+      icon: <DollarSign size={18} />,
+      content: (
+        <Payments
+          stepper={stepper}
+          type="wizard-horizontal"
+          booking={bookingInfo}
+          setBooking={setBookingInfo}
+          teamClass={teamClass}
+          realCountAttendees={realCountAttendees}
+        ></Payments>
+      )
     },
 
     {
