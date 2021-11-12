@@ -70,9 +70,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
     const finalPaymentPaid =
       booking && booking.payments && booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
 
-    if (finalPaymentPaid) {
-      setHasFinalPayment(true)
-    }
+    setHasFinalPayment(finalPaymentPaid ? true : false)
   }, [booking])
 
   React.useEffect(() => {
