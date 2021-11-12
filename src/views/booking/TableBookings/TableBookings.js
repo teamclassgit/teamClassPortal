@@ -32,7 +32,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, c
       maxWidth: '120px',
       cell: (row) => (
         <small>
-          {moment(row.createdAt).calendar(null, {
+          {moment(row.updatedAt).calendar(null, {
             lastDay: '[Yesterday]',
             sameDay: 'LT',
             lastWeek: 'dddd',
