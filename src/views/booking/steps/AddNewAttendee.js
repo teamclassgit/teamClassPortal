@@ -5,13 +5,13 @@ import React from 'react'
 import { Mail, Phone, User, X } from 'react-feather'
 import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from 'reactstrap'
 import Select from 'react-select'
+
 // ** Styles
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import Cleave from 'cleave.js/react'
 import 'cleave.js/dist/addons/cleave-phone.us'
 import { isValidEmail } from '../../../utility/Utils'
 import { v4 as uuid } from 'uuid'
-
 import countriesData from '../../../data/countries.json'
 
 const AddNewAttendee = ({
@@ -69,6 +69,7 @@ const AddNewAttendee = ({
           order: item.order
         }
       })
+
     try {
       const newElement = {
         id: currentElement && currentElement._id ? currentElement._id : uuid(),
@@ -245,6 +246,7 @@ const AddNewAttendee = ({
           </InputGroup>
         </FormGroup>
         <FormGroup className="">
+          <Label for="country">Country*</Label>
           <Select
             className="selectpicker"
             classNamePrefix="selectpicker"
@@ -256,7 +258,6 @@ const AddNewAttendee = ({
             placeholder="Select.."
             onChange={(option) => setNewCountry(option.label)}
           />
-          <small className="form-text text-muted">Country*</small>
         </FormGroup>
         {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? (
           <Label className="mb-1" for="full-name">

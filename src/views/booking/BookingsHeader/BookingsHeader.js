@@ -41,7 +41,7 @@ function BookingsHeader({
 }) {
   const [searchValue, setSearchValue] = useState('')
   const [limit, setLimit] = useState(defaultLimit)
-  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext)
+  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext, dateFilterContext } = useContext(FiltersContext)
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
 
   useEffect(() => {
@@ -132,6 +132,7 @@ function BookingsHeader({
           </InputGroup>
 
           <ButtonGroup>
+
             {showLimit && (
               <UncontrolledButtonDropdown>
                 <DropdownToggle color="primary" caret outline title="Number of results">
@@ -254,6 +255,7 @@ function BookingsHeader({
                 {!switchView ? <List size={13} /> : <Trello size={13} />}
               </Button.Ripple>
             )}
+
           </ButtonGroup>
         </Col>
       </CardHeader>

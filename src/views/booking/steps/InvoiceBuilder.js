@@ -32,10 +32,12 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
   const [processing, setProcessing] = React.useState(false)
   const [formValid, setFormValid] = React.useState(true)
   const [invoiceItems, setInvoiceItems] = React.useState([])
+  const [discount, setDiscount] = React.useState(0)
+  const [hasFinalPayment, setHasFinalPayment] = React.useState(false)
   const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingInvoiceDetails, {})
 
   React.useEffect(() => {
-    if (booking && booking.invoiceDetails)
+    if (booking && booking.invoiceDetails) {
       setInvoiceItems(
         booking.invoiceDetails.map(({ ...element }) => {
           return {
@@ -43,11 +45,16 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           }
         })
       )
-    else if (booking) {
-      const depositPayment =
-        booking.payments && booking.payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
+      const currentDiscount = booking.discount > 0 ? booking.discount * 100 : 0
+      setDiscount(currentDiscount)
+    } else if (booking) {
+      const depositsPaid =
+        booking && booking.payments && booking.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
 
-      if (depositPayment) defaultInvoiceItems[0].unitPrice = depositPayment.amount / 100 //value is saved in cents
+      if (depositsPaid && depositsPaid.length > 0) {
+        const depositAmountPaid = depositsPaid.reduce((previous, current) => previous + current.amount, 0)
+        defaultInvoiceItems[0].unitPrice = depositAmountPaid / 100
+      }
 
       const minimum = booking.classVariant ? booking.classVariant.minimum : booking.classMinimum
       //pricePerson is currently in use for group based pricing too
@@ -58,6 +65,13 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       defaultInvoiceItems[1].units = attendees > minimum ? attendees : minimum
 
       setInvoiceItems(defaultInvoiceItems)
+    }
+
+    const finalPaymentPaid =
+      booking && booking.payments && booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
+
+    if (finalPaymentPaid) {
+      setHasFinalPayment(true)
     }
   }, [booking])
 
@@ -102,6 +116,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
         variables: {
           bookingId: booking._id,
           invoiceDetails: invoiceItems,
+          discount: discount / 100,
           updatedAt: new Date()
         }
       })
@@ -245,6 +260,29 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                 ))}
               </tbody>
             </Table>
+            <Table>
+              <thead>
+                <tr>
+                  <th width="75%"></th>
+                  <th>
+                    <div align="center">
+                      <span>Discount (%)</span>
+                      <NumberInput
+                        min={0}
+                        max={100}
+                        value={booking.discount > 0 ? booking.discount * 100 : 0}
+                        size="sm"
+                        className="w-50"
+                        required={true}
+                        onChange={(newValue) => {
+                          setDiscount(newValue)
+                        }}
+                      />
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+            </Table>
           </Card>
         </Col>
       </Row>
@@ -255,7 +293,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           </CardLink>
         </span>
         <Button.Ripple
-          disabled={booking.status === BOOKING_PAID_STATUS || !formValid}
+          disabled={booking.status === BOOKING_PAID_STATUS || !formValid || hasFinalPayment}
           color="primary"
           className="btn-next"
           onClick={() => saveInvoiceDetails()}
