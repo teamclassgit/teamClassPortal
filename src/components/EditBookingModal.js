@@ -71,7 +71,8 @@ const EditBookingModal = ({
   allBookings,
   allCustomers,
   allCalendarEvents,
-  handleClose
+  handleClose,
+  editMode
 }) => {
   const [customerName, setCustomerName] = useState(null)
   const [customerEmail, setCustomerEmail] = useState(null)
@@ -502,7 +503,6 @@ const EditBookingModal = ({
                 isClearable={false}
               />
             </FormGroup>
-
             <FormGroup>
               <Label for="full-name">Group Size*</Label>
               <InputGroup size="sm">
@@ -565,35 +565,37 @@ const EditBookingModal = ({
                 isClearable={false}
               />
             </FormGroup>
-            <div align="center">
-              <Button
-                className="mr-1"
-                size="sm"
-                color={closedBookingReason ? 'danger' : 'primary'}
-                onClick={editBooking}
-                disabled={
-                  !customerName ||
-                  !customerEmail ||
-                  !emailValid ||
-                  !customerPhone ||
-                  !coordinatorId ||
-                  !bookingTeamClassId ||
-                  !classVariant ||
-                  !groupSize
-                }
-              >
-                {!processing && !closedBookingReason
-                  ? 'Save'
-                  : closedBookingReason && processing
-                  ? 'Saving...'
-                  : processing
-                  ? 'Saving...'
-                  : 'Close booking?'}
-              </Button>
-              <Button color="secondary" size="sm" onClick={cancel} outline>
-                Cancel
-              </Button>
-            </div>
+            {editMode && (
+              <div align="center">
+                <Button
+                  className="mr-1"
+                  size="sm"
+                  color={closedBookingReason ? 'danger' : 'primary'}
+                  onClick={editBooking}
+                  disabled={
+                    !customerName ||
+                    !customerEmail ||
+                    !emailValid ||
+                    !customerPhone ||
+                    !coordinatorId ||
+                    !bookingTeamClassId ||
+                    !classVariant ||
+                    !groupSize
+                  }
+                >
+                  {!processing && !closedBookingReason
+                    ? 'Save'
+                    : closedBookingReason && processing
+                    ? 'Saving...'
+                    : processing
+                    ? 'Saving...'
+                    : 'Close booking?'}
+                </Button>
+                <Button color="secondary" size="sm" onClick={cancel} outline>
+                  Cancel
+                </Button>
+              </div>
+            )}
           </ModalBody>
         </TabPane>
         <TabPane tabId="2">

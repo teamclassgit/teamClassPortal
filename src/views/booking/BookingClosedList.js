@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
-import DataTableBookings from './TableBookings/TableBookings'
-import BoardBookings from './BoardBookings/BoardBookings'
+import DataTableClosedBookings from './TableBookings/TableClosedBookings'
 import queryAllBookings from '../../graphql/QueryAllBookings'
 import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents'
 import queryAllCustomers from '../../graphql/QueryAllCustomers'
@@ -17,17 +16,14 @@ import { getCustomerEmail, getClassTitle } from './common'
 import moment from 'moment'
 
 const BookingList = () => {
-  const excludedBookings = ['closed', 'canceled']
-
   const [genericFilter, setGenericFilter] = useState({})
-  const [bookingsFilter, setBookingsFilter] = useState({ status_nin: excludedBookings })
+  const [bookingsFilter, setBookingsFilter] = useState({ status_in: 'closed' })
   const [bookings, setBookings] = useState([])
   const [limit, setLimit] = useState(600)
   const [customers, setCustomers] = useState([])
   const [coordinators, setCoordinators] = useState([])
   const [classes, setClasses] = useState([])
   const [calendarEvents, setCalendarEvents] = useState([])
-  const [switchView, setSwitchView] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
   const [currentElement, setCurrentElement] = useState({})
@@ -45,7 +41,7 @@ const BookingList = () => {
       filter: bookingsFilter,
       limit
     },
-    pollInterval: 200000
+    pollInterval: 300000
   })
 
   useEffect(() => {
@@ -63,7 +59,7 @@ const BookingList = () => {
     variables: {
       filter: genericFilter
     },
-    pollInterval: 200000
+    pollInterval: 300000
   })
 
   useEffect(() => {
@@ -75,7 +71,7 @@ const BookingList = () => {
     variables: {
       filter: genericFilter
     },
-    pollInterval: 200000
+    pollInterval: 300000
   })
 
   const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
@@ -83,7 +79,7 @@ const BookingList = () => {
     variables: {
       filter: genericFilter
     },
-    pollInterval: 200000
+    pollInterval: 300000
   })
 
   useEffect(() => {
@@ -99,7 +95,7 @@ const BookingList = () => {
     variables: {
       filter: genericFilter
     },
-    pollInterval: 200000
+    pollInterval: 300000
   })
 
   useEffect(() => {
@@ -136,7 +132,7 @@ const BookingList = () => {
 
   useEffect(() => {
     let query = {
-      status_nin: excludedBookings
+      status_in: 'closed'
     }
 
     if (classFilterContext) {
@@ -167,8 +163,6 @@ const BookingList = () => {
     <Fragment>
       <BookingsHeader
         setShowFiltersModal={(val) => setShowFiltersModal(val)}
-        switchView={switchView}
-        setSwitchView={() => setSwitchView(!switchView)}
         showAddModal={() => handleModal()}
         setElementToAdd={(d) => setElementToAdd(d)}
         onChangeLimit={(newLimit) => {
@@ -182,10 +176,10 @@ const BookingList = () => {
         defaultLimit={limit}
         showLimit={true}
         showExport={true}
-        showAdd={true}
+        showAdd={false}
         showFilter={true}
-        showView={true}
-        titleView={'Bookings '}
+        showView={false}
+        titleView={'Closed Bookings '}
       />
       {allClasses.loading ||
       allCoordinatorResult.loading ||
@@ -203,8 +197,8 @@ const BookingList = () => {
         classes && (
           <>
             <Col sm="12">
-              {bookings && bookings.length > 0 && switchView ? (
-                <DataTableBookings
+              {bookings && bookings.length > 0 && (
+                <DataTableClosedBookings
                   filteredData={filteredBookings}
                   handleEditModal={(element) => {
                     setCurrentElement(element)
@@ -215,21 +209,6 @@ const BookingList = () => {
                   classes={classes}
                   coordinators={coordinators}
                   bookings={bookings}
-                />
-              ) : (
-                <BoardBookings
-                  filteredBookings={filteredBookings}
-                  handleEditModal={(element) => {
-                    setCurrentElement(element)
-                    handleEditModal()
-                  }}
-                  customers={customers}
-                  calendarEvents={calendarEvents}
-                  classes={classes}
-                  coordinators={coordinators}
-                  bookings={bookings}
-                  setBookings={setBookings}
-                  setCustomers={setCustomers}
                 />
               )}
             </Col>
@@ -263,7 +242,7 @@ const BookingList = () => {
               setBookings={setBookings}
               setCustomers={setCustomers}
               handleClose={() => setCurrentElement({})}
-              editMode={true}
+              editMode={false}
             />
           </>
         )

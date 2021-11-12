@@ -31,7 +31,13 @@ function BookingsHeader({
   customers,
   coordinators,
   classes,
-  calendarEvents
+  calendarEvents,
+  showLimit,
+  showExport,
+  showAdd,
+  showFilter,
+  showView,
+  titleView
 }) {
   const [searchValue, setSearchValue] = useState('')
   const [limit, setLimit] = useState(defaultLimit)
@@ -65,6 +71,7 @@ function BookingsHeader({
 
       for (const i in bookings) {
         const bookingInfo = bookings[i]
+
         const row = [
           bookingInfo.updatedAt,
           bookingInfo._id,
@@ -88,14 +95,14 @@ function BookingsHeader({
 
       setAttendeesExcelTable(bookingsArray)
     }
-  }, [bookings])
+  }, [bookings, customers, coordinators, classes, calendarEvents])
 
   return (
     <Card className="w-100  shadow-none bg-transparent m-0">
       <CardHeader>
         <Col md={4}>
           <CardTitle tag="h4" className="mr-4">
-            Bookings{' '}
+            {titleView}
             <small>
               <a
                 href="#"
@@ -125,116 +132,130 @@ function BookingsHeader({
           </InputGroup>
 
           <ButtonGroup>
-            <UncontrolledButtonDropdown>
-              <DropdownToggle color="primary" caret outline title="Number of results">
-                {limit >= 20000 ? 'ALL' : limit}
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem
-                  className="w-100"
-                  onClick={(e) => {
-                    setLimit(200)
-                    onChangeLimit(200)
-                  }}
-                >
-                  <span className="align-right">200</span>
-                </DropdownItem>
-                <DropdownItem
-                  className="w-100"
-                  onClick={(e) => {
-                    setLimit(400)
-                    onChangeLimit(400)
-                  }}
-                >
-                  <span className="align-right">400</span>
-                </DropdownItem>
-                <DropdownItem
-                  className="w-100"
-                  onClick={(e) => {
-                    setLimit(600)
-                    onChangeLimit(600)
-                  }}
-                >
-                  <span className="align-right">600</span>
-                </DropdownItem>
-                <DropdownItem
-                  className="w-100"
-                  onClick={(e) => {
-                    setLimit(1000)
-                    onChangeLimit(1000)
-                  }}
-                >
-                  <span className="align-right">1000</span>
-                </DropdownItem>
-                <DropdownItem
-                  className="w-100"
-                  onClick={(e) => {
-                    setLimit(2000)
-                    onChangeLimit(2000)
-                  }}
-                >
-                  <span className="align-right">2000</span>
-                </DropdownItem>
-                <DropdownItem
-                  className="w-100"
-                  onClick={(e) => {
-                    setLimit(20000)
-                    onChangeLimit(20000)
-                  }}
-                >
-                  <span className="align-right">ALL</span>
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledButtonDropdown>
-            <UncontrolledButtonDropdown>
-              <DropdownToggle color="primary" caret outline title="Export">
-                <Share size={13} />
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem className="align-middle w-100">
-                  <ExportToExcel
-                    apiData={attendeesExcelTable}
-                    fileName={'Bookings'}
-                    title={
-                      <h6>
-                        <FileText size={13} />
-                        {' Excel File'}
-                      </h6>
-                    }
-                    smallText={<h6 className="small m-0 p-0">Download file with Bookings</h6>}
-                  />
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledButtonDropdown>
-            <Button
-              outline
-              color="primary"
-              onClick={(e) => {
-                const newElement = {
-                  name: '',
-                  email: '',
-                  phone: '',
-                  company: '',
-                  attendees: ''
-                }
-                setElementToAdd(newElement)
-                showAddModal()
-              }}
-              title="Add Booking"
-            >
-              <Plus size={13} />
-            </Button>
-            <Button
-              outline={!(classFilterContext || coordinatorFilterContext || dateFilterContext)}
-              color="primary"
-              onClick={() => setShowFiltersModal(true)}
-              title="Filters"
-            >
-              <Filter size={13} />
-            </Button>
-            <Button.Ripple outline color="primary" onClick={() => setSwitchView()} title="Switch view">
-              {!switchView ? <List size={13} /> : <Trello size={13} />}
-            </Button.Ripple>
+
+            {showLimit && (
+              <UncontrolledButtonDropdown>
+                <DropdownToggle color="primary" caret outline title="Number of results">
+                  {limit >= 20000 ? 'ALL' : limit}
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem
+                    className="w-100"
+                    onClick={(e) => {
+                      setLimit(200)
+                      onChangeLimit(200)
+                    }}
+                  >
+                    <span className="align-right">200</span>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="w-100"
+                    onClick={(e) => {
+                      setLimit(400)
+                      onChangeLimit(400)
+                    }}
+                  >
+                    <span className="align-right">400</span>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="w-100"
+                    onClick={(e) => {
+                      setLimit(600)
+                      onChangeLimit(600)
+                    }}
+                  >
+                    <span className="align-right">600</span>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="w-100"
+                    onClick={(e) => {
+                      setLimit(1000)
+                      onChangeLimit(1000)
+                    }}
+                  >
+                    <span className="align-right">1000</span>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="w-100"
+                    onClick={(e) => {
+                      setLimit(2000)
+                      onChangeLimit(2000)
+                    }}
+                  >
+                    <span className="align-right">2000</span>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="w-100"
+                    onClick={(e) => {
+                      setLimit(20000)
+                      onChangeLimit(20000)
+                    }}
+                  >
+                    <span className="align-right">ALL</span>
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledButtonDropdown>
+            )}
+
+            {showExport && (
+              <UncontrolledButtonDropdown>
+                <DropdownToggle color="primary" caret outline title="Export">
+                  <Share size={13} />
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem className="align-middle w-100">
+                    <ExportToExcel
+                      apiData={attendeesExcelTable}
+                      fileName={'Bookings'}
+                      title={
+                        <h6>
+                          <FileText size={13} />
+                          {' Excel File'}
+                        </h6>
+                      }
+                      smallText={<h6 className="small m-0 p-0">Download file with Bookings</h6>}
+                    />
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledButtonDropdown>
+            )}
+
+            {showAdd && (
+              <Button
+                outline
+                color="primary"
+                onClick={(e) => {
+                  const newElement = {
+                    name: '',
+                    email: '',
+                    phone: '',
+                    company: '',
+                    attendees: ''
+                  }
+                  setElementToAdd(newElement)
+                  showAddModal()
+                }}
+                title="Add Booking"
+              >
+                <Plus size={13} />
+              </Button>
+            )}
+            {showFilter && (
+              <Button
+                outline={!(classFilterContext || coordinatorFilterContext)}
+                color="primary"
+                onClick={() => setShowFiltersModal(true)}
+                title="Filters"
+              >
+                <Filter size={13} />
+              </Button>
+            )}
+            {showView && (
+              <Button.Ripple outline color="primary" onClick={() => setSwitchView()} title="Switch view">
+                {!switchView ? <List size={13} /> : <Trello size={13} />}
+              </Button.Ripple>
+            )}
+
           </ButtonGroup>
         </Col>
       </CardHeader>
