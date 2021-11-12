@@ -1,4 +1,4 @@
-import { Mail, Home, CheckCircle, Archive, BookOpen, Book } from 'react-feather'
+import { Archive, BookOpen, Book } from 'react-feather'
 
 export default [
   {

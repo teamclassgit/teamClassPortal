@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Modal, ModalHeader, ModalBody, FormGroup, InputGroup, Label, Input, Button } from 'reactstrap'
+import React, { useState, useContext } from 'react'
+import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from 'reactstrap'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import Select from 'react-select'
 import Flatpickr from 'react-flatpickr'
@@ -13,7 +13,7 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
   const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext)
   const [filterByDate, setFilterByDate] = useState(dateFilterContext)
 
-  const classOptions = classes.map(({ title, _id }) => ({ value: _id, label: title }))
+  const classOptions = classes && classes.map(({ title, _id }) => ({ value: _id, label: title }))
   const getClassFilterDefaultValue = () => {
     if (classFilterContext) {
       return classOptions.find((opt) => opt.value === classFilterContext.value)
@@ -21,7 +21,7 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
     return []
   }
 
-  const coordinatorOptions = coordinators.map(({ name, _id }) => ({ value: _id, label: name }))
+  const coordinatorOptions = coordinators && coordinators.map(({ name, _id }) => ({ value: _id, label: name }))
   const getCoordinatorFilterDefaultValue = () => {
     if (coordinatorFilterContext) {
       const values = coordinatorFilterContext.value

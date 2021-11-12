@@ -2,25 +2,14 @@
 import React, { Fragment, useState } from 'react'
 // ** Third Party Components
 import moment from 'moment'
-import Avatar from '@components/avatar'
 import DataTable from 'react-data-table-component'
-import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather'
+import { ChevronDown } from 'react-feather'
 import ReactPaginate from 'react-paginate'
-import { Button, Card } from 'reactstrap'
-import {
-  getCustomerEmail,
-  getClassTitle,
-  getBookingColor,
-  getFormattedEventDate,
-  getCustomerPhone,
-  getCustomerCompany,
-  getCoordinatorName
-} from '../booking/common'
+import { Card } from 'reactstrap'
+import { getCoordinatorName } from '../booking/common'
 
-const TablePrivateRequests = ({ filteredData, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
+const TablePrivateRequests = ({ filteredData, coordinators }) => {
   const [currentPage, setCurrentPage] = useState(0)
-
-  console.log('filteredData', filteredData)
 
   // ** Table Common Column
   const columns = [
@@ -87,8 +76,6 @@ const TablePrivateRequests = ({ filteredData, customers, classes, calendarEvents
       maxWidth: '120px',
       cell: (row) => (
         <small>
-          {console.log('coordinators', row.eventCoordinatorId)}
-
           <span className="d-block font-weight-bold">{getCoordinatorName(row.eventCoordinatorId, coordinators)}</span>
         </small>
       )
