@@ -4,7 +4,7 @@ import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import Select from 'react-select'
 import Flatpickr from 'react-flatpickr'
 
-function FiltersModal({ open, handleModal, classes, coordinators }) {
+function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClass, isFilterByCoordinator, isFilterByCreationDate }) {
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
   const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext)
@@ -57,51 +57,57 @@ function FiltersModal({ open, handleModal, classes, coordinators }) {
         <Button color="link" className="pl-0 float-right" onClick={() => handleClearFilters()}>
           Clear filters
         </Button>
-        <FormGroup>
-          <Label for="exampleSelect" className="text-dark mt-2">
-            Filter by class
-          </Label>
-          <Select
-            defaultValue={getClassFilterDefaultValue()}
-            options={classOptions}
-            onChange={(e) => {
-              setFilterByClass({ type: 'class', value: e.value, label: e.label })
-            }}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="exampleSelect" className="text-dark">
-            Filter by event coordinator
-          </Label>
-          <Select
-            defaultValue={getCoordinatorFilterDefaultValue()}
-            options={coordinatorOptions}
-            onChange={(e) => {
-              setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
-            }}
-            isMulti={true}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="exampleSelect" className="text-dark">
-            Filter by creation date
-          </Label>
-          <Flatpickr
-            value={dateFilterContext && dateFilterContext.value}
-            placeholder="Select Date Range..."
-            id="range-picker"
-            className="form-control"
-            onChange={(dates) =>
-              setFilterByDate({
-                type: 'date',
-                value: dates
-              })
-            }
-            options={{
-              mode: 'range'
-            }}
-          />
-        </FormGroup>
+        {isFilterByClass && (
+          <FormGroup>
+            <Label for="exampleSelect" className="text-dark mt-2">
+              Filter by class
+            </Label>
+            <Select
+              defaultValue={getClassFilterDefaultValue()}
+              options={classOptions}
+              onChange={(e) => {
+                setFilterByClass({ type: 'class', value: e.value, label: e.label })
+              }}
+            />
+          </FormGroup>
+        )}
+        {isFilterByCoordinator && (
+          <FormGroup>
+            <Label for="exampleSelect" className="text-dark">
+              Filter by event coordinator
+            </Label>
+            <Select
+              defaultValue={getCoordinatorFilterDefaultValue()}
+              options={coordinatorOptions}
+              onChange={(e) => {
+                setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
+              }}
+              isMulti={true}
+            />
+          </FormGroup>
+        )}
+        {isFilterByCreationDate && (
+          <FormGroup>
+            <Label for="exampleSelect" className="text-dark">
+              Filter by creation date
+            </Label>
+            <Flatpickr
+              value={dateFilterContext && dateFilterContext.value}
+              placeholder="Select Date Range..."
+              id="range-picker"
+              className="form-control"
+              onChange={(dates) =>
+                setFilterByDate({
+                  type: 'date',
+                  value: dates
+                })
+              }
+              options={{
+                mode: 'range'
+              }}
+            />
+          </FormGroup>
+        )}
       </ModalBody>
     </Modal>
   )
