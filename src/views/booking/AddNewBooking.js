@@ -27,6 +27,7 @@ import { isValidEmail, getUserData } from '../../utility/Utils'
 import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer'
 import { useMutation } from '@apollo/client'
 import { v4 as uuid } from 'uuid'
+import { BOOKING_QUOTE_STATUS } from '../../utility/Constants'
 
 const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, setCustomers, setBookings, classes, coordinators }) => {
   const [isOldCustomer, setIsOldCustomer] = useState(false)
@@ -121,7 +122,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
           customerCreatedAt: customer && customer.createdAt ? customer.createdAt : new Date(),
           createdAt: new Date(),
           updatedAt: new Date(),
-          status: 'quote',
+          status: BOOKING_QUOTE_STATUS,
           email: customer ? customer.email : newEmail,
           phone: customer ? customer.phone : newPhone,
           billingAddress: customer ? customer.billingAddress : null,

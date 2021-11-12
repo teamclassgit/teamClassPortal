@@ -57,6 +57,7 @@ const WizardClassBooking = () => {
     variables: {
       bookingId: id
     },
+    pollInterval: 300000,
     onCompleted: (data) => {
       setBookingInfo(data.booking)
       setTax((data.booking && data.booking.salesTax) || 0)
@@ -148,10 +149,17 @@ const WizardClassBooking = () => {
     setDiscount(bookingTotals.discount * 100)
     setTotalDiscount(bookingTotals.totalDiscount.toFixed(2))
 
-    const depositPayment =
-      bookingInfo.payments && bookingInfo.payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
+    const depositsPaid =
+      bookingInfo &&
+      bookingInfo.payments &&
+      bookingInfo.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
 
-    const initialDepositPaid = !isNaN(bookingTotals.customDeposit) ? bookingTotals.customDeposit : depositPayment ? depositPayment.amount / 100 : 0 //amount is in cents
+    const initialDepositPaid = !isNaN(bookingTotals.customDeposit)
+      ? bookingTotals.customDeposit
+      : depositsPaid && depositsPaid.length > 0
+      ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100
+      : 0 //amount is in cents
+
     const finalPayment = bookingTotals.finalValue - initialDepositPaid
     setInitialDeposit(initialDepositPaid.toFixed(2))
     setPayment(finalPayment.toFixed(2))
@@ -204,8 +212,8 @@ const WizardClassBooking = () => {
 
     {
       id: 'final-invoice',
-      title: 'Invoice',
-      subtitle: 'Final invoice',
+      title: 'Final Invoice',
+      subtitle: 'Final invoice details',
       icon: <DollarSign size={18} />,
       content: (
         <InvoiceBuilder

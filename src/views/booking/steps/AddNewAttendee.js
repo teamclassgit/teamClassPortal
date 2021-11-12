@@ -27,7 +27,6 @@ const AddNewAttendee = ({
   teamClassInfo,
   hasKit
 }) => {
-
   const [newName, setNewName] = React.useState('')
   const [newEmail, setNewEmail] = React.useState('')
   const [newPhone, setNewPhone] = React.useState('')
@@ -247,6 +246,7 @@ const AddNewAttendee = ({
           </InputGroup>
         </FormGroup>
         <FormGroup className="">
+          <Label for="country">Country*</Label>
           <Select
             className="selectpicker"
             classNamePrefix="selectpicker"
@@ -258,7 +258,6 @@ const AddNewAttendee = ({
             placeholder="Select.."
             onChange={(option) => setNewCountry(option.label)}
           />
-          <small className="form-text text-muted">Country*</small>
         </FormGroup>
         {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? (
           <Label className="mb-1" for="full-name">

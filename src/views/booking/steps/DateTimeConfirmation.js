@@ -8,7 +8,10 @@ import {
   DEFAULT_AVAILABILITY_ALWAYS,
   DEFAULT_AVAILABILITY,
   DAYS_AFTER_CURRENT_DATE_CONSIDERED_RUSH_DATE,
-  BREAK_BETWEEN_CLASSES_HOURS
+  BREAK_BETWEEN_CLASSES_HOURS,
+  BOOKING_QUOTE_STATUS,
+  DATE_AND_TIME_CONFIRMATION_STATUS,
+  BOOKING_DATE_REQUESTED_STATUS
 } from '../../../utility/Constants'
 import { useMutation } from '@apollo/client'
 import mutationRequestPreferredTime from '../../../graphql/MutationRequestPreferredTime'
@@ -155,10 +158,10 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         fromMinutes: newFromMinutes,
         toHour: newToHour,
         toMinutes: newToMinutes,
-        status: 'confirmed',
+        status: DATE_AND_TIME_CONFIRMATION_STATUS,
         isRushFee: isRushDate(),
         rushFee: classRushFee,
-        bookingStatus: booking.status === 'quote' || (calendarEvent && calendarEvent.status === 'rejected') ? 'date-requested' : booking.status,
+        bookingStatus: booking.status === BOOKING_QUOTE_STATUS ? BOOKING_DATE_REQUESTED_STATUS : booking.status,
         updatedAt: new Date()
       }
 

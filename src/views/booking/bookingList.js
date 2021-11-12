@@ -45,7 +45,7 @@ const BookingList = () => {
       filter: bookingsFilter,
       limit
     },
-    pollInterval: 300000
+    pollInterval: 200000
   })
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const BookingList = () => {
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    pollInterval: 200000
   })
 
   useEffect(() => {
@@ -75,7 +75,7 @@ const BookingList = () => {
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    pollInterval: 200000
   })
 
   const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
@@ -83,7 +83,7 @@ const BookingList = () => {
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    pollInterval: 200000
   })
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const BookingList = () => {
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    pollInterval: 200000
   })
 
   useEffect(() => {

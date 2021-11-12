@@ -33,6 +33,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
   const [formValid, setFormValid] = React.useState(true)
   const [invoiceItems, setInvoiceItems] = React.useState([])
   const [discount, setDiscount] = React.useState(0)
+  const [hasFinalPayment, setHasFinalPayment] = React.useState(false)
   const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingInvoiceDetails, {})
 
   React.useEffect(() => {
@@ -47,10 +48,13 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       const currentDiscount = booking.discount > 0 ? booking.discount * 100 : 0
       setDiscount(currentDiscount)
     } else if (booking) {
-      const depositPayment =
-        booking.payments && booking.payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
+      const depositsPaid =
+        booking && booking.payments && booking.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
 
-      if (depositPayment) defaultInvoiceItems[0].unitPrice = depositPayment.amount / 100 //value is saved in cents
+      if (depositsPaid && depositsPaid.length > 0) {
+        const depositAmountPaid = depositsPaid.reduce((previous, current) => previous + current.amount, 0)
+        defaultInvoiceItems[0].unitPrice = depositAmountPaid / 100
+      }
 
       const minimum = booking.classVariant ? booking.classVariant.minimum : booking.classMinimum
       //pricePerson is currently in use for group based pricing too
@@ -61,6 +65,13 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       defaultInvoiceItems[1].units = attendees > minimum ? attendees : minimum
 
       setInvoiceItems(defaultInvoiceItems)
+    }
+
+    const finalPaymentPaid =
+      booking && booking.payments && booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
+
+    if (finalPaymentPaid) {
+      setHasFinalPayment(true)
     }
   }, [booking])
 
@@ -282,7 +293,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           </CardLink>
         </span>
         <Button.Ripple
-          disabled={booking.status === BOOKING_PAID_STATUS || !formValid}
+          disabled={booking.status === BOOKING_PAID_STATUS || !formValid || hasFinalPayment}
           color="primary"
           className="btn-next"
           onClick={() => saveInvoiceDetails()}

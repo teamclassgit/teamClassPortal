@@ -94,6 +94,7 @@ export const BOOKING_DEPOSIT_CONFIRMATION_STATUS = 'confirmed'
 export const BOOKING_PAID_STATUS = 'paid'
 export const BOOKING_DATE_REQUESTED_STATUS = 'date-requested'
 export const BOOKING_QUOTE_STATUS = 'quote'
+export const BOOKING_CLOSED_STATUS = 'closed'
 
 export const DEFAULT_TIME_ZONE = 'America/Chicago'
 export const DEFAULT_TIME_ZONE_LABEL = 'CT'

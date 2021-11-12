@@ -37,6 +37,7 @@ import moment from 'moment'
 import classnames from 'classnames'
 
 import './EditBookingModal.scss'
+import { BOOKING_CLOSED_STATUS } from '../utility/Constants'
 
 const EditBookingModal = ({
   currentElement: {
@@ -120,6 +121,10 @@ const EditBookingModal = ({
     {
       label: 'Mistake',
       value: 'Mistake'
+    },
+    {
+      label: 'Test',
+      value: 'Test'
     }
   ]
 
@@ -186,7 +191,7 @@ const EditBookingModal = ({
           discount: 0,
           createdAt: createdAt,
           updatedAt: new Date(),
-          status: closedBookingReason ? 'closed' : currentStatus,
+          status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentStatus,
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
