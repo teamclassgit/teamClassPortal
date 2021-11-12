@@ -150,6 +150,7 @@ const PrivateRequestsList = () => {
     handleSearch((textFilterContext && textFilterContext.value) || '')
   }, [textFilterContext])
 
+  console.log('filteredPrivateClassRequests', filteredPrivateClassRequests)
   // ** Function to handle Modal toggle
   return (
     <Fragment>
@@ -161,6 +162,7 @@ const PrivateRequestsList = () => {
           setLimit(newLimit)
         }}
         bookings={filteredBookings}
+        privateRequests={filteredPrivateClassRequests}
         customers={customers}
         coordinators={coordinators}
         classes={classes}
@@ -172,6 +174,7 @@ const PrivateRequestsList = () => {
         showFilter={true}
         showView={false}
         titleView={'Private Requests '}
+        isPrivateRequest={true}
       />
       <>
         <Col sm="12">
