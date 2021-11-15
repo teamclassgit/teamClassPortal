@@ -22,6 +22,10 @@ const Routes = [
     layout: 'VerticalLayoutNoMenu'
   },
   {
+    path: '/generalInquiries',
+    component: lazy(() => import('../../views/generalInquiries/GeneralInquiriesList'))
+  },
+  {
     path: '/privateRequests',
     component: lazy(() => import('../../views/privateRequests/PrivateRequestsList'))
   },

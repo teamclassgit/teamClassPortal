@@ -27,6 +27,7 @@ function BookingsHeader({
   setElementToAdd,
   bookings,
   privateRequests,
+  generalInquiries,
   defaultLimit,
   onChangeLimit,
   customers,
@@ -39,13 +40,15 @@ function BookingsHeader({
   showFilter,
   showView,
   titleView,
-  isPrivateRequest
+  isPrivateRequest,
+  isGeneralInquiries
 }) {
   const [searchValue, setSearchValue] = useState('')
   const [limit, setLimit] = useState(defaultLimit)
   const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext, dateFilterContext } = useContext(FiltersContext)
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
   const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([])
+  const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([])
 
   useEffect(() => {
     if (bookings) {
@@ -125,6 +128,29 @@ function BookingsHeader({
       setPrivateRequestsExcelTable(privateClassRequestsArray)
     }
   }, [privateRequests, coordinators])
+
+  useEffect(() => {
+    if (generalInquiries) {
+      const questionsArray = []
+
+      const headers = ['Created', 'Name', 'Email', 'Phone', 'Inquiry']
+
+      questionsArray.push(headers)
+
+      for (const i in generalInquiries) {
+        const row = [
+          generalInquiries[i].date,
+          generalInquiries[i].name,
+          generalInquiries[i].email,
+          generalInquiries[i].phone,
+          generalInquiries[i].inquiry
+        ]
+
+        questionsArray.push(row)
+      }
+      setGeneralInquiriesExcelTable(questionsArray)
+    }
+  }, [generalInquiries])
 
   return (
     <Card className="w-100  shadow-none bg-transparent m-0">
@@ -243,6 +269,18 @@ function BookingsHeader({
                           </h6>
                         }
                         smallText={<h6 className="small m-0 p-0">Download file with Private Requests</h6>}
+                      />
+                    ) : isGeneralInquiries ? (
+                      <ExportToExcel
+                        apiData={generalInquiriesExcelTable}
+                        fileName={'General Inquires'}
+                        title={
+                          <h6>
+                            <FileText size={13} />
+                            {' Excel File'}
+                          </h6>
+                        }
+                        smallText={<h6 className="small m-0 p-0">Download file with general inquiries</h6>}
                       />
                     ) : (
                       <ExportToExcel
