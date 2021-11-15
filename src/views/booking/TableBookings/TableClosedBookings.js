@@ -4,19 +4,10 @@ import React, { Fragment, useState } from 'react'
 import moment from 'moment'
 import Avatar from '@components/avatar'
 import DataTable from 'react-data-table-component'
-import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather'
+import { Edit2, ChevronDown } from 'react-feather'
 import ReactPaginate from 'react-paginate'
-import { Button, Card } from 'reactstrap'
-import StatusSelector from './StatusSelector'
-import {
-  getCustomerEmail,
-  getClassTitle,
-  getBookingColor,
-  getFormattedEventDate,
-  getCustomerPhone,
-  getCustomerCompany,
-  getCoordinatorName
-} from '../common'
+import { Card } from 'reactstrap'
+import { getCustomerEmail, getClassTitle, getFormattedEventDate, getCustomerPhone, getCustomerCompany, getCoordinatorName } from '../common'
 import './TableBookings.scss'
 import CardLink from 'reactstrap/lib/CardLink'
 

@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Modal, ModalHeader, ModalBody, FormGroup, InputGroup, Label, Input, Button } from 'reactstrap'
+import React, { useState, useContext } from 'react'
+import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from 'reactstrap'
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
 import Select from 'react-select'
 import Flatpickr from 'react-flatpickr'
 
-function FiltersModal({ open, handleModal, classes, coordinators }) {
+function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClass, isFilterByCoordinator, isFilterByCreationDate }) {
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
   const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext)
@@ -13,7 +13,7 @@ function FiltersModal({ open, handleModal, classes, coordinators }) {
   const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext)
   const [filterByDate, setFilterByDate] = useState(dateFilterContext)
 
-  const classOptions = classes.map(({ title, _id }) => ({ value: _id, label: title }))
+  const classOptions = classes && classes.map(({ title, _id }) => ({ value: _id, label: title }))
   const getClassFilterDefaultValue = () => {
     if (classFilterContext) {
       return classOptions.find((opt) => opt.value === classFilterContext.value)
@@ -21,7 +21,7 @@ function FiltersModal({ open, handleModal, classes, coordinators }) {
     return []
   }
 
-  const coordinatorOptions = coordinators.map(({ name, _id }) => ({ value: _id, label: name }))
+  const coordinatorOptions = coordinators && coordinators.map(({ name, _id }) => ({ value: _id, label: name }))
   const getCoordinatorFilterDefaultValue = () => {
     if (coordinatorFilterContext) {
       const values = coordinatorFilterContext.value
@@ -57,51 +57,57 @@ function FiltersModal({ open, handleModal, classes, coordinators }) {
         <Button color="link" className="pl-0 float-right" onClick={() => handleClearFilters()}>
           Clear filters
         </Button>
-        <FormGroup>
-          <Label for="exampleSelect" className="text-dark mt-2">
-            Filter by class
-          </Label>
-          <Select
-            defaultValue={getClassFilterDefaultValue()}
-            options={classOptions}
-            onChange={(e) => {
-              setFilterByClass({ type: 'class', value: e.value, label: e.label })
-            }}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="exampleSelect" className="text-dark">
-            Filter by event coordinator
-          </Label>
-          <Select
-            defaultValue={getCoordinatorFilterDefaultValue()}
-            options={coordinatorOptions}
-            onChange={(e) => {
-              setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
-            }}
-            isMulti={true}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="exampleSelect" className="text-dark">
-            Filter by creation date
-          </Label>
-          <Flatpickr
-            value={dateFilterContext && dateFilterContext.value}
-            placeholder="Select Date Range..."
-            id="range-picker"
-            className="form-control"
-            onChange={(dates) =>
-              setFilterByDate({
-                type: 'date',
-                value: dates
-              })
-            }
-            options={{
-              mode: 'range'
-            }}
-          />
-        </FormGroup>
+        {isFilterByClass && (
+          <FormGroup>
+            <Label for="exampleSelect" className="text-dark mt-2">
+              Filter by class
+            </Label>
+            <Select
+              defaultValue={getClassFilterDefaultValue()}
+              options={classOptions}
+              onChange={(e) => {
+                setFilterByClass({ type: 'class', value: e.value, label: e.label })
+              }}
+            />
+          </FormGroup>
+        )}
+        {isFilterByCoordinator && (
+          <FormGroup>
+            <Label for="exampleSelect" className="text-dark">
+              Filter by event coordinator
+            </Label>
+            <Select
+              defaultValue={getCoordinatorFilterDefaultValue()}
+              options={coordinatorOptions}
+              onChange={(e) => {
+                setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
+              }}
+              isMulti={true}
+            />
+          </FormGroup>
+        )}
+        {isFilterByCreationDate && (
+          <FormGroup>
+            <Label for="exampleSelect" className="text-dark">
+              Filter by creation date
+            </Label>
+            <Flatpickr
+              value={dateFilterContext && dateFilterContext.value}
+              placeholder="Select Date Range..."
+              id="range-picker"
+              className="form-control"
+              onChange={(dates) =>
+                setFilterByDate({
+                  type: 'date',
+                  value: dates
+                })
+              }
+              options={{
+                mode: 'range'
+              }}
+            />
+          </FormGroup>
+        )}
       </ModalBody>
     </Modal>
   )

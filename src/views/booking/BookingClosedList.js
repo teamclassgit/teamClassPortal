@@ -220,6 +220,9 @@ const BookingList = () => {
               classes={classes}
               coordinators={coordinators}
               calendarEvents={calendarEvents}
+              isFilterByClass={true}
+              isFilterByCoordinator={true}
+              isFilterByCreationDate={true}
             />
             <AddNewBooking
               open={showAddModal}
