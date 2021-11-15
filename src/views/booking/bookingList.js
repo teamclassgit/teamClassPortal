@@ -114,12 +114,14 @@ const BookingList = () => {
         const startsWith =
           (item.customerName && item.customerName.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.customerId && getCustomerEmail(item.customerId, customers).toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().startsWith(value.toLowerCase()))
+          (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().startsWith(value.toLowerCase())) ||
+          item._id.startsWith(value)
 
         const includes =
           (item.customerName && item.customerName.toLowerCase().includes(value.toLowerCase())) ||
           (item.customerId && getCustomerEmail(item.customerId, customers).toLowerCase().includes(value.toLowerCase())) ||
-          (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().includes(value.toLowerCase()))
+          (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().includes(value.toLowerCase())) ||
+          item._id.includes(value)
 
         if (startsWith) {
           return startsWith
