@@ -173,7 +173,7 @@ function BookingsHeader({
         </Col>
         <Col className="mb-1 d-flex" lg="6" md="12">
           <InputGroup className="mr-2">
-            <Input type="text" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+            <Input type="text" value={textFilterContext.value} onChange={(e) => setSearchValue(e.target.value)} />
             <InputGroupAddon addonType="append">
               <Button
                 color="primary"
