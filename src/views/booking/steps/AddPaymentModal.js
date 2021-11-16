@@ -298,6 +298,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
             !newName ||
             !newEmail ||
             !newAmount ||
+            newAmount <= 0 ||
             !newPaymentCreationDate ||
             !newPaymentName ||
             !newPaymentMethod ||
