@@ -40,15 +40,21 @@ function BookingsHeader({
   showFilter,
   showView,
   titleView,
+  isInProgressBookings,
+  isClosedBookings,
   isPrivateRequest,
   isGeneralInquiries
 }) {
-  const [searchValue, setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState(null)
   const [limit, setLimit] = useState(defaultLimit)
   const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext, dateFilterContext } = useContext(FiltersContext)
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
   const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([])
   const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([])
+
+  useEffect(() => {
+    setTextFilterContext('')
+  }, [isInProgressBookings, isClosedBookings, isPrivateRequest, isGeneralInquiries])
 
   useEffect(() => {
     if (bookings) {
@@ -173,7 +179,14 @@ function BookingsHeader({
         </Col>
         <Col className="mb-1 d-flex" lg="6" md="12">
           <InputGroup className="mr-2">
-            <Input type="text" value={textFilterContext && textFilterContext.value} onChange={(e) => setSearchValue(e.target.value)} />
+            <Input
+              type="text"
+              value={searchValue}
+              onChange={(e) => {
+                e.preventDefault()
+                setSearchValue(e.target.value)
+              }}
+            />
             <InputGroupAddon addonType="append">
               <Button
                 color="primary"
