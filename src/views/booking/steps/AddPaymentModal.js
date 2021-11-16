@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Mail, Phone, User, X } from 'react-feather'
 import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from 'reactstrap'
 import Flatpickr from 'react-flatpickr'
@@ -7,8 +7,9 @@ import { selectThemeColors } from '@utils'
 import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments'
 import { useMutation } from '@apollo/client'
 import { BOOKING_DEPOSIT_CONFIRMATION_STATUS } from '../../../utility/Constants'
+import { capitalizeString } from '../../../utility/Utils'
 
-const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
+const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPayments, currentPayment, setCurrentPayment, indexToDelete }) => {
   const [newName, setNewName] = useState(null)
   const [newEmail, setNewEmail] = useState(null)
   const [newPhone, setNewPhone] = useState(null)
@@ -20,8 +21,8 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
   const [newPaymentMethod, setNewPaymentMethod] = useState(null)
   const [newPaymentId, setNewPaymentId] = useState(null)
   const [processing, setProcessing] = useState(false)
-  console.log('newPaymentCreationDate', newPaymentCreationDate)
-  console.log('booking', booking)
+  const [amountValidation, setAmountValidation] = useState(true)
+  console.log('currentPayment', currentPayment)
   const [updateBookingPayment] = useMutation(mutationUpdateBookingPayments, {})
 
   const paymentNameOptions = [
@@ -54,7 +55,23 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
     }
   ]
 
+  useEffect(() => {
+    if (currentPayment) {
+      setNewName(currentPayment.name)
+      setNewEmail(currentPayment.email)
+      setNewPhone(currentPayment.phone)
+      setNewAmount(currentPayment.amount / 100)
+      setNewCardBrand(currentPayment.cardBrand)
+      setNewCardLastFourDigits(currentPayment.cardLast4)
+      setNewPaymentCreationDate(currentPayment.createdAt)
+      setNewPaymentName(currentPayment.paymentName)
+      setNewPaymentMethod(currentPayment.paymentMethod)
+      setNewPaymentId(currentPayment.paymentId)
+    }
+  }, [currentPayment])
+
   const cancel = () => {
+    setCurrentPayment('')
     handleModal()
   }
   // ** Custom close btn
@@ -63,12 +80,14 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
   const updateBookingPaymentInfo = async () => {
     setProcessing(true)
 
-    let payments = booking.payments ? [...booking.payments] : []
-    payments.push({
+    let newPaymentArray = payments ? [...payments] : []
+    let bookingStatus = ''
+
+    let newPayments = {
       name: newName,
       email: newEmail,
       phone: newPhone,
-      amount: newAmount / 100,
+      amount: newAmount * 100,
       cardBrand: newCardBrand,
       cardLast4: newCardLastFourDigits,
       createdAt: newPaymentCreationDate && newPaymentCreationDate.length > 0 ? newPaymentCreationDate[0] : undefined,
@@ -76,23 +95,39 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
       paymentMethod: newPaymentMethod,
       paymentId: newPaymentId,
       chargeUrl: 'outside-of-system',
-      status: 'Succeeded'
-    })
+      status: 'succeeded'
+    }
+
+    if (mode === 'add') {
+      newPaymentArray.push(newPayments)
+    }
+
+    if (newPaymentName === 'deposit' && (booking.status === 'quote' || booking.status === 'date-requested')) {
+      bookingStatus = 'confirmed'
+    }
+
+    if (newPaymentName === 'final' && (booking.status === 'quote' || booking.status === 'date-requested' || booking.status === 'confirmed')) {
+      bookingStatus = 'paid'
+    }
+
     try {
       const resultUpdateBookingPayment = await updateBookingPayment({
         variables: {
           bookingId: booking._id,
           updatedAt: new Date(),
-          payments: payments,
-          status: BOOKING_DEPOSIT_CONFIRMATION_STATUS
+          payments: newPaymentArray,
+          status: bookingStatus
         }
       })
       if (resultUpdateBookingPayment && resultUpdateBookingPayment.data) {
         setProcessing(false)
         console.log('Booking payments updated!')
       }
+      console.log('resultUpdateBookingPayment', resultUpdateBookingPayment.data.updateOneBooking)
+      setPayments(newPaymentArray)
     } catch (er) {
       setProcessing(false)
+
       console.log(er)
     }
     handleModal()
@@ -146,37 +181,8 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
                 step="any"
                 placeholder=""
                 required={true}
-                value={newAmount}
+                value={newAmount ? newAmount : ''}
                 onChange={(e) => setNewAmount(e.target.value)}
-              />
-            </FormGroup>
-          </Col>
-          <Col md={6}>
-            <FormGroup>
-              <Label for="card-brand">Card Brand*</Label>
-              <Input
-                id="card-brand"
-                type="text"
-                placeholder="Visa"
-                required={true}
-                value={newCardBrand}
-                onChange={(e) => setNewCardBrand(e.target.value)}
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col md={6}>
-            <FormGroup>
-              <Label for="card-last-4">Card Last 4 Digits*</Label>
-              <Input
-                id="card-last-4"
-                type="number"
-                placeholder="4545"
-                required={true}
-                value={newCardLastFourDigits}
-                onChange={(e) => setNewCardLastFourDigits(e.target.value)}
               />
             </FormGroup>
           </Col>
@@ -185,6 +191,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
               <Label for="created">Created At*</Label>
               <InputGroup>
                 <Flatpickr
+                  className="small"
                   value={newPaymentCreationDate}
                   dateformat="Y-m-d H:i"
                   data-enable-time
@@ -199,6 +206,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
             </FormGroup>
           </Col>
         </Row>
+
         <Row>
           <Col md={6}>
             <FormGroup>
@@ -206,7 +214,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
               <Select
                 value={{
                   value: newPaymentName || '',
-                  label: newPaymentName
+                  label: capitalizeString(newPaymentName)
                 }}
                 theme={selectThemeColors}
                 className="react-select"
@@ -229,7 +237,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
               <Select
                 value={{
                   value: newPaymentMethod || '',
-                  label: newPaymentMethod
+                  label: capitalizeString(newPaymentMethod)
                 }}
                 theme={selectThemeColors}
                 className="react-select"
@@ -247,6 +255,36 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
             </FormGroup>
           </Col>
         </Row>
+        {newPaymentMethod === 'card' && (
+          <Row>
+            <Col md={6}>
+              <FormGroup>
+                <Label for="card-last-4">Card Last 4 Digits*</Label>
+                <Input
+                  id="card-last-4"
+                  placeholder="4545"
+                  required={true}
+                  value={newCardLastFourDigits}
+                  onChange={(e) => setNewCardLastFourDigits(e.target.value)}
+                  maxLength="4"
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label for="card-brand">Card Brand*</Label>
+                <Input
+                  id="card-brand"
+                  type="text"
+                  placeholder="Visa"
+                  required={true}
+                  value={newCardBrand}
+                  onChange={(e) => setNewCardBrand(e.target.value)}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+        )}
         <FormGroup>
           <Label for="payment-id">Payment ID</Label>
           <Input id="payment-id" placeholder="" value={newPaymentId} onChange={(e) => setNewPaymentId(e.target.value)} />
@@ -260,11 +298,11 @@ const AddPaymentModal = ({ open, handleModal, mode, booking }) => {
             !newName ||
             !newEmail ||
             !newAmount ||
-            !newCardBrand ||
-            !newCardLastFourDigits ||
             !newPaymentCreationDate ||
             !newPaymentName ||
-            !newPaymentMethod
+            !newPaymentMethod ||
+            (newPaymentMethod === 'card' && !newCardBrand) ||
+            (newPaymentMethod === 'card' && !newCardLastFourDigits)
           }
         >
           {processing ? 'Saving...' : 'Save'}
