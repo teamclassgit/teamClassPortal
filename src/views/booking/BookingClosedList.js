@@ -182,6 +182,7 @@ const BookingList = () => {
         showFilter={true}
         showView={false}
         titleView={'Closed Bookings '}
+        isClosedBookings={true}
       />
       {allClasses.loading ||
       allCoordinatorResult.loading ||
