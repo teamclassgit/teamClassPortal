@@ -75,6 +75,13 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
     }
   }, [currentPayment])
 
+  useEffect(() => {
+    if (newPaymentMethod !== 'card') {
+      setNewCardBrand('')
+      setNewCardLastFourDigits('')
+    }
+  }, [newPaymentMethod])
+
   const cancel = () => {
     setCurrentPayment('')
     handleModal()
