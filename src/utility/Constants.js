@@ -14,7 +14,7 @@ export const BOOKING_STATUS = [
 //scheduling
 export const DEFAULT_AVAILABILITY = [
   {
-    increment: 30,
+    increment: 15,
     toMinutes: 0,
     dayOfWeek: 1,
     fromHour: 7,
@@ -22,7 +22,7 @@ export const DEFAULT_AVAILABILITY = [
     toHour: 23
   },
   {
-    increment: 30,
+    increment: 15,
     toMinutes: 0,
     dayOfWeek: 2,
     fromHour: 7,
@@ -30,7 +30,7 @@ export const DEFAULT_AVAILABILITY = [
     toHour: 23
   },
   {
-    increment: 30,
+    increment: 15,
     toMinutes: 0,
     dayOfWeek: 3,
     fromHour: 7,
@@ -38,7 +38,7 @@ export const DEFAULT_AVAILABILITY = [
     toHour: 23
   },
   {
-    increment: 30,
+    increment: 15,
     toMinutes: 0,
     dayOfWeek: 4,
     fromHour: 7,
@@ -46,7 +46,7 @@ export const DEFAULT_AVAILABILITY = [
     toHour: 23
   },
   {
-    increment: 30,
+    increment: 15,
     toMinutes: 0,
     dayOfWeek: 5,
     fromHour: 7,
@@ -54,7 +54,7 @@ export const DEFAULT_AVAILABILITY = [
     toHour: 23
   },
   {
-    increment: 30,
+    increment: 15,
     toMinutes: 0,
     dayOfWeek: 6,
     fromHour: 7,
@@ -62,7 +62,7 @@ export const DEFAULT_AVAILABILITY = [
     toHour: 23
   },
   {
-    increment: 30,
+    increment: 15,
     toMinutes: 0,
     dayOfWeek: 7,
     fromHour: 7,

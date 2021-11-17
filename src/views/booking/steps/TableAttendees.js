@@ -49,7 +49,8 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
   const [searchValue, setSearchValue] = useState('')
   const [filteredData, setFilteredData] = useState([])
   const [mode, setMode] = useState(null)
-  const [centeredModal, setCenteredModal] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [elementToDelete, setElementToDelete] = useState(null)
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
   const [excelHeadersTemplate, setExcelHeadersTemplate] = useState([])
 
@@ -76,7 +77,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
   }
 
   // ** Custom close btn
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setCenteredModal(!centeredModal)} />
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setDeleteModal(!deleteModal)} />
 
   // ** Table Common Column
   const columns = [
@@ -124,7 +125,8 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
               className="mr-2"
               onClick={(e) => {
                 e.preventDefault()
-                setCenteredModal(!centeredModal)
+                setElementToDelete(row)
+                setDeleteModal(!deleteModal)
               }}
               href="#"
               title="Remove from list"
@@ -142,37 +144,6 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
             >
               <Edit size={18} title="Edit" />
             </a>
-
-            <Modal isOpen={centeredModal} toggle={() => setCenteredModal(!centeredModal)} backdrop={false} className="modal-dialog-centered border-0">
-              <ModalHeader toggle={() => setCenteredModal(!centeredModal)} close={CloseBtn}>
-                Delete attendee?
-              </ModalHeader>
-              <ModalFooter className="justify-content-center">
-                <Button
-                  color="secondary"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setCenteredModal(!centeredModal)
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  color="primary"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    deleteAttendee(row._id).then((result) => {
-                      const newData = data.filter((element) => element._id !== row._id)
-                      setData(newData)
-                      updateAttendeesCount(newData.length)
-                    })
-                    setCenteredModal(!centeredModal)
-                  }}
-                >
-                  Delete
-                </Button>
-              </ModalFooter>
-            </Modal>
           </div>
         )
       }
@@ -424,6 +395,39 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
         updateAttendeesCount={updateAttendeesCount}
         teamClassInfo={teamClassInfo}
       />
+      <Modal isOpen={deleteModal} toggle={() => setDeleteModal(!deleteModal)} backdrop={false} className="modal-dialog-centered border-0">
+        <ModalHeader toggle={() => setDeleteModal(!deleteModal)} close={CloseBtn}>
+          Are you sure to delete {elementToDelete && elementToDelete.name}'s registration?
+        </ModalHeader>
+        <ModalFooter className="justify-content-center">
+          <Button
+            color="secondary"
+            onClick={(e) => {
+              e.preventDefault()
+              setElementToDelete(null)
+              setDeleteModal(!deleteModal)
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            onClick={async (e) => {
+              e.preventDefault()
+              if (!elementToDelete) return
+              const result = await deleteAttendee(elementToDelete._id)
+              if (result) {
+                const newData = data.filter((element) => element._id !== elementToDelete._id)
+                setData(newData)
+                updateAttendeesCount(newData.length)
+                setDeleteModal(!deleteModal)
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </ModalFooter>
+      </Modal>
     </Fragment>
   )
 }
