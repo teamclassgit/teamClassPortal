@@ -33,7 +33,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
   const [payments, setPayments] = React.useState([])
   const [modal, setModal] = useState(false)
   const [mode, setMode] = useState(null)
-  const [centeredModal, setCenteredModal] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
   const [indexToDelete, setIndexToDelete] = useState(null)
 
   const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingPayments, {})
@@ -46,7 +46,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
   }, [booking])
 
   // ** Custom close btn
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setCenteredModal(!centeredModal)} />
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setDeleteModal(!deleteModal)} />
 
   const convertFinalPaymentToDeposit = async (payment) => {
     setProcessing(true)
@@ -201,32 +201,31 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                               ) : (
                                 <div>
                                   <p className="mt-1">
-                                    <small className="text text-danger">
-                                      Are you sure to convert <br />
-                                      this payment to deposit?
-                                    </small>
+                                    <small className="text text-danger text-justify">Are you sure to convert this payment to deposit?</small>
                                   </p>
                                   <small className="ml-1">
-                                    <a
-                                      className="btn btn-primary btn-sm"
-                                      href="#"
-                                      onClick={(e) => {
-                                        e.preventDefault()
-                                        convertFinalPaymentToDeposit(element)
-                                      }}
-                                    >
-                                      Yes
-                                    </a>{' '}
-                                    <a
-                                      className="btn btn-secondary btn-sm"
-                                      href="#"
-                                      onClick={(e) => {
-                                        e.preventDefault()
-                                        setClickedConvert(false)
-                                      }}
-                                    >
-                                      No
-                                    </a>
+                                    <div className="d-flex justify-content-start">
+                                      <a
+                                        className="btn btn-primary btn-sm"
+                                        href="#"
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          convertFinalPaymentToDeposit(element)
+                                        }}
+                                      >
+                                        Yes
+                                      </a>{' '}
+                                      <a
+                                        className="btn btn-secondary btn-sm"
+                                        href="#"
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          setClickedConvert(false)
+                                        }}
+                                      >
+                                        No
+                                      </a>
+                                    </div>
                                   </small>
                                   <br />
                                   <small className="ml-2"></small>
@@ -272,8 +271,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                                 onClick={(e) => {
                                   e.preventDefault()
                                   setIndexToDelete(index)
-                                  setMode('delete')
-                                  setCenteredModal(!centeredModal)
+                                  setDeleteModal(!deleteModal)
                                 }}
                                 href="#"
                                 title="Remove from list"
@@ -282,7 +280,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                               </a>
                               <a
                                 onClick={(e) => {
-                                  setCurrentPayment(payments[index])
+                                  setCurrentPayment({ ...element }, index)
                                   e.preventDefault()
                                   handleModal()
                                   setMode('edit')
@@ -296,39 +294,6 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                           ) : (
                             ''
                           )}
-                          <Modal
-                            isOpen={centeredModal}
-                            toggle={() => {
-                              setCenteredModal(!centeredModal)
-                            }}
-                            backdrop={false}
-                            className="modal-dialog-centered border-0"
-                          >
-                            <ModalHeader toggle={() => setCenteredModal(!centeredModal)} close={CloseBtn}>
-                              Delete attendee?
-                            </ModalHeader>
-                            <ModalFooter className="justify-content-center">
-                              <Button
-                                color="secondary"
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  setCenteredModal(!centeredModal)
-                                }}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                color="primary"
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  deleteOnePayment()
-                                  setCenteredModal(!centeredModal)
-                                }}
-                              >
-                                Delete
-                              </Button>
-                            </ModalFooter>
-                          </Modal>
                         </div>
                       </td>
                     </tr>
@@ -353,6 +318,39 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
         currentPayment={currentPayment}
         setCurrentPayment={setCurrentPayment}
       />
+      <Modal
+        isOpen={deleteModal}
+        toggle={() => {
+          setDeleteModal(!deleteModal)
+        }}
+        backdrop={false}
+        className="modal-dialog-centered border-0"
+      >
+        <ModalHeader toggle={() => setDeleteModal(!deleteModal)} close={CloseBtn}>
+          Delete Payment?
+        </ModalHeader>
+        <ModalFooter className="justify-content-center">
+          <Button
+            color="secondary"
+            onClick={(e) => {
+              e.preventDefault()
+              setDeleteModal(!deleteModal)
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            onClick={(e) => {
+              e.preventDefault()
+              deleteOnePayment()
+              setDeleteModal(!deleteModal)
+            }}
+          >
+            Delete
+          </Button>
+        </ModalFooter>
+      </Modal>
     </Fragment>
   )
 }

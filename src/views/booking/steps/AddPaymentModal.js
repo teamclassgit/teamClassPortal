@@ -190,6 +190,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
                 min="1"
                 step="any"
                 placeholder=""
+                prefix="$"
                 required={true}
                 value={newAmount ? newAmount : ''}
                 onChange={(e) => setNewAmount(e.target.value)}
