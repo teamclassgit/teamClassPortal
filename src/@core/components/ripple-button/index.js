@@ -1,43 +1,43 @@
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 // ** Third Party Components
-import { Button } from 'reactstrap'
-import classnames from 'classnames'
+import { Button } from 'reactstrap';
+import classnames from 'classnames';
 
 // ** Styles
-import './ripple-button.scss'
+import './ripple-button.scss';
 
 const RippleButton = ({ className, children, onClick, ...rest }) => {
   // ** States
-  const [mounted, setMounted] = useState(false)
-  const [isRippling, setIsRippling] = useState(false)
-  const [coords, setCoords] = useState({ x: -1, y: -1 })
+  const [mounted, setMounted] = useState(false);
+  const [isRippling, setIsRippling] = useState(false);
+  const [coords, setCoords] = useState({ x: -1, y: -1 });
 
   // ** Toggle mounted on mount & unmount
   useEffect(() => {
-    setMounted(true)
-    return () => setMounted(false)
-  }, [])
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   // ** Check for coords and set ripple
   useEffect(() => {
     if (mounted) {
       if (coords.x !== -1 && coords.y !== -1) {
-        setIsRippling(true)
-        setTimeout(() => setIsRippling(false), 500)
+        setIsRippling(true);
+        setTimeout(() => setIsRippling(false), 500);
       } else {
-        setIsRippling(false)
+        setIsRippling(false);
       }
     }
-  }, [coords])
+  }, [coords]);
 
   // ** Reset Coords on ripple end
   useEffect(() => {
     if (mounted) {
-      if (!isRippling) setCoords({ x: -1, y: -1 })
+      if (!isRippling) setCoords({ x: -1, y: -1 });
     }
-  }, [isRippling])
+  }, [isRippling]);
 
   return (
     <Button
@@ -45,10 +45,10 @@ const RippleButton = ({ className, children, onClick, ...rest }) => {
         [className]: className
       })}
       onClick={e => {
-        const rect = e.target.getBoundingClientRect()
-        setCoords({ x: e.clientX - rect.left, y: e.clientY - rect.top })
+        const rect = e.target.getBoundingClientRect();
+        setCoords({ x: e.clientX - rect.left, y: e.clientY - rect.top });
         if (onClick) {
-          onClick(e)
+          onClick(e);
         }
       }}
       {...rest}
@@ -64,12 +64,12 @@ const RippleButton = ({ className, children, onClick, ...rest }) => {
         ></span>
       ) : null}
     </Button>
-  )
-}
+  );
+};
 
 // ** PropTypes
 RippleButton.propTypes = {
   ...Button.propTypes
-}
+};
 
-Button.Ripple = RippleButton
+Button.Ripple = RippleButton;

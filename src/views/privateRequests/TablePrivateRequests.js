@@ -8,11 +8,11 @@ import { Card } from 'reactstrap';
 import { ChevronDown } from 'react-feather';
 
 // @scripts
-import '../booking/TableBookings/TableBookings.scss'
-import { getCoordinatorName } from '../booking/common'
+import '../booking/TableBookings/TableBookings.scss';
+import { getCoordinatorName } from '../booking/common';
 
 const TablePrivateRequests = ({ filteredData, coordinators }) => {
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0);
 
   // ** Table Common Column
   const columns = [
@@ -128,12 +128,12 @@ const TablePrivateRequests = ({ filteredData, coordinators }) => {
         </small>
       )
     }
-  ]
+  ];
 
   // ** Function to handle Pagination
   const handlePagination = (page) => {
-    setCurrentPage(page.selected)
-  }
+    setCurrentPage(page.selected);
+  };
 
   // ** Custom Pagination
   const CustomPagination = () => (
@@ -159,7 +159,7 @@ const TablePrivateRequests = ({ filteredData, coordinators }) => {
       previousLabel=""
       previousLinkClassName="page-link"
     />
-  )
+  );
 
   return (
     <Card>
@@ -177,12 +177,12 @@ const TablePrivateRequests = ({ filteredData, coordinators }) => {
         sortIcon={<ChevronDown size={10} />}
       />
     </Card>
-  )
-}
+  );
+};
 
 export default TablePrivateRequests;
 
 TablePrivateRequests.propTypes = {
   coordinators: Proptypes.array.isRequired,
   filteredData: Proptypes.array.isRequired
-}
+};

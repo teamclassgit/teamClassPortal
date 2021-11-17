@@ -1,82 +1,82 @@
 // ** React Imports
-import React, { useState } from 'react'
-import readXlsxFile, { Email } from 'read-excel-file'
-import { X } from 'react-feather'
-import { Alert, Button, Card, CardBody, CardHeader, CardTitle, Modal, ModalBody, ModalHeader } from 'reactstrap'
-import Uppy from '@uppy/core'
-import { DragDrop } from '@uppy/react'
+import React, { useState } from 'react';
+import readXlsxFile, { Email } from 'read-excel-file';
+import { X } from 'react-feather';
+import { Alert, Button, Card, CardBody, CardHeader, CardTitle, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import Uppy from '@uppy/core';
+import { DragDrop } from '@uppy/react';
 // ** Styles
-import '@styles/react/libs/flatpickr/flatpickr.scss'
-import 'uppy/dist/uppy.css'
-import '@uppy/status-bar/dist/style.css'
-import '@styles/react/libs/file-uploader/file-uploader.scss'
-import { v4 as uuid } from 'uuid'
+import '@styles/react/libs/flatpickr/flatpickr.scss';
+import 'uppy/dist/uppy.css';
+import '@uppy/status-bar/dist/style.css';
+import '@styles/react/libs/file-uploader/file-uploader.scss';
+import { v4 as uuid } from 'uuid';
 
 const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, setData, updateAttendeesCount, teamClassInfo }) => {
-  const [file, setFile] = useState(null)
-  const [errors, setErrors] = useState([])
-  const [fileData, setFileData] = useState([])
-  const [processing, setProcessing] = React.useState(false)
+  const [file, setFile] = useState(null);
+  const [errors, setErrors] = useState([]);
+  const [fileData, setFileData] = useState([]);
+  const [processing, setProcessing] = React.useState(false);
 
   const save = async () => {
     try {
-      setProcessing(true)
+      setProcessing(true);
 
-      let newData = data.map((element) => element)
+      let newData = data.map((element) => element);
 
       for (let i = 0; i < fileData.length; i++) {
         const result = newData.find(
           (element) => element.email && fileData[i].email && element.email.toLowerCase() === fileData[i].email.toLowerCase()
-        )
+        );
 
         if (result && result._id) {
-          fileData[i].id = result._id
-          newData = newData.filter((element) => element._id !== result._id)
-        } else fileData[i].id = uuid()
+          fileData[i].id = result._id;
+          newData = newData.filter((element) => element._id !== result._id);
+        } else fileData[i].id = uuid();
 
-        const { id, bookingId, name, addressLine1, addressLine2, city, state, zip, country, email, phone } = fileData[i]
-        const newAttendee = { id, bookingId, name, addressLine1, addressLine2, city, state, zip, country, email, phone, additionalFields: [] }
+        const { id, bookingId, name, addressLine1, addressLine2, city, state, zip, country, email, phone } = fileData[i];
+        const newAttendee = { id, bookingId, name, addressLine1, addressLine2, city, state, zip, country, email, phone, additionalFields: [] };
         for (const dynamicField in teamClassInfo.registrationFields) {
           newAttendee.additionalFields.push({
             name: teamClassInfo.registrationFields[dynamicField].label,
             order: teamClassInfo.registrationFields[dynamicField].order,
             value: fileData[i][teamClassInfo.registrationFields[dynamicField].label] || ''
-          })
+          });
         }
-        const row = await saveAttendee(newAttendee)
-        newData.push(row)
+        const row = await saveAttendee(newAttendee);
+        newData.push(row);
       }
 
-      setData(newData)
-      updateAttendeesCount(newData.length)
+      setData(newData);
+      updateAttendeesCount(newData.length);
 
-      setProcessing(false)
-      setFile(null)
-      setFileData([])
-      setErrors([])
+      setProcessing(false);
+      setFile(null);
+      setFileData([]);
+      setErrors([]);
 
-      handleModal()
+      handleModal();
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
+      console.log(ex);
+      setProcessing(false);
     }
-  }
+  };
 
   const cancel = () => {
-    handleModal()
-    setFile(null)
-    setFileData([])
-    setErrors([])
-  }
+    handleModal();
+    setFile(null);
+    setFileData([]);
+    setErrors([]);
+  };
 
   // ** Custom close btn
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   const uppy = new Uppy({
     meta: { type: 'avatar' },
     restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ['.xlsx'] },
     autoProceed: true
-  })
+  });
 
   const schema = {
     Name: {
@@ -125,30 +125,30 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
       type: String,
       required: false
     }
-  }
+  };
 
   for (const dynamicField in teamClassInfo.registrationFields) {
     Object.assign(schema, {
       [teamClassInfo.registrationFields[dynamicField].label]: {
         prop: teamClassInfo.registrationFields[dynamicField].label
       }
-    })
+    });
   }
 
   uppy.on('complete', (result) => {
     if (result && result.successful && result.successful.length > 0) {
-      setFile(result.successful[0].data)
+      setFile(result.successful[0].data);
       readXlsxFile(result.successful[0].data, { schema }).then((rows) => {
-        setErrors(rows.errors)
+        setErrors(rows.errors);
         setFileData(
           rows.rows.map((element) => {
-            element.bookingId = currentBookingId
-            return element
+            element.bookingId = currentBookingId;
+            return element;
           })
-        )
-      })
+        );
+      });
     }
-  })
+  });
 
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
@@ -187,7 +187,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
         </Button>
       </ModalBody>
     </Modal>
-  )
-}
+  );
+};
 
-export default UploadData
+export default UploadData;

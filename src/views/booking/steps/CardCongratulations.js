@@ -1,9 +1,9 @@
-import {Award} from 'react-feather'
-import Avatar from '@components/avatar'
-import {Button, Card, CardBody, CardFooter, CardText} from 'reactstrap'
-import decorationLeft from '@src/assets/images/elements/decore-left.png'
-import decorationRight from '@src/assets/images/elements/decore-right.png'
-import React from "react"
+import {Award} from 'react-feather';
+import Avatar from '@components/avatar';
+import {Button, Card, CardBody, CardFooter, CardText} from 'reactstrap';
+import decorationLeft from '@src/assets/images/elements/decore-left.png';
+import decorationRight from '@src/assets/images/elements/decore-right.png';
+import React from "react";
 
 const CardCongratulations = ({firstName, stepper, setConfirmation}) => {
   return (
@@ -19,13 +19,13 @@ const CardCongratulations = ({firstName, stepper, setConfirmation}) => {
       </CardBody>
       <CardFooter>
         <div className='text-center'>
-        <Button.Ripple color='secondary' className='btn-submit' onClick={() => setConfirmation(false) } >
+          <Button.Ripple color='secondary' className='btn-submit' onClick={() => setConfirmation(false) } >
           Change this booking
-        </Button.Ripple>
+          </Button.Ripple>
         </div>
       </CardFooter>
     </Card>
-  )
-}
+  );
+};
 
-export default CardCongratulations
+export default CardCongratulations;

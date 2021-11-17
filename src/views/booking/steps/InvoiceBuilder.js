@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react'
-import NumberInput from '@components/number-input'
-import { ArrowLeft, ArrowRight, Delete, DollarSign, Minus, MinusCircle, PlusCircle } from 'react-feather'
-import { Input, Button, Card, Col, Form, Media, Row, Table, CardLink } from 'reactstrap'
-import { BOOKING_PAID_STATUS } from '../../../utility/Constants'
-import { useMutation } from '@apollo/client'
-import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails'
-import Avatar from '@components/avatar'
+import React, { Fragment } from 'react';
+import NumberInput from '@components/number-input';
+import { ArrowLeft, ArrowRight, Delete, DollarSign, Minus, MinusCircle, PlusCircle } from 'react-feather';
+import { Input, Button, Card, Col, Form, Media, Row, Table, CardLink } from 'reactstrap';
+import { BOOKING_PAID_STATUS } from '../../../utility/Constants';
+import { useMutation } from '@apollo/client';
+import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
+import Avatar from '@components/avatar';
 
 const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking }) => {
   const defaultInvoiceItems = [
@@ -27,14 +27,14 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       taxable: true,
       readOnly: true
     }
-  ]
+  ];
 
-  const [processing, setProcessing] = React.useState(false)
-  const [formValid, setFormValid] = React.useState(true)
-  const [invoiceItems, setInvoiceItems] = React.useState([])
-  const [discount, setDiscount] = React.useState(0)
-  const [hasFinalPayment, setHasFinalPayment] = React.useState(false)
-  const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingInvoiceDetails, {})
+  const [processing, setProcessing] = React.useState(false);
+  const [formValid, setFormValid] = React.useState(true);
+  const [invoiceItems, setInvoiceItems] = React.useState([]);
+  const [discount, setDiscount] = React.useState(0);
+  const [hasFinalPayment, setHasFinalPayment] = React.useState(false);
+  const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingInvoiceDetails, {});
 
   React.useEffect(() => {
     if (booking && booking.invoiceDetails) {
@@ -42,52 +42,52 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
         booking.invoiceDetails.map(({ ...element }) => {
           return {
             ...element
-          }
+          };
         })
-      )
-      const currentDiscount = booking.discount > 0 ? booking.discount * 100 : 0
-      setDiscount(currentDiscount)
+      );
+      const currentDiscount = booking.discount > 0 ? booking.discount * 100 : 0;
+      setDiscount(currentDiscount);
     } else if (booking) {
       const depositsPaid =
-        booking && booking.payments && booking.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
+        booking && booking.payments && booking.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
 
       if (depositsPaid && depositsPaid.length > 0) {
-        const depositAmountPaid = depositsPaid.reduce((previous, current) => previous + current.amount, 0)
-        defaultInvoiceItems[0].unitPrice = depositAmountPaid / 100
+        const depositAmountPaid = depositsPaid.reduce((previous, current) => previous + current.amount, 0);
+        defaultInvoiceItems[0].unitPrice = depositAmountPaid / 100;
       }
 
-      const minimum = booking.classVariant ? booking.classVariant.minimum : booking.classMinimum
+      const minimum = booking.classVariant ? booking.classVariant.minimum : booking.classMinimum;
       //pricePerson is currently in use for group based pricing too
-      const price = booking.classVariant ? booking.classVariant.pricePerson : booking.pricePerson
-      const attendees = realCountAttendees > booking.attendees ? realCountAttendees : booking.attendees
+      const price = booking.classVariant ? booking.classVariant.pricePerson : booking.pricePerson;
+      const attendees = realCountAttendees > booking.attendees ? realCountAttendees : booking.attendees;
 
-      defaultInvoiceItems[1].unitPrice = price
-      defaultInvoiceItems[1].units = attendees > minimum ? attendees : minimum
+      defaultInvoiceItems[1].unitPrice = price;
+      defaultInvoiceItems[1].units = attendees > minimum ? attendees : minimum;
 
-      setInvoiceItems(defaultInvoiceItems)
+      setInvoiceItems(defaultInvoiceItems);
     }
 
     const finalPaymentPaid =
-      booking && booking.payments && booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
+      booking && booking.payments && booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
 
-    setHasFinalPayment(finalPaymentPaid ? true : false)
-  }, [booking])
+    setHasFinalPayment(!!finalPaymentPaid);
+  }, [booking]);
 
   React.useEffect(() => {
     if (invoiceItems) {
-      let i = 0
-      let valid = true
+      let i = 0;
+      let valid = true;
       while (i < invoiceItems.length && valid) {
-        let current = invoiceItems[i++]
-        valid = current.item && current.item.length > 0 && !isNaN(current.unitPrice) && current.units > 0
+        const current = invoiceItems[i++];
+        valid = current.item && current.item.length > 0 && !isNaN(current.unitPrice) && current.units > 0;
       }
 
-      setFormValid(valid)
+      setFormValid(valid);
     }
-  }, [invoiceItems])
+  }, [invoiceItems]);
 
   const addNewInvoiceItem = () => {
-    const newInvoiceItems = [...invoiceItems]
+    const newInvoiceItems = [...invoiceItems];
     newInvoiceItems.push({
       item: '',
       unitPrice: 0,
@@ -96,18 +96,18 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       unitsEditable: true,
       taxable: false,
       readOnly: false
-    })
+    });
 
-    setInvoiceItems(newInvoiceItems)
-  }
+    setInvoiceItems(newInvoiceItems);
+  };
 
   const removeInvoiceItem = (index) => {
-    const newInvoiceItems = invoiceItems.filter((element, i) => index !== i)
-    setInvoiceItems(newInvoiceItems)
-  }
+    const newInvoiceItems = invoiceItems.filter((element, i) => index !== i);
+    setInvoiceItems(newInvoiceItems);
+  };
 
   const saveInvoiceDetails = async () => {
-    setProcessing(true)
+    setProcessing(true);
 
     try {
       const result = await updateBooking({
@@ -117,20 +117,20 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           discount: discount / 100,
           updatedAt: new Date()
         }
-      })
+      });
 
       if (result && result.data && result.data.updateOneBooking) {
-        setBooking(result.data.updateOneBooking)
+        setBooking(result.data.updateOneBooking);
       }
 
-      console.log('booking updated')
+      console.log('booking updated');
 
-      setProcessing(false)
+      setProcessing(false);
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
+      console.log(ex);
+      setProcessing(false);
     }
-  }
+  };
 
   return (
     <Fragment>
@@ -167,10 +167,10 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                           disabled={element.readOnly}
                           value={element.item}
                           onChange={(e) => {
-                            element.item = e.target.value
-                            const newInvoiceItems = [...invoiceItems]
-                            newInvoiceItems.splice(index, 1, element)
-                            setInvoiceItems(newInvoiceItems)
+                            element.item = e.target.value;
+                            const newInvoiceItems = [...invoiceItems];
+                            newInvoiceItems.splice(index, 1, element);
+                            setInvoiceItems(newInvoiceItems);
                           }}
                         ></Input>
                       </div>
@@ -184,10 +184,10 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                           disabled={!element.priceEditable}
                           value={element.unitPrice}
                           onChange={(e) => {
-                            element.unitPrice = e.target.value
-                            const newInvoiceItems = [...invoiceItems]
-                            newInvoiceItems.splice(index, 1, element)
-                            setInvoiceItems(newInvoiceItems)
+                            element.unitPrice = e.target.value;
+                            const newInvoiceItems = [...invoiceItems];
+                            newInvoiceItems.splice(index, 1, element);
+                            setInvoiceItems(newInvoiceItems);
                           }}
                         ></Input>
                       </div>
@@ -202,10 +202,10 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                         disabled={!element.unitsEditable}
                         required={true}
                         onChange={(newValue) => {
-                          element.units = newValue
-                          const newInvoiceItems = [...invoiceItems]
-                          newInvoiceItems.splice(index, 1, element)
-                          setInvoiceItems(newInvoiceItems)
+                          element.units = newValue;
+                          const newInvoiceItems = [...invoiceItems];
+                          newInvoiceItems.splice(index, 1, element);
+                          setInvoiceItems(newInvoiceItems);
                         }}
                       />
                     </td>
@@ -217,10 +217,10 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                           disabled={element.readOnly}
                           bsSize="sm"
                           onChange={(e) => {
-                            element.taxable = e.target.checked
-                            const newInvoiceItems = [...invoiceItems]
-                            newInvoiceItems.splice(index, 1, element)
-                            setInvoiceItems(newInvoiceItems)
+                            element.taxable = e.target.checked;
+                            const newInvoiceItems = [...invoiceItems];
+                            newInvoiceItems.splice(index, 1, element);
+                            setInvoiceItems(newInvoiceItems);
                           }}
                         ></Input>
                       </div>
@@ -231,8 +231,8 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                         {element && !element.readOnly && (
                           <a
                             onClick={(e) => {
-                              e.preventDefault()
-                              removeInvoiceItem(index)
+                              e.preventDefault();
+                              removeInvoiceItem(index);
                             }}
                             href="#"
                             title="Remove current line"
@@ -243,8 +243,8 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                         {index === invoiceItems.length - 1 && (
                           <a
                             onClick={(e) => {
-                              e.preventDefault()
-                              addNewInvoiceItem()
+                              e.preventDefault();
+                              addNewInvoiceItem();
                             }}
                             href="#"
                             title="Add line below"
@@ -273,7 +273,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                         className="w-50"
                         required={true}
                         onChange={(newValue) => {
-                          setDiscount(newValue)
+                          setDiscount(newValue);
                         }}
                       />
                     </div>
@@ -300,7 +300,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
         </Button.Ripple>
       </div>
     </Fragment>
-  )
-}
+  );
+};
 
-export default InvoiceBuilder
+export default InvoiceBuilder;

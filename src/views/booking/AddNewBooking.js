@@ -1,9 +1,9 @@
 // ** React Imports
-import React, { useEffect, useState } from 'react'
-import Select from 'react-select'
-import { selectThemeColors } from '@utils'
+import React, { useEffect, useState } from 'react';
+import Select from 'react-select';
+import { selectThemeColors } from '@utils';
 // ** Third Party Components
-import { Mail, Phone, User, X, Briefcase } from 'react-feather'
+import { Mail, Phone, User, X, Briefcase } from 'react-feather';
 import {
   Button,
   FormGroup,
@@ -17,95 +17,95 @@ import {
   ModalHeader,
   CustomInput,
   Alert
-} from 'reactstrap'
+} from 'reactstrap';
 
 // ** Styles
-import '@styles/react/libs/flatpickr/flatpickr.scss'
-import Cleave from 'cleave.js/react'
-import 'cleave.js/dist/addons/cleave-phone.us'
-import { isValidEmail, getUserData } from '../../utility/Utils'
-import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer'
-import { useMutation } from '@apollo/client'
-import { v4 as uuid } from 'uuid'
-import { BOOKING_QUOTE_STATUS } from '../../utility/Constants'
+import '@styles/react/libs/flatpickr/flatpickr.scss';
+import Cleave from 'cleave.js/react';
+import 'cleave.js/dist/addons/cleave-phone.us';
+import { isValidEmail, getUserData } from '../../utility/Utils';
+import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer';
+import { useMutation } from '@apollo/client';
+import { v4 as uuid } from 'uuid';
+import { BOOKING_QUOTE_STATUS } from '../../utility/Constants';
 
 const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, setCustomers, setBookings, classes, coordinators }) => {
-  const [isOldCustomer, setIsOldCustomer] = useState(false)
-  const [newName, setNewName] = useState('')
-  const [newEmail, setNewEmail] = useState('')
-  const [newPhone, setNewPhone] = useState('')
-  const [newCompany, setNewCompany] = useState('')
-  const [newAttendees, setNewAttendees] = useState('')
-  const [selectedClass, setSelectedClass] = useState(null)
-  const [selectedCustomer, setSelectedCustomer] = useState(null)
-  const [processing, setProcessing] = useState(false)
-  const [emailValid, setEmailValid] = useState(true)
-  const [phoneValid, setPhoneValid] = useState(true)
-  const [attendeesValid, setAttendeesValid] = useState(true)
-  const [warning, setWarning] = useState({ open: false, message: '' })
-  const [createBooking] = useMutation(mutationNewBooking, {})
-  const [classVariantsOptions, setClassVariantsOptions] = useState([])
-  const [classVariant, setClassVariant] = useState(null)
-  const [oneCoordinator, setOneCoordinator] = useState(null)
-  const [defaultCoordinatorOption, setDefaultCoordinatorOption] = useState([])
+  const [isOldCustomer, setIsOldCustomer] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPhone, setNewPhone] = useState('');
+  const [newCompany, setNewCompany] = useState('');
+  const [newAttendees, setNewAttendees] = useState('');
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [emailValid, setEmailValid] = useState(true);
+  const [phoneValid, setPhoneValid] = useState(true);
+  const [attendeesValid, setAttendeesValid] = useState(true);
+  const [warning, setWarning] = useState({ open: false, message: '' });
+  const [createBooking] = useMutation(mutationNewBooking, {});
+  const [classVariantsOptions, setClassVariantsOptions] = useState([]);
+  const [classVariant, setClassVariant] = useState(null);
+  const [oneCoordinator, setOneCoordinator] = useState(null);
+  const [defaultCoordinatorOption, setDefaultCoordinatorOption] = useState([]);
 
-  const serviceFeeValue = 0.1
-  const salesTaxValue = 0.0825
+  const serviceFeeValue = 0.1;
+  const salesTaxValue = 0.0825;
 
-  const options = { phone: true, phoneRegionCode: 'US' }
+  const options = { phone: true, phoneRegionCode: 'US' };
 
   const emailValidation = (email) => {
-    setEmailValid(isValidEmail(email))
-  }
+    setEmailValid(isValidEmail(email));
+  };
 
   const phoneValidation = (phone) => {
-    setPhoneValid(true)
-  }
+    setPhoneValid(true);
+  };
 
   useEffect(() => {
-    phoneValidation(newPhone)
-  }, [newPhone])
+    phoneValidation(newPhone);
+  }, [newPhone]);
 
   const groupSizeValidation = (groupSize) => {
-    setAttendeesValid(groupSize > 0)
-  }
+    setAttendeesValid(groupSize > 0);
+  };
 
   useEffect(() => {
     if (selectedClass) {
-      const filteredClass = classes.find((element) => element._id === selectedClass)
-      if (filteredClass) setClassVariantsOptions(filteredClass.variants)
+      const filteredClass = classes.find((element) => element._id === selectedClass);
+      if (filteredClass) setClassVariantsOptions(filteredClass.variants);
     }
-  }, [selectedClass])
+  }, [selectedClass]);
 
   useEffect(() => {
-    const userData = getUserData()
+    const userData = getUserData();
     if (userData && userData.customData && userData.customData.coordinatorId) {
-      setDefaultCoordinatorOption(userData.customData)
-      setOneCoordinator(userData.customData.coordinatorId)
+      setDefaultCoordinatorOption(userData.customData);
+      setOneCoordinator(userData.customData.coordinatorId);
     }
-  }, [bookings])
+  }, [bookings]);
 
   const saveNewBooking = async () => {
-    setProcessing(true)
+    setProcessing(true);
 
     try {
-      let customer = undefined
+      let customer = undefined;
       if (isOldCustomer && selectedCustomer) {
-        customer = customers.find((element) => element._id === selectedCustomer)
+        customer = customers.find((element) => element._id === selectedCustomer);
       } else if (customers.find((element) => element.email.toLowerCase() === newEmail.toLowerCase())) {
-        setWarning({ open: true, message: 'A customer with the same email already exist.' })
-        setProcessing(false)
-        return
+        setWarning({ open: true, message: 'A customer with the same email already exist.' });
+        setProcessing(false);
+        return;
       }
 
-      const teamClass = classes.find((element) => element._id === selectedClass)
+      const teamClass = classes.find((element) => element._id === selectedClass);
 
       const resultCreateBooking = await createBooking({
         variables: {
           bookingId: uuid(),
           date: new Date(), // combine with quotaTime
           teamClassId: selectedClass,
-          classVariant: classVariant,
+          classVariant,
           instructorId: teamClass.instructorId ? teamClass.instructorId : teamClass._id,
           instructorName: teamClass.instructorName,
           customerId: customer ? customer._id : uuid(),
@@ -128,62 +128,62 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
           billingAddress: customer ? customer.billingAddress : null,
           company: customer ? customer.company : newCompany
         }
-      })
+      });
 
       if (!resultCreateBooking || !resultCreateBooking.data) {
-        setProcessing(false)
-        return
+        setProcessing(false);
+        return;
       }
 
       // Update customers object
       setCustomers([
         resultCreateBooking.data.upsertOneCustomer,
         ...customers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
-      ])
+      ]);
 
       // Update bookings object
       setBookings([
         resultCreateBooking.data.insertOneBooking,
         ...bookings.filter((element) => element._id !== resultCreateBooking.data.insertOneBooking._id)
-      ])
-      setProcessing(false)
-      setClassVariant(null)
-      setOneCoordinator(null)
+      ]);
+      setProcessing(false);
+      setClassVariant(null);
+      setOneCoordinator(null);
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
+      console.log(ex);
+      setProcessing(false);
     }
     // Hide modal
-    handleModal()
-  }
+    handleModal();
+  };
 
   const cancel = () => {
-    setClassVariant(null)
-    setOneCoordinator(null)
-    handleModal()
-  }
+    setClassVariant(null);
+    setOneCoordinator(null);
+    handleModal();
+  };
 
   // ** Custom close btn
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   useEffect(() => {
     if (baseElement) {
-      setNewName(baseElement.name)
-      setNewEmail(baseElement.email)
-      setNewPhone(baseElement.phone)
-      setNewCompany(baseElement.company)
-      setNewAttendees(baseElement.attendees)
-      setSelectedClass(baseElement.class)
-      setSelectedCustomer(null)
-      setIsOldCustomer(false)
-      setWarning({ open: false, message: '' })
+      setNewName(baseElement.name);
+      setNewEmail(baseElement.email);
+      setNewPhone(baseElement.phone);
+      setNewCompany(baseElement.company);
+      setNewAttendees(baseElement.attendees);
+      setSelectedClass(baseElement.class);
+      setSelectedCustomer(null);
+      setIsOldCustomer(false);
+      setWarning({ open: false, message: '' });
     }
-  }, [baseElement])
+  }, [baseElement]);
 
   const getClassName = (id) => {
-    const res = classes.find((element) => element._id === selectedClass)
-    return res ? res.title : ''
-  }
+    const res = classes.find((element) => element._id === selectedClass);
+    return res ? res.title : '';
+  };
 
   const selectStyles = {
     control: (base) => ({
@@ -203,7 +203,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
       padding: 0,
       fontSize: 12
     })
-  }
+  };
 
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
@@ -219,8 +219,8 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
                 id="exampleCustomRadio"
                 name="customRadio"
                 onClick={(e) => {
-                  setIsOldCustomer(false)
-                  setSelectedCustomer(null)
+                  setIsOldCustomer(false);
+                  setSelectedCustomer(null);
                 }}
                 defaultChecked
               />{' '}
@@ -234,8 +234,8 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
                 id="exampleCustomRadio2"
                 name="customRadio"
                 onClick={(e) => {
-                  setIsOldCustomer(true)
-                  setWarning({ open: false, message: '' })
+                  setIsOldCustomer(true);
+                  setWarning({ open: false, message: '' });
                 }}
               />{' '}
               Old Customer
@@ -271,7 +271,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
                   onChange={(e) => setNewEmail(e.target.value)}
                   invalid={!emailValid}
                   onBlur={(e) => {
-                    emailValidation(e.target.value)
+                    emailValidation(e.target.value);
                   }}
                 />
               </InputGroup>
@@ -291,7 +291,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
                   value={newPhone}
                   onChange={(e) => setNewPhone(e.target.value)}
                   onBlur={(e) => {
-                    phoneValidation(e.target.value)
+                    phoneValidation(e.target.value);
                   }}
                 />
               </InputGroup>
@@ -322,7 +322,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
                   return {
                     value: element._id,
                     label: `${element.name.split(' ')[0]} <${element.email}>`
-                  }
+                  };
                 })
               }
               onChange={(option) => setSelectedCustomer(option.value)}
@@ -346,7 +346,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
                 return {
                   value: item._id,
                   label: item.name
-                }
+                };
               })
             }
             onChange={(option) => setOneCoordinator(option.value)}
@@ -367,7 +367,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
                 return {
                   value: element._id,
                   label: element.title
-                }
+                };
               })
             }
             value={{
@@ -392,8 +392,8 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
                 classVariantsOptions.map((element) => {
                   return {
                     value: element,
-                    label: element.title + ' $' + element.pricePerson + (element.groupEvent ? '/group' : '/person')
-                  }
+                    label: `${element.title  } $${  element.pricePerson  }${element.groupEvent ? '/group' : '/person'}`
+                  };
                 })
               }
               onChange={(option) => setClassVariant(option.value)}
@@ -412,7 +412,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
               onChange={(e) => setNewAttendees(e.target.value)}
               type="number"
               onBlur={(e) => {
-                groupSizeValidation(e.target.value)
+                groupSizeValidation(e.target.value);
               }}
             />
           </InputGroup>
@@ -451,7 +451,7 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
         )}
       </ModalBody>
     </Modal>
-  )
-}
+  );
+};
 
-export default AddNewBooking
+export default AddNewBooking;

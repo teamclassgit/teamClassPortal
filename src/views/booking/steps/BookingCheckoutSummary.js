@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Card, CardBody, CardFooter, FormText, Media, Badge, Row, Col, CardHeader } from 'reactstrap'
+import React, { useState } from 'react';
+import { Card, CardBody, CardFooter, FormText, Media, Badge, Row, Col, CardHeader } from 'reactstrap';
 import {
   BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_PAID_STATUS,
@@ -8,11 +8,11 @@ import {
   DATE_AND_TIME_RESERVED_STATUS,
   DEFAULT_TIME_ZONE_LABEL,
   DEFAULT_TIME_ZONE_LABEL_DESCRIPTION
-} from '../../../utility/Constants'
+} from '../../../utility/Constants';
 
-import moment from 'moment'
-import { capitalizeString } from '../../../utility/Utils'
-import StatusSelector from '../TableBookings/StatusSelector'
+import moment from 'moment';
+import { capitalizeString } from '../../../utility/Utils';
+import StatusSelector from '../TableBookings/StatusSelector';
 
 const BookingCheckoutSummary = ({
   teamClass,
@@ -137,7 +137,7 @@ const BookingCheckoutSummary = ({
               <tr>
                 <th className="font-weight-normal pt-1">
                   ${bookingInfo.pricePerson} x
-                  {' ' + (attendeesToInvoice < bookingInfo.classMinimum ? bookingInfo.classMinimum : attendeesToInvoice) + ' '} attendees
+                  {` ${  attendeesToInvoice < bookingInfo.classMinimum ? bookingInfo.classMinimum : attendeesToInvoice  } `} attendees
                   {attendeesToInvoice < bookingInfo.classMinimum && <FormText color="muted">Under {bookingInfo.classMinimum} group fee</FormText>}
                 </th>
                 <td className="text-right pt-1">${totalWithoutFee}</td>
@@ -214,7 +214,7 @@ const BookingCheckoutSummary = ({
         </CardFooter>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default BookingCheckoutSummary
+export default BookingCheckoutSummary;

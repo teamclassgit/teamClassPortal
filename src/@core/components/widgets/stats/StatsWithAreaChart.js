@@ -1,18 +1,18 @@
 // ** Custom Components
-import Avatar from '@components/avatar'
+import Avatar from '@components/avatar';
 
 // ** Third Party Components
-import PropTypes from 'prop-types'
-import classnames from 'classnames'
-import Chart from 'react-apexcharts'
-import { Card, CardBody } from 'reactstrap'
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import Chart from 'react-apexcharts';
+import { Card, CardBody } from 'reactstrap';
 
 // ** Default Options
-import { areaChartOptions } from './ChartOptions'
+import { areaChartOptions } from './ChartOptions';
 
 const StatsWithAreaChart = props => {
   // ** Props
-  const { icon, color, stats, statTitle, series, options, type, height, className, ...rest } = props
+  const { icon, color, stats, statTitle, series, options, type, height, className, ...rest } = props;
   return (
     <Card {...rest}>
       <CardBody
@@ -26,10 +26,10 @@ const StatsWithAreaChart = props => {
       </CardBody>
       <Chart options={options} series={series} type={type} height={height ? height : 100} />
     </Card>
-  )
-}
+  );
+};
 
-export default StatsWithAreaChart
+export default StatsWithAreaChart;
 
 // ** PropTypes
 StatsWithAreaChart.propTypes = {
@@ -42,10 +42,10 @@ StatsWithAreaChart.propTypes = {
   type: PropTypes.string,
   height: PropTypes.string,
   className: PropTypes.string
-}
+};
 
 // ** Default Props
 StatsWithAreaChart.defaultProps = {
   options: areaChartOptions,
   color: 'primary'
-}
+};

@@ -1,8 +1,8 @@
-import {Button} from 'reactstrap'
-import {Link} from 'react-router-dom'
-import notAuthImg from '@src/assets/images/pages/not-authorized.svg'
+import {Button} from 'reactstrap';
+import {Link} from 'react-router-dom';
+import notAuthImg from '@src/assets/images/pages/not-authorized.svg';
 
-import '@styles/base/pages/page-misc.scss'
+import '@styles/base/pages/page-misc.scss';
 
 const NotAuthorized = () => {
   return (
@@ -72,6 +72,6 @@ const NotAuthorized = () => {
         </div>
       </div>
     </div>
-  )
-}
-export default NotAuthorized
+  );
+};
+export default NotAuthorized;

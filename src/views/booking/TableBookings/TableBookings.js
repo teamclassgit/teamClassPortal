@@ -1,13 +1,13 @@
 // ** React Imports
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react';
 // ** Third Party Components
-import moment from 'moment'
-import Avatar from '@components/avatar'
-import DataTable from 'react-data-table-component'
-import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather'
-import ReactPaginate from 'react-paginate'
-import { Button, Card } from 'reactstrap'
-import StatusSelector from './StatusSelector'
+import moment from 'moment';
+import Avatar from '@components/avatar';
+import DataTable from 'react-data-table-component';
+import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather';
+import ReactPaginate from 'react-paginate';
+import { Button, Card } from 'reactstrap';
+import StatusSelector from './StatusSelector';
 import {
   getCustomerEmail,
   getClassTitle,
@@ -16,12 +16,12 @@ import {
   getCustomerPhone,
   getCustomerCompany,
   getCoordinatorName
-} from '../common'
-import './TableBookings.scss'
-import CardLink from 'reactstrap/lib/CardLink'
+} from '../common';
+import './TableBookings.scss';
+import CardLink from 'reactstrap/lib/CardLink';
 
 const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0);
 
   // ** Table Common Column
   const columns = [
@@ -74,7 +74,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, c
                   currentEventDurationHours: row.eventDurationHours,
                   currentClosedReason: row.closedReason,
                   currentNotes: row.notes
-                })
+                });
               }}
               title={`Edit booking info ${row._id}`}
             >
@@ -158,7 +158,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, c
       allowOverflow: true,
       maxWidth: '400px',
       cell: (row) => {
-        const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id)
+        const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id);
 
         return row.status === 'quote' ? (
           <small>
@@ -293,15 +293,15 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, c
           </small>
         ) : (
           <></>
-        )
+        );
       }
     }
-  ]
+  ];
 
   // ** Function to handle Pagination
   const handlePagination = (page) => {
-    setCurrentPage(page.selected)
-  }
+    setCurrentPage(page.selected);
+  };
 
   // ** Custom Pagination
   const CustomPagination = () => (
@@ -327,7 +327,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, c
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
     />
-  )
+  );
 
   return (
     <Fragment>
@@ -347,7 +347,7 @@ const DataTableBookings = ({ filteredData, customers, classes, calendarEvents, c
         />
       </Card>
     </Fragment>
-  )
-}
+  );
+};
 
-export default DataTableBookings
+export default DataTableBookings;

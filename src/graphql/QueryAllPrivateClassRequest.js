@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from '@apollo/client';
 
 export default gql`
   query GetprivateRequests($filter: PrivateClassRequestQueryInput!) {
@@ -14,4 +14,4 @@ export default gql`
       eventCoordinatorId
     }
   }
-`
+`;

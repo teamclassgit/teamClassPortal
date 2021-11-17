@@ -1,28 +1,28 @@
-import React, { Fragment } from 'react'
-import { Input, Button, Card, Col, Form, Media, Row, Table, CardLink, Badge } from 'reactstrap'
-import { useMutation } from '@apollo/client'
-import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments'
-import moment from 'moment'
-import { capitalizeString } from '../../../utility/Utils'
-import { BOOKING_DEPOSIT_CONFIRMATION_STATUS } from '../../../utility/Constants'
+import React, { Fragment } from 'react';
+import { Input, Button, Card, Col, Form, Media, Row, Table, CardLink, Badge } from 'reactstrap';
+import { useMutation } from '@apollo/client';
+import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
+import moment from 'moment';
+import { capitalizeString } from '../../../utility/Utils';
+import { BOOKING_DEPOSIT_CONFIRMATION_STATUS } from '../../../utility/Constants';
 
 const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking }) => {
-  const [processing, setProcessing] = React.useState(false)
-  const [clickedConvert, setClickedConvert] = React.useState(false)
-  const [payments, setPayments] = React.useState([])
-  const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingPayments, {})
+  const [processing, setProcessing] = React.useState(false);
+  const [clickedConvert, setClickedConvert] = React.useState(false);
+  const [payments, setPayments] = React.useState([]);
+  const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingPayments, {});
 
   React.useEffect(() => {
-    setPayments((booking && booking.payments) || [])
-  }, [booking])
+    setPayments((booking && booking.payments) || []);
+  }, [booking]);
 
   const convertFinalPaymentToDeposit = async (payment) => {
-    setProcessing(true)
+    setProcessing(true);
 
-    const newPayment = { ...payment }
-    newPayment.paymentName = 'deposit'
-    const newPaymentsList = payments.filter((element) => element.paymentName !== 'final')
-    newPaymentsList.push(newPayment)
+    const newPayment = { ...payment };
+    newPayment.paymentName = 'deposit';
+    const newPaymentsList = payments.filter((element) => element.paymentName !== 'final');
+    newPaymentsList.push(newPayment);
 
     try {
       const result = await updateBooking({
@@ -32,21 +32,21 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
           status: BOOKING_DEPOSIT_CONFIRMATION_STATUS,
           updatedAt: new Date()
         }
-      })
+      });
 
       if (result && result.data && result.data.updateOneBooking) {
-        setPayments(newPaymentsList)
-        setBooking(result.data.updateOneBooking)
+        setPayments(newPaymentsList);
+        setBooking(result.data.updateOneBooking);
       }
 
-      console.log('booking updated')
+      console.log('booking updated');
 
-      setProcessing(false)
+      setProcessing(false);
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
+      console.log(ex);
+      setProcessing(false);
     }
-  }
+  };
 
   return (
     <Fragment>
@@ -107,8 +107,8 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                                   href="#"
                                   title="Convert this payment to deposit will move this booking to deposit-paid status"
                                   onClick={(e) => {
-                                    e.preventDefault()
-                                    setClickedConvert(true)
+                                    e.preventDefault();
+                                    setClickedConvert(true);
                                   }}
                                 >
                                   Convert to deposit
@@ -127,8 +127,8 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                                     className="btn btn-primary btn-sm"
                                     href="#"
                                     onClick={(e) => {
-                                      e.preventDefault()
-                                      convertFinalPaymentToDeposit(element)
+                                      e.preventDefault();
+                                      convertFinalPaymentToDeposit(element);
                                     }}
                                   >
                                     Yes
@@ -137,8 +137,8 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                                     className="btn btn-secondary btn-sm"
                                     href="#"
                                     onClick={(e) => {
-                                      e.preventDefault()
-                                      setClickedConvert(false)
+                                      e.preventDefault();
+                                      setClickedConvert(false);
                                     }}
                                   >
                                     No
@@ -187,7 +187,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
         </div>
       )}
     </Fragment>
-  )
-}
+  );
+};
 
-export default Payments
+export default Payments;

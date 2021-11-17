@@ -1,15 +1,15 @@
 // ** React Imports
-import { useEffect } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 // ** Horizontal menu items array
-import navigation from '@src/navigation/horizontal'
+import navigation from '@src/navigation/horizontal';
 
 // ** Third Party Components
-import classnames from 'classnames'
+import classnames from 'classnames';
 
 // ** Utils
-import { isNavLinkActive, search, getAllParents } from '@layouts/utils'
+import { isNavLinkActive, search, getAllParents } from '@layouts/utils';
 
 const HorizontalNavMenuLink = ({
   item,
@@ -22,33 +22,33 @@ const HorizontalNavMenuLink = ({
   isChild
 }) => {
   // ** Conditional Link Tag, if item has newTab or externalLink props use <a> tag else use NavLink
-  const LinkTag = item.externalLink ? 'a' : NavLink
+  const LinkTag = item.externalLink ? 'a' : NavLink;
 
   // ** URL Vars
-  const location = useLocation()
-  const currentURL = location.pathname
+  const location = useLocation();
+  const currentURL = location.pathname;
 
-  const navLinkActive = isNavLinkActive(item.navLink, currentURL, routerProps)
+  const navLinkActive = isNavLinkActive(item.navLink, currentURL, routerProps);
 
   // ** Get parents of current items
   const searchParents = (navigation, currentURL) => {
-    const parents = search(navigation, currentURL, routerProps) // Search for parent object
-    const allParents = getAllParents(parents, 'id') // Parents Object to Parents Array
-    allParents.pop()
-    return allParents
-  }
+    const parents = search(navigation, currentURL, routerProps); // Search for parent object
+    const allParents = getAllParents(parents, 'id'); // Parents Object to Parents Array
+    allParents.pop();
+    return allParents;
+  };
 
   // ** Remove all items from OpenDropdown array
-  const resetOpenDropdowns = () => setOpenDropdown([])
+  const resetOpenDropdowns = () => setOpenDropdown([]);
 
   // ** On mount update active group array
   useEffect(() => {
     if (currentActiveItem !== null) {
-      setActiveItem(currentActiveItem)
-      const arr = searchParents(navigation, currentURL)
-      setGroupActive([...arr])
+      setActiveItem(currentActiveItem);
+      const arr = searchParents(navigation, currentURL);
+      setGroupActive([...arr]);
     }
-  }, [location])
+  }, [location]);
 
   return (
     <li
@@ -88,7 +88,7 @@ const HorizontalNavMenuLink = ({
         <span>{item.title}</span>
       </LinkTag>
     </li>
-  )
-}
+  );
+};
 
-export default HorizontalNavMenuLink
+export default HorizontalNavMenuLink;

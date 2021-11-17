@@ -1,21 +1,21 @@
 // ** React Imports
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment, useState, useEffect } from 'react';
 
 // ** Third Party Components
-import PropTypes from 'prop-types'
-import classnames from 'classnames'
-import UiLoader from '@components/ui-loader'
-import { ChevronDown, RotateCw, X } from 'react-feather'
-import { Card, CardHeader, CardTitle, Collapse, Spinner } from 'reactstrap'
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import UiLoader from '@components/ui-loader';
+import { ChevronDown, RotateCw, X } from 'react-feather';
+import { Card, CardHeader, CardTitle, Collapse, Spinner } from 'reactstrap';
 
 const CardActions = props => {
   // ** Props
-  const { title, actions, children, collapseIcon, reloadIcon, removeIcon, endReload } = props
+  const { title, actions, children, collapseIcon, reloadIcon, removeIcon, endReload } = props;
 
   // ** States
-  const [reload, setReload] = useState(false)
-  const [collapse, setCollapse] = useState(true)
-  const [visibility, setVisibility] = useState(true)
+  const [reload, setReload] = useState(false);
+  const [collapse, setCollapse] = useState(true);
+  const [visibility, setVisibility] = useState(true);
 
   /**
    ** If custom icon is defined then consider that else default icons
@@ -24,20 +24,20 @@ const CardActions = props => {
     collapse: collapseIcon ? collapseIcon : ChevronDown,
     remove: removeIcon ? removeIcon : X,
     reload: reloadIcon ? reloadIcon : RotateCw
-  }
+  };
 
   // ** Action to call
   const callAction = action => {
     switch (action) {
-      case 'collapse':
-        return setCollapse(!collapse)
-      case 'remove':
-        return setVisibility(false)
-      case 'reload':
-        return setReload(true)
-      default:
+    case 'collapse':
+      return setCollapse(!collapse);
+    case 'remove':
+      return setVisibility(false);
+    case 'reload':
+      return setReload(true);
+    default:
     }
-  }
+  };
 
   // ** Renders card actions
   const renderIcons = () => {
@@ -48,7 +48,7 @@ const CardActions = props => {
 
     if (Array.isArray(actions)) {
       return actions.map((action, i) => {
-        const Tag = Icons[action]
+        const Tag = Icons[action];
         return (
           <Tag
             key={i}
@@ -58,31 +58,31 @@ const CardActions = props => {
             size={15}
             onClick={() => callAction(action)}
           />
-        )
-      })
+        );
+      });
     } else {
-      const Tag = Icons[actions]
-      return <Tag className='cursor-pointer' size={15} onClick={() => callAction(actions)} />
+      const Tag = Icons[actions];
+      return <Tag className='cursor-pointer' size={15} onClick={() => callAction(actions)} />;
     }
-  }
+  };
 
   // ** Ends reload
   const removeReload = () => {
-    setReload(false)
-  }
+    setReload(false);
+  };
 
   // ** If user passes endReload function call it.
   useEffect(() => {
     if (reload) {
-      endReload(removeReload)
+      endReload(removeReload);
     }
-  })
+  });
 
   // ** If user passes collapse action then return <Collapse> as Wrapper else return <Fragment>
-  const CollapseWrapper = actions === 'collapse' || actions.includes('collapse') ? Collapse : Fragment
+  const CollapseWrapper = actions === 'collapse' || actions.includes('collapse') ? Collapse : Fragment;
 
   // ** If user passes reload action then return <BlockUi> as Wrapper else return <Fragment>
-  const BlockUiWrapper = actions === 'reload' || actions.includes('reload') ? UiLoader : Fragment
+  const BlockUiWrapper = actions === 'reload' || actions.includes('reload') ? UiLoader : Fragment;
 
   return (
     <BlockUiWrapper
@@ -108,10 +108,10 @@ const CardActions = props => {
         </CollapseWrapper>
       </Card>
     </BlockUiWrapper>
-  )
-}
+  );
+};
 
-export default CardActions
+export default CardActions;
 
 // ** PropTypes
 CardActions.propTypes = {
@@ -120,13 +120,13 @@ CardActions.propTypes = {
   removeIcon: PropTypes.any,
   reloadIcon: PropTypes.any,
   actions: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
-  endReload(props) {
+  endReload (props) {
     // ** User passes reload action and doesn't pass endReload then return Error
     if (
       (props['actions'] === 'reload' && props['endReload'] === undefined) ||
       (props['actions'].includes('reload') && props['endReload'] === undefined)
     ) {
-      return new Error('Please provide a function to end reload!')
+      return new Error('Please provide a function to end reload!');
     }
   }
-}
+};

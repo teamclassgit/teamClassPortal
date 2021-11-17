@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -13,13 +13,13 @@ import {
   Col,
   InputGroup,
   InputGroupAddon
-} from 'reactstrap'
-import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather'
-import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
-import ExportToExcel from '../../../components/ExportToExcel'
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName, getFormattedEventDate } from '../common'
+} from 'reactstrap';
+import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather';
+import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
+import ExportToExcel from '../../../components/ExportToExcel';
+import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName, getFormattedEventDate } from '../common';
 
-function BookingsHeader({
+function BookingsHeader ({
   setShowFiltersModal,
   setSwitchView,
   switchView,
@@ -45,20 +45,20 @@ function BookingsHeader({
   isPrivateRequest,
   isGeneralInquiries
 }) {
-  const [searchValue, setSearchValue] = useState(null)
-  const [limit, setLimit] = useState(defaultLimit)
-  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext, dateFilterContext } = useContext(FiltersContext)
-  const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
-  const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([])
-  const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([])
+  const [searchValue, setSearchValue] = useState(null);
+  const [limit, setLimit] = useState(defaultLimit);
+  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext, dateFilterContext } = useContext(FiltersContext);
+  const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
+  const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([]);
+  const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([]);
 
   useEffect(() => {
-    setTextFilterContext('')
-  }, [isInProgressBookings, isClosedBookings, isPrivateRequest, isGeneralInquiries])
+    setTextFilterContext('');
+  }, [isInProgressBookings, isClosedBookings, isPrivateRequest, isGeneralInquiries]);
 
   useEffect(() => {
     if (bookings) {
-      const bookingsArray = []
+      const bookingsArray = [];
 
       const headers = [
         'Updated',
@@ -77,12 +77,12 @@ function BookingsHeader({
         'Sign Up Deadline',
         'Close Booking Reason',
         'Event Date'
-      ]
+      ];
 
-      bookingsArray.push(headers)
+      bookingsArray.push(headers);
 
       for (const i in bookings) {
-        const bookingInfo = bookings[i]
+        const bookingInfo = bookings[i];
 
         const row = [
           bookingInfo.updatedAt,
@@ -101,21 +101,21 @@ function BookingsHeader({
           bookingInfo.signUpDeadline,
           bookingInfo.closedReason,
           getFormattedEventDate(bookingInfo._id, calendarEvents)
-        ]
-        bookingsArray.push(row)
+        ];
+        bookingsArray.push(row);
       }
 
-      setAttendeesExcelTable(bookingsArray)
+      setAttendeesExcelTable(bookingsArray);
     }
-  }, [bookings, customers, coordinators, classes, calendarEvents])
+  }, [bookings, customers, coordinators, classes, calendarEvents]);
 
   useEffect(() => {
     if (privateRequests) {
-      const privateClassRequestsArray = []
+      const privateClassRequestsArray = [];
 
-      const headers = ['Created', 'Name', 'Email', 'Phone', 'Coordinator', 'Attendees', 'Date Option 1', 'Date Option 2']
+      const headers = ['Created', 'Name', 'Email', 'Phone', 'Coordinator', 'Attendees', 'Date Option 1', 'Date Option 2'];
 
-      privateClassRequestsArray.push(headers)
+      privateClassRequestsArray.push(headers);
 
       for (const i in privateRequests) {
         const row = [
@@ -127,21 +127,21 @@ function BookingsHeader({
           privateRequests[i].attendees,
           privateRequests[i].dateOption1,
           privateRequests[i].dateOption2
-        ]
+        ];
 
-        privateClassRequestsArray.push(row)
+        privateClassRequestsArray.push(row);
       }
-      setPrivateRequestsExcelTable(privateClassRequestsArray)
+      setPrivateRequestsExcelTable(privateClassRequestsArray);
     }
-  }, [privateRequests, coordinators])
+  }, [privateRequests, coordinators]);
 
   useEffect(() => {
     if (generalInquiries) {
-      const questionsArray = []
+      const questionsArray = [];
 
-      const headers = ['Created', 'Name', 'Email', 'Phone', 'Inquiry']
+      const headers = ['Created', 'Name', 'Email', 'Phone', 'Inquiry'];
 
-      questionsArray.push(headers)
+      questionsArray.push(headers);
 
       for (const i in generalInquiries) {
         const row = [
@@ -150,13 +150,13 @@ function BookingsHeader({
           generalInquiries[i].email,
           generalInquiries[i].phone,
           generalInquiries[i].inquiry
-        ]
+        ];
 
-        questionsArray.push(row)
+        questionsArray.push(row);
       }
-      setGeneralInquiriesExcelTable(questionsArray)
+      setGeneralInquiriesExcelTable(questionsArray);
     }
-  }, [generalInquiries])
+  }, [generalInquiries]);
 
   return (
     <Card className="w-100  shadow-none bg-transparent m-0">
@@ -168,8 +168,8 @@ function BookingsHeader({
               <a
                 href="#"
                 onClick={(e) => {
-                  e.preventDefault()
-                  setShowFiltersModal(true)
+                  e.preventDefault();
+                  setShowFiltersModal(true);
                 }}
               >
                 {coordinatorFilterContext ? coordinatorFilterContext.label.join(', ') : 'All Coordinators'}
@@ -183,15 +183,15 @@ function BookingsHeader({
               type="text"
               value={searchValue}
               onChange={(e) => {
-                e.preventDefault()
-                setSearchValue(e.target.value)
+                e.preventDefault();
+                setSearchValue(e.target.value);
               }}
             />
             <InputGroupAddon addonType="append">
               <Button
                 color="primary"
                 onClick={() => {
-                  setTextFilterContext({ type: 'text', value: searchValue })
+                  setTextFilterContext({ type: 'text', value: searchValue });
                 }}
               >
                 <Search size={12} />
@@ -209,8 +209,8 @@ function BookingsHeader({
                   <DropdownItem
                     className="w-100"
                     onClick={(e) => {
-                      setLimit(200)
-                      onChangeLimit(200)
+                      setLimit(200);
+                      onChangeLimit(200);
                     }}
                   >
                     <span className="align-right">200</span>
@@ -218,8 +218,8 @@ function BookingsHeader({
                   <DropdownItem
                     className="w-100"
                     onClick={(e) => {
-                      setLimit(400)
-                      onChangeLimit(400)
+                      setLimit(400);
+                      onChangeLimit(400);
                     }}
                   >
                     <span className="align-right">400</span>
@@ -227,8 +227,8 @@ function BookingsHeader({
                   <DropdownItem
                     className="w-100"
                     onClick={(e) => {
-                      setLimit(600)
-                      onChangeLimit(600)
+                      setLimit(600);
+                      onChangeLimit(600);
                     }}
                   >
                     <span className="align-right">600</span>
@@ -236,8 +236,8 @@ function BookingsHeader({
                   <DropdownItem
                     className="w-100"
                     onClick={(e) => {
-                      setLimit(1000)
-                      onChangeLimit(1000)
+                      setLimit(1000);
+                      onChangeLimit(1000);
                     }}
                   >
                     <span className="align-right">1000</span>
@@ -245,8 +245,8 @@ function BookingsHeader({
                   <DropdownItem
                     className="w-100"
                     onClick={(e) => {
-                      setLimit(2000)
-                      onChangeLimit(2000)
+                      setLimit(2000);
+                      onChangeLimit(2000);
                     }}
                   >
                     <span className="align-right">2000</span>
@@ -254,8 +254,8 @@ function BookingsHeader({
                   <DropdownItem
                     className="w-100"
                     onClick={(e) => {
-                      setLimit(20000)
-                      onChangeLimit(20000)
+                      setLimit(20000);
+                      onChangeLimit(20000);
                     }}
                   >
                     <span className="align-right">ALL</span>
@@ -324,9 +324,9 @@ function BookingsHeader({
                     phone: '',
                     company: '',
                     attendees: ''
-                  }
-                  setElementToAdd(newElement)
-                  showAddModal()
+                  };
+                  setElementToAdd(newElement);
+                  showAddModal();
                 }}
                 title="Add Booking"
               >
@@ -352,7 +352,7 @@ function BookingsHeader({
         </Col>
       </CardHeader>
     </Card>
-  )
+  );
 }
 
-export default BookingsHeader
+export default BookingsHeader;

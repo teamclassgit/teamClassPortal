@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react'
-import { AlertCircle, ArrowLeft, ArrowRight } from 'react-feather'
-import { Alert, Button, Col, Form, FormGroup, Row, Badge } from 'reactstrap'
-import Flatpickr from 'react-flatpickr'
-import moment from 'moment'
-import { toAmPm } from '../../../utility/Utils'
+import React, { Fragment } from 'react';
+import { AlertCircle, ArrowLeft, ArrowRight } from 'react-feather';
+import { Alert, Button, Col, Form, FormGroup, Row, Badge } from 'reactstrap';
+import Flatpickr from 'react-flatpickr';
+import moment from 'moment';
+import { toAmPm } from '../../../utility/Utils';
 import {
   DEFAULT_AVAILABILITY_ALWAYS,
   DEFAULT_AVAILABILITY,
@@ -12,17 +12,17 @@ import {
   BOOKING_QUOTE_STATUS,
   DATE_AND_TIME_CONFIRMATION_STATUS,
   BOOKING_DATE_REQUESTED_STATUS
-} from '../../../utility/Constants'
-import { useMutation } from '@apollo/client'
-import mutationRequestPreferredTime from '../../../graphql/MutationRequestPreferredTime'
-import { v4 as uuid } from 'uuid'
+} from '../../../utility/Constants';
+import { useMutation } from '@apollo/client';
+import mutationRequestPreferredTime from '../../../graphql/MutationRequestPreferredTime';
+import { v4 as uuid } from 'uuid';
 
 const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, calendarEvent, setCalendarEvent, booking, teamClass }) => {
-  const [date, setDate] = React.useState(null)
-  const [time, setTime] = React.useState(null)
-  const [availableTimes, setAvailableTimes] = React.useState(null)
-  const [processing, setProcessing] = React.useState(false)
-  const [createOrUpdateCalendarEvent, { ...calendarEventData }] = useMutation(mutationRequestPreferredTime, {})
+  const [date, setDate] = React.useState(null);
+  const [time, setTime] = React.useState(null);
+  const [availableTimes, setAvailableTimes] = React.useState(null);
+  const [processing, setProcessing] = React.useState(false);
+  const [createOrUpdateCalendarEvent, { ...calendarEventData }] = useMutation(mutationRequestPreferredTime, {});
 
   const isDateTooEarly = () => {
     /*  const today = new Date()
@@ -31,39 +31,39 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
   
           return date && date.length > 0 && date[0] > today && date[0] <= reference */
 
-    return false
-  }
+    return false;
+  };
 
   const isDateInThePast = () => {
     //This validation can be added if want to avoid dates in the past !date || date.length === 0 ? false : date[0] <= new Date()
-    return false
-  }
+    return false;
+  };
 
   const isRushDate = () => {
-    const today = new Date()
-    const reference = new Date()
-    reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_CONSIDERED_RUSH_DATE) //15 days
-    return !isDateTooEarly() && date && date.length > 0 && date[0] > today && date[0] <= reference
-  }
+    const today = new Date();
+    const reference = new Date();
+    reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_CONSIDERED_RUSH_DATE); //15 days
+    return !isDateTooEarly() && date && date.length > 0 && date[0] > today && date[0] <= reference;
+  };
 
   React.useEffect(() => {
     //setDate([new Date(2021, 4, 10)])
     setDate(
       calendarEvent ? [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)] : [new Date().setDate(new Date().getDate() + 20)]
-    )
-    setTime(calendarEvent ? `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}` : null)
-  }, [calendarEvent])
+    );
+    setTime(calendarEvent ? `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}` : null);
+  }, [calendarEvent]);
 
   const hasEvents = (selectedDate, fullStartHour, fullEndHour, breakBetweenClasses) => {
-    if (!availableEvents) return false
+    if (!availableEvents) return false;
 
-    const day = selectedDate.date()
-    const month = selectedDate.month() + 1
-    const year = selectedDate.year()
+    const day = selectedDate.date();
+    const month = selectedDate.month() + 1;
+    const year = selectedDate.year();
 
     const calendarEvents = availableEvents.filter((element) => {
-      const eventFullStartHour = element.fromHour + element.fromMinutes / 60 - breakBetweenClasses
-      const eventFullEndHour = element.toHour + element.toMinutes / 60 + breakBetweenClasses
+      const eventFullStartHour = element.fromHour + element.fromMinutes / 60 - breakBetweenClasses;
+      const eventFullEndHour = element.toHour + element.toMinutes / 60 + breakBetweenClasses;
 
       return (
         element.bookingId !== booking._id &&
@@ -72,34 +72,34 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         element.year === year &&
         ((fullStartHour >= eventFullStartHour && fullStartHour < eventFullEndHour) ||
           (fullEndHour >= eventFullStartHour && fullEndHour < eventFullEndHour))
-      )
-    })
+      );
+    });
 
-    return calendarEvents && calendarEvents.length > 0
-  }
+    return calendarEvents && calendarEvents.length > 0;
+  };
 
   const getAvailableTimes = (selectedDate) => {
-    const times = []
+    const times = [];
 
     if (selectedDate && teamClass) {
       const availabilities =
         teamClass.availability && teamClass.availability.length > 0 && !DEFAULT_AVAILABILITY_ALWAYS
           ? teamClass.availability.filter((element) => element.dayOfWeek === selectedDate.isoWeekday())
-          : DEFAULT_AVAILABILITY.filter((element) => element.dayOfWeek === selectedDate.isoWeekday())
+          : DEFAULT_AVAILABILITY.filter((element) => element.dayOfWeek === selectedDate.isoWeekday());
 
       for (let j = 0; j < availabilities.length; j++) {
-        const availability = availabilities[j]
-        const breakBetweenClasses = BREAK_BETWEEN_CLASSES_HOURS
-        const incrementInHours = availability.increment / 60
-        const fromHourAndMinutes = availability.fromHour + availability.fromMinutes / 60
-        const toHourAndMinutes = availability.toHour + availability.toMinutes / 60
+        const availability = availabilities[j];
+        const breakBetweenClasses = BREAK_BETWEEN_CLASSES_HOURS;
+        const incrementInHours = availability.increment / 60;
+        const fromHourAndMinutes = availability.fromHour + availability.fromMinutes / 60;
+        const toHourAndMinutes = availability.toHour + availability.toMinutes / 60;
         for (let i = fromHourAndMinutes; i < toHourAndMinutes; i = i + incrementInHours) {
-          const fullEndHour = i + teamClass.duration
-          const fullMinutes = i * 60
-          let eHour = Math.floor(fullMinutes / 60)
-          eHour = eHour < 10 ? `${eHour}` : eHour
-          let eMinutes = fullMinutes % 60
-          eMinutes = eMinutes < 10 ? `0${eMinutes}` : eMinutes
+          const fullEndHour = i + teamClass.duration;
+          const fullMinutes = i * 60;
+          let eHour = Math.floor(fullMinutes / 60);
+          eHour = eHour < 10 ? `${eHour}` : eHour;
+          let eMinutes = fullMinutes % 60;
+          eMinutes = eMinutes < 10 ? `0${eMinutes}` : eMinutes;
 
           times.push({
             hour: eHour,
@@ -107,30 +107,30 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
             label: `${eHour}:${eMinutes}`,
             amPm: toAmPm(eHour, eMinutes, ''),
             open: teamClass.multipleInstructors || !hasEvents(selectedDate, i, fullEndHour, breakBetweenClasses)
-          })
+          });
         }
       }
     }
 
-    return times
-  }
+    return times;
+  };
 
   React.useEffect(() => {
     if (date) {
-      setAvailableTimes(getAvailableTimes(moment(date[0])))
+      setAvailableTimes(getAvailableTimes(moment(date[0])));
     }
-  }, [date])
+  }, [date]);
 
   const saveCalendarEvent = async () => {
-    setProcessing(true)
+    setProcessing(true);
 
-    const selectedDate = moment(date[0])
-    const eventDate = moment(`${selectedDate.format('DD/MM/YYYY')} ${time}`, 'DD/MM/YYYY HH:mm')
-    const newFromHour = eventDate.hour()
-    const newFromMinutes = eventDate.minutes()
-    const eventEnd = eventDate.add(teamClass.duration, 'hours')
-    const newToHour = eventEnd.hour()
-    const newToMinutes = eventEnd.minutes()
+    const selectedDate = moment(date[0]);
+    const eventDate = moment(`${selectedDate.format('DD/MM/YYYY')} ${time}`, 'DD/MM/YYYY HH:mm');
+    const newFromHour = eventDate.hour();
+    const newFromMinutes = eventDate.minutes();
+    const eventEnd = eventDate.add(teamClass.duration, 'hours');
+    const newToHour = eventEnd.hour();
+    const newToMinutes = eventEnd.minutes();
 
     const sameEventDate =
       calendarEvent &&
@@ -139,11 +139,11 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
       selectedDate.month() + 1 === calendarEvent.month &&
       selectedDate.date() === calendarEvent.day &&
       newFromHour === calendarEvent.fromHour &&
-      newFromMinutes === calendarEvent.fromMinutes
+      newFromMinutes === calendarEvent.fromMinutes;
 
     if (sameEventDate) {
-      setProcessing(false)
-      return
+      setProcessing(false);
+      return;
     }
 
     try {
@@ -163,22 +163,22 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         rushFee: classRushFee,
         bookingStatus: booking.status === BOOKING_QUOTE_STATUS ? BOOKING_DATE_REQUESTED_STATUS : booking.status,
         updatedAt: new Date()
-      }
+      };
 
       const result = await createOrUpdateCalendarEvent({
         variables: calendarEventData
-      })
+      });
 
-      if (result && result.data) setCalendarEvent(result.data.upsertOneCalendarEvent)
+      if (result && result.data) setCalendarEvent(result.data.upsertOneCalendarEvent);
 
-      console.log('calendar event saved')
+      console.log('calendar event saved');
 
-      setProcessing(false)
+      setProcessing(false);
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
+      console.log(ex);
+      setProcessing(false);
     }
-  }
+  };
 
   return (
     <Fragment>
@@ -197,8 +197,8 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
                 value={date}
                 options={{ inline: true }}
                 onChange={(value) => {
-                  setDate(value)
-                  setTime(null)
+                  setDate(value);
+                  setTime(null);
                 }}
               />
             </FormGroup>
@@ -252,7 +252,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         </div>
       </Form>
     </Fragment>
-  )
-}
+  );
+};
 
-export default DateTimeConfirmation
+export default DateTimeConfirmation;

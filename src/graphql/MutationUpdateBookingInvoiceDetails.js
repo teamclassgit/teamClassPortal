@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from '@apollo/client';
 
 export default gql`
   mutation updateBookingInvoiceDetails(
@@ -91,4 +91,4 @@ export default gql`
       updatedAt
     }
   }
-`
+`;

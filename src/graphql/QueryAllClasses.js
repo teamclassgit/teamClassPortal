@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from '@apollo/client';
 
 export default gql`
   query GetClasses($filter: TeamClassQueryInput!) {
@@ -26,4 +26,4 @@ export default gql`
       category
     }
   }
-`
+`;

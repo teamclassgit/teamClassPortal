@@ -1,15 +1,15 @@
 // ** React Imports
-import React, { forwardRef, Fragment, useState } from 'react'
+import React, { forwardRef, Fragment, useState } from 'react';
 // ** Add New Modal Component
-import AddNewAttendee from './AddNewAttendee'
-import UploadData from './UploadData'
+import AddNewAttendee from './AddNewAttendee';
+import UploadData from './UploadData';
 // ** Custom Components
-import Avatar from '@components/avatar'
+import Avatar from '@components/avatar';
 // ** Third Party Components
-import ReactPaginate from 'react-paginate'
-import DataTable from 'react-data-table-component'
+import ReactPaginate from 'react-paginate';
+import DataTable from 'react-data-table-component';
 
-import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather'
+import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
 
 import {
   Badge,
@@ -28,8 +28,8 @@ import {
   ModalFooter,
   Row,
   UncontrolledButtonDropdown
-} from 'reactstrap'
-import ExportToExcel from '../../../components/ExportToExcel'
+} from 'reactstrap';
+import ExportToExcel from '../../../components/ExportToExcel';
 
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
@@ -37,46 +37,46 @@ const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
     <input type="checkbox" className="custom-control-input" ref={ref} {...rest} />
     <label className="custom-control-label" onClick={onClick} />
   </div>
-))
+));
 
 const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee, deleteAttendee, updateAttendeesCount, teamClassInfo }) => {
   // ** States
-  const [currentElement, setCurrentElement] = useState(null)
-  const [data, setData] = useState(attendees)
-  const [modal, setModal] = useState(false)
-  const [modalUpload, setModalUpload] = useState(false)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [searchValue, setSearchValue] = useState('')
-  const [filteredData, setFilteredData] = useState([])
-  const [mode, setMode] = useState(null)
-  const [centeredModal, setCenteredModal] = useState(false)
-  const [attendeesExcelTable, setAttendeesExcelTable] = useState([])
-  const [excelHeadersTemplate, setExcelHeadersTemplate] = useState([])
+  const [currentElement, setCurrentElement] = useState(null);
+  const [data, setData] = useState(attendees);
+  const [modal, setModal] = useState(false);
+  const [modalUpload, setModalUpload] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  const [mode, setMode] = useState(null);
+  const [centeredModal, setCenteredModal] = useState(false);
+  const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
+  const [excelHeadersTemplate, setExcelHeadersTemplate] = useState([]);
 
   // ** Function to handle Modal toggle
-  const handleModal = () => setModal(!modal)
+  const handleModal = () => setModal(!modal);
 
   // ** Function to handle Modal toggle
-  const handleModalUpload = () => setModalUpload(!modalUpload)
+  const handleModalUpload = () => setModalUpload(!modalUpload);
 
   React.useEffect(() => {
-    setData(attendees)
-  }, [attendees])
+    setData(attendees);
+  }, [attendees]);
 
   // ** Vars
-  const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary']
+  const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
 
   const status = {
     1: { title: 'Waiting', color: 'light-warning' },
     2: { title: 'Completed', color: 'light-success' }
-  }
+  };
 
   const getStatus = (row) => {
-    return row.addressLine1 && row.city && row.state && row.zip && row.country ? 2 : 1
-  }
+    return row.addressLine1 && row.city && row.state && row.zip && row.country ? 2 : 1;
+  };
 
   // ** Custom close btn
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setCenteredModal(!centeredModal)} />
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setCenteredModal(!centeredModal)} />;
 
   // ** Table Common Column
   const columns = [
@@ -123,8 +123,8 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
             <a
               className="mr-2"
               onClick={(e) => {
-                e.preventDefault()
-                setCenteredModal(!centeredModal)
+                e.preventDefault();
+                setCenteredModal(!centeredModal);
               }}
               href="#"
               title="Remove from list"
@@ -133,9 +133,9 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
             </a>
             <a
               onClick={(e) => {
-                setCurrentElement(row)
-                handleModal()
-                setMode('edit')
+                setCurrentElement(row);
+                handleModal();
+                setMode('edit');
               }}
               href="#"
               title="Edit attendee"
@@ -151,8 +151,8 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
                 <Button
                   color="secondary"
                   onClick={(e) => {
-                    e.preventDefault()
-                    setCenteredModal(!centeredModal)
+                    e.preventDefault();
+                    setCenteredModal(!centeredModal);
                   }}
                 >
                   Cancel
@@ -160,13 +160,13 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
                 <Button
                   color="primary"
                   onClick={(e) => {
-                    e.preventDefault()
+                    e.preventDefault();
                     deleteAttendee(row._id).then((result) => {
-                      const newData = data.filter((element) => element._id !== row._id)
-                      setData(newData)
-                      updateAttendeesCount(newData.length)
-                    })
-                    setCenteredModal(!centeredModal)
+                      const newData = data.filter((element) => element._id !== row._id);
+                      setData(newData);
+                      updateAttendeesCount(newData.length);
+                    });
+                    setCenteredModal(!centeredModal);
                   }}
                 >
                   Delete
@@ -174,26 +174,26 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
               </ModalFooter>
             </Modal>
           </div>
-        )
+        );
       }
     }
-  ]
+  ];
 
   React.useEffect(() => {
     if (attendees && teamClassInfo) {
-      const attendeesArray = []
+      const attendeesArray = [];
 
-      const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country']
+      const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country'];
 
       for (const dynamicField in teamClassInfo.registrationFields) {
-        headers.push(teamClassInfo.registrationFields[dynamicField].label)
+        headers.push(teamClassInfo.registrationFields[dynamicField].label);
       }
-      setExcelHeadersTemplate([headers])
+      setExcelHeadersTemplate([headers]);
 
-      attendeesArray.push(headers)
+      attendeesArray.push(headers);
 
       for (const i in attendees) {
-        const attendeeInfo = attendees[i]
+        const attendeeInfo = attendees[i];
         const row = [
           attendeeInfo.name,
           attendeeInfo.email,
@@ -204,24 +204,24 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           attendeeInfo.state,
           attendeeInfo.zip,
           attendeeInfo.country
-        ]
+        ];
 
         for (const dynamicField in attendeeInfo.additionalFields) {
-          row.push(attendeeInfo.additionalFields[dynamicField].value)
+          row.push(attendeeInfo.additionalFields[dynamicField].value);
         }
 
-        attendeesArray.push(row)
+        attendeesArray.push(row);
       }
 
-      setAttendeesExcelTable(attendeesArray)
+      setAttendeesExcelTable(attendeesArray);
     }
-  }, [attendees, teamClassInfo])
+  }, [attendees, teamClassInfo]);
 
   // ** Function to handle filter
   const handleFilter = (e) => {
-    const value = e.target.value
-    let updatedData = []
-    setSearchValue(value)
+    const value = e.target.value;
+    let updatedData = [];
+    setSearchValue(value);
 
     if (value.length) {
       updatedData = data.filter((item) => {
@@ -234,7 +234,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           (item.city && item.city.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.state && item.state.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.zip && item.zip.toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.country && item.country.toLowerCase().startsWith(value.toLowerCase()))
+          (item.country && item.country.toLowerCase().startsWith(value.toLowerCase()));
 
         const includes =
           (item.name && item.name.toLowerCase().includes(value.toLowerCase())) ||
@@ -245,23 +245,23 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           (item.city && item.city.toLowerCase().includes(value.toLowerCase())) ||
           (item.state && item.state.toLowerCase().includes(value.toLowerCase())) ||
           (item.zip && item.zip.toLowerCase().includes(value.toLowerCase())) ||
-          (item.country && item.country.toLowerCase().includes(value.toLowerCase()))
+          (item.country && item.country.toLowerCase().includes(value.toLowerCase()));
 
         if (startsWith) {
-          return startsWith
+          return startsWith;
         } else if (!startsWith && includes) {
-          return includes
-        } else return null
-      })
-      setFilteredData(updatedData)
-      setSearchValue(value)
+          return includes;
+        } else return null;
+      });
+      setFilteredData(updatedData);
+      setSearchValue(value);
     }
-  }
+  };
 
   // ** Function to handle Pagination
   const handlePagination = (page) => {
-    setCurrentPage(page.selected)
-  }
+    setCurrentPage(page.selected);
+  };
 
   // ** Custom Pagination
   const CustomPagination = () => (
@@ -287,7 +287,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
     />
-  )
+  );
 
   return (
     <Fragment>
@@ -354,7 +354,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
                   className="ml-2"
                   color="primary"
                   onClick={(e) => {
-                    setMode('new')
+                    setMode('new');
                     const newElementTemplate = {
                       city: '',
                       phone: '',
@@ -367,9 +367,9 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
                       name: '',
                       state: '',
                       dinamycValues: []
-                    }
-                    setCurrentElement(newElementTemplate)
-                    handleModal()
+                    };
+                    setCurrentElement(newElementTemplate);
+                    handleModal();
                   }}
                 >
                   <Plus size={15} />
@@ -425,7 +425,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
         teamClassInfo={teamClassInfo}
       />
     </Fragment>
-  )
-}
+  );
+};
 
-export default DataTableAttendees
+export default DataTableAttendees;

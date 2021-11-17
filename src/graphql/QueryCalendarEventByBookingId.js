@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client"
+import {gql} from "@apollo/client";
 
 export default gql`
 query ListCalendarEvents($bookingId:String!) {
@@ -16,4 +16,4 @@ query ListCalendarEvents($bookingId:String!) {
       month
       rushFee
   }
-}`
+}`;

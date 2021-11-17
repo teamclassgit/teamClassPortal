@@ -4,17 +4,17 @@ import { NavItem, NavLink } from 'reactstrap';
 import { Sun, Moon, Menu } from 'react-feather';
 
 // @scripts
-import UserDropdown from './UserDropdown'
+import UserDropdown from './UserDropdown';
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
 
   const ThemeToggler = () => {
     if (skin === 'dark') {
-      return <Sun className='ficon' onClick={() => setSkin('light')} />
+      return <Sun className='ficon' onClick={() => setSkin('light')} />;
     } else {
-      return <Moon className='ficon' onClick={() => setSkin('dark')} />
+      return <Moon className='ficon' onClick={() => setSkin('dark')} />;
     }
-  }
+  };
 
   return (
     <>
@@ -36,8 +36,8 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
         <UserDropdown />
       </ul>
     </>
-  )
-}
+  );
+};
 
 export default NavbarUser;
 
@@ -45,4 +45,4 @@ NavbarUser.propTypes = {
   skin: PropTypes.string,
   setSkin: PropTypes.func,
   setMenuVisibility: PropTypes.func
-}
+};

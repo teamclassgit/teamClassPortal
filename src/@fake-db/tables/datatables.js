@@ -1,5 +1,5 @@
-import mock from '../mock'
-import { paginateArray } from '../utils'
+import mock from '../mock';
+import { paginateArray } from '../utils';
 
 const data = [
   {
@@ -1408,28 +1408,28 @@ const data = [
     experience: '7 Years',
     status: 2
   }
-]
+];
 
 mock.onGet('/api/datatables/initial-data').reply(config => {
-  return [200, data]
-})
+  return [200, data];
+});
 
 mock.onGet('/api/datatables/data').reply(config => {
   // eslint-disable-next-line object-curly-newline
-  const { q = '', perPage = 10, page = 1 } = config
+  const { q = '', perPage = 10, page = 1 } = config;
   /* eslint-enable */
 
-  const queryLowered = q.toLowerCase()
+  const queryLowered = q.toLowerCase();
   const filteredData = data.filter(
     item =>
-      /* eslint-disable operator-linebreak, implicit-arrow-linebreak */
+    /* eslint-disable operator-linebreak, implicit-arrow-linebreak */
       item.full_name.toLowerCase().includes(queryLowered) ||
       item.post.toLowerCase().includes(queryLowered) ||
       item.email.toLowerCase().includes(queryLowered) ||
       item.age.toLowerCase().includes(queryLowered) ||
       item.salary.toLowerCase().includes(queryLowered) ||
       item.start_date.toLowerCase().includes(queryLowered)
-  )
+  );
   /* eslint-enable  */
 
   return [
@@ -1439,5 +1439,5 @@ mock.onGet('/api/datatables/data').reply(config => {
       invoices: paginateArray(filteredData, perPage, page),
       total: filteredData.length
     }
-  ]
-})
+  ];
+});

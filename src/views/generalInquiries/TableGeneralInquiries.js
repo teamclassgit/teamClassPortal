@@ -1,13 +1,13 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react';
 
-import moment from 'moment'
-import DataTable from 'react-data-table-component'
-import { ChevronDown } from 'react-feather'
-import ReactPaginate from 'react-paginate'
-import { Card } from 'reactstrap'
+import moment from 'moment';
+import DataTable from 'react-data-table-component';
+import { ChevronDown } from 'react-feather';
+import ReactPaginate from 'react-paginate';
+import { Card } from 'reactstrap';
 
 const TableGeneralInquiries = ({ filteredData }) => {
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0);
 
   // ** Table Common Column
   const columns = [
@@ -78,12 +78,12 @@ const TableGeneralInquiries = ({ filteredData }) => {
         </small>
       )
     }
-  ]
+  ];
 
   // ** Function to handle Pagination
   const handlePagination = (page) => {
-    setCurrentPage(page.selected)
-  }
+    setCurrentPage(page.selected);
+  };
 
   // ** Custom Pagination
   const CustomPagination = () => (
@@ -109,7 +109,7 @@ const TableGeneralInquiries = ({ filteredData }) => {
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
     />
-  )
+  );
 
   return (
     <Fragment>
@@ -129,7 +129,7 @@ const TableGeneralInquiries = ({ filteredData }) => {
         />
       </Card>
     </Fragment>
-  )
-}
+  );
+};
 
-export default TableGeneralInquiries
+export default TableGeneralInquiries;

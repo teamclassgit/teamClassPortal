@@ -1,53 +1,52 @@
-import { useState, useContext } from 'react'
-import { useSkin } from '@hooks/useSkin'
-import { Facebook, GitHub, Mail, Twitter } from 'react-feather'
-import { Link } from 'react-router-dom'
-import InputPasswordToggle from '@components/input-password-toggle'
+import { useState, useContext } from 'react';
+import { useSkin } from '@hooks/useSkin';
+import { Facebook, GitHub, Mail, Twitter } from 'react-feather';
+import { Link } from 'react-router-dom';
+import InputPasswordToggle from '@components/input-password-toggle';
 // ** Configs
-import themeConfig from '@configs/themeConfig'
-import { Button, CardText, CardTitle, Col, CustomInput, Form, FormGroup, Input, Label, Row, Alert } from 'reactstrap'
-import '@styles/base/pages/page-auth.scss'
-import { loginWithEmailAndPassword, logoutUser } from '../utility/RealmApolloClient'
-import { FiltersContext } from '../context/FiltersContext/FiltersContext'
-import { getUserData } from '../utility/Utils'
+import themeConfig from '@configs/themeConfig';
+import { Button, CardText, CardTitle, Col, CustomInput, Form, FormGroup, Input, Label, Row, Alert } from 'reactstrap';
+import '@styles/base/pages/page-auth.scss';
+import { loginWithEmailAndPassword, logoutUser } from '../utility/RealmApolloClient';
+import { FiltersContext } from '../context/FiltersContext/FiltersContext';
+import { getUserData } from '../utility/Utils';
 
 const Login = (props) => {
   
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
-  const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext);
 
   const setDefaultFilters = (userData) => {
-    if (userData && userData.customData && userData.customData.coordinatorId)
-      setCoordinatorFilterContext({
-        type: 'coordinator',
-        value: [userData.customData.coordinatorId],
-        label: [userData.customData.name]
-      })
-  }
+    if (userData && userData.customData && userData.customData.coordinatorId) setCoordinatorFilterContext({
+      type: 'coordinator',
+      value: [userData.customData.coordinatorId],
+      label: [userData.customData.name]
+    });
+  };
 
   const submitHandler = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     if (event.target.email.value && event.target.password.value) {
       try {
-        setLoading(true)
-        setError(false)
-        await loginWithEmailAndPassword(event.target.email.value, event.target.password.value)
-        const userData = getUserData()
+        setLoading(true);
+        setError(false);
+        await loginWithEmailAndPassword(event.target.email.value, event.target.password.value);
+        const userData = getUserData();
         if (!userData || !userData.customData || !userData.customData.role) {
-          await logoutUser()
-          setError(true)
+          await logoutUser();
+          setError(true);
         } else {
-          setDefaultFilters(userData)
-          setLoading(false)
-          props.history.push('/')
+          setDefaultFilters(userData);
+          setLoading(false);
+          props.history.push('/');
         }
       } catch (ex) {
-        setLoading(false)
-        setError(true)
+        setLoading(false);
+        setError(true);
       }
     }
-  }
+  };
 
   return (
     <div className="auth-wrapper auth-v2">
@@ -119,7 +118,7 @@ const Login = (props) => {
         </Col>
       </Row>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
