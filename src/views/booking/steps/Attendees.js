@@ -31,11 +31,13 @@ const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountA
   };
 
   const deleteAttendee = async (attendeeId) => {
-    await removeAttendee({
+    const result = await removeAttendee({
       variables: {
         id: attendeeId
       }
     });
+
+    return !result || !result.data || !result.data.deleteOneAttendee ? false : true;
   };
 
   return (
