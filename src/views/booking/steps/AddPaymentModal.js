@@ -15,7 +15,7 @@ import {
 } from '../../../utility/Constants'
 import { capitalizeString } from '../../../utility/Utils'
 
-const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPayments, currentPayment, setCurrentPayment, indexToDelete }) => {
+const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPayments, currentPayment, setCurrentPayment, indexPayment }) => {
   const [newName, setNewName] = useState(null)
   const [newEmail, setNewEmail] = useState(null)
   const [newPhone, setNewPhone] = useState(null)
@@ -27,7 +27,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
   const [newPaymentMethod, setNewPaymentMethod] = useState(null)
   const [newPaymentId, setNewPaymentId] = useState(null)
   const [processing, setProcessing] = useState(false)
-  console.log('currentPayment', currentPayment)
+
   const [updateBookingPayment] = useMutation(mutationUpdateBookingPayments, {})
 
   const paymentNameOptions = [
@@ -68,7 +68,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       setNewAmount(currentPayment.amount / 100)
       setNewCardBrand(currentPayment.cardBrand)
       setNewCardLastFourDigits(currentPayment.cardLast4)
-      setNewPaymentCreationDate(currentPayment.createdAt)
+      setNewPaymentCreationDate([currentPayment.createdAt])
       setNewPaymentName(currentPayment.paymentName)
       setNewPaymentMethod(currentPayment.paymentMethod)
       setNewPaymentId(currentPayment.paymentId)
@@ -85,10 +85,10 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
   const updateBookingPaymentInfo = async () => {
     setProcessing(true)
 
-    let newPaymentArray = payments ? [...payments] : []
+    let newPaymentsArray = payments ? [...payments] : []
     let bookingStatus = ''
 
-    let newPayments = {
+    let newPayment = {
       name: newName,
       email: newEmail,
       phone: newPhone,
@@ -103,9 +103,10 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       status: 'succeeded'
     }
 
-    if (mode === 'add') {
-      newPaymentArray.push(newPayments)
+    if (mode === 'edit') {
+      newPaymentsArray = newPaymentsArray.filter((element, index) => index !== indexPayment)
     }
+    newPaymentsArray.push(newPayment)
 
     if (newPaymentName === 'deposit' && (booking.status === BOOKING_QUOTE_STATUS || booking.status === BOOKING_DATE_REQUESTED_STATUS)) {
       bookingStatus = BOOKING_DEPOSIT_CONFIRMATION_STATUS
@@ -125,16 +126,15 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
         variables: {
           bookingId: booking._id,
           updatedAt: new Date(),
-          payments: newPaymentArray,
+          payments: newPaymentsArray,
           status: bookingStatus
         }
       })
       if (resultUpdateBookingPayment && resultUpdateBookingPayment.data) {
         setProcessing(false)
-        console.log('Booking payments updated!')
+        console.log('Booking payments updated!', resultUpdateBookingPayment.data.updateOneBooking)
       }
-      console.log('resultUpdateBookingPayment', resultUpdateBookingPayment.data.updateOneBooking)
-      setPayments(newPaymentArray)
+      setPayments(newPaymentsArray)
     } catch (er) {
       setProcessing(false)
 

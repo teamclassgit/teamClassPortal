@@ -1,30 +1,12 @@
 import React, { Fragment, useState } from 'react'
-import {
-  Badge,
-  Button,
-  Card,
-  CardHeader,
-  CardTitle,
-  Col,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Input,
-  Label,
-  Modal,
-  ModalHeader,
-  ModalFooter,
-  Row,
-  Table,
-  UncontrolledButtonDropdown
-} from 'reactstrap'
+import { Badge, Button, Card, Col, Modal, ModalHeader, ModalFooter, Row, Table } from 'reactstrap'
 import { useMutation } from '@apollo/client'
 import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments'
 import moment from 'moment'
 import { capitalizeString } from '../../../utility/Utils'
 import { BOOKING_DEPOSIT_CONFIRMATION_STATUS, CHARGE_URL } from '../../../utility/Constants'
 import AddPaymentModal from './AddPaymentModal'
-import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather'
+import { Edit, Plus, Trash, X } from 'react-feather'
 
 const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking }) => {
   const [currentPayment, setCurrentPayment] = useState(null)
@@ -34,7 +16,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
   const [modal, setModal] = useState(false)
   const [mode, setMode] = useState(null)
   const [deleteModal, setDeleteModal] = useState(false)
-  const [indexToDelete, setIndexToDelete] = useState(null)
+  const [indexPayment, setIndexPayment] = useState(null)
 
   const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingPayments, {})
 
@@ -86,12 +68,12 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
         variables: {
           bookingId: booking._id,
           updatedAt: new Date(),
-          payments: payments.filter((element, index) => index !== indexToDelete),
+          payments: payments.filter((element, index) => index !== indexPayment),
           status: BOOKING_DEPOSIT_CONFIRMATION_STATUS
         }
       })
-      setPayments(payments.filter((element, index) => index !== indexToDelete))
-      console.log('Booking payment delete it!')
+      setPayments(payments.filter((element, index) => index !== indexPayment))
+      console.log('Booking payment delete it.')
     } catch (er) {
       console.log(er)
     }
@@ -270,7 +252,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                                 className="mr-2"
                                 onClick={(e) => {
                                   e.preventDefault()
-                                  setIndexToDelete(index)
+                                  setIndexPayment(index)
                                   setDeleteModal(!deleteModal)
                                 }}
                                 href="#"
@@ -282,6 +264,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                                 onClick={(e) => {
                                   setCurrentPayment({ ...element }, index)
                                   e.preventDefault()
+                                  setIndexPayment(index)
                                   handleModal()
                                   setMode('edit')
                                 }}
@@ -317,6 +300,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
         setPayments={setPayments}
         currentPayment={currentPayment}
         setCurrentPayment={setCurrentPayment}
+        indexPayment={indexPayment}
       />
       <Modal
         isOpen={deleteModal}
