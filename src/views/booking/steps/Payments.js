@@ -8,7 +8,7 @@ import { BOOKING_DEPOSIT_CONFIRMATION_STATUS, CHARGE_URL } from '../../../utilit
 import AddPaymentModal from './AddPaymentModal'
 import { Edit, Plus, Trash, X } from 'react-feather'
 
-const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking }) => {
+const Payments = ({ booking, setBooking }) => {
   const [currentPayment, setCurrentPayment] = useState(null)
   const [processing, setProcessing] = React.useState(false)
   const [clickedConvert, setClickedConvert] = React.useState(false)
@@ -18,7 +18,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
   const [deleteModal, setDeleteModal] = useState(false)
   const [indexPayment, setIndexPayment] = useState(null)
 
-  const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingPayments, {})
+  const [updateBooking] = useMutation(mutationUpdateBookingPayments, {})
 
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal)
@@ -63,17 +63,20 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
   }
 
   const deleteOnePayment = async () => {
+    let newPaymentsArray = payments ? [...payments] : []
+    newPaymentsArray.splice(indexPayment, 1)
+
     try {
       const resultUpdateBookingPayment = await updateBooking({
         variables: {
           bookingId: booking._id,
           updatedAt: new Date(),
-          payments: payments.filter((element, index) => index !== indexPayment),
+          payments: newPaymentsArray,
           status: BOOKING_DEPOSIT_CONFIRMATION_STATUS
         }
       })
-      setPayments(payments.filter((element, index) => index !== indexPayment))
-      console.log('Booking payment delete it.')
+      setPayments(newPaymentsArray)
+      console.log('Booking payment delete it.', resultUpdateBookingPayment.data.updateOneBooking)
     } catch (er) {
       console.log(er)
     }

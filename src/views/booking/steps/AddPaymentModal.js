@@ -134,12 +134,12 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
           bookingId: booking._id,
           updatedAt: new Date(),
           payments: newPaymentsArray,
-          status: bookingStatus
+          status: bookingStatus ? bookingStatus : booking.status
         }
       })
       if (resultUpdateBookingPayment && resultUpdateBookingPayment.data) {
         setProcessing(false)
-        console.log('Booking payments updated!', resultUpdateBookingPayment.data.updateOneBooking)
+        console.log('Booking payments updated', resultUpdateBookingPayment.data.updateOneBooking)
       }
       setPayments(newPaymentsArray)
     } catch (er) {
