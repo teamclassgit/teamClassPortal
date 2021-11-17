@@ -204,7 +204,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
             </FormGroup>
           </Col>
           <Col md={12} lg={1} sm={12}></Col>
-          <Col md={12} lg={6} sm={12} className="py-2">
+          <Col md={12} lg={6} sm={12} className="pb-2">
             <Row>
               {availableTimes &&
                 availableTimes.map((element, index) => (
