@@ -188,6 +188,7 @@ const BookingList = () => {
         showFilter={true}
         showView={true}
         titleView={'Bookings '}
+        isInProgressBookings={true}
       />
       {allClasses.loading ||
       allCoordinatorResult.loading ||
