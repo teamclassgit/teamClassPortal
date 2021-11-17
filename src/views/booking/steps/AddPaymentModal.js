@@ -6,7 +6,12 @@ import Select from 'react-select'
 import { selectThemeColors } from '@utils'
 import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments'
 import { useMutation } from '@apollo/client'
-import { BOOKING_DEPOSIT_CONFIRMATION_STATUS } from '../../../utility/Constants'
+import {
+  BOOKING_DEPOSIT_CONFIRMATION_STATUS,
+  BOOKING_QUOTE_STATUS,
+  BOOKING_DATE_REQUESTED_STATUS,
+  BOOKING_PAID_STATUS
+} from '../../../utility/Constants'
 import { capitalizeString } from '../../../utility/Utils'
 
 const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPayments, currentPayment, setCurrentPayment, indexToDelete }) => {
@@ -21,7 +26,6 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
   const [newPaymentMethod, setNewPaymentMethod] = useState(null)
   const [newPaymentId, setNewPaymentId] = useState(null)
   const [processing, setProcessing] = useState(false)
-  const [amountValidation, setAmountValidation] = useState(true)
   console.log('currentPayment', currentPayment)
   const [updateBookingPayment] = useMutation(mutationUpdateBookingPayments, {})
 
@@ -102,12 +106,17 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       newPaymentArray.push(newPayments)
     }
 
-    if (newPaymentName === 'deposit' && (booking.status === 'quote' || booking.status === 'date-requested')) {
-      bookingStatus = 'confirmed'
+    if (newPaymentName === 'deposit' && (booking.status === BOOKING_QUOTE_STATUS || booking.status === BOOKING_DATE_REQUESTED_STATUS)) {
+      bookingStatus = BOOKING_DEPOSIT_CONFIRMATION_STATUS
     }
 
-    if (newPaymentName === 'final' && (booking.status === 'quote' || booking.status === 'date-requested' || booking.status === 'confirmed')) {
-      bookingStatus = 'paid'
+    if (
+      newPaymentName === 'final' &&
+      (booking.status === BOOKING_QUOTE_STATUS ||
+        booking.status === BOOKING_DATE_REQUESTED_STATUS ||
+        booking.status === BOOKING_DEPOSIT_CONFIRMATION_STATUS)
+    ) {
+      bookingStatus = BOOKING_PAID_STATUS
     }
 
     try {
