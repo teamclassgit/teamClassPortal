@@ -99,3 +99,6 @@ export const BOOKING_CLOSED_STATUS = 'closed'
 export const DEFAULT_TIME_ZONE = 'America/Chicago'
 export const DEFAULT_TIME_ZONE_LABEL = 'CT'
 export const DEFAULT_TIME_ZONE_LABEL_DESCRIPTION = 'Central Time'
+
+// deposit
+export const CHARGE_URL = 'outside-of-system'

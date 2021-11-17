@@ -10,7 +10,8 @@ import {
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
   BOOKING_QUOTE_STATUS,
   BOOKING_DATE_REQUESTED_STATUS,
-  BOOKING_PAID_STATUS
+  BOOKING_PAID_STATUS,
+  CHARGE_URL
 } from '../../../utility/Constants'
 import { capitalizeString } from '../../../utility/Utils'
 
@@ -98,7 +99,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       paymentName: newPaymentName,
       paymentMethod: newPaymentMethod,
       paymentId: newPaymentId,
-      chargeUrl: 'outside-of-system',
+      chargeUrl: CHARGE_URL,
       status: 'succeeded'
     }
 

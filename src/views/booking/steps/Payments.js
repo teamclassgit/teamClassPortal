@@ -22,7 +22,7 @@ import { useMutation } from '@apollo/client'
 import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments'
 import moment from 'moment'
 import { capitalizeString } from '../../../utility/Utils'
-import { BOOKING_DEPOSIT_CONFIRMATION_STATUS } from '../../../utility/Constants'
+import { BOOKING_DEPOSIT_CONFIRMATION_STATUS, CHARGE_URL } from '../../../utility/Constants'
 import AddPaymentModal from './AddPaymentModal'
 import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather'
 
@@ -90,7 +90,6 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
           status: BOOKING_DEPOSIT_CONFIRMATION_STATUS
         }
       })
-
       setPayments(payments.filter((element, index) => index !== indexToDelete))
       console.log('Booking payment delete it!')
     } catch (er) {
@@ -256,7 +255,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                       </td>
                       <td align="center">
                         <div className={` text-default`}>
-                          <span>{element.chargeUrl === 'outside-of-system' ? 'Manual payment' : 'Automatic payment'}</span>
+                          <span>{element.chargeUrl === CHARGE_URL ? 'Manual payment' : 'Automatic payment'}</span>
                         </div>
                       </td>
                       <td align="center">
@@ -266,7 +265,7 @@ const Payments = ({ stepper, type, teamClass, realCountAttendees, booking, setBo
                       </td>
                       <td align="right">
                         <div className={`text-default'}`}>
-                          {element.chargeUrl === 'outside-of-system' ? (
+                          {element.chargeUrl === CHARGE_URL ? (
                             <div className="d-flex ">
                               <a
                                 className="mr-2"
