@@ -1,10 +1,22 @@
-import React, { useState, useContext } from 'react'
-import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from 'reactstrap'
-import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
-import Select from 'react-select'
-import Flatpickr from 'react-flatpickr'
+// @packages
+import Flatpickr from 'react-flatpickr';
+import PropTypes from 'prop-types';
+import React, { useState, useContext } from 'react';
+import Select from 'react-select';
+import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from 'reactstrap';
 
-function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClass, isFilterByCoordinator, isFilterByCreationDate }) {
+// @scripts
+import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
+
+const FiltersModal = ({ 
+  classes,
+  coordinators,
+  handleModal,
+  isFilterByClass,
+  isFilterByCoordinator,
+  isFilterByCreationDate,
+  open
+}) => {
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
   const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext)
@@ -27,7 +39,6 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
       const values = coordinatorFilterContext.value
       return coordinatorOptions.filter((opt) => values && values.includes(opt.value))
     }
-
     return null
   }
 
@@ -63,6 +74,8 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
               Filter by class
             </Label>
             <Select
+              classNamePrefix='select'
+              className='react-select'
               defaultValue={getClassFilterDefaultValue()}
               options={classOptions}
               onChange={(e) => {
@@ -79,6 +92,7 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
             <Select
               defaultValue={getCoordinatorFilterDefaultValue()}
               options={coordinatorOptions}
+              classNamePrefix='select'
               onChange={(e) => {
                 setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
               }}
@@ -114,3 +128,13 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
 }
 
 export default FiltersModal
+
+FiltersModal.propTypes = {
+  classes: PropTypes.array,
+  coordinators: PropTypes.array,
+  handleModal: PropTypes.func,
+  isFilterByClass: PropTypes.bool,
+  isFilterByCoordinator: PropTypes.bool,
+  isFilterByCreationDate: PropTypes.bool,
+  open: PropTypes.bool
+}

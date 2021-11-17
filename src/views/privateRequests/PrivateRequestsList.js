@@ -1,21 +1,24 @@
-import React, { Fragment, useState, useEffect, useContext } from 'react'
-import DataTablePrivateRequest from './TablePrivateRequests'
-import queryAllPrivateClassRequest from '../../graphql/QueryAllPrivateClassRequest'
-import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators'
-import { useQuery } from '@apollo/client'
-import { Col, Spinner } from 'reactstrap'
-import BookingsHeader from '../booking/BookingsHeader/BookingsHeader'
-import FiltersModal from '../booking/BoardBookings/FiltersModal'
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext'
-import { getCoordinatorName } from '../booking/common'
-import moment from 'moment'
+// @packages
+import React, { useState, useEffect, useContext } from 'react';
+import moment from 'moment';
+import { Col, Spinner } from 'reactstrap';
+import { useQuery } from '@apollo/client';
+
+// @scripts
+import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
+import DataTablePrivateRequest from './TablePrivateRequests';
+import FiltersModal from '../booking/BoardBookings/FiltersModal';
+import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
+import queryAllPrivateClassRequest from '../../graphql/QueryAllPrivateClassRequest';
+import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
+import { getCoordinatorName } from '../booking/common';
 
 const PrivateRequestsList = () => {
-  const [privateClassRequestsFilter, setPrivateClassRequestsFilter] = useState({ status_in: 'closed' })
-  const [privateClassRequests, setPrivateClassRequests] = useState([])
+  const [coordinators, setCoordinators] = useState([])
   const [filteredPrivateClassRequests, setFilteredPrivateClassRequests] = useState([])
   const [limit, setLimit] = useState(600)
-  const [coordinators, setCoordinators] = useState([])
+  const [privateClassRequests, setPrivateClassRequests] = useState([])
+  const [privateClassRequestsFilter, setPrivateClassRequestsFilter] = useState({ status_in: 'closed' })
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const { coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext)
 
@@ -62,13 +65,8 @@ const PrivateRequestsList = () => {
           (item.email && item.email.toLowerCase().includes(value.toLowerCase())) ||
           (item.eventCoordinatorId && getCoordinatorName(item.eventCoordinatorId, coordinators).toLowerCase().includes(value.toLowerCase()))
 
-        if (startsWith) {
-          return startsWith
-        } else if (!startsWith && includes) {
-          return includes
-        } else return null
+        return startsWith || includes
       })
-
       setFilteredPrivateClassRequests(updatedData)
     } else {
       setFilteredPrivateClassRequests(privateClassRequests)
@@ -97,38 +95,39 @@ const PrivateRequestsList = () => {
     handleSearch((textFilterContext && textFilterContext.value) || '')
   }, [textFilterContext])
 
-  // ** Function to handle Modal toggle
   return (
-    <Fragment>
+    <>
       <BookingsHeader
-        setShowFiltersModal={(val) => setShowFiltersModal(val)}
+        coordinators={coordinators}
+        defaultLimit={limit}
+        isPrivateRequest={true}
         onChangeLimit={(newLimit) => {
           setLimit(newLimit)
         }}
         privateRequests={filteredPrivateClassRequests}
-        coordinators={coordinators}
-        defaultLimit={limit}
-        showLimit={true}
-        showExport={true}
+        setShowFiltersModal={(val) => setShowFiltersModal(val)}
         showAdd={false}
+        showExport={true}
         showFilter={true}
+        showLimit={true}
         showView={false}
         titleView={'Private Requests '}
-        isPrivateRequest={true}
       />
       {allPrivateRequests.loading || allCoordinatorResult.loading ? (
-        <div>
+        <>
           <Spinner className="mr-25" />
           <Spinner type="grow" />
-        </div>
+        </>
       ) : (
         <>
           <Col sm="12">
             {privateClassRequests && privateClassRequests.length > 0 && (
-              <DataTablePrivateRequest filteredData={filteredPrivateClassRequests} coordinators={coordinators} />
+              <DataTablePrivateRequest 
+                filteredData={filteredPrivateClassRequests} 
+                coordinators={coordinators} 
+              />
             )}
           </Col>
-
           <FiltersModal
             open={showFiltersModal}
             handleModal={() => setShowFiltersModal(!showFiltersModal)}
@@ -139,7 +138,10 @@ const PrivateRequestsList = () => {
           />
         </>
       )}
-    </Fragment>
+    </>
   )
 }
-export default PrivateRequestsList
+
+export default PrivateRequestsList;
+
+

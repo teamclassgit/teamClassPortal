@@ -1,17 +1,13 @@
-// ** Dropdowns Imports
-import { Fragment } from 'react'
+// @packages
+import PropTypes from 'prop-types';
+import { NavItem, NavLink } from 'reactstrap';
+import { Sun, Moon, Menu } from 'react-feather';
 
+// @scripts
 import UserDropdown from './UserDropdown'
 
-// ** Third Party Components
-import { Sun, Moon, Menu } from 'react-feather'
-import { NavItem, NavLink } from 'reactstrap'
+const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
 
-const NavbarUser = props => {
-  // ** Props
-  const { skin, setSkin, setMenuVisibility } = props
-
-  // ** Function to toggle Theme (Light/Dark)
   const ThemeToggler = () => {
     if (skin === 'dark') {
       return <Sun className='ficon' onClick={() => setSkin('light')} />
@@ -21,7 +17,7 @@ const NavbarUser = props => {
   }
 
   return (
-    <Fragment>
+    <>
       <ul className='navbar-nav d-xl-none d-flex align-items-center'>
         <NavItem className='mobile-menu mr-auto'>
           <NavLink className='nav-menu-main menu-toggle hidden-xs is-active' onClick={() => setMenuVisibility(true)}>
@@ -39,7 +35,14 @@ const NavbarUser = props => {
       <ul className='nav navbar-nav align-items-center ml-auto'>
         <UserDropdown />
       </ul>
-    </Fragment>
+    </>
   )
 }
-export default NavbarUser
+
+export default NavbarUser;
+
+NavbarUser.propTypes = {
+  skin: PropTypes.string,
+  setSkin: PropTypes.func,
+  setMenuVisibility: PropTypes.func
+}

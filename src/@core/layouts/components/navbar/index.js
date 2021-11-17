@@ -1,18 +1,15 @@
-// ** React Imports
-import { Fragment } from 'react'
+// @packages
+import NavbarUser from './NavbarUser';
+import PropTypes from 'prop-types';
 
-// ** Custom Components
-import NavbarUser from './NavbarUser'
-
-const ThemeNavbar = props => {
-  // ** Props
-  const { skin, setSkin, setMenuVisibility } = props
-
-  return (
-    <Fragment>
-      <NavbarUser skin={skin} setSkin={setSkin} setMenuVisibility={setMenuVisibility} />
-    </Fragment>
-  )
-}
+const ThemeNavbar = ({ skin, setSkin, setMenuVisibility }) => (
+  <NavbarUser skin={skin} setSkin={setSkin} setMenuVisibility={setMenuVisibility} />
+)
 
 export default ThemeNavbar
+
+ThemeNavbar.propTypes = {
+  skin: PropTypes.string,
+  setSkin: PropTypes.func,
+  setMenuVisibility: PropTypes.func
+}

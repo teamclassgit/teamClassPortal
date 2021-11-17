@@ -1,8 +1,6 @@
-//** React Imports
-import { useState, useEffect } from 'react'
-
-// ** Configs
-import themeConfig from '@configs/themeConfig'
+// @packages
+import themeConfig from '@configs/themeConfig';
+import { useState, useEffect } from 'react';
 
 export const useSkin = () => {
   // ** State
@@ -53,6 +51,8 @@ export const useSkin = () => {
       element.classList.add(classNames[skin])
     }
   }, [skin])
+
+  console.log(skin)
 
   return [skin, setValue]
 }

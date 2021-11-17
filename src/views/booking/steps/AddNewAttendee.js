@@ -1,45 +1,44 @@
-// ** React Imports
-import React from 'react'
+// @packages
+import 'cleave.js/dist/addons/cleave-phone.us';
+import Cleave from 'cleave.js/react';
+import React, { useState } from 'react';
+import Select from 'react-select';
+import { Mail, Phone, User, X } from 'react-feather';
+import { v4 as uuid } from 'uuid';
 
-// ** Third Party Components
-import { Mail, Phone, User, X } from 'react-feather'
-import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from 'reactstrap'
-import Select from 'react-select'
+// @scripts
+import countriesData from '../../../data/countries.json';
+import { Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { isValidEmail } from '../../../utility/Utils';
 
-// ** Styles
-import '@styles/react/libs/flatpickr/flatpickr.scss'
-import Cleave from 'cleave.js/react'
-import 'cleave.js/dist/addons/cleave-phone.us'
-import { isValidEmail } from '../../../utility/Utils'
-import { v4 as uuid } from 'uuid'
-import countriesData from '../../../data/countries.json'
+// @styles
+import '@styles/react/libs/flatpickr/flatpickr.scss';
 
 const AddNewAttendee = ({
-  open,
-  handleModal,
   currentBookingId,
   currentElement,
-  saveAttendee,
   data,
-  setData,
-  updateAttendeesCount,
+  handleModal,
   mode,
+  open,
+  saveAttendee,
+  setData,
   teamClassInfo,
-  hasKit
+  updateAttendeesCount
 }) => {
-  const [newName, setNewName] = React.useState('')
-  const [newEmail, setNewEmail] = React.useState('')
-  const [newPhone, setNewPhone] = React.useState('')
-  const [newAddress1, setNewAddress1] = React.useState('')
-  const [newAddress2, setNewAddress2] = React.useState('')
-  const [newCity, setNewCity] = React.useState('')
-  const [newState, setNewState] = React.useState('')
-  const [newZip, setNewZip] = React.useState('')
-  const [newCountry, setNewCountry] = React.useState('')
-  const [processing, setProcessing] = React.useState(false)
-  const [emailValid, setEmailValid] = React.useState(true)
-  const [dynamicValues, setDynamicValues] = React.useState([])
-  const [dynamicValuesValidation, setDynamicValuesValidation] = React.useState(true)
+  const [dynamicValues, setDynamicValues] = useState([])
+  const [dynamicValuesValidation, setDynamicValuesValidation] = useState(true)
+  const [emailValid, setEmailValid] = useState(true)
+  const [newAddress1, setNewAddress1] = useState('')
+  const [newAddress2, setNewAddress2] = useState('')
+  const [newCity, setNewCity] = useState('')
+  const [newCountry, setNewCountry] = useState('')
+  const [newEmail, setNewEmail] = useState('')
+  const [newName, setNewName] = useState('')
+  const [newPhone, setNewPhone] = useState('')
+  const [newState, setNewState] = useState('')
+  const [newZip, setNewZip] = useState('')
+  const [processing, setProcessing] = useState(false)
 
   const options = { phone: true, phoneRegionCode: 'US' }
 
@@ -338,6 +337,7 @@ const AddNewAttendee = ({
                         })
                       }
                       isMulti
+                      classNamePrefix='select'
                       required={field.required}
                       name={field.label}
                       options={field.listItems.map((element) => {
@@ -364,4 +364,18 @@ const AddNewAttendee = ({
   )
 }
 
-export default AddNewAttendee
+export default AddNewAttendee;
+
+AddNewAttendee.propTypes = {
+  currentBookingId: PropTypes.string,
+  currentElement: PropTypes.object,
+  data: PropTypes.object,
+  handleModal: PropTypes.func,
+  mode: PropTypes.string,
+  openModal: PropTypes.bool,
+  saveAttendee: PropTypes.func,
+  setData: PropTypes.func,
+  teamClassInfo: PropTypes.object,
+  updateAttendeesCount: PropTypes.func
+}
+
