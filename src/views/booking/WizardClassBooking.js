@@ -6,6 +6,7 @@ import { Calendar, CreditCard, Users, DollarSign } from 'react-feather';
 import { Col, Row, Spinner } from 'reactstrap';
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
+import Breadcrumbs from '@components/breadcrumbs';
 
 // @scripts
 import Attendees from './steps/Attendees';
@@ -259,6 +260,15 @@ const WizardClassBooking = () => {
 
   return bookingInfo && customer && teamClass ? (
     <Row>
+      <Col xs={12}>
+        <Breadcrumbs 
+          breadCrumbActive={id}
+          breadCrumbParent="Bookings"
+          breadCrumbTitle="Booking"
+          noHome
+          removeRightOptions
+        />
+      </Col>
       <Col lg={9} md={12} sm={12}>
         <div className="modern-horizontal-wizard">
           {!confirmation && (
