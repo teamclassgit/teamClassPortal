@@ -1,12 +1,12 @@
-import React, { Fragment, useState, useEffect, useContext } from 'react';
-import DataTableGeneralInquiries from './TableGeneralInquiries';
-import queryAllQuestions from '../../graphql/QueryAllQuestions';
-import { useQuery } from '@apollo/client';
-import { Col, Spinner } from 'reactstrap';
 import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
+import DataTableGeneralInquiries from './TableGeneralInquiries';
 import FiltersModal from '../booking/BoardBookings/FiltersModal';
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
+import React, { Fragment, useState, useEffect, useContext } from 'react';
 import moment from 'moment';
+import queryAllQuestions from '../../graphql/QueryAllQuestions';
+import { Col, Spinner } from 'reactstrap';
+import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
+import { useQuery } from '@apollo/client';
 
 const GeneralInquiresList = () => {
   const [generalInquiriesFilter, setGeneralInquiriesFilter] = useState({});
