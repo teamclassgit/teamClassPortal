@@ -156,10 +156,9 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
         setProcessing(false)
         console.log('Booking payments updated', resultUpdateBookingPayment.data.updateOneBooking)
       }
-      setPayments(newPaymentsArray)
+      setPayments(newPaymentsArray.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)))
     } catch (er) {
       setProcessing(false)
-
       console.log(er)
     }
     handleModal()

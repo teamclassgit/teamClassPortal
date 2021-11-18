@@ -30,7 +30,6 @@ const Payments = ({ booking, setBooking }) => {
       setPayments([])
     }
   }, [booking])
-  console.log(payments)
 
   // ** Custom close btn
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setDeleteModal(!deleteModal)} />
