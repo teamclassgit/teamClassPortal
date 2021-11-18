@@ -1,8 +1,9 @@
 // @packages
-import React, { useState } from 'react';
-import CardLink from 'reactstrap/lib/CardLink';
 import Avatar from '@components/avatar';
+import CardLink from 'reactstrap/lib/CardLink';
 import DataTable from 'react-data-table-component';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather';
 
@@ -354,3 +355,12 @@ const DataTableBookings = ({
 };
 
 export default DataTableBookings;
+
+DataTableBookings.propTypes = {
+  calendarEvents: PropTypes.array.isRequired,
+  classes: PropTypes.object.isRequired,
+  coordinators: PropTypes.array.isRequired,
+  customers: PropTypes.array.isRequired,
+  filteredData: PropTypes.array.isRequired,
+  handleEditModal: PropTypes.func.isRequired
+};
