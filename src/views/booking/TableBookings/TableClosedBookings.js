@@ -14,6 +14,8 @@ import CardLink from 'reactstrap/lib/CardLink';
 const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
+  console.log(customers);
+
   // ** Table Common Column
   const columns = [
     {
