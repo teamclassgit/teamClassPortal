@@ -11,7 +11,9 @@ import {
   BOOKING_QUOTE_STATUS,
   BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_PAID_STATUS,
-  CHARGE_URL
+  CHARGE_URL,
+  PAYMENT_STATUS_SUCCESS,
+  PAYMEN_STATUS_CANCEL
 } from '../../../utility/Constants'
 import { capitalizeString } from '../../../utility/Utils'
 
@@ -27,6 +29,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
   const [newPaymentMethod, setNewPaymentMethod] = useState(null)
   const [newPaymentId, setNewPaymentId] = useState(null)
   const [processing, setProcessing] = useState(false)
+  const [cancelPayment, setCancelPayment] = useState('')
 
   const [updateBookingPayment] = useMutation(mutationUpdateBookingPayments, {})
 
@@ -60,6 +63,13 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
     }
   ]
 
+  const cancelPaymentOptions = [
+    {
+      label: 'Yes',
+      value: 'Yes'
+    }
+  ]
+
   useEffect(() => {
     if (currentPayment) {
       setNewName(currentPayment.name)
@@ -72,6 +82,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       setNewPaymentName(currentPayment.paymentName)
       setNewPaymentMethod(currentPayment.paymentMethod)
       setNewPaymentId(currentPayment.paymentId)
+      setCancelPayment(currentPayment.status === PAYMEN_STATUS_CANCEL ? 'Yes' : '')
     }
   }, [currentPayment])
 
@@ -107,7 +118,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       paymentMethod: newPaymentMethod,
       paymentId: newPaymentId,
       chargeUrl: CHARGE_URL,
-      status: 'succeeded'
+      status: cancelPayment === 'Yes' ? PAYMEN_STATUS_CANCEL : PAYMENT_STATUS_SUCCESS
     }
 
     if (mode === 'edit') {
@@ -128,6 +139,10 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       bookingStatus = BOOKING_PAID_STATUS
     }
 
+    if (newPaymentsArray.filter((item) => item.status === PAYMENT_STATUS_SUCCESS).length === 0) {
+      bookingStatus = BOOKING_DATE_REQUESTED_STATUS
+    }
+
     try {
       const resultUpdateBookingPayment = await updateBookingPayment({
         variables: {
@@ -141,7 +156,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
         setProcessing(false)
         console.log('Booking payments updated', resultUpdateBookingPayment.data.updateOneBooking)
       }
-      setPayments(newPaymentsArray.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)))
+      setPayments(newPaymentsArray)
     } catch (er) {
       setProcessing(false)
 
@@ -308,6 +323,33 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
           <Input id="payment-id" placeholder="" value={newPaymentId} onChange={(e) => setNewPaymentId(e.target.value)} />
           <small>ID of the payment platform.</small>
         </FormGroup>
+        {currentPayment.status === PAYMENT_STATUS_SUCCESS && (
+          <Row>
+            <Col md={6}>
+              <FormGroup>
+                <Label for="card-last-4">Cancel Payment?</Label>
+                <Select
+                  value={{
+                    value: cancelPayment,
+                    label: cancelPayment
+                  }}
+                  theme={selectThemeColors}
+                  className="react-select"
+                  classNamePrefix="select"
+                  placeholder=""
+                  options={cancelPaymentOptions.map((item) => {
+                    return {
+                      label: item.label,
+                      value: item.value
+                    }
+                  })}
+                  onChange={(option) => setCancelPayment(option.value)}
+                  isClearable={false}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+        )}
         <Button
           className="mr-1 mt-1"
           color="primary"

@@ -102,3 +102,5 @@ export const DEFAULT_TIME_ZONE_LABEL_DESCRIPTION = 'Central Time'
 
 // deposit
 export const CHARGE_URL = 'outside-of-system'
+export const PAYMENT_STATUS_SUCCESS = 'succeeded'
+export const PAYMEN_STATUS_CANCEL = 'canceled'

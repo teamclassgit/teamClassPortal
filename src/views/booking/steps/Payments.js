@@ -24,8 +24,13 @@ const Payments = ({ booking, setBooking }) => {
   const handleModal = () => setModal(!modal)
 
   React.useEffect(() => {
-    setPayments((booking && booking.payments) || [])
+    if (booking && booking.payments) {
+      setPayments([...booking.payments].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)))
+    } else {
+      setPayments([])
+    }
   }, [booking])
+  console.log(payments)
 
   // ** Custom close btn
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setDeleteModal(!deleteModal)} />
@@ -76,15 +81,15 @@ const Payments = ({ booking, setBooking }) => {
         }
       })
       setPayments(newPaymentsArray)
+      setBooking(resultUpdateBookingPayment.data.updateOneBooking)
       console.log('Booking payment delete it.', resultUpdateBookingPayment.data.updateOneBooking)
     } catch (er) {
       console.log(er)
     }
   }
 
-  console.log('indexPayment', indexPayment)
   return (
-    <Fragment>
+    <>
       <div className="d-flex justify-content-end mb-2">
         <Button
           className="ml-2"
@@ -147,146 +152,144 @@ const Payments = ({ booking, setBooking }) => {
               </thead>
               <tbody>
                 {payments &&
-                  [...payments]
-                    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-                    .map((element, index) => (
-                      <tr key={index}>
-                        <td align="left">
-                          <div className="transaction-item">
-                            {moment(element.createdAt).calendar(null, {
-                              lastDay: '[Yesterday]',
-                              sameDay: 'LT',
-                              lastWeek: 'dddd',
-                              sameElse: 'MMMM Do, YYYY'
-                            })}
-                          </div>
-                        </td>
-                        <td align="left">
-                          <div className={`text-default'}`}>
-                            <span>
-                              {capitalizeString(element.paymentName)}
-                              {processing && (
+                  payments.map((element, index) => (
+                    <tr key={index}>
+                      <td align="left">
+                        <div className="transaction-item">
+                          {moment(element.createdAt).calendar(null, {
+                            lastDay: '[Yesterday]',
+                            sameDay: 'LT',
+                            lastWeek: 'dddd',
+                            sameElse: 'MMMM Do, YYYY'
+                          })}
+                        </div>
+                      </td>
+                      <td align="left">
+                        <div className={`text-default'}`}>
+                          <span>
+                            {capitalizeString(element.paymentName)}
+                            {processing && (
+                              <small>
+                                <br />
+                                <span>Converting...</span>
+                              </small>
+                            )}
+                            {!processing && element.paymentName === 'final' ? (
+                              !clickedConvert ? (
                                 <small>
                                   <br />
-                                  <span>Converting...</span>
+                                  <a
+                                    href="#"
+                                    title="Convert this payment to deposit will move this booking to deposit-paid status"
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      setClickedConvert(true)
+                                    }}
+                                  >
+                                    Convert to deposit
+                                  </a>
                                 </small>
-                              )}
-                              {!processing && element.paymentName === 'final' ? (
-                                !clickedConvert ? (
-                                  <small>
-                                    <br />
-                                    <a
-                                      href="#"
-                                      title="Convert this payment to deposit will move this booking to deposit-paid status"
-                                      onClick={(e) => {
-                                        e.preventDefault()
-                                        setClickedConvert(true)
-                                      }}
-                                    >
-                                      Convert to deposit
-                                    </a>
-                                  </small>
-                                ) : (
-                                  <div>
-                                    <p className="mt-1">
-                                      <small className="text text-danger text-justify">Are you sure to convert this payment to deposit?</small>
-                                    </p>
-                                    <small className="ml-1">
-                                      <div className="d-flex justify-content-start">
-                                        <a
-                                          className="btn btn-primary btn-sm"
-                                          href="#"
-                                          onClick={(e) => {
-                                            e.preventDefault()
-                                            convertFinalPaymentToDeposit(element)
-                                          }}
-                                        >
-                                          Yes
-                                        </a>{' '}
-                                        <a
-                                          className="btn btn-secondary btn-sm"
-                                          href="#"
-                                          onClick={(e) => {
-                                            e.preventDefault()
-                                            setClickedConvert(false)
-                                          }}
-                                        >
-                                          No
-                                        </a>
-                                      </div>
-                                    </small>
-                                    <br />
-                                    <small className="ml-2"></small>
-                                  </div>
-                                )
                               ) : (
-                                <></>
-                              )}
-                            </span>
-                          </div>
-                        </td>
-                        <td align="left">
-                          <div className={`text-default'}`}>
-                            <span>{capitalizeString(element.cardBrand)}</span>
-                          </div>
-                        </td>
-                        <td align="left">
-                          <div className={`text-default'}`}>
-                            <span>{element.cardLast4}</span>
-                          </div>
-                        </td>
-                        <td align="right">
-                          <div className={`font-weight-bolder text-default'}`}>
-                            <span>${element.amount / 100}</span>
-                          </div>
-                        </td>
-                        <td align="center">
-                          <div className={` text-default`}>
-                            <span>{element.chargeUrl === CHARGE_URL ? 'Manual payment' : 'Automatic payment'}</span>
-                          </div>
-                        </td>
-                        <td align="center">
-                          <div className={`text-default'}`}>
-                            <Badge>{capitalizeString(element.status)}</Badge>
-                          </div>
-                        </td>
-                        <td align="right">
-                          <div className={`text-default'}`}>
-                            {element.chargeUrl === CHARGE_URL ? (
-                              <div className="d-flex ">
-                                <a
-                                  className="mr-2"
-                                  onClick={(e) => {
-                                    e.preventDefault()
-                                    setIndexPayment(index)
-                                    setDeleteModal(!deleteModal)
-                                  }}
-                                  href="#"
-                                  title="Remove from list"
-                                >
-                                  <Trash size={18} />
-                                </a>
-                                <a
-                                  onClick={(e) => {
-                                    setCurrentPayment({ ...element }, index)
-                                    e.preventDefault()
-                                    setIndexPayment(index)
-                                    handleModal()
-                                    setMode('edit')
-                                  }}
-                                  href="#"
-                                  title="Edit attendee"
-                                >
-                                  <Edit size={18} title="Edit" />
-                                </a>
-                              </div>
+                                <div>
+                                  <p className="mt-1">
+                                    <small className="text text-danger text-justify">Are you sure to convert this payment to deposit?</small>
+                                  </p>
+                                  <small className="ml-1">
+                                    <div className="d-flex justify-content-start">
+                                      <a
+                                        className="btn btn-primary btn-sm"
+                                        href="#"
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          convertFinalPaymentToDeposit(element)
+                                        }}
+                                      >
+                                        Yes
+                                      </a>{' '}
+                                      <a
+                                        className="btn btn-secondary btn-sm"
+                                        href="#"
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          setClickedConvert(false)
+                                        }}
+                                      >
+                                        No
+                                      </a>
+                                    </div>
+                                  </small>
+                                  <br />
+                                  <small className="ml-2"></small>
+                                </div>
+                              )
                             ) : (
-                              ''
+                              <></>
                             )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                          </span>
+                        </div>
+                      </td>
+                      <td align="left">
+                        <div className={`text-default'}`}>
+                          <span>{capitalizeString(element.cardBrand)}</span>
+                        </div>
+                      </td>
+                      <td align="left">
+                        <div className={`text-default'}`}>
+                          <span>{element.cardLast4}</span>
+                        </div>
+                      </td>
+                      <td align="right">
+                        <div className={`font-weight-bolder text-default'}`}>
+                          <span>${element.amount / 100}</span>
+                        </div>
+                      </td>
+                      <td align="center">
+                        <div className={` text-default`}>
+                          <span>{element.chargeUrl === CHARGE_URL ? 'Manual payment' : 'Automatic payment'}</span>
+                        </div>
+                      </td>
+                      <td align="center">
+                        <div className={`text-default'}`}>
+                          <Badge color={element.status === 'succeeded' ? 'primary' : 'secondary'}>{capitalizeString(element.status)}</Badge>
+                        </div>
+                      </td>
+                      <td align="right">
+                        <div className={`text-default'}`}>
+                          {element.chargeUrl === CHARGE_URL ? (
+                            <div className="d-flex ">
+                              <a
+                                className="mr-2"
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  setIndexPayment(index)
+                                  setDeleteModal(!deleteModal)
+                                }}
+                                href="#"
+                                title="Remove from list"
+                              >
+                                <Trash size={18} />
+                              </a>
+                              <a
+                                onClick={(e) => {
+                                  setCurrentPayment({ ...element })
+                                  e.preventDefault()
+                                  setIndexPayment(index)
+                                  handleModal()
+                                  setMode('edit')
+                                }}
+                                href="#"
+                                title="Edit attendee"
+                              >
+                                <Edit size={18} title="Edit" />
+                              </a>
+                            </div>
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </Table>
           </Card>
@@ -341,7 +344,7 @@ const Payments = ({ booking, setBooking }) => {
           </Button>
         </ModalFooter>
       </Modal>
-    </Fragment>
+    </>
   )
 }
 
