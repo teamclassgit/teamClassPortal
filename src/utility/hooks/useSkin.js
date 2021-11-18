@@ -52,7 +52,5 @@ export const useSkin = () => {
     }
   }, [skin]);
 
-  console.log(skin);
-
   return [skin, setValue];
 };
