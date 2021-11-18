@@ -19,20 +19,21 @@ import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
 import { getCustomerEmail, getClassTitle } from './common';
 
 const BookingList = () => {
-  const [bookings, setBookings] = useState([]);
+  const [genericFilter] = useState({});
   const [bookingsFilter, setBookingsFilter] = useState({ status_in: 'closed' });
-  const [calendarEvents, setCalendarEvents] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [coordinators, setCoordinators] = useState([]);
-  const [currentElement, setCurrentElement] = useState({});
-  const [customers, setCustomers] = useState([]);
-  const [editModal, setEditModal] = useState(false);
-  const [elementToAdd, setElementToAdd] = useState({});
-  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [limit, setLimit] = useState(600);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [coordinators, setCoordinators] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [calendarEvents, setCalendarEvents] = useState([]);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [currentElement, setCurrentElement] = useState({});
+  const [elementToAdd, setElementToAdd] = useState({});
   const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
+  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [editModal, setEditModal] = useState(false);
 
   // ** Function to handle Modal toggle
   const handleEditModal = () => setEditModal(!editModal);
@@ -52,8 +53,15 @@ const BookingList = () => {
     }
   }, [allBookingsResult.data]);
 
+  useEffect(() => {
+    handleSearch((textFilterContext && textFilterContext.value) || '');
+  }, [bookings]);
+
   const { ...allCalendarEventsResults } = useQuery(queryAllCalendarEvents, {
     fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    },
     pollInterval: 300000
   });
 
@@ -63,11 +71,17 @@ const BookingList = () => {
 
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
     fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    },
     pollInterval: 300000
   });
 
   const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
     fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    },
     pollInterval: 300000
   });
 
@@ -81,6 +95,9 @@ const BookingList = () => {
 
   const { ...allClasses } = useQuery(queryAllClasses, {
     fetchPolicy: 'no-cache',
+    variables: {
+      filter: genericFilter
+    },
     pollInterval: 300000
   });
 
@@ -105,7 +122,11 @@ const BookingList = () => {
           (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().includes(value.toLowerCase())) ||
           item._id.includes(value);
 
-        return startsWith || includes;
+        if (startsWith) {
+          return startsWith;
+        } else if (!startsWith && includes) {
+          return includes;
+        } else return null;
       });
 
       setFilteredBookings(updatedData);
@@ -113,10 +134,6 @@ const BookingList = () => {
       setFilteredBookings(bookings);
     }
   };
-
-  useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
-  }, [bookings]);
 
   useEffect(() => {
     let query = {
@@ -181,9 +198,9 @@ const BookingList = () => {
           </div>
         ) : (
           filteredBookings &&
-        customers &&
-        calendarEvents &&
-        classes && (
+          customers &&
+          calendarEvents &&
+          classes && (
             <>
               <Col sm="12">
                 {bookings && bookings.length > 0 && (
@@ -193,48 +210,48 @@ const BookingList = () => {
                       setCurrentElement(element);
                       handleEditModal();
                     }}
-                    customers={customers}
+                    bookings={bookings}
                     calendarEvents={calendarEvents}
                     classes={classes}
                     coordinators={coordinators}
-                    bookings={bookings}
+                    customers={customers}
                   />
                 )}
               </Col>
               <FiltersModal
-                open={showFiltersModal}
-                handleModal={() => setShowFiltersModal(!showFiltersModal)}
+                calendarEvents={calendarEvents}
                 classes={classes}
                 coordinators={coordinators}
-                calendarEvents={calendarEvents}
+                handleModal={() => setShowFiltersModal(!showFiltersModal)}
                 isFilterByClass={true}
                 isFilterByCoordinator={true}
                 isFilterByCreationDate={true}
+                open={showFiltersModal}
               />
               <AddNewBooking
-                open={showAddModal}
-                handleModal={handleModal}
+                baseElement={elementToAdd}
                 bookings={bookings}
                 classes={classes}
-                setCustomers={setCustomers}
-                customers={customers}
-                baseElement={elementToAdd}
-                setBookings={setBookings}
                 coordinators={coordinators}
+                customers={customers}
+                handleModal={handleModal}
+                open={showAddModal}
+                setBookings={setBookings}
+                setCustomers={setCustomers}
               />
               <EditBookingModal
-                open={editModal}
-                handleModal={handleEditModal}
-                currentElement={currentElement}
-                allCoordinators={coordinators}
-                allClasses={classes}
                 allBookings={bookings}
-                allCustomers={customers}
                 allCalendarEvents={calendarEvents}
+                allClasses={classes}
+                allCoordinators={coordinators}
+                allCustomers={customers}
+                currentElement={currentElement}
+                editMode={false}
+                handleClose={() => setCurrentElement({})}
+                handleModal={handleEditModal}
+                open={editModal}
                 setBookings={setBookings}
                 setCustomers={setCustomers}
-                handleClose={() => setCurrentElement({})}
-                editMode={false}
               />
             </>
           )
@@ -242,4 +259,5 @@ const BookingList = () => {
     </>
   );
 };
+
 export default BookingList;
