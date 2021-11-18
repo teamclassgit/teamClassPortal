@@ -82,6 +82,7 @@ const Payments = ({ booking, setBooking }) => {
     }
   }
 
+  console.log('indexPayment', indexPayment)
   return (
     <Fragment>
       <div className="d-flex justify-content-end mb-2">
