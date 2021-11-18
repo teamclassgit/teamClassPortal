@@ -1,38 +1,38 @@
-import React, { Fragment } from 'react'
-import { Button, Col, Form, FormGroup, Input, Row } from 'reactstrap'
-import '@styles/react/libs/react-select/_react-select.scss'
-import Cleave from 'cleave.js/react'
-import 'cleave.js/dist/addons/cleave-phone.us'
-import { useMutation } from '@apollo/client'
-import mutationUpdateQuote from '../../../graphql/MutationUpdateQuote'
-import { isValidEmail } from '../../../utility/Utils'
+import React, { Fragment } from 'react';
+import { Button, Col, Form, FormGroup, Input, Row } from 'reactstrap';
+import '@styles/react/libs/react-select/_react-select.scss';
+import Cleave from 'cleave.js/react';
+import 'cleave.js/dist/addons/cleave-phone.us';
+import { useMutation } from '@apollo/client';
+import mutationUpdateQuote from '../../../graphql/MutationUpdateQuote';
+import { isValidEmail } from '../../../utility/Utils';
 
 const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
-  const [phone, setPhone] = React.useState('')
-  const [name, setName] = React.useState('')
-  const [company, setCompany] = React.useState('')
-  const [email, setEmail] = React.useState('')
-  const [emailValid, setEmailValid] = React.useState(true)
-  const [processing, setProcessing] = React.useState(false)
-  const [updateBooking, { ...finalQuotaData }] = useMutation(mutationUpdateQuote, {})
+  const [phone, setPhone] = React.useState('');
+  const [name, setName] = React.useState('');
+  const [company, setCompany] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [emailValid, setEmailValid] = React.useState(true);
+  const [processing, setProcessing] = React.useState(false);
+  const [updateBooking, { ...finalQuotaData }] = useMutation(mutationUpdateQuote, {});
 
   const emailValidation = (email) => {
-    setEmailValid(isValidEmail(email))
-  }
+    setEmailValid(isValidEmail(email));
+  };
 
-  const options = { phone: true, phoneRegionCode: 'US' }
+  const options = { phone: true, phoneRegionCode: 'US' };
 
   React.useEffect(() => {
     if (customer) {
-      setName(customer.name)
-      setEmail(customer.email)
-      setPhone(customer.phone)
-      setCompany(customer.company)
+      setName(customer.name);
+      setEmail(customer.email);
+      setPhone(customer.phone);
+      setCompany(customer.company);
     }
-  }, [customer])
+  }, [customer]);
 
   const saveBooking = async () => {
-    setProcessing(true)
+    setProcessing(true);
 
     try {
       await updateBooking({
@@ -45,16 +45,16 @@ const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
           company,
           updatedAt: new Date()
         }
-      })
+      });
 
-      console.log('booking updated')
+      console.log('booking updated');
 
-      setProcessing(false)
+      setProcessing(false);
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
+      console.log(ex);
+      setProcessing(false);
     }
-  }
+  };
 
   return (
     <Fragment>
@@ -99,7 +99,7 @@ const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
                   invalid={!emailValid}
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={(e) => {
-                    emailValidation(e.target.value)
+                    emailValidation(e.target.value);
                   }}
                 />
               </FormGroup>
@@ -129,7 +129,7 @@ const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
         </div>
       </Form>
     </Fragment>
-  )
-}
+  );
+};
 
-export default BillingInfo
+export default BillingInfo;

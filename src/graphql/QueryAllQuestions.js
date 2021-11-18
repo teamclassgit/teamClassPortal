@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from '@apollo/client';
 
 export default gql`
   query GetAllQuestions($filter: QuestionQueryInput!) {
@@ -12,4 +12,4 @@ export default gql`
       type
     }
   }
-`
+`;

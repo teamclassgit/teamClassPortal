@@ -1,6 +1,6 @@
 // ** Third Party Components
-import PropTypes from 'prop-types'
-import { Card, CardBody } from 'reactstrap'
+import PropTypes from 'prop-types';
+import { Card, CardBody } from 'reactstrap';
 
 const StatsVertical = ({ icon, color, stats, statTitle, className, ...rest }) => {
   return (
@@ -13,10 +13,10 @@ const StatsVertical = ({ icon, color, stats, statTitle, className, ...rest }) =>
         <p className='card-text line-ellipsis'>{statTitle}</p>
       </CardBody>
     </Card>
-  )
-}
+  );
+};
 
-export default StatsVertical
+export default StatsVertical;
 
 // ** PropTypes
 StatsVertical.propTypes = {
@@ -25,4 +25,4 @@ StatsVertical.propTypes = {
   stats: PropTypes.string.isRequired,
   statTitle: PropTypes.string.isRequired,
   className: PropTypes.string
-}
+};

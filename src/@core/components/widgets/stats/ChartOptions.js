@@ -44,7 +44,7 @@ export const areaChartOptions = {
   tooltip: {
     x: { show: false }
   }
-}
+};
 
 // ** Line Chart Common Options
 export const lineChartOptions = {
@@ -101,4 +101,4 @@ export const lineChartOptions = {
   tooltip: {
     x: { show: false }
   }
-}
+};

@@ -1,25 +1,25 @@
 // ** React Imports
-import { Fragment } from 'react'
+import { Fragment } from 'react';
 
 // ** Third Party Components
-import Proptypes from 'prop-types'
-import classnames from 'classnames'
-import { UncontrolledTooltip } from 'reactstrap'
+import Proptypes from 'prop-types';
+import classnames from 'classnames';
+import { UncontrolledTooltip } from 'reactstrap';
 
 // ** Custom Components
-import Avatar from '@components/avatar'
+import Avatar from '@components/avatar';
 
 const AvatarGroup = props => {
   // ** Props
-  const { data, tag, className } = props
+  const { data, tag, className } = props;
 
   // ** Conditional Tag
-  const Tag = tag ? tag : 'div'
+  const Tag = tag ? tag : 'div';
 
   // ** Render Data
   const renderData = () => {
     return data.map((item, i) => {
-      const ItemTag = item.tag ? item.tag : 'div'
+      const ItemTag = item.tag ? item.tag : 'div';
       return (
         <Fragment key={i}>
           {item.title ? (
@@ -41,9 +41,9 @@ const AvatarGroup = props => {
           ) : null}
           {item.meta ? <ItemTag className='d-flex align-items-center pl-1'>{item.meta}</ItemTag> : null}
         </Fragment>
-      )
-    })
-  }
+      );
+    });
+  };
 
   return (
     <Tag
@@ -53,13 +53,13 @@ const AvatarGroup = props => {
     >
       {renderData()}
     </Tag>
-  )
-}
+  );
+};
 
-export default AvatarGroup
+export default AvatarGroup;
 
 // ** PropTypes
 AvatarGroup.propTypes = {
   data: Proptypes.array.isRequired,
   tag: Proptypes.oneOfType([Proptypes.func, Proptypes.string])
-}
+};

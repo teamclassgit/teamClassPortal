@@ -7,7 +7,7 @@ const ComponentSpinner = () => {
         <div className='effect-3 effects'></div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ComponentSpinner
+export default ComponentSpinner;

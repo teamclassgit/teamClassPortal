@@ -1,15 +1,15 @@
 // ** React Imports
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom';
 
 // ** Third Party Components
-import classnames from 'classnames'
-import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap'
+import classnames from 'classnames';
+import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
 
 // ** Utils
-import { isNavGroupActive } from '@layouts/utils'
+import { isNavGroupActive } from '@layouts/utils';
 
 // ** Horizontal Menu Items Component
-import HorizontalNavMenuItems from './HorizontalNavMenuItems'
+import HorizontalNavMenuItems from './HorizontalNavMenuItems';
 
 const HorizontalNavMenuGroup = props => {
   // ** Props
@@ -26,10 +26,10 @@ const HorizontalNavMenuGroup = props => {
     routerProps,
     setOpenDropdown,
     currentActiveItem
-  } = props
+  } = props;
 
   // ** URL Var
-  const currentURL = useLocation().pathname
+  const currentURL = useLocation().pathname;
 
   // ** Dropdown menu modifiers
   const menuModifiers = {
@@ -38,23 +38,23 @@ const HorizontalNavMenuGroup = props => {
       fn: data => {
         const pageHeight = window.innerHeight,
           ddTop = data.instance.reference.getBoundingClientRect().top,
-          ddHeight = data.popper.height
-        let maxHeight, stylesObj
+          ddHeight = data.popper.height;
+        let maxHeight, stylesObj;
 
         // ** Calculate and set height
         if (pageHeight - ddTop - ddHeight - 28 < 1) {
-          maxHeight = pageHeight - ddTop - 25
+          maxHeight = pageHeight - ddTop - 25;
           stylesObj = {
             maxHeight,
             overflowY: 'auto'
-          }
+          };
         }
 
-        const ddRef = data.instance.popper.getBoundingClientRect()
+        const ddRef = data.instance.popper.getBoundingClientRect();
 
         // ** If there is not space left to open sub menu open it to the right
         if (ddRef.left + ddRef.width - (window.innerWidth - 16) >= 0) {
-          data.instance.popper.closest('.dropdown').classList.add('openLeft')
+          data.instance.popper.closest('.dropdown').classList.add('openLeft');
         }
 
         return {
@@ -62,10 +62,10 @@ const HorizontalNavMenuGroup = props => {
           styles: {
             ...stylesObj
           }
-        }
+        };
       }
     }
-  }
+  };
   return (
     <Dropdown
       tag='li'
@@ -111,7 +111,7 @@ const HorizontalNavMenuGroup = props => {
         />
       </DropdownMenu>
     </Dropdown>
-  )
-}
+  );
+};
 
-export default HorizontalNavMenuGroup
+export default HorizontalNavMenuGroup;

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const UserContext = React.createContext({
   app: null,
@@ -6,6 +6,6 @@ const UserContext = React.createContext({
   user: null,
   setClient: () => {},
   setUser: () => {}
-})
+});
 
-export default UserContext
+export default UserContext;

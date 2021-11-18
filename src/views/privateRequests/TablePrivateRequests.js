@@ -1,15 +1,18 @@
-// ** React Imports
-import React, { Fragment, useState } from 'react'
-// ** Third Party Components
-import moment from 'moment'
-import DataTable from 'react-data-table-component'
-import { ChevronDown } from 'react-feather'
-import ReactPaginate from 'react-paginate'
-import { Card } from 'reactstrap'
-import { getCoordinatorName } from '../booking/common'
+// @packages
+import DataTable from 'react-data-table-component';
+import Proptypes from 'prop-types';
+import React, { useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import moment from 'moment';
+import { Card } from 'reactstrap';
+import { ChevronDown } from 'react-feather';
+
+// @scripts
+import '../booking/TableBookings/TableBookings.scss';
+import { getCoordinatorName } from '../booking/common';
 
 const TablePrivateRequests = ({ filteredData, coordinators }) => {
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0);
 
   // ** Table Common Column
   const columns = [
@@ -125,58 +128,61 @@ const TablePrivateRequests = ({ filteredData, coordinators }) => {
         </small>
       )
     }
-  ]
+  ];
 
   // ** Function to handle Pagination
   const handlePagination = (page) => {
-    setCurrentPage(page.selected)
-  }
+    setCurrentPage(page.selected);
+  };
 
   // ** Custom Pagination
   const CustomPagination = () => (
     <ReactPaginate
-      previousLabel=""
-      nextLabel=""
-      forcePage={currentPage}
-      onPageChange={(page) => handlePagination(page)}
-      pageCount={filteredData.length / 7 || 1}
-      breakLabel="..."
-      pageRangeDisplayed={2}
-      marginPagesDisplayed={2}
       activeClassName="active"
-      pageClassName="page-item"
       breakClassName="page-item"
+      breakClassName="page-item"
+      breakLabel="..."
       breakLinkClassName="page-link"
-      nextLinkClassName="page-link"
-      nextClassName="page-item next"
-      previousClassName="page-item prev"
-      previousLinkClassName="page-link"
-      pageLinkClassName="page-link"
-      breakClassName="page-item"
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
+      forcePage={currentPage}
+      marginPagesDisplayed={2}
+      nextClassName="page-item next"
+      nextLabel=""
+      nextLinkClassName="page-link"
+      onPageChange={(page) => handlePagination(page)}
+      pageClassName="page-item"
+      pageCount={filteredData.length / 7 || 1}
+      pageLinkClassName="page-link"
+      pageRangeDisplayed={2}
+      previousClassName="page-item prev"
+      previousLabel=""
+      previousLinkClassName="page-link"
     />
-  )
+  );
 
   return (
-    <Fragment>
-      <Card>
-        <DataTable
-          noHeader
-          pagination
-          columns={columns}
-          defaultSortField={'updatedAt'}
-          defaultSortAsc={false}
-          paginationPerPage={8}
-          className="react-dataTable"
-          sortIcon={<ChevronDown size={10} />}
-          paginationDefaultPage={currentPage + 1}
-          paginationComponent={CustomPagination}
-          data={filteredData}
-        />
-      </Card>
-    </Fragment>
-  )
-}
+    <Card>
+      <DataTable
+        className='react-dataTable'
+        columns={columns}
+        data={filteredData}
+        defaultSortAsc={false}
+        responsive
+        noHeader
+        pagination
+        paginationComponent={CustomPagination}
+        paginationDefaultPage={currentPage + 1}
+        paginationPerPage={8}
+        sortIcon={<ChevronDown size={10} />}
+      />
+    </Card>
+  );
+};
 
-export default TablePrivateRequests
+export default TablePrivateRequests;
+
+TablePrivateRequests.propTypes = {
+  coordinators: Proptypes.array.isRequired,
+  filteredData: Proptypes.array.isRequired
+};

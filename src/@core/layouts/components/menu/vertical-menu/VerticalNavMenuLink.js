@@ -1,16 +1,16 @@
 // ** React Imports
-import { useEffect } from 'react'
-import { NavLink, useLocation, matchPath, useParams } from 'react-router-dom'
+import { useEffect } from 'react';
+import { NavLink, useLocation, matchPath, useParams } from 'react-router-dom';
 
 // ** Third Party Components
-import { Badge } from 'reactstrap'
-import classnames from 'classnames'
+import { Badge } from 'reactstrap';
+import classnames from 'classnames';
 
 // ** Vertical Menu Array Of Items
-import navigation from '@src/navigation/vertical'
+import navigation from '@src/navigation/vertical';
 
 // ** Utils
-import { isNavLinkActive, search, getAllParents } from '@layouts/utils'
+import { isNavLinkActive, search, getAllParents } from '@layouts/utils';
 
 const VerticalNavMenuLink = ({
   item,
@@ -26,46 +26,46 @@ const VerticalNavMenuLink = ({
   currentActiveItem
 }) => {
   // ** Conditional Link Tag, if item has newTab or externalLink props use <a> tag else use NavLink
-  const LinkTag = item.externalLink ? 'a' : NavLink
+  const LinkTag = item.externalLink ? 'a' : NavLink;
 
   // ** URL Vars
-  const location = useLocation()
-  const currentURL = location.pathname
+  const location = useLocation();
+  const currentURL = location.pathname;
 
   // ** To match path
   const match = matchPath(currentURL, {
     path: `${item.navLink}/:param`,
     exact: true,
     strict: false
-  })
+  });
 
   // ** Search for current item parents
   const searchParents = (navigation, currentURL) => {
-    const parents = search(navigation, currentURL, routerProps) // Search for parent object
-    const allParents = getAllParents(parents, 'id') // Parents Object to Parents Array
-    return allParents
-  }
+    const parents = search(navigation, currentURL, routerProps); // Search for parent object
+    const allParents = getAllParents(parents, 'id'); // Parents Object to Parents Array
+    return allParents;
+  };
 
   // ** URL Vars
   const resetActiveGroup = navLink => {
-    const parents = search(navigation, navLink, match)
-    toggleActiveGroup(item.id, parents)
-  }
+    const parents = search(navigation, navLink, match);
+    toggleActiveGroup(item.id, parents);
+  };
 
   // ** Reset Active & Open Group Arrays
   const resetActiveAndOpenGroups = () => {
-    setGroupActive([])
-    setGroupOpen([])
-  }
+    setGroupActive([]);
+    setGroupOpen([]);
+  };
 
   // ** Checks url & updates active item
   useEffect(() => {
     if (currentActiveItem !== null) {
-      setActiveItem(currentActiveItem)
-      const arr = searchParents(navigation, currentURL)
-      setGroupActive([...arr])
+      setActiveItem(currentActiveItem);
+      const arr = searchParents(navigation, currentURL);
+      setGroupActive([...arr]);
     }
-  }, [location])
+  }, [location]);
 
   return (
     <li
@@ -98,9 +98,9 @@ const VerticalNavMenuLink = ({
         /*eslint-enable */
         onClick={e => {
           if (!item.navLink.length) {
-            e.preventDefault()
+            e.preventDefault();
           }
-          parentItem ? resetActiveGroup(item.navLink) : resetActiveAndOpenGroups()
+          parentItem ? resetActiveGroup(item.navLink) : resetActiveAndOpenGroups();
         }}
       >
         {item.icon}
@@ -113,7 +113,7 @@ const VerticalNavMenuLink = ({
         ) : null}
       </LinkTag>
     </li>
-  )
-}
+  );
+};
 
-export default VerticalNavMenuLink
+export default VerticalNavMenuLink;

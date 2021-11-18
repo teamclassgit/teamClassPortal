@@ -1,9 +1,9 @@
 // ** React Imports
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 // ** Third Party Components
-import Proptypes from 'prop-types'
-import { Grid, CheckSquare, MessageSquare, Mail, Calendar } from 'react-feather'
+import Proptypes from 'prop-types';
+import { Grid, CheckSquare, MessageSquare, Mail, Calendar } from 'react-feather';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,11 +11,11 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle
-} from 'reactstrap'
+} from 'reactstrap';
 
 const BreadCrumbs = props => {
   // ** Props
-  const { breadCrumbTitle, breadCrumbParent, breadCrumbParent2, breadCrumbParent3, breadCrumbActive, removeRightOptions } = props
+  const { breadCrumbTitle, breadCrumbParent, breadCrumbParent2, breadCrumbParent3, breadCrumbActive, removeRightOptions } = props;
 
   return (
     <div className='content-header row'>
@@ -82,12 +82,12 @@ const BreadCrumbs = props => {
         </div>
       </div>}
     </div>
-  )
-}
-export default BreadCrumbs
+  );
+};
+export default BreadCrumbs;
 
 // ** PropTypes
 BreadCrumbs.propTypes = {
   breadCrumbTitle: Proptypes.string.isRequired,
   breadCrumbActive: Proptypes.string.isRequired
-}
+};

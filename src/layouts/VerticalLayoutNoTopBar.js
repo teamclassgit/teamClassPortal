@@ -1,6 +1,6 @@
 // !Do not remove the Layout import
-import Layout from '@layouts/VerticalLayoutNoTopBar'
+import Layout from '@layouts/VerticalLayoutNoTopBar';
 
-const VerticalLayoutNoTopBar = props => <Layout {...props}>{props.children}</Layout>
+const VerticalLayoutNoTopBar = props => <Layout {...props}>{props.children}</Layout>;
 
-export default VerticalLayoutNoTopBar
+export default VerticalLayoutNoTopBar;

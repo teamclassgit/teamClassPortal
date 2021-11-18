@@ -1,13 +1,13 @@
 // ** Third Party Components
-import Proptypes from 'prop-types'
-import classnames from 'classnames'
+import Proptypes from 'prop-types';
+import classnames from 'classnames';
 
 const Timeline = props => {
   // ** Props
-  const { data, tag, className } = props
+  const { data, tag, className } = props;
 
   // ** Custom Tagg
-  const Tag = tag ? tag : 'ul'
+  const Tag = tag ? tag : 'ul';
 
   return (
     <Tag
@@ -16,7 +16,7 @@ const Timeline = props => {
       })}
     >
       {data.map((item, i) => {
-        const ItemTag = item.tag ? item.tag : 'li'
+        const ItemTag = item.tag ? item.tag : 'li';
 
         return (
           <ItemTag
@@ -60,17 +60,17 @@ const Timeline = props => {
               {item.customContent ? item.customContent : null}
             </div>
           </ItemTag>
-        )
+        );
       })}
     </Tag>
-  )
-}
+  );
+};
 
-export default Timeline
+export default Timeline;
 
 // ** PropTypes
 Timeline.propTypes = {
   data: Proptypes.array.isRequired,
   className: Proptypes.string,
   tag: Proptypes.string
-}
+};

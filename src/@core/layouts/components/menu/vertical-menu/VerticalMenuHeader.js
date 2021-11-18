@@ -1,33 +1,33 @@
 // ** React Imports
-import { useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 
 // ** Third Party Components
-import { Disc, X, Circle } from 'react-feather'
+import { Disc, X, Circle } from 'react-feather';
 
 // ** Config
-import themeConfig from '@configs/themeConfig'
-import logo from '../../../../../assets/images/logo/logo.png'
+import themeConfig from '@configs/themeConfig';
+import logo from '../../../../../assets/images/logo/logo.png';
 
 const VerticalMenuHeader = (props) => {
   // ** Props
-  const { menuCollapsed, setMenuCollapsed, setMenuVisibility, setGroupOpen, menuHover } = props
+  const { menuCollapsed, setMenuCollapsed, setMenuVisibility, setGroupOpen, menuHover } = props;
 
   // ** Reset open group
   useEffect(() => {
-    if (!menuHover && menuCollapsed) setGroupOpen([])
-  }, [menuHover, menuCollapsed])
+    if (!menuHover && menuCollapsed) setGroupOpen([]);
+  }, [menuHover, menuCollapsed]);
 
   // ** Menu toggler component
   const Toggler = () => {
     if (!menuCollapsed) {
-      return <Disc size={20} data-tour="toggle-icon" className="text-primary toggle-icon d-none d-xl-block" onClick={() => setMenuCollapsed(true)} />
+      return <Disc size={20} data-tour="toggle-icon" className="text-primary toggle-icon d-none d-xl-block" onClick={() => setMenuCollapsed(true)} />;
     } else {
       return (
         <Circle size={20} data-tour="toggle-icon" className="text-primary toggle-icon d-none d-xl-block" onClick={() => setMenuCollapsed(false)} />
-      )
+      );
     }
-  }
+  };
 
   return (
     <div className="navbar-header">
@@ -48,7 +48,7 @@ const VerticalMenuHeader = (props) => {
         </li>
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default VerticalMenuHeader
+export default VerticalMenuHeader;

@@ -1,24 +1,24 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 // ** Custom Hooks
-import { useSkin } from '@hooks/useSkin'
+import { useSkin } from '@hooks/useSkin';
 
 const BlankLayout = ({ children, ...rest }) => {
   // ** Hooks
-  const [skin, setSkin] = useSkin()
+  const [skin, setSkin] = useSkin();
 
   // ** States
-  const [isMounted, setIsMounted] = useState(false)
+  const [isMounted, setIsMounted] = useState(false);
 
   //** ComponentDidMount
   useEffect(() => {
-    setIsMounted(true)
-    return () => setIsMounted(false)
-  }, [])
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
   if (!isMounted) {
-    return null
+    return null;
   }
 
   return (
@@ -29,7 +29,7 @@ const BlankLayout = ({ children, ...rest }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BlankLayout
+export default BlankLayout;

@@ -1,16 +1,16 @@
 // ** React Imports
-import PropTypes from 'prop-types'
-import classnames from 'classnames'
-import { Plus, Minus } from 'react-feather'
-import { useState, useEffect } from 'react'
-import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap'
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import { Plus, Minus } from 'react-feather';
+import { useState, useEffect } from 'react';
+import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
 
 // ** Styles
-import './number-input.scss'
+import './number-input.scss';
 
 // ** Keycode Vars
-const KEYCODE_UP = 38
-const KEYCODE_DOWN = 40
+const KEYCODE_UP = 38;
+const KEYCODE_DOWN = 40;
 
 const NumberInput = props => {
   // ** Props
@@ -33,93 +33,93 @@ const NumberInput = props => {
     onIncrement,
     inputClassName,
     ...rest
-  } = props
+  } = props;
 
   // ** State
-  const [count, setCount] = useState(value || min)
+  const [count, setCount] = useState(value || min);
 
   // ** Handle btn down click
   const handleDecrement = () => {
     if (!disabled && !readonly) {
       // ** If count is equals or smaller than min then return and do nothing
       if (!wrap && count <= min) {
-        return
+        return;
       }
 
       // ** Returns the decreased count based on wrap & and min prop
       const countCondition = () => {
         if (count - step < min) {
           if (wrap) {
-            return max
+            return max;
           } else {
-            return min
+            return min;
           }
         } else {
-          return count - step
+          return count - step;
         }
-      }
+      };
 
-      setCount(countCondition())
+      setCount(countCondition());
 
       if (onDecrement) {
-        onIncrement(count)
+        onIncrement(count);
       }
     }
-  }
+  };
 
   // ** Handle btn up click
   const handleIncrement = () => {
     if (!disabled && !readonly) {
       // ** If count is equals or larger than min then return and do nothing
       if (!wrap && count >= max) {
-        return
+        return;
       }
 
       // ** Returns the Increased count based on wrap & and max prop
       const countCondition = () => {
         if (count + step > max) {
           if (wrap) {
-            return min
+            return min;
           } else {
-            return max
+            return max;
           }
         } else {
-          return count + step
+          return count + step;
         }
-      }
+      };
 
-      setCount(countCondition())
+      setCount(countCondition());
 
       if (onIncrement) {
-        onIncrement(count)
+        onIncrement(count);
       }
     }
-  }
+  };
 
   // ** Handle input change
   const handleInputChange = e => {
-    setCount(Number(e.target.value))
-  }
+    setCount(Number(e.target.value));
+  };
 
   // ** Handle Arrow Up & Down
   const handleKeyDown = e => {
-    e.preventDefault()
+    e.preventDefault();
     if (!readonly) {
       if (e.keyCode === KEYCODE_UP) {
-        handleIncrement()
+        handleIncrement();
       }
       if (e.keyCode === KEYCODE_DOWN) {
-        handleDecrement()
+        handleDecrement();
       }
     }
-  }
+  };
 
   // ** UseEffect based on user passed onChange
   useEffect(() => {
     if (onChange) {
-      onChange(count)
+      onChange(count);
     }
-  }, [count])
+  }, [count]);
 
   return (
     <InputGroup
@@ -166,10 +166,10 @@ const NumberInput = props => {
         </Button>
       </InputGroupAddon>
     </InputGroup>
-  )
-}
+  );
+};
 
-export default NumberInput
+export default NumberInput;
 
 // ** Default Props
 NumberInput.defaultProps = {
@@ -181,7 +181,7 @@ NumberInput.defaultProps = {
   readonly: false,
   downIcon: <Minus size={14} />,
   upIcon: <Plus size={14} />
-}
+};
 
 // ** PropTypes
 NumberInput.propTypes = {
@@ -202,4 +202,4 @@ NumberInput.propTypes = {
   onIncrement: PropTypes.func,
   inputClassName: PropTypes.string,
   size: PropTypes.oneOf(['sm', 'lg'])
-}
+};
