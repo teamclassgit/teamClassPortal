@@ -323,7 +323,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
           <Input id="payment-id" placeholder="" value={newPaymentId} onChange={(e) => setNewPaymentId(e.target.value)} />
           <small>ID of the payment platform.</small>
         </FormGroup>
-        {currentPayment.status === PAYMENT_STATUS_SUCCESS && (
+        {currentPayment && currentPayment.status === PAYMENT_STATUS_SUCCESS && (
           <Row>
             <Col md={6}>
               <FormGroup>
