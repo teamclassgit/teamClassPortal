@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather';
+import { useHistory } from 'react-router';
 
 // @scripts
 import StatusSelector from './StatusSelector';
@@ -30,6 +31,8 @@ const DataTableBookings = ({
   handleEditModal
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
+
+  const history = useHistory();
 
   const columns = [
     {
@@ -307,7 +310,7 @@ const DataTableBookings = ({
   };
 
   const handleEdit = (rowId) => {
-    window.open(`/booking/${rowId}`, "_blank", "width=1250px,height=600px");
+    history.push(`/booking/${rowId}`);
   };
 
   const CustomPagination = () => (

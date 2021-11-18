@@ -1,4 +1,4 @@
-import {Mail, Home, CheckCircle} from 'react-feather';
+import { CheckCircle } from 'react-feather';
 
 export default [
   {

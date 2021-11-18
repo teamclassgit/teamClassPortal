@@ -21,7 +21,7 @@ import { getCustomerEmail, getClassTitle } from './common';
 
 const BookingList = () => {
   const excludedBookings = ['closed', 'canceled'];
-  const [genericFilter, setGenericFilter] = useState({});
+  const genericFilter = {};
   const [bookingsFilter, setBookingsFilter] = useState({ status_nin: excludedBookings });
   const [bookings, setBookings] = useState([]);
   const [limit, setLimit] = useState(600);

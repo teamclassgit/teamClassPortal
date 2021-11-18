@@ -1,20 +1,22 @@
-// ** React Imports
-import {useEffect, useState, Fragment, forwardRef} from 'react';
-
-// ** Third Party Components
+// @packages
 import Stepper from 'bs-stepper';
 import classnames from 'classnames';
-import {PropTypes} from 'prop-types';
+import { Fragment, useEffect, useState, forwardRef } from 'react';
 import {ChevronRight} from 'react-feather';
+import {PropTypes} from 'prop-types';
 
 // ** Styles
 import 'bs-stepper/dist/css/bs-stepper.min.css';
 import '../../../@core/scss/base/plugins/forms/form-wizard.scss';
 
-const Wizard = forwardRef((props, ref) => {
-  // ** Props
-  const {type, className, steps, separator, options, instance} = props;
-
+const Wizard = forwardRef(({
+  type,
+  className,
+  steps,
+  separator,
+  options,
+  instance
+}, ref) => {
   // ** State
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -48,7 +50,7 @@ const Wizard = forwardRef((props, ref) => {
             data-target={`#${step.id}`}
           >
             <button type='button' className='step-trigger'>
-              <span className='bs-stepper-box'>{step.icon ? step.icon : index + 1}</span>
+              {step.icon ? <span className='bs-stepper-box'>{step.icon}</span> : null}
               <span className='bs-stepper-label'>
                 <span className='bs-stepper-title'>{step.title}</span>
                 {step.subtitle ? <span className='bs-stepper-subtitle'>{step.subtitle}</span> : null}
@@ -60,7 +62,6 @@ const Wizard = forwardRef((props, ref) => {
     });
   };
 
-  // ** Renders Wizard Content
   const renderContent = () => {
     return steps.map((step, index) => {
       return (
@@ -86,7 +87,7 @@ const Wizard = forwardRef((props, ref) => {
         'vertical wizard-modern': type === 'modern-vertical',
         'wizard-modern': type === 'modern-horizontal'
       })}
-    >
+    > 
       <div className='bs-stepper-header'>{renderHeader()}</div>
       <div className='bs-stepper-content'>{renderContent()}</div>
     </div>
@@ -95,14 +96,13 @@ const Wizard = forwardRef((props, ref) => {
 
 export default Wizard;
 
-// ** Default Props
 Wizard.defaultProps = {
   type: 'horizontal',
   separator: <ChevronRight size={17}/>,
-  options: {}
+  options: {},
+  steps: []
 };
 
-// ** PropTypes
 Wizard.propTypes = {
   type: PropTypes.string,
   instance: PropTypes.func,
@@ -117,5 +117,5 @@ Wizard.propTypes = {
       icon: PropTypes.any,
       content: PropTypes.any.isRequired
     })
-  ).isRequired
+  )
 };

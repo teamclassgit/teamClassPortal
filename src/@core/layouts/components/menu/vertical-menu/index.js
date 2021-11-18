@@ -1,14 +1,10 @@
-// ** React Imports
-import { Fragment, useState, useRef } from 'react';
-
-// ** Vertical Menu Items Array
-import navigation from '@src/navigation/vertical';
-
-// ** Third Party Components
-import classnames from 'classnames';
+// @packages
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import classnames from 'classnames';
+import navigation from '@src/navigation/vertical';
+import { useState, useRef } from 'react';
 
-// ** Vertical Menu Components
+// @scripts
 import VerticalMenuHeader from './VerticalMenuHeader';
 import VerticalNavMenuItems from './VerticalNavMenuItems';
 
@@ -46,7 +42,7 @@ const Sidebar = props => {
   };
 
   return (
-    <Fragment>
+    <>
       <div
         className={classnames('main-menu menu-fixed menu-accordion menu-shadow', {
           expanded: menuHover || menuCollapsed === false,
@@ -59,7 +55,7 @@ const Sidebar = props => {
         {menu ? (
           menu
         ) : (
-          <Fragment>
+          <>
             {/* Vertical Menu Header */}
             <VerticalMenuHeader setGroupOpen={setGroupOpen} menuHover={menuHover} {...props} />
             {/* Vertical Menu Header Shadow */}
@@ -86,10 +82,10 @@ const Sidebar = props => {
                 />
               </ul>
             </PerfectScrollbar>
-          </Fragment>
+          </>
         )}
       </div>
-    </Fragment>
+    </>
   );
 };
 
