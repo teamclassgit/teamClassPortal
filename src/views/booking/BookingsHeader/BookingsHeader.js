@@ -1,56 +1,60 @@
+// @packages
 import React, { useState, useContext, useEffect } from 'react';
 import {
+  Button,
+  ButtonGroup,
   Card,
   CardHeader,
   CardTitle,
-  UncontrolledButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-  ButtonGroup,
-  Input,
   Col,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Input,
   InputGroup,
-  InputGroupAddon
+  InputGroupAddon,
+  UncontrolledButtonDropdown
 } from 'reactstrap';
 import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather';
-import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
+import PropTypes from 'prop-types';
+
+// @scripts
 import ExportToExcel from '../../../components/ExportToExcel';
+import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
 import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName, getFormattedEventDate } from '../common';
 
-function BookingsHeader ({
+const BookingsHeader = ({
+  bookings,
+  calendarEvents,
+  classes,
+  coordinators,
+  customers,
+  defaultLimit,
+  generalInquiries,
+  isClosedBookings,
+  isGeneralInquiries,
+  isInProgressBookings,
+  isPrivateRequest,
+  onChangeLimit,
+  privateRequests,
+  setElementToAdd,
   setShowFiltersModal,
   setSwitchView,
-  switchView,
-  showAddModal,
-  setElementToAdd,
-  bookings,
-  privateRequests,
-  generalInquiries,
-  defaultLimit,
-  onChangeLimit,
-  customers,
-  coordinators,
-  classes,
-  calendarEvents,
-  showLimit,
-  showExport,
   showAdd,
+  showAddModal,
+  showExport,
   showFilter,
+  showLimit,
   showView,
-  titleView,
-  isInProgressBookings,
-  isClosedBookings,
-  isPrivateRequest,
-  isGeneralInquiries
-}) {
-  const [searchValue, setSearchValue] = useState(null);
-  const [limit, setLimit] = useState(defaultLimit);
-  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext, dateFilterContext } = useContext(FiltersContext);
+  switchView,
+  titleView
+}) => {
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
-  const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([]);
   const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([]);
+  const [limit, setLimit] = useState(defaultLimit);
+  const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([]);
+  const [searchValue, setSearchValue] = useState(null);
+  const { setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext);
 
   useEffect(() => {
     setTextFilterContext('');
@@ -158,6 +162,16 @@ function BookingsHeader ({
     }
   }, [generalInquiries]);
 
+  const handleChange = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      setTextFilterContext({ type: 'text', value: searchValue });
+    }
+  };
+
   return (
     <Card className="w-100  shadow-none bg-transparent m-0">
       <CardHeader>
@@ -181,11 +195,9 @@ function BookingsHeader ({
           <InputGroup className="mr-2">
             <Input
               type="text"
+              onKeyPress={handleKeyPress}
               value={searchValue}
-              onChange={(e) => {
-                e.preventDefault();
-                setSearchValue(e.target.value);
-              }}
+              onChange={handleChange}
             />
             <InputGroupAddon addonType="append">
               <Button
@@ -353,6 +365,34 @@ function BookingsHeader ({
       </CardHeader>
     </Card>
   );
-}
+};
 
 export default BookingsHeader;
+
+BookingsHeader.propTypes = {
+  bookings: PropTypes.array.isRequired,
+  calendarEvents: PropTypes.array.isRequired,
+  classes: PropTypes.array.isRequired,
+  coordinators: PropTypes.array.isRequired,
+  customers: PropTypes.array.isRequired,
+  defaultLimit: PropTypes.number.isRequired,
+  generalInquiries: PropTypes.array.isRequired,
+  isClosedBookings: PropTypes.bool.isRequired,
+  isGeneralInquiries: PropTypes.bool.isRequired,
+  isInProgressBookings: PropTypes.bool.isRequired,
+  isPrivateRequests: PropTypes.bool.isRequired,
+  onChangeLimit: PropTypes.func.isRequired,
+  privateRequests: PropTypes.array.isRequired,
+  setElementToAdd: PropTypes.func.isRequired,
+  setShowFiltersModal: PropTypes.func.isRequired,
+  setSwitchView: PropTypes.func.isRequired,
+  showAdd: PropTypes.bool.isRequired,
+  showAddModal: PropTypes.func.isRequired,
+  showExport: PropTypes.bool.isRequired,
+  showFilter: PropTypes.bool.isRequired,
+  showLimit: PropTypes.bool.isRequired,
+  showView: PropTypes.bool.isRequired,
+  switchView: PropTypes.bool.isRequired,
+  titleView: PropTypes.string.isRequired
+};
+
