@@ -1,4 +1,4 @@
-import { Mail, Home, CheckCircle, Archive, BookOpen, Book, HelpCircle } from 'react-feather'
+import { Mail, Home, CheckCircle, Archive, BookOpen, Book, HelpCircle } from 'react-feather';
 
 export default [
   {
@@ -25,4 +25,4 @@ export default [
     icon: <HelpCircle size={20} />,
     navLink: '/generalInquiries'
   }
-]
+];

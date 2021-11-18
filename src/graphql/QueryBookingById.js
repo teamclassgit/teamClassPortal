@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from '@apollo/client';
 
 export default gql`
   query GetBooking($bookingId: String!) {
@@ -93,4 +93,4 @@ export default gql`
       signUpDeadline
     }
   }
-`
+`;

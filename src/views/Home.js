@@ -1,4 +1,4 @@
-import {Card, CardBody, CardHeader, CardLink, CardText, CardTitle} from 'reactstrap'
+import {Card, CardBody, CardHeader, CardLink, CardText, CardTitle} from 'reactstrap';
 
 const Home = () => {
   return (
@@ -43,7 +43,7 @@ const Home = () => {
         </CardBody>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

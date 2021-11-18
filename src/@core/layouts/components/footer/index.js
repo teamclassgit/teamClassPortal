@@ -1,5 +1,5 @@
 // ** Icons Import
-import { Heart } from 'react-feather'
+import { Heart } from 'react-feather';
 
 const Footer = () => {
   return (
@@ -16,7 +16,7 @@ const Footer = () => {
         <Heart size={14} />
       </span>
     </p>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

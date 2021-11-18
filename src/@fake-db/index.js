@@ -1,4 +1,4 @@
-import mock from './mock'
-import './tables/datatables'
+import mock from './mock';
+import './tables/datatables';
 
-mock.onAny().passThrough()
+mock.onAny().passThrough();

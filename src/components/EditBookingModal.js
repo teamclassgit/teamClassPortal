@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -20,24 +20,24 @@ import {
   Nav,
   NavItem,
   NavLink
-} from 'reactstrap'
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather'
-import Select from 'react-select'
-import { getUserData, isValidEmail } from '../utility/Utils'
-import Cleave from 'cleave.js/react'
-import { selectThemeColors } from '@utils'
-import Flatpickr from 'react-flatpickr'
-import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer'
-import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId'
-import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote'
-import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes'
-import { useMutation } from '@apollo/client'
-import Avatar from '@components/avatar'
-import moment from 'moment'
-import classnames from 'classnames'
+} from 'reactstrap';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather';
+import Select from 'react-select';
+import { getUserData, isValidEmail } from '../utility/Utils';
+import Cleave from 'cleave.js/react';
+import { selectThemeColors } from '@utils';
+import Flatpickr from 'react-flatpickr';
+import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
+import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
+import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
+import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
+import { useMutation } from '@apollo/client';
+import Avatar from '@components/avatar';
+import moment from 'moment';
+import classnames from 'classnames';
 
-import './EditBookingModal.scss'
-import { BOOKING_CLOSED_STATUS } from '../utility/Constants'
+import './EditBookingModal.scss';
+import { BOOKING_CLOSED_STATUS } from '../utility/Constants';
 
 const EditBookingModal = ({
   currentElement: {
@@ -74,33 +74,33 @@ const EditBookingModal = ({
   handleClose,
   editMode
 }) => {
-  const [customerName, setCustomerName] = useState(null)
-  const [customerEmail, setCustomerEmail] = useState(null)
-  const [emailValid, setEmailValid] = useState(true)
-  const [customerPhone, setCustomerPhone] = useState(null)
-  const [customerCompany, setCustomerCompany] = useState(null)
-  const [coordinatorName, setCoordinatorName] = useState(null)
-  const [coordinatorId, setCoordinatorId] = useState(null)
-  const [bookingTeamClassId, setBookingTeamClassId] = useState(null)
-  const [bookingTeamClassName, setBookingTeamClassName] = useState(null)
-  const [classVariantsOptions, setClassVariantsOptions] = useState([])
-  const [classVariant, setClassVariant] = useState(null)
-  const [groupSize, setGroupSize] = useState(null)
-  const [attendeesValid, setAttendeesValid] = useState(true)
-  const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([])
-  const [closedBookingReason, setClosedBookingReason] = useState(null)
-  const [bookingNotes, setBookingNotes] = useState([])
-  const [active, setActive] = useState('1')
-  const [processing, setProcessing] = useState(false)
-  const [inputNote, setInputNote] = useState('')
+  const [customerName, setCustomerName] = useState(null);
+  const [customerEmail, setCustomerEmail] = useState(null);
+  const [emailValid, setEmailValid] = useState(true);
+  const [customerPhone, setCustomerPhone] = useState(null);
+  const [customerCompany, setCustomerCompany] = useState(null);
+  const [coordinatorName, setCoordinatorName] = useState(null);
+  const [coordinatorId, setCoordinatorId] = useState(null);
+  const [bookingTeamClassId, setBookingTeamClassId] = useState(null);
+  const [bookingTeamClassName, setBookingTeamClassName] = useState(null);
+  const [classVariantsOptions, setClassVariantsOptions] = useState([]);
+  const [classVariant, setClassVariant] = useState(null);
+  const [groupSize, setGroupSize] = useState(null);
+  const [attendeesValid, setAttendeesValid] = useState(true);
+  const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
+  const [closedBookingReason, setClosedBookingReason] = useState(null);
+  const [bookingNotes, setBookingNotes] = useState([]);
+  const [active, setActive] = useState('1');
+  const [processing, setProcessing] = useState(false);
+  const [inputNote, setInputNote] = useState('');
 
-  const [updateBooking] = useMutation(mutationUpdateBooking, {})
+  const [updateBooking] = useMutation(mutationUpdateBooking, {});
 
-  const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {})
+  const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
 
-  const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {})
+  const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
 
-  const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {})
+  const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
 
   const closeBookingOptions = [
     {
@@ -127,60 +127,60 @@ const EditBookingModal = ({
       label: 'Test',
       value: 'Test'
     }
-  ]
+  ];
 
   useEffect(() => {
-    setCustomerName(currentName)
-    setCustomerEmail(currentEmail)
-    setCustomerPhone(currentPhone)
-    setCustomerCompany(currentCompany)
-    setCoordinatorId(currentCoordinatorId)
-    setCoordinatorName(currentCoordinatorName)
-    setBookingTeamClassId(currentTeamclassId)
-    setBookingTeamClassName(currentTeamclassName)
-    setClassVariant(currentClassVariant)
-    setGroupSize(currentGroupSize)
-    setBookingSignUpDeadline([currentSignUpDeadline])
-    setClosedBookingReason(currentClosedReason)
-    setBookingNotes(currentNotes)
-  }, [bookingId])
+    setCustomerName(currentName);
+    setCustomerEmail(currentEmail);
+    setCustomerPhone(currentPhone);
+    setCustomerCompany(currentCompany);
+    setCoordinatorId(currentCoordinatorId);
+    setCoordinatorName(currentCoordinatorName);
+    setBookingTeamClassId(currentTeamclassId);
+    setBookingTeamClassName(currentTeamclassName);
+    setClassVariant(currentClassVariant);
+    setGroupSize(currentGroupSize);
+    setBookingSignUpDeadline([currentSignUpDeadline]);
+    setClosedBookingReason(currentClosedReason);
+    setBookingNotes(currentNotes);
+  }, [bookingId]);
 
   useEffect(() => {
     if (bookingTeamClassId) {
-      const filteredClass = allClasses.find((element) => element._id === bookingTeamClassId)
-      if (filteredClass) setClassVariantsOptions(filteredClass.variants)
+      const filteredClass = allClasses.find((element) => element._id === bookingTeamClassId);
+      if (filteredClass) setClassVariantsOptions(filteredClass.variants);
     }
-  }, [bookingTeamClassId])
+  }, [bookingTeamClassId]);
 
   const emailValidation = (email) => {
-    setEmailValid(isValidEmail(email))
-  }
+    setEmailValid(isValidEmail(email));
+  };
 
-  const options = { phone: true, phoneRegionCode: 'US' }
+  const options = { phone: true, phoneRegionCode: 'US' };
 
   const cancel = () => {
-    setClosedBookingReason(null)
-    handleModal()
-  }
+    setClosedBookingReason(null);
+    handleModal();
+  };
 
   const groupSizeValidation = (size) => {
-    setAttendeesValid(size > 0)
-  }
+    setAttendeesValid(size > 0);
+  };
   const editBooking = async () => {
-    setProcessing(true)
+    setProcessing(true);
 
     try {
-      const teamClass = allClasses.find((element) => element._id === bookingTeamClassId)
+      const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
       const resultUpdateBooking = await updateBooking({
         variables: {
-          bookingId: bookingId,
+          bookingId,
           date: new Date(), // combine with quotaTime
           teamClassId: bookingTeamClassId,
-          classVariant: classVariant,
+          classVariant,
           instructorId: teamClass.instructorId,
           instructorName: teamClass.instructorName,
           customerId: currentCustomerId,
-          customerName: customerName,
+          customerName,
           eventDate: new Date(),
           eventDurationHours: classVariant.duration ? classVariant.duration : currentEventDurationHours,
           eventCoordinatorId: coordinatorId,
@@ -190,7 +190,7 @@ const EditBookingModal = ({
           serviceFee: currentServiceFee,
           salesTax: currentSalesTax,
           discount: 0,
-          createdAt: createdAt,
+          createdAt,
           updatedAt: new Date(),
           status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentStatus,
           email: customerEmail,
@@ -200,66 +200,66 @@ const EditBookingModal = ({
           closedReason: closedBookingReason,
           notes: bookingNotes
         }
-      })
+      });
 
       if (!resultUpdateBooking || !resultUpdateBooking.data) {
-        setProcessing(false)
-        return
+        setProcessing(false);
+        return;
       }
 
       // Update customers object
       setCustomers([
         resultUpdateBooking.data.updateOneCustomer,
         ...allCustomers.filter((element) => element._id !== resultUpdateBooking.data.updateOneCustomer._id)
-      ])
+      ]);
 
       if (closedBookingReason) {
         const resultEmail = await removeCampaignRequestQuote({
           variables: { customerEmail: customerEmail.toLowerCase() }
-        })
-        console.log('Remove campaign before redirecting:', resultEmail)
-        setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)])
+        });
+        console.log('Remove campaign before redirecting:', resultEmail);
+        setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
       } else {
         // Update bookings object
         setBookings([
           resultUpdateBooking.data.updateOneBooking,
           ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
-        ])
+        ]);
       }
 
       if (closedBookingReason === 'Lost' || closedBookingReason === 'Duplicated' || closedBookingReason === 'Mistake') {
-        const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId)
+        const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
         if (calendarEventObject) {
           const resultStatusUpdated = await updateCalendarEventStatus({
             variables: {
               calendarEventId: calendarEventObject._id,
               status: 'canceled'
             }
-          })
-          console.log('Changing calendar event status', resultStatusUpdated)
+          });
+          console.log('Changing calendar event status', resultStatusUpdated);
         }
       }
 
-      setProcessing(false)
-      setClosedBookingReason(null)
+      setProcessing(false);
+      setClosedBookingReason(null);
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
-      setClosedBookingReason(null)
+      console.log(ex);
+      setProcessing(false);
+      setClosedBookingReason(null);
     }
     // Hide modal
-    handleModal()
-  }
+    handleModal();
+  };
 
   const editNotes = async () => {
-    setProcessing(true)
-    const newArray = bookingNotes ? [...bookingNotes] : []
-    const userData = getUserData()
+    setProcessing(true);
+    const newArray = bookingNotes ? [...bookingNotes] : [];
+    const userData = getUserData();
     newArray.unshift({
       note: inputNote,
       author: (userData && userData.customData && userData.customData['name']) || 'Unknown',
       date: new Date()
-    })
+    });
 
     try {
       const resultNotesUpdated = await updateBookingNotes({
@@ -268,30 +268,30 @@ const EditBookingModal = ({
           notes: newArray,
           updatedAt: new Date()
         }
-      })
-      setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)))
+      });
+      setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)));
       setBookings([
         resultNotesUpdated.data.updateOneBooking,
         ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
-      ])
-      setProcessing(false)
+      ]);
+      setProcessing(false);
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
+      console.log(ex);
+      setProcessing(false);
     }
-  }
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
+  };
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   const toggle = (tab) => {
     if (active !== tab) {
-      setActive(tab)
+      setActive(tab);
     }
-  }
+  };
 
   const onChangeNotes = () => {
-    editNotes()
-    setInputNote('')
-  }
+    editNotes();
+    setInputNote('');
+  };
 
   const selectStyles = {
     control: (base) => ({
@@ -311,7 +311,7 @@ const EditBookingModal = ({
       padding: 0,
       fontSize: 12
     })
-  }
+  };
 
   return (
     <Modal
@@ -331,7 +331,7 @@ const EditBookingModal = ({
             title="Basic information"
             active={active === '1'}
             onClick={() => {
-              toggle('1')
+              toggle('1');
             }}
           >
             <Info size="18" />
@@ -342,7 +342,7 @@ const EditBookingModal = ({
             title="Notes"
             active={active === '2'}
             onClick={() => {
-              toggle('2')
+              toggle('2');
             }}
           >
             <Edit size="18" />
@@ -388,7 +388,7 @@ const EditBookingModal = ({
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   invalid={!emailValid}
                   onBlur={(e) => {
-                    emailValidation(e.target.value)
+                    emailValidation(e.target.value);
                   }}
                 />
               </InputGroup>
@@ -438,12 +438,12 @@ const EditBookingModal = ({
                     return {
                       value: item._id,
                       label: item.name
-                    }
+                    };
                   })
                 }
                 onChange={(option) => {
-                  setCoordinatorId(option.value)
-                  setCoordinatorName(option.label)
+                  setCoordinatorId(option.value);
+                  setCoordinatorName(option.label);
                 }}
                 isClearable={false}
               />
@@ -462,7 +462,7 @@ const EditBookingModal = ({
                     return {
                       value: element._id,
                       label: element.title
-                    }
+                    };
                   })
                 }
                 value={{
@@ -470,9 +470,9 @@ const EditBookingModal = ({
                   label: bookingTeamClassName
                 }}
                 onChange={(option) => {
-                  setClassVariant(null)
-                  setBookingTeamClassId(option.value)
-                  setBookingTeamClassName(option.label)
+                  setClassVariant(null);
+                  setBookingTeamClassId(option.value);
+                  setBookingTeamClassName(option.label);
                 }}
                 isClearable={false}
               />
@@ -487,7 +487,7 @@ const EditBookingModal = ({
                 classNamePrefix="select"
                 placeholder="Select..."
                 value={{
-                  label: classVariant && classVariant.title + ' $' + classVariant.pricePerson + (classVariant.groupEvent ? '/group' : '/person'),
+                  label: classVariant && `${classVariant.title  } $${  classVariant.pricePerson  }${classVariant.groupEvent ? '/group' : '/person'}`,
                   value: classVariant
                 }}
                 options={
@@ -495,8 +495,8 @@ const EditBookingModal = ({
                   classVariantsOptions.map((element) => {
                     return {
                       value: element,
-                      label: element.title + ' $' + element.pricePerson + (element.groupEvent ? '/group' : '/person')
-                    }
+                      label: `${element.title  } $${  element.pricePerson  }${element.groupEvent ? '/group' : '/person'}`
+                    };
                   })
                 }
                 onChange={(option) => setClassVariant(option.value)}
@@ -513,7 +513,7 @@ const EditBookingModal = ({
                   onChange={(e) => setGroupSize(e.target.value)}
                   type="number"
                   onBlur={(e) => {
-                    groupSizeValidation(e.target.value)
+                    groupSizeValidation(e.target.value);
                   }}
                 />
               </InputGroup>
@@ -529,7 +529,7 @@ const EditBookingModal = ({
                   className="form-control"
                   placeholder="Select Date..."
                   onChange={(selectedDates, dateStr, instance) => {
-                    setBookingSignUpDeadline(selectedDates)
+                    setBookingSignUpDeadline(selectedDates);
                   }}
                 />
               </InputGroup>
@@ -559,7 +559,7 @@ const EditBookingModal = ({
                   return {
                     label: item.label,
                     value: item.value
-                  }
+                  };
                 })}
                 onChange={(option) => setClosedBookingReason(option.value)}
                 isClearable={false}
@@ -586,10 +586,10 @@ const EditBookingModal = ({
                   {!processing && !closedBookingReason
                     ? 'Save'
                     : closedBookingReason && processing
-                    ? 'Saving...'
-                    : processing
-                    ? 'Saving...'
-                    : 'Close booking?'}
+                      ? 'Saving...'
+                      : processing
+                        ? 'Saving...'
+                        : 'Close booking?'}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel
@@ -628,7 +628,7 @@ const EditBookingModal = ({
                           </p>
                         </div>
                       </li>
-                    )
+                    );
                   })
                 ) : (
                   <li>
@@ -648,7 +648,7 @@ const EditBookingModal = ({
         <TabPane tabId="3">Settings tab</TabPane>
       </TabContent>
     </Modal>
-  )
-}
+  );
+};
 
-export default EditBookingModal
+export default EditBookingModal;

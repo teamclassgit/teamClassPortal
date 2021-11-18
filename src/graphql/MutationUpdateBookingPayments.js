@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from '@apollo/client';
 
 export default gql`
   mutation updateBookingPayments($bookingId: String!, $payments: [BookingPaymentUpdateInput]!, $status: String!, $updatedAt: DateTime!) {
@@ -86,4 +86,4 @@ export default gql`
       updatedAt
     }
   }
-`
+`;

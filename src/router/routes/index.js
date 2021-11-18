@@ -1,10 +1,10 @@
-import { lazy } from 'react'
+import { lazy } from 'react';
 
 // ** Document title
-const TemplateTitle = '%s - TeamClass Ops Dashboard'
+const TemplateTitle = '%s - TeamClass Ops Dashboard';
 
 // ** Default Route
-const DefaultRoute = '/bookings'
+const DefaultRoute = '/bookings';
 
 // ** Merge Routes
 const Routes = [
@@ -42,6 +42,6 @@ const Routes = [
     component: lazy(() => import('../../views/Error')),
     layout: 'BlankLayout'
   }
-]
+];
 
-export { DefaultRoute, TemplateTitle, Routes }
+export { DefaultRoute, TemplateTitle, Routes };

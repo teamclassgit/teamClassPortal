@@ -1,16 +1,16 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState } from 'react';
 
 // ** Third Party Components
-import Select from 'react-select'
-import classnames from 'classnames'
-import { Settings, X } from 'react-feather'
-import { CustomInput, FormGroup } from 'reactstrap'
-import PerfectScrollbar from 'react-perfect-scrollbar'
-import { selectThemeColors } from '@utils'
+import Select from 'react-select';
+import classnames from 'classnames';
+import { Settings, X } from 'react-feather';
+import { CustomInput, FormGroup } from 'reactstrap';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import { selectThemeColors } from '@utils';
 
 // ** Styles
-import '@styles/react/libs/react-select/_react-select.scss'
+import '@styles/react/libs/react-select/_react-select.scss';
 
 const Customizer = props => {
   // ** Props
@@ -35,16 +35,16 @@ const Customizer = props => {
     setMenuCollapsed,
     transition,
     setTransition
-  } = props
+  } = props;
 
   // ** State
-  const [openCustomizer, setOpenCustomizer] = useState(false)
+  const [openCustomizer, setOpenCustomizer] = useState(false);
 
   // ** Toggles Customizer
   const handleToggle = e => {
-    e.preventDefault()
-    setOpenCustomizer(!openCustomizer)
-  }
+    e.preventDefault();
+    setOpenCustomizer(!openCustomizer);
+  };
 
   // ** Render Layout Skin Options
   const renderSkinsRadio = () => {
@@ -69,13 +69,13 @@ const Customizer = props => {
         label: 'Semi Dark',
         checked: skin === 'semi-dark'
       }
-    ]
+    ];
 
     return skinsArr.map((radio, index) => {
-      const marginCondition = index !== skinsArr.length - 1
+      const marginCondition = index !== skinsArr.length - 1;
 
       if (layout === 'HorizontalLayout' && radio.name === 'semi-dark') {
-        return null
+        return null;
       }
 
       return (
@@ -88,13 +88,13 @@ const Customizer = props => {
           onChange={() => setSkin(radio.name)}
           className={classnames({ 'mr-1': marginCondition })}
         />
-      )
-    })
-  }
+      );
+    });
+  };
 
   // ** Render Navbar Colors Options
   const renderNavbarColors = () => {
-    const colorsArr = ['white', 'primary', 'secondary', 'success', 'danger', 'info', 'warning', 'dark']
+    const colorsArr = ['white', 'primary', 'secondary', 'success', 'danger', 'info', 'warning', 'dark'];
 
     return colorsArr.map(color => (
       <li
@@ -105,8 +105,8 @@ const Customizer = props => {
         })}
         onClick={() => setNavbarColor(color)}
       ></li>
-    ))
-  }
+    ));
+  };
 
   // ** Render Navbar Type Options
   const renderNavbarTypeRadio = () => {
@@ -131,13 +131,13 @@ const Customizer = props => {
         label: 'Hidden',
         checked: navbarType === 'hidden'
       }
-    ]
+    ];
 
     return navbarTypeArr.map((radio, index) => {
-      const marginCondition = index !== navbarTypeArr.length - 1
+      const marginCondition = index !== navbarTypeArr.length - 1;
 
       if (layout === 'HorizontalLayout' && radio.name === 'hidden') {
-        return null
+        return null;
       }
 
       return (
@@ -150,9 +150,9 @@ const Customizer = props => {
           onChange={() => setNavbarType(radio.name)}
           className={classnames({ 'mr-1': marginCondition })}
         />
-      )
-    })
-  }
+      );
+    });
+  };
 
   // ** Render Footer Type Options
   const renderFooterTypeRadio = () => {
@@ -172,10 +172,10 @@ const Customizer = props => {
         label: 'Hidden',
         checked: footerType === 'hidden'
       }
-    ]
+    ];
 
     return footerTypeArr.map((radio, index) => {
-      const marginCondition = index !== footerTypeArr.length - 1
+      const marginCondition = index !== footerTypeArr.length - 1;
 
       return (
         <CustomInput
@@ -187,9 +187,9 @@ const Customizer = props => {
           onChange={() => setFooterType(radio.name)}
           className={classnames({ 'mr-1': marginCondition })}
         />
-      )
-    })
-  }
+      );
+    });
+  };
 
   // **  Router Transition Options
   const transitionOptions = [
@@ -197,10 +197,10 @@ const Customizer = props => {
     { value: 'fadeInLeft', label: 'Fade In Left' },
     { value: 'zoomIn', label: 'Zoom In' },
     { value: 'none', label: 'None' }
-  ]
+  ];
 
   // ** Get Current Transition
-  const transitionValue = transitionOptions.find(i => i.value === transition)
+  const transitionValue = transitionOptions.find(i => i.value === transition);
 
   return (
     <div
@@ -351,7 +351,7 @@ const Customizer = props => {
         </div>
       </PerfectScrollbar>
     </div>
-  )
-}
+  );
+};
 
-export default Customizer
+export default Customizer;

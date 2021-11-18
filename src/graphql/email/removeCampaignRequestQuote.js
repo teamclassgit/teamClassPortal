@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client"
+import { gql } from "@apollo/client";
 
 export default gql`
   mutation removeCampaignRequestQuote($customerEmail: String!) {
@@ -6,4 +6,4 @@ export default gql`
       executed
     }
   }
-`
+`;

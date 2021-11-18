@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { useMutation } from '@apollo/client'
-import { Row } from 'reactstrap'
-import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus'
-import BoardCard from './BoardCard/BoardCard'
-import Board from '@lourenci/react-kanban'
-import { BOOKING_STATUS } from '../../../utility/Constants'
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getFormattedEventDate, getCoordinatorName } from '../common'
-import './BoardBookings.scss'
-import '@lourenci/react-kanban/dist/styles.css'
+import React, { useEffect, useState, useContext } from 'react';
+import { useMutation } from '@apollo/client';
+import { Row } from 'reactstrap';
+import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus';
+import BoardCard from './BoardCard/BoardCard';
+import Board from '@lourenci/react-kanban';
+import { BOOKING_STATUS } from '../../../utility/Constants';
+import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getFormattedEventDate, getCoordinatorName } from '../common';
+import './BoardBookings.scss';
+import '@lourenci/react-kanban/dist/styles.css';
 
 const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
-  const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {})
-  const [loading, setLoading] = useState(true)
+  const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {});
+  const [loading, setLoading] = useState(true);
 
   const getEmptyBoard = () => {
     return {
@@ -20,8 +20,8 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
         title: label,
         cards: []
       }))
-    }
-  }
+    };
+  };
 
   const getLoadingBoard = () => {
     return {
@@ -30,52 +30,52 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
         title: 'Loading...',
         cards: []
       }))
-    }
-  }
+    };
+  };
 
   const getColumnData = (bookingCards, column) => {
-    if (column === 'quote' || column === 'canceled') return bookingCards.filter(({ status }) => status.indexOf(column) > -1)
+    if (column === 'quote' || column === 'canceled') return bookingCards.filter(({ status }) => status.indexOf(column) > -1);
 
     if (column === 'date-requested') {
       return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf(column) > -1 && calendarEvent && calendarEvent.status === 'reserved'
-      })
+        return status.indexOf(column) > -1 && calendarEvent && calendarEvent.status === 'reserved';
+      });
     }
 
     if (column === 'accepted') {
       return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'confirmed'
-      })
+        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'confirmed';
+      });
     }
 
     if (column === 'rejected') {
       return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'rejected'
-      })
+        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'rejected';
+      });
     }
 
     if (column === 'confirmed') {
       return bookingCards.filter(({ status, payments }) => {
-        const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
-        return status.indexOf(column) > -1 && depositPayment
-      })
+        const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+        return status.indexOf(column) > -1 && depositPayment;
+      });
     }
 
     if (column === 'paid') {
       return bookingCards.filter(({ status, payments }) => {
-        const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
-        return status.indexOf(column) > -1 && finalPayment
-      })
+        const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+        return status.indexOf(column) > -1 && finalPayment;
+      });
     }
 
     if (column === 'reviews') {
       return bookingCards.filter(({ status, payments }) => {
-        return status.indexOf('reviews') > -1 || (status.indexOf('confirmed') > -1 && (!payments || payments.length === 0))
-      })
+        return status.indexOf('reviews') > -1 || (status.indexOf('confirmed') > -1 && (!payments || payments.length === 0));
+      });
     }
 
-    return []
-  }
+    return [];
+  };
 
   const getBoard = () => {
     const bookingCards = filteredBookings.map(
@@ -130,33 +130,33 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           teamClass: classes.find((element) => element._id === teamClassId),
           closedReason,
           notes
-        }
+        };
       }
-    )
+    );
     return {
       columns: BOOKING_STATUS.map(({ label, value }, index) => ({
         id: index,
         title: label,
         cards: getColumnData(bookingCards, value)
       }))
-    }
-  }
+    };
+  };
 
-  const [loadingBoard, setLoadingBoard] = useState(getLoadingBoard())
-  const [board, setBoard] = useState(getEmptyBoard())
+  const [loadingBoard, setLoadingBoard] = useState(getLoadingBoard());
+  const [board, setBoard] = useState(getEmptyBoard());
 
   useEffect(() => {
-    setLoading(true)
-    const newBoard = getBoard()
-    setBoard(newBoard)
-    setLoading(false)
-  }, [filteredBookings])
+    setLoading(true);
+    const newBoard = getBoard();
+    setBoard(newBoard);
+    setLoading(false);
+  }, [filteredBookings]);
 
   // Here we change the status of the dragged card
   const handleDragCard = async (booking, source, destination) => {
-    const sourceStatus = BOOKING_STATUS[source.fromColumnId].value
-    const newStatus = BOOKING_STATUS[destination.toColumnId].value
-    const bookingId = booking._id
+    const sourceStatus = BOOKING_STATUS[source.fromColumnId].value;
+    const newStatus = BOOKING_STATUS[destination.toColumnId].value;
+    const bookingId = booking._id;
 
     try {
       await updateBookingStatus({
@@ -165,11 +165,11 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           status: newStatus,
           updatedAt: new Date()
         }
-      })
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   return (
     <>
@@ -187,7 +187,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
         </Board>
       </Row>
     </>
-  )
-}
+  );
+};
 
-export default BoardBookings
+export default BoardBookings;

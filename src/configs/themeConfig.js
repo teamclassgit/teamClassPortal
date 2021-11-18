@@ -26,6 +26,6 @@ const themeConfig = {
     customizer: false,
     scrollTop: true // Enable scroll to top button
   }
-}
+};
 
-export default themeConfig
+export default themeConfig;

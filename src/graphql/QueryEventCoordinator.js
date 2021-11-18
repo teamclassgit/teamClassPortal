@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client"
+import { gql } from "@apollo/client";
 
 export default gql`
   query getEventCoordinator($id: String!) {
@@ -10,4 +10,4 @@ export default gql`
       crmId
     }
   }
-`
+`;

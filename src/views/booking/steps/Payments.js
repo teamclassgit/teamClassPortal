@@ -1,46 +1,46 @@
-import React, { Fragment, useState } from 'react'
-import { Badge, Button, Card, Col, Modal, ModalHeader, ModalFooter, Row, Table } from 'reactstrap'
-import { useMutation } from '@apollo/client'
-import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments'
-import moment from 'moment'
-import { capitalizeString } from '../../../utility/Utils'
-import { BOOKING_DEPOSIT_CONFIRMATION_STATUS, CHARGE_URL } from '../../../utility/Constants'
-import AddPaymentModal from './AddPaymentModal'
-import { Edit, Plus, Trash, X } from 'react-feather'
+import React, { Fragment, useState } from 'react';
+import { Badge, Button, Card, Col, Modal, ModalHeader, ModalFooter, Row, Table } from 'reactstrap';
+import { useMutation } from '@apollo/client';
+import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
+import moment from 'moment';
+import { capitalizeString } from '../../../utility/Utils';
+import { BOOKING_DEPOSIT_CONFIRMATION_STATUS, CHARGE_URL } from '../../../utility/Constants';
+import AddPaymentModal from './AddPaymentModal';
+import { Edit, Plus, Trash, X } from 'react-feather';
 
 const Payments = ({ booking, setBooking }) => {
-  const [currentPayment, setCurrentPayment] = useState(null)
-  const [processing, setProcessing] = React.useState(false)
-  const [clickedConvert, setClickedConvert] = React.useState(false)
-  const [payments, setPayments] = React.useState([])
-  const [modal, setModal] = useState(false)
-  const [mode, setMode] = useState(null)
-  const [deleteModal, setDeleteModal] = useState(false)
-  const [indexPayment, setIndexPayment] = useState(null)
+  const [currentPayment, setCurrentPayment] = useState(null);
+  const [processing, setProcessing] = React.useState(false);
+  const [clickedConvert, setClickedConvert] = React.useState(false);
+  const [payments, setPayments] = React.useState([]);
+  const [modal, setModal] = useState(false);
+  const [mode, setMode] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [indexPayment, setIndexPayment] = useState(null);
 
-  const [updateBooking] = useMutation(mutationUpdateBookingPayments, {})
+  const [updateBooking] = useMutation(mutationUpdateBookingPayments, {});
 
   // ** Function to handle Modal toggle
-  const handleModal = () => setModal(!modal)
+  const handleModal = () => setModal(!modal);
 
   React.useEffect(() => {
     if (booking && booking.payments) {
-      setPayments([...booking.payments].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)))
+      setPayments([...booking.payments].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)));
     } else {
-      setPayments([])
+      setPayments([]);
     }
-  }, [booking])
+  }, [booking]);
 
   // ** Custom close btn
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setDeleteModal(!deleteModal)} />
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setDeleteModal(!deleteModal)} />;
 
   const convertFinalPaymentToDeposit = async (payment) => {
-    setProcessing(true)
+    setProcessing(true);
 
-    const newPayment = { ...payment }
-    newPayment.paymentName = 'deposit'
-    const newPaymentsList = payments.filter((element) => element.paymentName !== 'final')
-    newPaymentsList.push(newPayment)
+    const newPayment = { ...payment };
+    newPayment.paymentName = 'deposit';
+    const newPaymentsList = payments.filter((element) => element.paymentName !== 'final');
+    newPaymentsList.push(newPayment);
 
     try {
       const result = await updateBooking({
@@ -50,25 +50,25 @@ const Payments = ({ booking, setBooking }) => {
           status: BOOKING_DEPOSIT_CONFIRMATION_STATUS,
           updatedAt: new Date()
         }
-      })
+      });
 
       if (result && result.data && result.data.updateOneBooking) {
-        setPayments(newPaymentsList)
-        setBooking(result.data.updateOneBooking)
+        setPayments(newPaymentsList);
+        setBooking(result.data.updateOneBooking);
       }
 
-      console.log('booking updated')
+      console.log('booking updated');
 
-      setProcessing(false)
+      setProcessing(false);
     } catch (ex) {
-      console.log(ex)
-      setProcessing(false)
+      console.log(ex);
+      setProcessing(false);
     }
-  }
+  };
 
   const deleteOnePayment = async () => {
-    let newPaymentsArray = payments ? [...payments] : []
-    newPaymentsArray.splice(indexPayment, 1)
+    const newPaymentsArray = payments ? [...payments] : [];
+    newPaymentsArray.splice(indexPayment, 1);
 
     try {
       const resultUpdateBookingPayment = await updateBooking({
@@ -78,14 +78,14 @@ const Payments = ({ booking, setBooking }) => {
           payments: newPaymentsArray,
           status: BOOKING_DEPOSIT_CONFIRMATION_STATUS
         }
-      })
-      setPayments(newPaymentsArray)
-      setBooking(resultUpdateBookingPayment.data.updateOneBooking)
-      console.log('Booking payment delete it.', resultUpdateBookingPayment.data.updateOneBooking)
+      });
+      setPayments(newPaymentsArray);
+      setBooking(resultUpdateBookingPayment.data.updateOneBooking);
+      console.log('Booking payment delete it.', resultUpdateBookingPayment.data.updateOneBooking);
     } catch (er) {
-      console.log(er)
+      console.log(er);
     }
-  }
+  };
 
   return (
     <>
@@ -94,7 +94,7 @@ const Payments = ({ booking, setBooking }) => {
           className="ml-2"
           color="primary"
           onClick={(e) => {
-            setMode('add')
+            setMode('add');
             const newPay = {
               name: '',
               email: '',
@@ -108,9 +108,9 @@ const Payments = ({ booking, setBooking }) => {
               paymentId: '',
               chargeUrl: '',
               status: ''
-            }
-            setCurrentPayment(newPay)
-            handleModal()
+            };
+            setCurrentPayment(newPay);
+            handleModal();
           }}
         >
           <Plus size={15} />
@@ -181,8 +181,8 @@ const Payments = ({ booking, setBooking }) => {
                                     href="#"
                                     title="Convert this payment to deposit will move this booking to deposit-paid status"
                                     onClick={(e) => {
-                                      e.preventDefault()
-                                      setClickedConvert(true)
+                                      e.preventDefault();
+                                      setClickedConvert(true);
                                     }}
                                   >
                                     Convert to deposit
@@ -199,8 +199,8 @@ const Payments = ({ booking, setBooking }) => {
                                         className="btn btn-primary btn-sm"
                                         href="#"
                                         onClick={(e) => {
-                                          e.preventDefault()
-                                          convertFinalPaymentToDeposit(element)
+                                          e.preventDefault();
+                                          convertFinalPaymentToDeposit(element);
                                         }}
                                       >
                                         Yes
@@ -209,8 +209,8 @@ const Payments = ({ booking, setBooking }) => {
                                         className="btn btn-secondary btn-sm"
                                         href="#"
                                         onClick={(e) => {
-                                          e.preventDefault()
-                                          setClickedConvert(false)
+                                          e.preventDefault();
+                                          setClickedConvert(false);
                                         }}
                                       >
                                         No
@@ -259,9 +259,9 @@ const Payments = ({ booking, setBooking }) => {
                               <a
                                 className="mr-2"
                                 onClick={(e) => {
-                                  e.preventDefault()
-                                  setIndexPayment(index)
-                                  setDeleteModal(!deleteModal)
+                                  e.preventDefault();
+                                  setIndexPayment(index);
+                                  setDeleteModal(!deleteModal);
                                 }}
                                 href="#"
                                 title="Remove from list"
@@ -270,11 +270,11 @@ const Payments = ({ booking, setBooking }) => {
                               </a>
                               <a
                                 onClick={(e) => {
-                                  setCurrentPayment({ ...element })
-                                  e.preventDefault()
-                                  setIndexPayment(index)
-                                  handleModal()
-                                  setMode('edit')
+                                  setCurrentPayment({ ...element });
+                                  e.preventDefault();
+                                  setIndexPayment(index);
+                                  handleModal();
+                                  setMode('edit');
                                 }}
                                 href="#"
                                 title="Edit attendee"
@@ -313,7 +313,7 @@ const Payments = ({ booking, setBooking }) => {
       <Modal
         isOpen={deleteModal}
         toggle={() => {
-          setDeleteModal(!deleteModal)
+          setDeleteModal(!deleteModal);
         }}
         backdrop={false}
         className="modal-dialog-centered border-0"
@@ -325,8 +325,8 @@ const Payments = ({ booking, setBooking }) => {
           <Button
             color="secondary"
             onClick={(e) => {
-              e.preventDefault()
-              setDeleteModal(!deleteModal)
+              e.preventDefault();
+              setDeleteModal(!deleteModal);
             }}
           >
             Cancel
@@ -334,9 +334,9 @@ const Payments = ({ booking, setBooking }) => {
           <Button
             color="primary"
             onClick={(e) => {
-              e.preventDefault()
-              deleteOnePayment()
-              setDeleteModal(!deleteModal)
+              e.preventDefault();
+              deleteOnePayment();
+              setDeleteModal(!deleteModal);
             }}
           >
             Delete
@@ -344,7 +344,7 @@ const Payments = ({ booking, setBooking }) => {
         </ModalFooter>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default Payments
+export default Payments;

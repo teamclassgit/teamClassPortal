@@ -1,49 +1,60 @@
-import React, { useState, useContext } from 'react'
-import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from 'reactstrap'
-import { FiltersContext } from '../../../context/FiltersContext/FiltersContext'
-import Select from 'react-select'
-import Flatpickr from 'react-flatpickr'
+// @packages
+import Flatpickr from 'react-flatpickr';
+import PropTypes from 'prop-types';
+import React, { useState, useContext } from 'react';
+import Select from 'react-select';
+import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from 'reactstrap';
 
-function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClass, isFilterByCoordinator, isFilterByCreationDate }) {
-  const { classFilterContext, setClassFilterContext } = useContext(FiltersContext)
-  const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext)
-  const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext)
+// @scripts
+import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
 
-  const [filterByClass, setFilterByClass] = useState(classFilterContext)
-  const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext)
-  const [filterByDate, setFilterByDate] = useState(dateFilterContext)
+const FiltersModal = ({ 
+  classes,
+  coordinators,
+  handleModal,
+  isFilterByClass,
+  isFilterByCoordinator,
+  isFilterByCreationDate,
+  open
+}) => {
+  const { classFilterContext, setClassFilterContext } = useContext(FiltersContext);
+  const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext);
+  const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext);
 
-  const classOptions = classes && classes.map(({ title, _id }) => ({ value: _id, label: title }))
+  const [filterByClass, setFilterByClass] = useState(classFilterContext);
+  const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext);
+  const [filterByDate, setFilterByDate] = useState(dateFilterContext);
+
+  const classOptions = classes && classes.map(({ title, _id }) => ({ value: _id, label: title }));
   const getClassFilterDefaultValue = () => {
     if (classFilterContext) {
-      return classOptions.find((opt) => opt.value === classFilterContext.value)
+      return classOptions.find((opt) => opt.value === classFilterContext.value);
     }
-    return []
-  }
+    return [];
+  };
 
-  const coordinatorOptions = coordinators && coordinators.map(({ name, _id }) => ({ value: _id, label: name }))
+  const coordinatorOptions = coordinators && coordinators.map(({ name, _id }) => ({ value: _id, label: name }));
   const getCoordinatorFilterDefaultValue = () => {
     if (coordinatorFilterContext) {
-      const values = coordinatorFilterContext.value
-      return coordinatorOptions.filter((opt) => values && values.includes(opt.value))
+      const values = coordinatorFilterContext.value;
+      return coordinatorOptions.filter((opt) => values && values.includes(opt.value));
     }
-
-    return null
-  }
+    return null;
+  };
 
   const handleApplyFilters = () => {
-    setClassFilterContext(filterByClass && filterByClass.value ? filterByClass : null)
-    setCoordinatorFilterContext(filterByCoordinator && filterByCoordinator.value && filterByCoordinator.value.length > 0 ? filterByCoordinator : null)
-    setDateFilterContext(filterByDate && filterByDate.value ? filterByDate : null)
-    handleModal()
-  }
+    setClassFilterContext(filterByClass && filterByClass.value ? filterByClass : null);
+    setCoordinatorFilterContext(filterByCoordinator && filterByCoordinator.value && filterByCoordinator.value.length > 0 ? filterByCoordinator : null);
+    setDateFilterContext(filterByDate && filterByDate.value ? filterByDate : null);
+    handleModal();
+  };
 
   const handleClearFilters = () => {
-    setClassFilterContext(null)
-    setCoordinatorFilterContext(null)
-    setDateFilterContext(null)
-    handleModal()
-  }
+    setClassFilterContext(null);
+    setCoordinatorFilterContext(null);
+    setDateFilterContext(null);
+    handleModal();
+  };
 
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
@@ -63,10 +74,12 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
               Filter by class
             </Label>
             <Select
+              classNamePrefix='select'
+              className='react-select'
               defaultValue={getClassFilterDefaultValue()}
               options={classOptions}
               onChange={(e) => {
-                setFilterByClass({ type: 'class', value: e.value, label: e.label })
+                setFilterByClass({ type: 'class', value: e.value, label: e.label });
               }}
             />
           </FormGroup>
@@ -79,8 +92,9 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
             <Select
               defaultValue={getCoordinatorFilterDefaultValue()}
               options={coordinatorOptions}
+              classNamePrefix='select'
               onChange={(e) => {
-                setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) })
+                setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) });
               }}
               isMulti={true}
             />
@@ -96,11 +110,10 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
               placeholder="Select Date Range..."
               id="range-picker"
               className="form-control"
-              onChange={(dates) =>
-                setFilterByDate({
-                  type: 'date',
-                  value: dates
-                })
+              onChange={(dates) => setFilterByDate({
+                type: 'date',
+                value: dates
+              })
               }
               options={{
                 mode: 'range'
@@ -110,7 +123,17 @@ function FiltersModal({ open, handleModal, classes, coordinators, isFilterByClas
         )}
       </ModalBody>
     </Modal>
-  )
-}
+  );
+};
 
-export default FiltersModal
+export default FiltersModal;
+
+FiltersModal.propTypes = {
+  classes: PropTypes.array,
+  coordinators: PropTypes.array,
+  handleModal: PropTypes.func,
+  isFilterByClass: PropTypes.bool,
+  isFilterByCoordinator: PropTypes.bool,
+  isFilterByCreationDate: PropTypes.bool,
+  open: PropTypes.bool
+};

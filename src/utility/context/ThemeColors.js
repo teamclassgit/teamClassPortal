@@ -1,18 +1,18 @@
 // ** React Imports
-import { useEffect, useState, createContext } from 'react'
+import { useEffect, useState, createContext } from 'react';
 
 // ** Create Context
-const ThemeColors = createContext()
+const ThemeColors = createContext();
 
 const ThemeContext = ({ children }) => {
   // ** State
-  const [colors, setColors] = useState({})
+  const [colors, setColors] = useState({});
 
   //** ComponentDidMount
   useEffect(() => {
     if (window !== 'undefined') {
       //** Get variable value
-      const getHex = color => window.getComputedStyle(document.body).getPropertyValue(color).trim()
+      const getHex = color => window.getComputedStyle(document.body).getPropertyValue(color).trim();
 
       //** Colors obj
       const obj = {
@@ -44,13 +44,13 @@ const ThemeContext = ({ children }) => {
           light: getHex('--dark').concat('1a'),
           main: getHex('--dark')
         }
-      }
+      };
 
-      setColors({ ...obj })
+      setColors({ ...obj });
     }
-  }, [])
+  }, []);
 
-  return <ThemeColors.Provider value={{ colors }}>{children}</ThemeColors.Provider>
-}
+  return <ThemeColors.Provider value={{ colors }}>{children}</ThemeColors.Provider>;
+};
 
-export { ThemeColors, ThemeContext }
+export { ThemeColors, ThemeContext };

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import moment from 'moment'
-import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap'
-import { Calendar, Copy, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather'
-import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils'
-import './BoardCard.scss'
-import Avatar from '@components/avatar'
-import CopyClipboard from '../../../../components/CopyClipboard'
+import React, { useState, useEffect } from 'react';
+import moment from 'moment';
+import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
+import { Calendar, Copy, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather';
+import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils';
+import './BoardCard.scss';
+import Avatar from '@components/avatar';
+import CopyClipboard from '../../../../components/CopyClipboard';
 
-function BoardCard({
+function BoardCard ({
   handleEditModal,
   content: {
     customerName,
@@ -40,11 +40,11 @@ function BoardCard({
     notes
   }
 }) {
-  const [flippedCard, setFlippedCard] = useState(false)
-  const [date, setDate] = useState(null)
-  const [time, setTime] = useState(null)
-  const [total, setTotal] = useState(0)
-  const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null)
+  const [flippedCard, setFlippedCard] = useState(false);
+  const [date, setDate] = useState(null);
+  const [time, setTime] = useState(null);
+  const [total, setTotal] = useState(0);
+  const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null);
 
   const getTotals = () => {
     const bookingInfo = {
@@ -55,31 +55,31 @@ function BoardCard({
       payments,
       attendees,
       salesTax
-    }
+    };
 
-    const bookingTotals = getBookingTotals(bookingInfo, false, salesTax, true)
-    setTotal(bookingTotals.finalValue.toFixed(2))
-  }
-
-  useEffect(() => {
-    getTotals()
-  }, [classVariant])
+    const bookingTotals = getBookingTotals(bookingInfo, false, salesTax, true);
+    setTotal(bookingTotals.finalValue.toFixed(2));
+  };
 
   useEffect(() => {
-    const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded')
-    const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded')
+    getTotals();
+  }, [classVariant]);
+
+  useEffect(() => {
+    const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+    const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
 
     if (depositPayment || finalPayment) {
-      setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger')
+      setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger');
     }
-  }, [payments])
+  }, [payments]);
 
-  const formatTime = () => toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, 'CT')
+  const formatTime = () => toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, 'CT');
 
   useEffect(() => {
-    setDate(calendarEvent ? new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day) : null)
-    setTime(calendarEvent ? formatTime() : null)
-  }, [calendarEvent, teamClass])
+    setDate(calendarEvent ? new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day) : null);
+    setTime(calendarEvent ? formatTime() : null);
+  }, [calendarEvent, teamClass]);
 
   const cardBack = () => {
     return (
@@ -104,30 +104,29 @@ function BoardCard({
             <a
               href="#"
               className="cursor-pointer"
-              onClick={() =>
-                handleEditModal({
-                  bookingId: _id,
-                  currentCustomerId: customerId,
-                  currentName: customerName,
-                  currentEmail: email,
-                  currentPhone: phone,
-                  currentCompany: company,
-                  currentCoordinatorId: eventCoordinatorId,
-                  currentCoordinatorName: coordinatorName,
-                  currentTeamclassId: teamClassId,
-                  currentTeamclassName: classTitle,
-                  currentGroupSize: attendees,
-                  currentSignUpDeadline: signUpDeadline,
-                  currentClassVariant: classVariant,
-                  currentServiceFee: serviceFee,
-                  currentSalesTax: salesTax,
-                  createdAt: createdAt,
-                  updatedAt: updatedAt,
-                  currentStatus: status,
-                  currentEventDurationHours: eventDurationHours,
-                  currentClosedReason: closedReason,
-                  currentNotes: notes
-                })
+              onClick={() => handleEditModal({
+                bookingId: _id,
+                currentCustomerId: customerId,
+                currentName: customerName,
+                currentEmail: email,
+                currentPhone: phone,
+                currentCompany: company,
+                currentCoordinatorId: eventCoordinatorId,
+                currentCoordinatorName: coordinatorName,
+                currentTeamclassId: teamClassId,
+                currentTeamclassName: classTitle,
+                currentGroupSize: attendees,
+                currentSignUpDeadline: signUpDeadline,
+                currentClassVariant: classVariant,
+                currentServiceFee: serviceFee,
+                currentSalesTax: salesTax,
+                createdAt,
+                updatedAt,
+                currentStatus: status,
+                currentEventDurationHours: eventDurationHours,
+                currentClosedReason: closedReason,
+                currentNotes: notes
+              })
               }
               title={'Edit booking info'}
             >
@@ -188,37 +187,36 @@ function BoardCard({
           </table>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const cardFront = () => {
     return (
       <div
         className="cursor-pointer"
-        onClick={() =>
-          handleEditModal({
-            bookingId: _id,
-            currentCustomerId: customerId,
-            currentName: customerName,
-            currentEmail: email,
-            currentPhone: phone,
-            currentCompany: company,
-            currentCoordinatorId: eventCoordinatorId,
-            currentCoordinatorName: coordinatorName,
-            currentTeamclassId: teamClassId,
-            currentTeamclassName: classTitle,
-            currentGroupSize: attendees,
-            currentSignUpDeadline: signUpDeadline,
-            currentClassVariant: classVariant,
-            currentServiceFee: serviceFee,
-            currentSalesTax: salesTax,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            currentStatus: status,
-            currentEventDurationHours: eventDurationHours,
-            currentClosedReason: closedReason,
-            currentNotes: notes
-          })
+        onClick={() => handleEditModal({
+          bookingId: _id,
+          currentCustomerId: customerId,
+          currentName: customerName,
+          currentEmail: email,
+          currentPhone: phone,
+          currentCompany: company,
+          currentCoordinatorId: eventCoordinatorId,
+          currentCoordinatorName: coordinatorName,
+          currentTeamclassId: teamClassId,
+          currentTeamclassName: classTitle,
+          currentGroupSize: attendees,
+          currentSignUpDeadline: signUpDeadline,
+          currentClassVariant: classVariant,
+          currentServiceFee: serviceFee,
+          currentSalesTax: salesTax,
+          createdAt,
+          updatedAt,
+          currentStatus: status,
+          currentEventDurationHours: eventDurationHours,
+          currentClosedReason: closedReason,
+          currentNotes: notes
+        })
         }
         title={'Edit booking info'}
       >
@@ -238,8 +236,8 @@ function BoardCard({
           </small>
         </p>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <>
@@ -249,7 +247,7 @@ function BoardCard({
             color="link"
             className="flip-button text-muted"
             onClick={() => {
-              setFlippedCard(!flippedCard)
+              setFlippedCard(!flippedCard);
             }}
           >
             <Repeat size={14} />
@@ -388,7 +386,7 @@ function BoardCard({
         )}
       </Card>
     </>
-  )
+  );
 }
 
-export default BoardCard
+export default BoardCard;

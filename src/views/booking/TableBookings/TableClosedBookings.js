@@ -1,18 +1,20 @@
 // ** React Imports
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react';
 // ** Third Party Components
-import moment from 'moment'
-import Avatar from '@components/avatar'
-import DataTable from 'react-data-table-component'
-import { Edit2, ChevronDown } from 'react-feather'
-import ReactPaginate from 'react-paginate'
-import { Card } from 'reactstrap'
-import { getCustomerEmail, getClassTitle, getFormattedEventDate, getCustomerPhone, getCustomerCompany, getCoordinatorName } from '../common'
-import './TableBookings.scss'
-import CardLink from 'reactstrap/lib/CardLink'
+import moment from 'moment';
+import Avatar from '@components/avatar';
+import DataTable from 'react-data-table-component';
+import { Edit2, ChevronDown } from 'react-feather';
+import ReactPaginate from 'react-paginate';
+import { Card } from 'reactstrap';
+import { getCustomerEmail, getClassTitle, getFormattedEventDate, getCustomerPhone, getCustomerCompany, getCoordinatorName } from '../common';
+import './TableBookings.scss';
+import CardLink from 'reactstrap/lib/CardLink';
 
 const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0);
+
+  console.log(customers);
 
   // ** Table Common Column
   const columns = [
@@ -65,7 +67,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
                   currentEventDurationHours: row.eventDurationHours,
                   currentClosedReason: row.closedReason,
                   currentNotes: row.notes
-                })
+                });
               }}
               title={`Edit booking info ${row._id}`}
             >
@@ -162,7 +164,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       allowOverflow: true,
       maxWidth: '50px',
       cell: (row) => {
-        const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id)
+        const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id);
 
         return row.status === 'quote' ? (
           <small>
@@ -222,15 +224,15 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
           </small>
         ) : (
           <></>
-        )
+        );
       }
     }
-  ]
+  ];
 
   // ** Function to handle Pagination
   const handlePagination = (page) => {
-    setCurrentPage(page.selected)
-  }
+    setCurrentPage(page.selected);
+  };
 
   // ** Custom Pagination
   const CustomPagination = () => (
@@ -256,7 +258,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
     />
-  )
+  );
 
   return (
     <Fragment>
@@ -276,7 +278,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
         />
       </Card>
     </Fragment>
-  )
-}
+  );
+};
 
-export default DataTableClosedBookings
+export default DataTableClosedBookings;

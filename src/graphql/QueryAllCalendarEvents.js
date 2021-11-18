@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client"
+import {gql} from "@apollo/client";
 
 export default gql`
 query GetCalendarEvents($filter:CalendarEventQueryInput!) {
@@ -16,4 +16,4 @@ query GetCalendarEvents($filter:CalendarEventQueryInput!) {
       month
       rushFee
   }
-}`
+}`;

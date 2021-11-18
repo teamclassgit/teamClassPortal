@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { Mail, Phone, User, X } from 'react-feather'
-import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from 'reactstrap'
-import Flatpickr from 'react-flatpickr'
-import Select from 'react-select'
-import { selectThemeColors } from '@utils'
-import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments'
-import { useMutation } from '@apollo/client'
+import React, { useState, useEffect } from 'react';
+import { Mail, Phone, User, X } from 'react-feather';
+import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from 'reactstrap';
+import Flatpickr from 'react-flatpickr';
+import Select from 'react-select';
+import { selectThemeColors } from '@utils';
+import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
+import { useMutation } from '@apollo/client';
 import {
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
   BOOKING_QUOTE_STATUS,
@@ -14,24 +14,24 @@ import {
   CHARGE_URL,
   PAYMENT_STATUS_SUCCESS,
   PAYMEN_STATUS_CANCEL
-} from '../../../utility/Constants'
-import { capitalizeString } from '../../../utility/Utils'
+} from '../../../utility/Constants';
+import { capitalizeString } from '../../../utility/Utils';
 
 const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPayments, currentPayment, setCurrentPayment, indexPayment }) => {
-  const [newName, setNewName] = useState(null)
-  const [newEmail, setNewEmail] = useState(null)
-  const [newPhone, setNewPhone] = useState(null)
-  const [newAmount, setNewAmount] = useState(null)
-  const [newCardBrand, setNewCardBrand] = useState(null)
-  const [newCardLastFourDigits, setNewCardLastFourDigits] = useState(null)
-  const [newPaymentCreationDate, setNewPaymentCreationDate] = useState([])
-  const [newPaymentName, setNewPaymentName] = useState(null)
-  const [newPaymentMethod, setNewPaymentMethod] = useState(null)
-  const [newPaymentId, setNewPaymentId] = useState(null)
-  const [processing, setProcessing] = useState(false)
-  const [cancelPayment, setCancelPayment] = useState('')
+  const [newName, setNewName] = useState(null);
+  const [newEmail, setNewEmail] = useState(null);
+  const [newPhone, setNewPhone] = useState(null);
+  const [newAmount, setNewAmount] = useState(null);
+  const [newCardBrand, setNewCardBrand] = useState(null);
+  const [newCardLastFourDigits, setNewCardLastFourDigits] = useState(null);
+  const [newPaymentCreationDate, setNewPaymentCreationDate] = useState([]);
+  const [newPaymentName, setNewPaymentName] = useState(null);
+  const [newPaymentMethod, setNewPaymentMethod] = useState(null);
+  const [newPaymentId, setNewPaymentId] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [cancelPayment, setCancelPayment] = useState('');
 
-  const [updateBookingPayment] = useMutation(mutationUpdateBookingPayments, {})
+  const [updateBookingPayment] = useMutation(mutationUpdateBookingPayments, {});
 
   const paymentNameOptions = [
     {
@@ -42,7 +42,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       label: 'Final',
       value: 'final'
     }
-  ]
+  ];
 
   const paymentMethodOptions = [
     {
@@ -61,52 +61,52 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       label: 'ACH',
       value: 'ach'
     }
-  ]
+  ];
 
   const cancelPaymentOptions = [
     {
       label: 'Yes',
       value: 'Yes'
     }
-  ]
+  ];
 
   useEffect(() => {
     if (currentPayment) {
-      setNewName(currentPayment.name)
-      setNewEmail(currentPayment.email)
-      setNewPhone(currentPayment.phone)
-      setNewAmount(currentPayment.amount / 100)
-      setNewCardBrand(currentPayment.cardBrand)
-      setNewCardLastFourDigits(currentPayment.cardLast4)
-      setNewPaymentCreationDate([currentPayment.createdAt])
-      setNewPaymentName(currentPayment.paymentName)
-      setNewPaymentMethod(currentPayment.paymentMethod)
-      setNewPaymentId(currentPayment.paymentId)
-      setCancelPayment(currentPayment.status === PAYMEN_STATUS_CANCEL ? 'Yes' : '')
+      setNewName(currentPayment.name);
+      setNewEmail(currentPayment.email);
+      setNewPhone(currentPayment.phone);
+      setNewAmount(currentPayment.amount / 100);
+      setNewCardBrand(currentPayment.cardBrand);
+      setNewCardLastFourDigits(currentPayment.cardLast4);
+      setNewPaymentCreationDate([currentPayment.createdAt]);
+      setNewPaymentName(currentPayment.paymentName);
+      setNewPaymentMethod(currentPayment.paymentMethod);
+      setNewPaymentId(currentPayment.paymentId);
+      setCancelPayment(currentPayment.status === PAYMEN_STATUS_CANCEL ? 'Yes' : '');
     }
-  }, [currentPayment])
+  }, [currentPayment]);
 
   useEffect(() => {
     if (newPaymentMethod !== 'card') {
-      setNewCardBrand('')
-      setNewCardLastFourDigits('')
+      setNewCardBrand('');
+      setNewCardLastFourDigits('');
     }
-  }, [newPaymentMethod])
+  }, [newPaymentMethod]);
 
   const cancel = () => {
-    setCurrentPayment('')
-    handleModal()
-  }
+    setCurrentPayment('');
+    handleModal();
+  };
   // ** Custom close btn
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   const updateBookingPaymentInfo = async () => {
-    setProcessing(true)
+    setProcessing(true);
 
-    let newPaymentsArray = payments ? [...payments] : []
-    let bookingStatus = ''
+    let newPaymentsArray = payments ? [...payments] : [];
+    let bookingStatus = '';
 
-    let newPayment = {
+    const newPayment = {
       name: newName,
       email: newEmail,
       phone: newPhone,
@@ -119,15 +119,15 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       paymentId: newPaymentId,
       chargeUrl: CHARGE_URL,
       status: cancelPayment === 'Yes' ? PAYMEN_STATUS_CANCEL : PAYMENT_STATUS_SUCCESS
-    }
+    };
 
     if (mode === 'edit') {
-      newPaymentsArray = newPaymentsArray.filter((element, index) => index !== indexPayment)
+      newPaymentsArray = newPaymentsArray.filter((element, index) => index !== indexPayment);
     }
-    newPaymentsArray.push(newPayment)
+    newPaymentsArray.push(newPayment);
 
     if (newPaymentName === 'deposit' && (booking.status === BOOKING_QUOTE_STATUS || booking.status === BOOKING_DATE_REQUESTED_STATUS)) {
-      bookingStatus = BOOKING_DEPOSIT_CONFIRMATION_STATUS
+      bookingStatus = BOOKING_DEPOSIT_CONFIRMATION_STATUS;
     }
 
     if (
@@ -136,11 +136,11 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
         booking.status === BOOKING_DATE_REQUESTED_STATUS ||
         booking.status === BOOKING_DEPOSIT_CONFIRMATION_STATUS)
     ) {
-      bookingStatus = BOOKING_PAID_STATUS
+      bookingStatus = BOOKING_PAID_STATUS;
     }
 
     if (newPaymentsArray.filter((item) => item.status === PAYMENT_STATUS_SUCCESS).length === 0) {
-      bookingStatus = BOOKING_DATE_REQUESTED_STATUS
+      bookingStatus = BOOKING_DATE_REQUESTED_STATUS;
     }
 
     try {
@@ -151,18 +151,18 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
           payments: newPaymentsArray,
           status: bookingStatus ? bookingStatus : booking.status
         }
-      })
+      });
       if (resultUpdateBookingPayment && resultUpdateBookingPayment.data) {
-        setProcessing(false)
-        console.log('Booking payments updated', resultUpdateBookingPayment.data.updateOneBooking)
+        setProcessing(false);
+        console.log('Booking payments updated', resultUpdateBookingPayment.data.updateOneBooking);
       }
-      setPayments(newPaymentsArray.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)))
+      setPayments(newPaymentsArray.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)));
     } catch (er) {
-      setProcessing(false)
-      console.log(er)
+      setProcessing(false);
+      console.log(er);
     }
-    handleModal()
-  }
+    handleModal();
+  };
 
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
@@ -231,7 +231,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
                   className="form-control"
                   placeholder="Select Date..."
                   onChange={(selectedDates, dateStr, instance) => {
-                    setNewPaymentCreationDate(selectedDates)
+                    setNewPaymentCreationDate(selectedDates);
                   }}
                 />
               </InputGroup>
@@ -256,7 +256,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
                   return {
                     label: item.label,
                     value: item.value
-                  }
+                  };
                 })}
                 onChange={(option) => setNewPaymentName(option.value)}
                 isClearable={false}
@@ -279,7 +279,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
                   return {
                     label: item.label,
                     value: item.value
-                  }
+                  };
                 })}
                 onChange={(option) => setNewPaymentMethod(option.value)}
                 isClearable={false}
@@ -340,7 +340,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
                     return {
                       label: item.label,
                       value: item.value
-                    }
+                    };
                   })}
                   onChange={(option) => setCancelPayment(option.value)}
                   isClearable={false}
@@ -372,7 +372,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
         </Button>
       </ModalBody>
     </Modal>
-  )
-}
+  );
+};
 
-export default AddPaymentModal
+export default AddPaymentModal;

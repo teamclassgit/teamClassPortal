@@ -1,6 +1,6 @@
 // ** React Imports
-import Proptypes from 'prop-types'
-import { Row, Col } from 'reactstrap'
+import Proptypes from 'prop-types';
+import { Row, Col } from 'reactstrap';
 
 const ExtensionsHeader = props => {
   return (
@@ -18,13 +18,13 @@ const ExtensionsHeader = props => {
         )}
       </Col>
     </Row>
-  )
-}
-export default ExtensionsHeader
+  );
+};
+export default ExtensionsHeader;
 
 // ** PropTypes
 ExtensionsHeader.propTypes = {
   title: Proptypes.string.isRequired,
   subTitle: Proptypes.string.isRequired,
   link: Proptypes.string
-}
+};

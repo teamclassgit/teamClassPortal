@@ -1,12 +1,12 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useState } from 'react';
 
-export const FiltersContext = createContext()
+export const FiltersContext = createContext();
 
 const FiltersContextProvider = (props) => {
-  const [classFilterContext, setClassFilterContext] = useState(null)
-  const [coordinatorFilterContext, setCoordinatorFilterContext] = useState(null)
-  const [textFilterContext, setTextFilterContext] = useState(null)
-  const [dateFilterContext, setDateFilterContext] = useState(null)
+  const [classFilterContext, setClassFilterContext] = useState(null);
+  const [coordinatorFilterContext, setCoordinatorFilterContext] = useState(null);
+  const [textFilterContext, setTextFilterContext] = useState(null);
+  const [dateFilterContext, setDateFilterContext] = useState(null);
 
   return (
     <FiltersContext.Provider
@@ -23,7 +23,7 @@ const FiltersContextProvider = (props) => {
     >
       {props.children}
     </FiltersContext.Provider>
-  )
-}
+  );
+};
 
-export default FiltersContextProvider
+export default FiltersContextProvider;

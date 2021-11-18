@@ -1,21 +1,24 @@
-import React, { Fragment, useState } from 'react'
+// @packages
+import DataTable from 'react-data-table-component';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import moment from 'moment';
+import { Card } from 'reactstrap';
+import { ChevronDown } from 'react-feather';
 
-import moment from 'moment'
-import DataTable from 'react-data-table-component'
-import { ChevronDown } from 'react-feather'
-import ReactPaginate from 'react-paginate'
-import { Card } from 'reactstrap'
+// @styles
+import '../booking/TableBookings/TableBookings.scss';
 
 const TableGeneralInquiries = ({ filteredData }) => {
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // ** Table Common Column
   const columns = [
     {
       name: 'Created',
       selector: 'date',
       sortable: true,
-      maxWidth: '150px',
+      maxWidth: '8%',
       cell: (row) => (
         <small>
           {moment(row.date).calendar(null, {
@@ -27,12 +30,11 @@ const TableGeneralInquiries = ({ filteredData }) => {
         </small>
       )
     },
-
     {
       name: 'Name',
       selector: 'name',
       sortable: true,
-      maxWidth: '170px',
+      maxWidth: '10%',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -45,7 +47,7 @@ const TableGeneralInquiries = ({ filteredData }) => {
       name: 'Email',
       selector: 'email',
       sortable: true,
-      maxWidth: '200px',
+      maxWidth: '16%',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -58,7 +60,7 @@ const TableGeneralInquiries = ({ filteredData }) => {
       name: 'Phone',
       selector: 'phone',
       sortable: true,
-      maxWidth: '120px',
+      maxWidth: '9%',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -71,65 +73,65 @@ const TableGeneralInquiries = ({ filteredData }) => {
       name: 'Inquiry',
       selector: 'inquiry',
       sortable: true,
-      maxWidth: '600px',
+      maxWidth: '55%',
       cell: (row) => (
         <small>
-          <span className="d-block font-weight-bold text-justify">{row.inquiry}</span>
+          <span className="d-block font-weight-bold">{row.inquiry}</span>
         </small>
       )
     }
-  ]
+  ];
 
-  // ** Function to handle Pagination
   const handlePagination = (page) => {
-    setCurrentPage(page.selected)
-  }
+    setCurrentPage(page.selected);
+  };
 
-  // ** Custom Pagination
   const CustomPagination = () => (
     <ReactPaginate
-      previousLabel=""
-      nextLabel=""
-      forcePage={currentPage}
-      onPageChange={(page) => handlePagination(page)}
-      pageCount={filteredData.length / 7 || 1}
-      breakLabel="..."
-      pageRangeDisplayed={2}
-      marginPagesDisplayed={2}
       activeClassName="active"
-      pageClassName="page-item"
       breakClassName="page-item"
+      breakClassName="page-item"
+      breakLabel="..."
       breakLinkClassName="page-link"
-      nextLinkClassName="page-link"
-      nextClassName="page-item next"
-      previousClassName="page-item prev"
-      previousLinkClassName="page-link"
-      pageLinkClassName="page-link"
-      breakClassName="page-item"
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
+      forcePage={currentPage}
+      marginPagesDisplayed={2}
+      nextClassName="page-item next"
+      nextLabel=""
+      nextLinkClassName="page-link"
+      onPageChange={(page) => handlePagination(page)}
+      pageClassName="page-item"
+      pageCount={filteredData.length / 7 || 1}
+      pageLinkClassName="page-link"
+      pageRangeDisplayed={2}
+      previousClassName="page-item prev"
+      previousLabel=""
+      previousLinkClassName="page-link"
     />
-  )
+  );
 
   return (
-    <Fragment>
-      <Card>
-        <DataTable
-          noHeader
-          pagination
-          columns={columns}
-          defaultSortField={'updatedAt'}
-          defaultSortAsc={false}
-          paginationPerPage={8}
-          className="react-dataTable"
-          sortIcon={<ChevronDown size={10} />}
-          paginationDefaultPage={currentPage + 1}
-          paginationComponent={CustomPagination}
-          data={filteredData}
-        />
-      </Card>
-    </Fragment>
-  )
-}
+    <Card>
+      <DataTable
+        className="react-dataTable"
+        columns={columns}
+        data={filteredData}
+        defaultSortAsc={false}
+        defaultSortField={'updatedAt'}
+        noHeader
+        pagination
+        paginationComponent={CustomPagination}
+        paginationDefaultPage={currentPage + 1}
+        paginationPerPage={8}
+        sortIcon={<ChevronDown size={10} />}
+      />
+    </Card>
+  );
+};
 
-export default TableGeneralInquiries
+export default TableGeneralInquiries;
+
+TableGeneralInquiries.propTypes = {
+  filteredData: PropTypes.array.isRequired
+};

@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client"
+import {gql} from "@apollo/client";
 
 export default gql`
 mutation requestPreferredTime(
@@ -52,4 +52,4 @@ mutation requestPreferredTime(
      status
      rushFee
   }
-}`
+}`;

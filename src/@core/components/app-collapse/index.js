@@ -1,56 +1,56 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState } from 'react';
 
 // ** Third Party Components
-import Proptypes from 'prop-types'
-import classnames from 'classnames'
-import { ChevronUp } from 'react-feather'
-import { Collapse, Card, CardHeader, CardBody, CardTitle } from 'reactstrap'
+import Proptypes from 'prop-types';
+import classnames from 'classnames';
+import { ChevronUp } from 'react-feather';
+import { Collapse, Card, CardHeader, CardBody, CardTitle } from 'reactstrap';
 
 const AppCollapse = props => {
   // ** Props
-  const { data, type, accordion, active, toggle, titleKey, contentKey, className } = props
+  const { data, type, accordion, active, toggle, titleKey, contentKey, className } = props;
 
   /**
    ** If accordion is true then return only one active index else return an Array
    */
   const defaultActive = () => {
     if (accordion) {
-      return active
+      return active;
     } else {
-      return [...active]
+      return [...active];
     }
-  }
+  };
 
   // ** State
-  const [openCollapse, setOpenCollapse] = useState(defaultActive())
+  const [openCollapse, setOpenCollapse] = useState(defaultActive());
 
   // ** Function to handle Collapse Toggle
   const handleCollapseToggle = id => {
     if (accordion) {
       if (id === openCollapse) {
-        setOpenCollapse(null)
+        setOpenCollapse(null);
       } else {
-        setOpenCollapse(id)
+        setOpenCollapse(id);
       }
     } else {
       const arr = openCollapse,
-        index = arr.indexOf(id)
+        index = arr.indexOf(id);
       if (arr.includes(id)) {
-        arr.splice(index, 1)
-        setOpenCollapse([...arr])
+        arr.splice(index, 1);
+        setOpenCollapse([...arr]);
       } else {
-        arr.push(id)
-        setOpenCollapse([...arr])
+        arr.push(id);
+        setOpenCollapse([...arr]);
       }
     }
-  }
+  };
 
   // ** Function to render collapse
   const renderData = () => {
     return data.map((item, index) => {
       const title = titleKey ? item[titleKey] : item.title,
-        content = contentKey ? item[contentKey] : item.content
+        content = contentKey ? item[contentKey] : item.content;
 
       return (
         <Card
@@ -81,9 +81,9 @@ const AppCollapse = props => {
             <CardBody>{content}</CardBody>
           </Collapse>
         </Card>
-      )
-    })
-  }
+      );
+    });
+  };
 
   return (
     <div
@@ -97,10 +97,10 @@ const AppCollapse = props => {
     >
       {renderData()}
     </div>
-  )
-}
+  );
+};
 
-export default AppCollapse
+export default AppCollapse;
 
 // ** PropTypes
 AppCollapse.propTypes = {
@@ -111,10 +111,10 @@ AppCollapse.propTypes = {
   titleKey: Proptypes.string,
   contentKey: Proptypes.string,
   className: Proptypes.string
-}
+};
 
 // ** Default Props
 AppCollapse.defaultProps = {
   active: [],
   toggle: 'click'
-}
+};
