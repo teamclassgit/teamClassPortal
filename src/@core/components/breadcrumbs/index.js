@@ -1,5 +1,5 @@
 // ** React Imports
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 // ** Third Party Components
 import Proptypes from 'prop-types';
@@ -17,6 +17,12 @@ const BreadCrumbs = props => {
   // ** Props
   const { breadCrumbTitle, noHome, breadCrumbParent, breadCrumbParent2, breadCrumbParent3, breadCrumbActive, removeRightOptions } = props;
 
+  const history = useHistory();
+
+  const handleBack = () => {
+    history.goBack();
+  };
+
   return (
     <div className='content-header row'>
       <div className='content-header-left col-md-9 col-12 mb-2'>
@@ -27,7 +33,7 @@ const BreadCrumbs = props => {
               <Breadcrumb>
                 {noHome ? '' : <BreadcrumbItem><Link to='/'>Home</Link></BreadcrumbItem>}
                 <BreadcrumbItem tag='li' className='text-primary'>
-                  <Link to='/' style={{
+                  <Link onClick={handleBack} style={{
                     lineHeight: '1.2'
                   }}>
                     <small>

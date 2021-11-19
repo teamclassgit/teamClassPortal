@@ -1,12 +1,12 @@
 // @packages
+import Breadcrumbs from '@components/breadcrumbs';
 import React, { useRef, useState, useEffect } from 'react';
 import Wizard from '@components/wizard';
 import moment from 'moment';
 import { Calendar, CreditCard, Users, DollarSign } from 'react-feather';
 import { Col, Row, Spinner } from 'reactstrap';
 import { useLazyQuery, useQuery } from '@apollo/client';
-import { useParams } from 'react-router-dom';
-import Breadcrumbs from '@components/breadcrumbs';
+import { useParams, useHistory } from 'react-router-dom';
 
 // @scripts
 import Attendees from './steps/Attendees';
@@ -57,6 +57,7 @@ const WizardClassBooking = () => {
 
   const ref = useRef(null);
   const { id } = useParams();
+  const { history } = useHistory();
 
   const result = useQuery(queryBookingById, {
     variables: {
