@@ -34,6 +34,7 @@ $step-box-width: 28px;
         flex-wrap: nowrap;
         font-weight: normal;
         .bs-stepper-box {
+          margin-top: 5px;
           display: flex;
           align-items: center;
           justify-content: center;
