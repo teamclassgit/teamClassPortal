@@ -1,25 +1,27 @@
-import React, { Fragment, useState, useEffect, useContext } from 'react';
-import DataTableBookings from './TableBookings/TableBookings';
+// @packages
+import React, { useState, useEffect, useContext } from 'react';
+import moment from 'moment';
+import { Col, Spinner } from 'reactstrap';
+import { useQuery } from '@apollo/client';
+
+// @scripts
+import AddNewBooking from './AddNewBooking';
 import BoardBookings from './BoardBookings/BoardBookings';
+import BookingsHeader from './BookingsHeader/BookingsHeader';
+import DataTableBookings from './TableBookings/TableBookings';
+import EditBookingModal from '../../components/EditBookingModal';
+import FiltersModal from './BoardBookings/FiltersModal';
 import queryAllBookings from '../../graphql/QueryAllBookings';
 import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
-import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllClasses from '../../graphql/QueryAllClasses';
-import { useQuery } from '@apollo/client';
-import { Col, Spinner } from 'reactstrap';
-import BookingsHeader from './BookingsHeader/BookingsHeader';
-import FiltersModal from './BoardBookings/FiltersModal';
-import AddNewBooking from './AddNewBooking';
+import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
+import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
-import EditBookingModal from '../../components/EditBookingModal';
 import { getCustomerEmail, getClassTitle } from './common';
-import moment from 'moment';
 
 const BookingList = () => {
   const excludedBookings = ['closed', 'canceled'];
-
-  const [genericFilter, setGenericFilter] = useState({});
+  const genericFilter = {};
   const [bookingsFilter, setBookingsFilter] = useState({ status_nin: excludedBookings });
   const [bookings, setBookings] = useState([]);
   const [limit, setLimit] = useState(600);
@@ -36,7 +38,6 @@ const BookingList = () => {
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [editModal, setEditModal] = useState(false);
 
-  // ** Function to handle Modal toggle
   const handleEditModal = () => setEditModal(!editModal);
 
   const { ...allBookingsResult } = useQuery(queryAllBookings, {
@@ -119,11 +120,7 @@ const BookingList = () => {
           (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().includes(value.toLowerCase())) ||
           item._id.includes(value);
 
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
+        return startsWith || includes;
       });
 
       setFilteredBookings(updatedData);
@@ -166,7 +163,7 @@ const BookingList = () => {
 
   // ** Function to handle Modal toggle
   return (
-    <Fragment>
+    <>
       <BookingsHeader
         setShowFiltersModal={(val) => setShowFiltersModal(val)}
         switchView={switchView}
@@ -274,7 +271,8 @@ const BookingList = () => {
             </>
           )
         )}
-    </Fragment>
+    </>
   );
 };
+
 export default BookingList;

@@ -5,7 +5,8 @@ import TableAttendees from './TableAttendees';
 import { useMutation } from '@apollo/client';
 import mutationUpsertAttendee from '../../../graphql/MutationUpsertAttendee';
 import mutationDeleteAttendee from '../../../graphql/MutationDeleteAttendee';
-// ** Styles
+
+// @styles
 import '@styles/react/libs/tables/react-dataTable-component.scss';
 
 const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountAttendees }) => {

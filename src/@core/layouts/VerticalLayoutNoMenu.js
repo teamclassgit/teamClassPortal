@@ -17,9 +17,7 @@ import themeConfig from '@configs/themeConfig';
 
 // ** Custom Components
 import Customizer from '@components/customizer';
-import FooterComponent from './components/footer';
 import NavbarComponent from './components/navbar';
-import SidebarComponent from './components/menu/vertical-menu';
 
 // ** Custom Hooks
 import { useRTL } from '@hooks/useRTL';
@@ -32,10 +30,7 @@ import { useNavbarColor } from '@hooks/useNavbarColor';
 import '@styles/base/core/menu/menu-types/vertical-menu.scss';
 import '@styles/base/core/menu/menu-types/vertical-overlay-menu.scss';
 
-const VerticalLayoutNoMenu = (props) => {
-  // ** Props
-  const { children, navbar, footer, menu, routerProps, currentActiveItem } = props;
-
+const VerticalLayoutNoMenu = ({ children, navbar}) => {
   // ** Hooks
   const [skin, setSkin] = useSkin();
   const [isRtl, setIsRtl] = useRTL();
@@ -65,34 +60,26 @@ const VerticalLayoutNoMenu = (props) => {
 
   // ** Toggles Menu Collapsed
   const setMenuCollapsed = (val) => dispatch(handleMenuCollapsed(val));
-
-  // ** Handles Content Width
   const setContentWidth = (val) => dispatch(handleContentWidth(val));
-
-  // ** Handles Content Width
   const setIsHidden = (val) => dispatch(handleMenuHidden(val));
 
-  //** This function will detect the Route Change and will hide the menu on menu item click
   useEffect(() => {
     if (menuVisibility && windowWidth < 1200) {
       setMenuVisibility(false);
     }
   }, [location]);
 
-  //** Sets Window Size & Layout Props
   useEffect(() => {
     if (window !== undefined) {
       window.addEventListener('resize', handleWindowWidth);
     }
   }, [windowWidth]);
 
-  //** ComponentDidMount
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
   }, []);
 
-  // ** Vars
   const footerClasses = {
     static: 'footer-static',
     sticky: 'footer-fixed',
@@ -149,14 +136,12 @@ const VerticalLayoutNoMenu = (props) => {
       </Navbar>
       {children}
 
-      {/* Vertical Nav Menu Overlay */}
       <div
         className={classnames('sidenav-overlay', {
           show: menuVisibility
         })}
         onClick={() => setMenuVisibility(false)}
-      ></div>
-      {/* Vertical Nav Menu Overlay */}
+      />
 
       {themeConfig.layout.customizer === true ? (
         <Customizer
@@ -183,14 +168,6 @@ const VerticalLayoutNoMenu = (props) => {
           themeConfig={themeConfig}
         />
       ) : null}
-      {/* <footer
-        className={classnames(`footer footer-light ${footerClasses[footerType] || 'footer-static'}`, {
-          'd-none': footerType === 'hidden'
-        })}
-      >
-        {footer ? footer : <FooterComponent footerType={footerType} footerClasses={footerClasses} />}
-      </footer> */}
-
       {themeConfig.layout.scrollTop === true ? (
         <div className="scroll-to-top">
           <ScrollToTop showUnder={300} style={{ bottom: '5%' }}>

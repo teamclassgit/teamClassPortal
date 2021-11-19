@@ -1,4 +1,4 @@
-// ** Third Party Components
+// @packages
 import PropTypes from 'prop-types';
 import { Card, CardBody } from 'reactstrap';
 
@@ -18,11 +18,10 @@ const StatsVertical = ({ icon, color, stats, statTitle, className, ...rest }) =>
 
 export default StatsVertical;
 
-// ** PropTypes
 StatsVertical.propTypes = {
-  icon: PropTypes.element.isRequired,
+  className: PropTypes.string,
   color: PropTypes.string.isRequired,
-  stats: PropTypes.string.isRequired,
+  icon: PropTypes.element.isRequired,
   statTitle: PropTypes.string.isRequired,
-  className: PropTypes.string
+  stats: PropTypes.string.isRequired
 };

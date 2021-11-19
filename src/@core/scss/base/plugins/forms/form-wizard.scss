@@ -1,13 +1,12 @@
 @import '../../bootstrap-extended/include'; // Bootstrap includes
 @import '../../components/include'; // Components includes
 
-$header-padding-y: 1.5rem;
-$header-padding-x: 1.5rem;
+$header-padding-y: 2rem;
 $content-padding-x: 1.5rem;
 $content-padding-y: 1.5rem;
 $trigger-padding-vertical: 1rem;
-$step-box-height: 38px;
-$step-box-width: 38px;
+$step-box-height: 28px;
+$step-box-width: 28px;
 
 .bs-stepper {
   background-color: $white;
@@ -15,7 +14,7 @@ $step-box-width: 38px;
   border-radius: 0.5rem;
 
   .bs-stepper-header {
-    padding: $header-padding-y $header-padding-x;
+    padding: 0 0 $header-padding-y;
     flex-wrap: wrap;
     border-bottom: 1px solid rgba($black, 0.08);
     margin: 0;
@@ -30,10 +29,11 @@ $step-box-width: 38px;
     }
     .step {
       .step-trigger {
-        padding: 0 1.75rem;
+        padding: 0 1.5rem;
         flex-wrap: nowrap;
         font-weight: normal;
         .bs-stepper-box {
+          margin-top: 5px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -51,6 +51,7 @@ $step-box-width: 38px;
           margin: 0;
           margin-top: 0.5rem;
           margin-left: 1rem;
+          font-size: 0.80rem;
 
           .bs-stepper-title {
             display: inherit;
@@ -62,7 +63,7 @@ $step-box-width: 38px;
 
           .bs-stepper-subtitle {
             font-weight: 400;
-            font-size: 0.85rem;
+            font-size: 0.80rem;
             color: $text-muted;
           }
         }
