@@ -66,7 +66,6 @@ const WizardClassBooking = () => {
     pollInterval: 300000,
     onCompleted: (data) => {
       setBookingInfo(data.booking);
-      setTax((data.booking && data.booking.salesTax) || 0);
     }
   });
 
@@ -149,6 +148,8 @@ const WizardClassBooking = () => {
 
   useEffect(() => {
     if (bookingInfo) {
+      setTax(bookingInfo.salesTax || 0);
+
       getAttendees({
         variables: {
           bookingId: bookingInfo._id
@@ -175,7 +176,6 @@ const WizardClassBooking = () => {
     }
   }, [bookingInfo]);
 
-  
   const steps = [
     {
       id: 'account-details',
@@ -265,14 +265,8 @@ const WizardClassBooking = () => {
 
   return bookingInfo && customer && teamClass ? (
     <Row>
-      <Col xs={12} >
-        <Breadcrumbs 
-          breadCrumbActive={id}
-          breadCrumbParent="Bookings"
-          breadCrumbTitle="Booking"
-          noHome
-          removeRightOptions
-        />
+      <Col xs={12}>
+        <Breadcrumbs breadCrumbActive={id} breadCrumbParent="Bookings" breadCrumbTitle="" noHome removeRightOptions />
       </Col>
       <Col lg={9} md={12} sm={12} xs={12}>
         <div className="modern-horizontal-wizard">

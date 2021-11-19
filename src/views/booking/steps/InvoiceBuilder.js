@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import NumberInput from '@components/number-input';
-import { ArrowLeft, ArrowRight, Delete, DollarSign, Minus, MinusCircle, PlusCircle } from 'react-feather';
-import { Input, Button, Card, Col, Form, Media, Row, Table, CardLink } from 'reactstrap';
-import { BOOKING_PAID_STATUS } from '../../../utility/Constants';
+import { DollarSign, MinusCircle, PlusCircle } from 'react-feather';
+import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText } from 'reactstrap';
+import { BOOKING_PAID_STATUS, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
 import Avatar from '@components/avatar';
@@ -30,6 +30,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
   ];
 
   const [processing, setProcessing] = React.useState(false);
+  const [taxExempt, setTaxExempt] = React.useState(false);
   const [formValid, setFormValid] = React.useState(true);
   const [invoiceItems, setInvoiceItems] = React.useState([]);
   const [discount, setDiscount] = React.useState(0);
@@ -70,7 +71,8 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
     const finalPaymentPaid =
       booking && booking.payments && booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
 
-    setHasFinalPayment(!!finalPaymentPaid);
+    setHasFinalPayment(finalPaymentPaid ? true : false);
+    setTaxExempt(booking && booking.taxExempt ? true : false);
   }, [booking]);
 
   React.useEffect(() => {
@@ -115,6 +117,9 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           bookingId: booking._id,
           invoiceDetails: invoiceItems,
           discount: discount / 100,
+          taxExempt,
+          salesTax: taxExempt ? 0 : booking.salesTax > 0 ? booking.salesTax : SALES_TAX,
+          salesTaxState: taxExempt ? '' : booking.salesTax > 0 ? booking.salesTaxState : SALES_TAX_STATE,
           updatedAt: new Date()
         }
       });
@@ -136,23 +141,40 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
     <Fragment>
       <Row>
         <Col lg={12}>
+          <div align="right" className="pb-2">
+            <CustomInput
+              type="switch"
+              id="taxExempt"
+              onClick={(e) => {
+                setTaxExempt(e.target.checked);
+              }}
+              checked={taxExempt}
+              className="custom-control-secondary"
+              label="Tax Exempt?"
+              name="taxExempt"
+              inline
+            />
+          </div>
           <Card className="card-transaction">
             <Table responsive>
               <thead>
                 <tr>
                   <th>
-                    <div align="center">Item</div>
+                    <div align="center">Item / Detail</div>
                   </th>
                   <th>
-                    <div align="center">Price</div>
+                    <div align="center">Price ($)</div>
                   </th>
                   <th>
-                    <div align="center">#</div>
+                    <div align="center">UNITS</div>
                   </th>
                   <th>
-                    <div align="center">Taxable</div>
+                    <div align="center">
+                      Taxable
+                      <br />
+                      <small>{taxExempt || !booking.salesTaxState ? '' : `(${booking.salesTaxState}, ${booking.salesTax})`}</small>
+                    </div>
                   </th>
-
                   <th></th>
                 </tr>
               </thead>
@@ -210,49 +232,47 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                       />
                     </td>
                     <td align="center">
-                      <div className="mb-3">
-                        <Input
-                          type="checkbox"
-                          checked={element.taxable}
-                          disabled={element.readOnly}
-                          bsSize="sm"
-                          onChange={(e) => {
-                            element.taxable = e.target.checked;
-                            const newInvoiceItems = [...invoiceItems];
-                            newInvoiceItems.splice(index, 1, element);
-                            setInvoiceItems(newInvoiceItems);
-                          }}
-                        ></Input>
-                      </div>
+                      <CustomInput
+                        inline
+                        id={`taxable-${index}`}
+                        type="checkbox"
+                        checked={!taxExempt && element.taxable}
+                        disabled={element.readOnly || taxExempt}
+                        onChange={(e) => {
+                          element.taxable = e.target.checked;
+                          const newInvoiceItems = [...invoiceItems];
+                          newInvoiceItems.splice(index, 1, element);
+                          setInvoiceItems(newInvoiceItems);
+                        }}
+                        className="custom-control-secondary"
+                      />
                     </td>
 
-                    <td align="center">
-                      <div className="d-flex">
-                        {element && !element.readOnly && (
-                          <a
-                            onClick={(e) => {
-                              e.preventDefault();
-                              removeInvoiceItem(index);
-                            }}
-                            href="#"
-                            title="Remove current line"
-                          >
-                            <MinusCircle size={20} />
-                          </a>
-                        )}
-                        {index === invoiceItems.length - 1 && (
-                          <a
-                            onClick={(e) => {
-                              e.preventDefault();
-                              addNewInvoiceItem();
-                            }}
-                            href="#"
-                            title="Add line below"
-                          >
-                            <PlusCircle size={20} />
-                          </a>
-                        )}
-                      </div>
+                    <td align="left">
+                      {element && !element.readOnly && (
+                        <a
+                          onClick={(e) => {
+                            e.preventDefault();
+                            removeInvoiceItem(index);
+                          }}
+                          href="#"
+                          title="Remove current line"
+                        >
+                          <MinusCircle size={20} />
+                        </a>
+                      )}
+                      {index === invoiceItems.length - 1 && (
+                        <a
+                          onClick={(e) => {
+                            e.preventDefault();
+                            addNewInvoiceItem();
+                          }}
+                          href="#"
+                          title="Add line below"
+                        >
+                          <PlusCircle size={20} />
+                        </a>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -261,10 +281,10 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
             <Table>
               <thead>
                 <tr>
-                  <th width="75%"></th>
-                  <th>
+                  <th width="70%"></th>
+                  <th width="30%">
                     <div align="center">
-                      <span>Discount (%)</span>
+                      <CardText className="mb-0">Discount (%)</CardText>
                       <NumberInput
                         min={0}
                         max={100}

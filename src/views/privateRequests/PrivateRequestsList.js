@@ -16,7 +16,7 @@ import { getCoordinatorName } from '../booking/common';
 const PrivateRequestsList = () => {
   const [coordinators, setCoordinators] = useState([]);
   const [filteredPrivateClassRequests, setFilteredPrivateClassRequests] = useState([]);
-  const [limit, setLimit] = useState(600);
+  const [limit, setLimit] = useState(200);
   const [privateClassRequests, setPrivateClassRequests] = useState([]);
   const [privateClassRequestsFilter, setPrivateClassRequestsFilter] = useState({ status_in: 'closed' });
   const [showFiltersModal, setShowFiltersModal] = useState(false);
