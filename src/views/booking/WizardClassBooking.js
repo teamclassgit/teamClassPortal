@@ -109,6 +109,10 @@ const WizardClassBooking = () => {
     }
   }, [calendarEvent]);
 
+  useEffect(() => {
+    setConfirmation(false);
+  }, [attendees]);
+
   const getTotals = () => {
     if (!bookingInfo) return;
 
@@ -260,7 +264,7 @@ const WizardClassBooking = () => {
 
   return bookingInfo && customer && teamClass ? (
     <Row>
-      <Col xs={12}>
+      <Col xs={12} >
         <Breadcrumbs 
           breadCrumbActive={id}
           breadCrumbParent="Bookings"
@@ -269,7 +273,7 @@ const WizardClassBooking = () => {
           removeRightOptions
         />
       </Col>
-      <Col lg={9} md={12} sm={12}>
+      <Col lg={9} md={12} sm={12} xs={12}>
         <div className="modern-horizontal-wizard">
           {!confirmation && (
             <Wizard
@@ -299,7 +303,6 @@ const WizardClassBooking = () => {
           )}
         </div>
       </Col>
-
       <Col lg={3} md={12} sm={12}>
         <div>
           {bookingInfo && (

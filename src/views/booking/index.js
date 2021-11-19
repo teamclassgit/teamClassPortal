@@ -1,20 +1,15 @@
-import {Fragment} from 'react';
-import {Col, Row} from 'reactstrap';
+// @packages
+import { Col, Row } from 'reactstrap';
+
+// @scripts
 import WizardClassBooking from './WizardClassBooking';
-import {useParams} from "react-router-dom";
 
-const Booking = () => {
+const Booking = () => (
+  <Row>
+    <Col sm='12'>
+      <WizardClassBooking/>
+    </Col>
+  </Row>
+);
 
-  const {id} = useParams();
-
-  return (
-    <Fragment>
-      <Row>
-        <Col sm='12'>
-          <WizardClassBooking/>
-        </Col>
-      </Row>
-    </Fragment>
-  );
-};
 export default Booking;
