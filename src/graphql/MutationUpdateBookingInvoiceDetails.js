@@ -5,9 +5,22 @@ export default gql`
     $bookingId: String!
     $invoiceDetails: [BookingInvoiceDetailUpdateInput]!
     $discount: Float!
+    $salesTax: Float!
+    $salesTaxState: String!
     $updatedAt: DateTime!
+    $taxExempt: Boolean!
   ) {
-    updateOneBooking(query: { _id: $bookingId }, set: { discount: $discount, invoiceDetails: $invoiceDetails, updatedAt: $updatedAt }) {
+    updateOneBooking(
+      query: { _id: $bookingId }
+      set: {
+        discount: $discount
+        invoiceDetails: $invoiceDetails
+        updatedAt: $updatedAt
+        taxExempt: $taxExempt
+        salesTax: $salesTax
+        salesTaxState: $salesTaxState
+      }
+    ) {
       _id
       date
       expirationHours
@@ -77,6 +90,7 @@ export default gql`
       eventLink
       signUpStatusLink
       checkoutLink
+      taxExempt
       invoiceDetails {
         item
         unitPrice

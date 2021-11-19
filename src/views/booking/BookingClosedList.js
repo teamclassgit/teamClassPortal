@@ -22,7 +22,7 @@ const BookingList = () => {
   const [genericFilter] = useState({});
   const [bookingsFilter, setBookingsFilter] = useState({ status_in: 'closed' });
   const [bookings, setBookings] = useState([]);
-  const [limit, setLimit] = useState(600);
+  const [limit, setLimit] = useState(200);
   const [customers, setCustomers] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [classes, setClasses] = useState([]);
