@@ -27,7 +27,9 @@ const BreadCrumbs = props => {
               <Breadcrumb>
                 {noHome ? '' : <BreadcrumbItem><Link to='/'>Home</Link></BreadcrumbItem>}
                 <BreadcrumbItem tag='li' className='text-primary'>
-                  <Link to='/'>
+                  <Link to='/' style={{
+                    lineHeight: '1.2'
+                  }}>
                     <small>
                       {breadCrumbParent}
                     </small>
@@ -48,7 +50,9 @@ const BreadCrumbs = props => {
                   ''
                 )}
                 <BreadcrumbItem tag='li' active>
-                  <small>
+                  <small style={{
+                    lineHeight: '1.6'
+                  }}>
                     {breadCrumbActive}
                   </small>
                 </BreadcrumbItem>
