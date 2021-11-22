@@ -6,6 +6,7 @@ import 'cleave.js/dist/addons/cleave-phone.us';
 import { useMutation } from '@apollo/client';
 import mutationUpdateQuote from '../../../graphql/MutationUpdateQuote';
 import { isValidEmail } from '../../../utility/Utils';
+import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
 
 const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
   const [phone, setPhone] = React.useState('');
@@ -116,17 +117,20 @@ const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
             </Row>
           </Col>
         </Row>
-        <div className="d-flex justify-content-between">
-          <span></span>
-          <Button.Ripple
-            color="primary"
-            className="btn-submit"
-            onClick={() => saveBooking()}
-            disabled={!phone || !name || !email || processing || !emailValid || !calendarEvent}
-          >
-            {processing ? `Saving...` : `Save`}
-          </Button.Ripple>
-        </div>
+        {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+          <div className="d-flex justify-content-between">
+            <span></span>
+            <Button.Ripple
+              color="primary"
+              className="btn-submit"
+              size="sm"
+              onClick={() => saveBooking()}
+              disabled={!phone || !name || !email || processing || !emailValid || !calendarEvent}
+            >
+              {processing ? `Saving...` : `Save`}
+            </Button.Ripple>
+          </div>
+        )}
       </Form>
     </Fragment>
   );

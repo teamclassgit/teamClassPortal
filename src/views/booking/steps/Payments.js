@@ -1,19 +1,23 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { Badge, Button, Card, Col, Modal, ModalHeader, ModalFooter, Row, Table } from 'reactstrap';
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
 import moment from 'moment';
+import AddPaymentModal from './AddPaymentModal';
+import { Edit, Plus, X, XSquare } from 'react-feather';
 import { capitalizeString } from '../../../utility/Utils';
 import {
+  BOOKING_CLOSED_STATUS,
+  BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
+  BOOKING_PAID_STATUS,
+  BOOKING_QUOTE_STATUS,
   CHARGE_OUTSIDE_SYSTEM,
   PAYMENT_STATUS_CANCELED,
   PAYMENT_STATUS_SUCCEEDED
 } from '../../../utility/Constants';
-import AddPaymentModal from './AddPaymentModal';
-import { Edit, Plus, Trash, X, XSquare } from 'react-feather';
 
-const Payments = ({ booking, setBooking }) => {
+const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
   const [processing, setProcessing] = React.useState(false);
   const [clickedConvert, setClickedConvert] = React.useState(false);
@@ -22,7 +26,6 @@ const Payments = ({ booking, setBooking }) => {
   const [mode, setMode] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [indexPayment, setIndexPayment] = useState(null);
-
   const [updateBooking] = useMutation(mutationUpdateBookingPayments, {});
 
   // ** Function to handle Modal toggle
@@ -78,7 +81,13 @@ const Payments = ({ booking, setBooking }) => {
     const depositPayment =
       newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
 
-    const newBookingStatus = finalPayment ? BOOKING_PAID_STATUS : depositPayment ? BOOKING_DEPOSIT_CONFIRMATION_STATUS : booking.status;
+    const newBookingStatus = finalPayment
+      ? BOOKING_PAID_STATUS
+      : depositPayment
+        ? BOOKING_DEPOSIT_CONFIRMATION_STATUS
+        : calendarEvent
+          ? BOOKING_DATE_REQUESTED_STATUS
+          : BOOKING_QUOTE_STATUS;
 
     try {
       const result = await updateBooking({
@@ -100,34 +109,36 @@ const Payments = ({ booking, setBooking }) => {
 
   return (
     <>
-      <div className="d-flex justify-content-end mb-2">
-        <Button
-          className="ml-2"
-          color="primary"
-          onClick={(e) => {
-            setMode('add');
-            const newPay = {
-              name: '',
-              email: '',
-              phone: '',
-              amount: '',
-              cardBrand: '',
-              cardLast4: '',
-              createdAt: '',
-              paymentName: '',
-              paymentMethod: '',
-              paymentId: '',
-              chargeUrl: '',
-              status: ''
-            };
-            setCurrentPayment(newPay);
-            handleModal();
-          }}
-        >
-          <Plus size={15} />
-          <span className="align-middle ml-50">Add Payment</span>
-        </Button>
-      </div>
+      {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+        <div className="d-flex justify-content-end mb-2">
+          <Button
+            size="sm"
+            color="primary"
+            onClick={(e) => {
+              setMode('add');
+              const newPay = {
+                name: '',
+                email: '',
+                phone: '',
+                amount: '',
+                cardBrand: '',
+                cardLast4: '',
+                createdAt: '',
+                paymentName: '',
+                paymentMethod: '',
+                paymentId: '',
+                chargeUrl: '',
+                status: ''
+              };
+              setCurrentPayment(newPay);
+              handleModal();
+            }}
+          >
+            <Plus size={15} />
+            <span className="align-middle ml-50">Add Payment</span>
+          </Button>
+        </div>
+      )}
       <Row>
         <Col lg={12}>
           <Card className="card-transaction">
@@ -141,16 +152,13 @@ const Payments = ({ booking, setBooking }) => {
                     <div align="left">Type</div>
                   </th>
                   <th>
-                    <div align="left">Brand</div>
-                  </th>
-                  <th>
-                    <div align="left">Last 4</div>
+                    <div align="left">Method</div>
                   </th>
                   <th>
                     <div align="right">Amount</div>
                   </th>
                   <th>
-                    <div align="center">Type of payment</div>
+                    <div align="center">Type</div>
                   </th>
                   <th>
                     <div align="center">Status</div>
@@ -176,8 +184,8 @@ const Payments = ({ booking, setBooking }) => {
                       </td>
                       <td align="left">
                         <div className={`text-default'}`}>
-                          <span>
-                            {capitalizeString(element.paymentName)}
+                          {capitalizeString(element.paymentName)}
+                          {booking && booking.status !== BOOKING_CLOSED_STATUS && <span>
                             {processing && (
                               <small>
                                 <br />
@@ -235,17 +243,18 @@ const Payments = ({ booking, setBooking }) => {
                             ) : (
                               <></>
                             )}
-                          </span>
+                          </span>}
                         </div>
                       </td>
                       <td align="left">
                         <div className={`text-default'}`}>
-                          <span>{capitalizeString(element.cardBrand)}</span>
-                        </div>
-                      </td>
-                      <td align="left">
-                        <div className={`text-default'}`}>
-                          <span>{element.cardLast4}</span>
+                          {element.cardBrand ? (
+                            <span>
+                              {capitalizeString(element.cardBrand)} {element.cardLast4}
+                            </span>
+                          ) : (
+                            <span>{capitalizeString(element.paymentMethod)}</span>
+                          )}
                         </div>
                       </td>
                       <td align="right">
@@ -255,7 +264,7 @@ const Payments = ({ booking, setBooking }) => {
                       </td>
                       <td align="center">
                         <div className={` text-default`}>
-                          <span>{element.chargeUrl === CHARGE_OUTSIDE_SYSTEM ? 'Manual' : 'Automatic'}</span>
+                          <span>{element.chargeUrl === CHARGE_OUTSIDE_SYSTEM ? 'Manual' : 'Automated'}</span>
                         </div>
                       </td>
                       <td align="center">
@@ -263,39 +272,38 @@ const Payments = ({ booking, setBooking }) => {
                           <Badge color={element.status === 'succeeded' ? 'primary' : 'secondary'}>{capitalizeString(element.status)}</Badge>
                         </div>
                       </td>
-                      <td align="right">
-                        <div className={`text-default'}`}>
-                          {element.chargeUrl === CHARGE_OUTSIDE_SYSTEM && element.status === PAYMENT_STATUS_SUCCEEDED ? (
-                            <div className="d-flex ">
-                              <a
-                                className="mr-2"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setIndexPayment(index);
-                                  setDeleteModal(!deleteModal);
-                                }}
-                                href="#"
-                                title="Cancel payment"
-                              >
-                                <XSquare size={18} />
-                              </a>
-                              <a
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setCurrentPayment({ ...element, index });
-                                  setMode('edit');
-                                  handleModal();
-                                }}
-                                href="#"
-                                title="Edit payment"
-                              >
-                                <Edit size={18} title="Edit" />
-                              </a>
-                            </div>
-                          ) : (
-                            ''
-                          )}
-                        </div>
+                      <td align="center">
+                        {booking &&
+                          booking.status !== BOOKING_CLOSED_STATUS &&
+                          element.chargeUrl === CHARGE_OUTSIDE_SYSTEM &&
+                          element.status === PAYMENT_STATUS_SUCCEEDED && (
+                          <div align="center">
+                            <a
+                              className="mr-1"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setIndexPayment(index);
+                                setDeleteModal(!deleteModal);
+                              }}
+                              href="#"
+                              title="Cancel payment"
+                            >
+                              <XSquare size={18} />
+                            </a>
+                            <a
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setCurrentPayment({ ...element, index });
+                                setMode('edit');
+                                handleModal();
+                              }}
+                              href="#"
+                              title="Edit payment"
+                            >
+                              <Edit size={18} title="Edit" />
+                            </a>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -338,6 +346,7 @@ const Payments = ({ booking, setBooking }) => {
               e.preventDefault();
               setDeleteModal(!deleteModal);
             }}
+            size="sm"
           >
             Cancel
           </Button>
@@ -348,6 +357,7 @@ const Payments = ({ booking, setBooking }) => {
               cancelPayment();
               setDeleteModal(!deleteModal);
             }}
+            size="sm"
           >
             Confirm
           </Button>

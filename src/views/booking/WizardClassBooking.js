@@ -222,8 +222,7 @@ const WizardClassBooking = () => {
           type="wizard-horizontal"
           booking={bookingInfo}
           setBooking={setBookingInfo}
-          teamClass={teamClass}
-          realCountAttendees={realCountAttendees}
+          calendarEvent={calendarEvent}
         ></Payments>
       )
     },

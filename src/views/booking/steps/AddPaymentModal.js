@@ -12,11 +12,12 @@ import {
   CHARGE_OUTSIDE_SYSTEM,
   PAYMENT_STATUS_SUCCEEDED
 } from '../../../utility/Constants';
-import { capitalizeString } from '../../../utility/Utils';
+import { capitalizeString, isValidEmail } from '../../../utility/Utils';
 
 const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payments, setPayments, currentPayment, setCurrentPayment }) => {
   const [newName, setNewName] = useState(null);
   const [newEmail, setNewEmail] = useState(null);
+  const [emailValid, setEmailValid] = useState(true);
   const [newPhone, setNewPhone] = useState(null);
   const [newAmount, setNewAmount] = useState(null);
   const [newCardBrand, setNewCardBrand] = useState(null);
@@ -61,6 +62,10 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
     }
   ];
 
+  const emailValidation = (email) => {
+    setEmailValid(isValidEmail(email));
+  };
+
   useEffect(() => {
     if (currentPayment) {
       setNewName(currentPayment.name);
@@ -80,9 +85,9 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
       setNewAmount(0);
       setNewCardBrand('');
       setNewCardLastFourDigits('');
-      setNewPaymentCreationDate([new Date()]);
+      setNewPaymentCreationDate([]);
       setNewPaymentName('');
-      setNewPaymentMethod('card');
+      setNewPaymentMethod('');
       setNewPaymentId('');
     }
   }, [currentPayment]);
@@ -122,7 +127,10 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
     };
 
     if (mode === 'edit') {
-      newPaymentsArray = newPaymentsArray.filter((element, index) => index !== currentPayment.index);
+      newPaymentsArray = [
+        ...newPaymentsArray.slice(0, currentPayment.index),
+        ...newPaymentsArray.slice(currentPayment.index + 1, newPaymentsArray.lenght)
+      ];
     }
     newPaymentsArray.push(newPayment);
     newPaymentsArray.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
@@ -176,7 +184,17 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
                 <Mail size={15} />
               </InputGroupText>
             </InputGroupAddon>
-            <Input id="name" placeholder="Email*" required={true} value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
+            <Input
+              id="email"
+              placeholder="Email*"
+              required={true}
+              invalid={!emailValid}
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              onBlur={(e) => {
+                emailValidation(e.target.value);
+              }}
+            />
           </InputGroup>
         </FormGroup>
         <FormGroup>
@@ -186,7 +204,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
                 <Phone size={15} />
               </InputGroupText>
             </InputGroupAddon>
-            <Input id="name" placeholder="Phone" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
+            <Input id="phone" placeholder="Phone" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
           </InputGroup>
         </FormGroup>
 
@@ -197,6 +215,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
               <Input
                 id="amount"
                 type="number"
+                invalid={newAmount && newAmount <= 0}
                 min="1"
                 step="any"
                 placeholder=""
@@ -204,6 +223,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
                 required={true}
                 value={newAmount ? newAmount : ''}
                 onChange={(e) => setNewAmount(e.target.value)}
+                className="form-control"
               />
             </FormGroup>
           </Col>
@@ -326,6 +346,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
           onClick={updateBookingPaymentInfo}
           disabled={
             !newName ||
+            !emailValid ||
             !newEmail ||
             !newAmount ||
             newAmount <= 0 ||

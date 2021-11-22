@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import NumberInput from '@components/number-input';
 import { ArrowLeft, ArrowRight, Delete, DollarSign, Minus, MinusCircle, PlusCircle } from 'react-feather';
 import { Input, Button, Card, Col, Form, Media, Row, Table, CardLink } from 'reactstrap';
-import { BOOKING_PAID_STATUS } from '../../../utility/Constants';
+import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS } from '../../../utility/Constants';
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
 import Avatar from '@components/avatar';
@@ -227,32 +227,34 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                     </td>
 
                     <td align="center">
-                      <div className="d-flex">
-                        {element && !element.readOnly && (
-                          <a
-                            onClick={(e) => {
-                              e.preventDefault();
-                              removeInvoiceItem(index);
-                            }}
-                            href="#"
-                            title="Remove current line"
-                          >
-                            <MinusCircle size={20} />
-                          </a>
-                        )}
-                        {index === invoiceItems.length - 1 && (
-                          <a
-                            onClick={(e) => {
-                              e.preventDefault();
-                              addNewInvoiceItem();
-                            }}
-                            href="#"
-                            title="Add line below"
-                          >
-                            <PlusCircle size={20} />
-                          </a>
-                        )}
-                      </div>
+                      {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+                        <div className="d-flex">
+                          {element && !element.readOnly && (
+                            <a
+                              onClick={(e) => {
+                                e.preventDefault();
+                                removeInvoiceItem(index);
+                              }}
+                              href="#"
+                              title="Remove current line"
+                            >
+                              <MinusCircle size={20} />
+                            </a>
+                          )}
+                          {index === invoiceItems.length - 1 && (
+                            <a
+                              onClick={(e) => {
+                                e.preventDefault();
+                                addNewInvoiceItem();
+                              }}
+                              href="#"
+                              title="Add line below"
+                            >
+                              <PlusCircle size={20} />
+                            </a>
+                          )}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -284,21 +286,25 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           </Card>
         </Col>
       </Row>
-      <div className="d-flex justify-content-between">
-        <span>
-          <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
-            <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
-          </CardLink>
-        </span>
-        <Button.Ripple
-          disabled={booking.status === BOOKING_PAID_STATUS || !formValid || hasFinalPayment}
-          color="primary"
-          className="btn-next"
-          onClick={() => saveInvoiceDetails()}
-        >
-          <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
-        </Button.Ripple>
-      </div>
+
+      {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+        <div className="d-flex justify-content-between">
+          <span>
+            <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
+              <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
+            </CardLink>
+          </span>
+          <Button.Ripple
+            size="sm"
+            disabled={booking.status === BOOKING_PAID_STATUS || !formValid || hasFinalPayment}
+            color="primary"
+            className="btn-next"
+            onClick={() => saveInvoiceDetails()}
+          >
+            <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
+          </Button.Ripple>
+        </div>
+      )}
     </Fragment>
   );
 };
