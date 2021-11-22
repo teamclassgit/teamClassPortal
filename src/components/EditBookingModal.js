@@ -100,8 +100,9 @@ const EditBookingModal = ({
   const [processing, setProcessing] = useState(false);
   const [inputNote, setInputNote] = useState('');
   const [calendarEvent, setCalendarEvent] = useState(null);
-  const [isOpenBooking, setIsOpenBooking] = useState(true);
+  const [isOpenBooking, setIsOpenBooking] = useState(false);
 
+  console.log('isOpenBooking', isOpenBooking);
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
@@ -164,8 +165,16 @@ const EditBookingModal = ({
   }, [bookingTeamClassId]);
 
   useEffect(() => {
-    if (!open) setCalendarEvent('');
+    if (!open) {
+      setCalendarEvent('');
+    }
   }, [open]);
+
+  useEffect(() => {
+    if (closedBookingReason) {
+      setIsOpenBooking(true);
+    }
+  }, [closedBookingReason]);
 
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
