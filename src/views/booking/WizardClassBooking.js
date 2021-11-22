@@ -197,6 +197,14 @@ const WizardClassBooking = () => {
     },
 
     {
+      id: 'personal-info',
+      title: 'Customer',
+      subtitle: 'Basic info',
+      icon: <CreditCard size={18} />,
+      content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
+    },
+
+    {
       id: 'step-address',
       title: 'Attendees',
       subtitle: 'Who is coming',
@@ -214,14 +222,6 @@ const WizardClassBooking = () => {
     },
 
     {
-      id: 'personal-info',
-      title: 'Customer',
-      subtitle: 'Basic info',
-      icon: <CreditCard size={18} />,
-      content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
-    },
-
-    {
       id: 'payments',
       title: 'Payments',
       subtitle: 'Received payments',
@@ -232,8 +232,7 @@ const WizardClassBooking = () => {
           type="wizard-horizontal"
           booking={bookingInfo}
           setBooking={setBookingInfo}
-          teamClass={teamClass}
-          realCountAttendees={realCountAttendees}
+          calendarEvent={calendarEvent}
         ></Payments>
       )
     },

@@ -11,7 +11,8 @@ import {
   BREAK_BETWEEN_CLASSES_HOURS,
   BOOKING_QUOTE_STATUS,
   DATE_AND_TIME_CONFIRMATION_STATUS,
-  BOOKING_DATE_REQUESTED_STATUS
+  BOOKING_DATE_REQUESTED_STATUS,
+  BOOKING_CLOSED_STATUS
 } from '../../../utility/Constants';
 import { useMutation } from '@apollo/client';
 import mutationRequestPreferredTime from '../../../graphql/MutationRequestPreferredTime';
@@ -246,9 +247,11 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         </Row>
 
         <div className="d-flex justify-content-end">
-          <Button.Ripple color="primary" className="btn-next" onClick={() => saveCalendarEvent()} disabled={!time || !date || processing}>
-            <span className="align-middle d-sm-inline-block d-none">{processing ? 'Processing...' : 'Save date'}</span>
-          </Button.Ripple>
+          {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+            <Button.Ripple size="sm" color="primary" className="btn-next" onClick={() => saveCalendarEvent()} disabled={!time || !date || processing}>
+              <span className="align-middle d-sm-inline-block d-none">{processing ? 'Processing...' : 'Save date'}</span>
+            </Button.Ripple>
+          )}
         </div>
       </Form>
     </Fragment>
