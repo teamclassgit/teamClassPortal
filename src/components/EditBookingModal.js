@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Alert,
   Button,
   Card,
   CardBody,
-  CardHeader,
-  CardTitle,
   FormGroup,
   Input,
   InputGroup,
@@ -42,7 +39,6 @@ import {
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
   BOOKING_PAID_STATUS,
   BOOKING_QUOTE_STATUS,
-  PAYMENT_STATUS_SUCCESS,
   DATE_AND_TIME_RESERVED_STATUS,
   DATE_AND_TIME_CONFIRMATION_STATUS,
   DATE_AND_TIME_CANCELED_STATUS
@@ -105,9 +101,6 @@ const EditBookingModal = ({
   const [inputNote, setInputNote] = useState('');
   const [calendarEvent, setCalendarEvent] = useState(null);
   const [isOpenBooking, setIsOpenBooking] = useState(true);
-
-  // console.log('currentPayments', currentPayments);
-  // console.log('open', open);
 
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
 
@@ -192,7 +185,6 @@ const EditBookingModal = ({
 
   const editBooking = async (openBooking) => {
     setProcessing(true);
-    console.log('openBooking', openBooking);
 
     let openBookingStatus;
     let openCalendarStatus;
@@ -206,12 +198,6 @@ const EditBookingModal = ({
       closedBooking = closedBookingReason;
     }
 
-    console.log('openBooking', openBooking);
-    console.log('openBookingStatus, openCalendarStatus: ', openBookingStatus, ', ', openCalendarStatus);
-
-    const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
-
-    console.log('closedBooking', closedBooking);
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
       const resultUpdateBooking = await updateBooking({
@@ -269,6 +255,9 @@ const EditBookingModal = ({
           ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
         ]);
       }
+
+      const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
+
       if (calendarEventObject && calendarEventObject._id) {
         let calendarEventStatus;
 
@@ -321,12 +310,9 @@ const EditBookingModal = ({
     } else {
       bookingStatus = BOOKING_DATE_REQUESTED_STATUS;
     }
-    console.log('bookingStatus', bookingStatus);
-
     return bookingStatus;
   };
 
-  // console.log('calendarEvent', calendarEvent);
   const changeEventStatus = () => {
     const openBookingStatus = changeOpenBookingStatus();
     let calendarEventStatus = '';
@@ -337,7 +323,6 @@ const EditBookingModal = ({
     if (openBookingStatus === BOOKING_DATE_REQUESTED_STATUS) {
       calendarEventStatus = DATE_AND_TIME_RESERVED_STATUS;
     }
-    // console.log('calendarEventStatus', calendarEventStatus);
     return calendarEventStatus;
   };
 
