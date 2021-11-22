@@ -172,7 +172,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                     <div align="center">
                       Taxable
                       <br />
-                      <small>{taxExempt || !booking.salesTaxState ? '' : `(${booking.salesTaxState}, ${booking.salesTax * 100}%)`}</small>
+                      <small>{taxExempt || !booking.salesTaxState ? '' : `(${booking.salesTaxState}, ${(booking.salesTax * 100).toFixed(2)}%)`}</small>
                     </div>
                   </th>
                   <th></th>
