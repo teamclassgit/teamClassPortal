@@ -201,7 +201,7 @@ const EditBookingModal = ({
 
     if (openBooking) {
       openBookingStatus = changeOpenBookingStatus();
-      openCalendarStatus = changeEventStatus();
+      openCalendarStatus = changeEventStatus(openBookingStatus);
       closedBooking = '';
     } else {
       closedBooking = closedBookingReason;
@@ -256,6 +256,8 @@ const EditBookingModal = ({
           variables: { customerEmail: customerEmail.toLowerCase() }
         });
         console.log('Remove campaign before redirecting:', resultEmail);
+        setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
+      } else if (openBooking) {
         setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
       } else {
         // Update bookings object
@@ -322,8 +324,8 @@ const EditBookingModal = ({
     return bookingStatus;
   };
 
-  const changeEventStatus = () => {
-    const openBookingStatus = changeOpenBookingStatus();
+  const changeEventStatus = (openBookingStatus) => {
+    // const openBookingStatus = changeOpenBookingStatus();
     let calendarEventStatus = '';
 
     if (openBookingStatus === BOOKING_PAID_STATUS || openBookingStatus === BOOKING_DEPOSIT_CONFIRMATION_STATUS) {
