@@ -70,6 +70,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
       console.log(ex);
     }
 
+    setClickedConvert(false);
     setProcessing(false);
   };
 
