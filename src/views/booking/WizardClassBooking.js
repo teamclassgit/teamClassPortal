@@ -166,7 +166,6 @@ const WizardClassBooking = () => {
     }
   }, [bookingInfo]);
 
-  
   const steps = [
     {
       id: 'account-details',
@@ -188,6 +187,14 @@ const WizardClassBooking = () => {
     },
 
     {
+      id: 'personal-info',
+      title: 'Customer',
+      subtitle: 'Basic info',
+      icon: <CreditCard size={18} />,
+      content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
+    },
+
+    {
       id: 'step-address',
       title: 'Attendees',
       subtitle: 'Who is coming',
@@ -202,14 +209,6 @@ const WizardClassBooking = () => {
           setRealCountAttendees={setRealCountAttendees}
         />
       )
-    },
-
-    {
-      id: 'personal-info',
-      title: 'Customer',
-      subtitle: 'Basic info',
-      icon: <CreditCard size={18} />,
-      content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
     },
 
     {

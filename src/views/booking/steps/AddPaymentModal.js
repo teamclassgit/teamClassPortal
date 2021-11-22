@@ -8,16 +8,13 @@ import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookin
 import { useMutation } from '@apollo/client';
 import {
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
-  BOOKING_QUOTE_STATUS,
-  BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_PAID_STATUS,
-  CHARGE_URL,
-  PAYMENT_STATUS_SUCCESS,
-  PAYMEN_STATUS_CANCEL
+  CHARGE_OUTSIDE_SYSTEM,
+  PAYMENT_STATUS_SUCCEEDED
 } from '../../../utility/Constants';
 import { capitalizeString } from '../../../utility/Utils';
 
-const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPayments, currentPayment, setCurrentPayment, indexPayment }) => {
+const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payments, setPayments, currentPayment, setCurrentPayment }) => {
   const [newName, setNewName] = useState(null);
   const [newEmail, setNewEmail] = useState(null);
   const [newPhone, setNewPhone] = useState(null);
@@ -29,20 +26,21 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
   const [newPaymentMethod, setNewPaymentMethod] = useState(null);
   const [newPaymentId, setNewPaymentId] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [cancelPayment, setCancelPayment] = useState('');
-
   const [updateBookingPayment] = useMutation(mutationUpdateBookingPayments, {});
 
   const paymentNameOptions = [
     {
       label: 'Deposit',
       value: 'deposit'
-    },
-    {
-      label: 'Final',
-      value: 'final'
     }
   ];
+
+  if (booking && (!booking.payments || !booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded'))) {
+    paymentNameOptions.push({
+      label: 'Final',
+      value: 'final'
+    });
+  }
 
   const paymentMethodOptions = [
     {
@@ -63,13 +61,6 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
     }
   ];
 
-  const cancelPaymentOptions = [
-    {
-      label: 'Yes',
-      value: 'Yes'
-    }
-  ];
-
   useEffect(() => {
     if (currentPayment) {
       setNewName(currentPayment.name);
@@ -82,7 +73,17 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       setNewPaymentName(currentPayment.paymentName);
       setNewPaymentMethod(currentPayment.paymentMethod);
       setNewPaymentId(currentPayment.paymentId);
-      setCancelPayment(currentPayment.status === PAYMEN_STATUS_CANCEL ? 'Yes' : '');
+    } else {
+      setNewName('');
+      setNewEmail('');
+      setNewPhone('');
+      setNewAmount(0);
+      setNewCardBrand('');
+      setNewCardLastFourDigits('');
+      setNewPaymentCreationDate([new Date()]);
+      setNewPaymentName('');
+      setNewPaymentMethod('card');
+      setNewPaymentId('');
     }
   }, [currentPayment]);
 
@@ -94,7 +95,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
   }, [newPaymentMethod]);
 
   const cancel = () => {
-    setCurrentPayment('');
+    setCurrentPayment(null);
     handleModal();
   };
   // ** Custom close btn
@@ -104,7 +105,6 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
     setProcessing(true);
 
     let newPaymentsArray = payments ? [...payments] : [];
-    let bookingStatus = '';
 
     const newPayment = {
       name: newName,
@@ -113,54 +113,43 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
       amount: newAmount * 100,
       cardBrand: newCardBrand,
       cardLast4: newCardLastFourDigits,
-      createdAt: newPaymentCreationDate && newPaymentCreationDate.length > 0 ? newPaymentCreationDate[0] : undefined,
+      createdAt: newPaymentCreationDate && newPaymentCreationDate.length > 0 && newPaymentCreationDate[0],
       paymentName: newPaymentName,
       paymentMethod: newPaymentMethod,
       paymentId: newPaymentId,
-      chargeUrl: CHARGE_URL,
-      status: cancelPayment === 'Yes' ? PAYMEN_STATUS_CANCEL : PAYMENT_STATUS_SUCCESS
+      chargeUrl: CHARGE_OUTSIDE_SYSTEM,
+      status: PAYMENT_STATUS_SUCCEEDED
     };
 
     if (mode === 'edit') {
-      newPaymentsArray = newPaymentsArray.filter((element, index) => index !== indexPayment);
+      newPaymentsArray = newPaymentsArray.filter((element, index) => index !== currentPayment.index);
     }
     newPaymentsArray.push(newPayment);
+    newPaymentsArray.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
-    if (newPaymentName === 'deposit' && (booking.status === BOOKING_QUOTE_STATUS || booking.status === BOOKING_DATE_REQUESTED_STATUS)) {
-      bookingStatus = BOOKING_DEPOSIT_CONFIRMATION_STATUS;
-    }
+    const finalPayment = newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+    const depositPayment =
+      newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
 
-    if (
-      newPaymentName === 'final' &&
-      (booking.status === BOOKING_QUOTE_STATUS ||
-        booking.status === BOOKING_DATE_REQUESTED_STATUS ||
-        booking.status === BOOKING_DEPOSIT_CONFIRMATION_STATUS)
-    ) {
-      bookingStatus = BOOKING_PAID_STATUS;
-    }
-
-    if (newPaymentsArray.filter((item) => item.status === PAYMENT_STATUS_SUCCESS).length === 0) {
-      bookingStatus = BOOKING_DATE_REQUESTED_STATUS;
-    }
+    const newBookingStatus = finalPayment ? BOOKING_PAID_STATUS : depositPayment ? BOOKING_DEPOSIT_CONFIRMATION_STATUS : booking.status;
 
     try {
-      const resultUpdateBookingPayment = await updateBookingPayment({
+      const result = await updateBookingPayment({
         variables: {
           bookingId: booking._id,
           updatedAt: new Date(),
           payments: newPaymentsArray,
-          status: bookingStatus ? bookingStatus : booking.status
+          status: newBookingStatus
         }
       });
-      if (resultUpdateBookingPayment && resultUpdateBookingPayment.data) {
-        setProcessing(false);
-        console.log('Booking payments updated', resultUpdateBookingPayment.data.updateOneBooking);
+      if (result && result.data && result.data.updateOneBooking) {
+        setPayments(newPaymentsArray);
+        setBooking(result.data.updateOneBooking);
       }
-      setPayments(newPaymentsArray.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)));
-    } catch (er) {
-      setProcessing(false);
-      console.log(er);
+    } catch (error) {
+      console.log('Error saving payments', error);
     }
+    setProcessing(false);
     handleModal();
   };
 
@@ -225,6 +214,14 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
                 <Flatpickr
                   className="small"
                   value={newPaymentCreationDate}
+                  options={{
+                    disable: [
+                      function (date) {
+                        // return true to disable
+                        return date > new Date();
+                      }
+                    ]
+                  }}
                   dateformat="Y-m-d H:i"
                   data-enable-time
                   id="signUpDateLine"
@@ -322,33 +319,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, payments, setPaymen
           <Input id="payment-id" placeholder="" value={newPaymentId} onChange={(e) => setNewPaymentId(e.target.value)} />
           <small>ID of the payment platform.</small>
         </FormGroup>
-        {currentPayment && currentPayment.status === PAYMENT_STATUS_SUCCESS && (
-          <Row>
-            <Col md={6}>
-              <FormGroup>
-                <Label for="card-last-4">Cancel Payment?</Label>
-                <Select
-                  value={{
-                    value: cancelPayment,
-                    label: cancelPayment
-                  }}
-                  theme={selectThemeColors}
-                  className="react-select"
-                  classNamePrefix="select"
-                  placeholder=""
-                  options={cancelPaymentOptions.map((item) => {
-                    return {
-                      label: item.label,
-                      value: item.value
-                    };
-                  })}
-                  onChange={(option) => setCancelPayment(option.value)}
-                  isClearable={false}
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-        )}
+
         <Button
           className="mr-1 mt-1"
           color="primary"

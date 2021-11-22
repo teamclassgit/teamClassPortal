@@ -4,9 +4,14 @@ import { useMutation } from '@apollo/client';
 import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
 import moment from 'moment';
 import { capitalizeString } from '../../../utility/Utils';
-import { BOOKING_DEPOSIT_CONFIRMATION_STATUS, CHARGE_URL } from '../../../utility/Constants';
+import {
+  BOOKING_DEPOSIT_CONFIRMATION_STATUS,
+  CHARGE_OUTSIDE_SYSTEM,
+  PAYMENT_STATUS_CANCELED,
+  PAYMENT_STATUS_SUCCEEDED
+} from '../../../utility/Constants';
 import AddPaymentModal from './AddPaymentModal';
-import { Edit, Plus, Trash, X } from 'react-feather';
+import { Edit, Plus, Trash, X, XSquare } from 'react-feather';
 
 const Payments = ({ booking, setBooking }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
@@ -25,7 +30,9 @@ const Payments = ({ booking, setBooking }) => {
 
   React.useEffect(() => {
     if (booking && booking.payments) {
-      setPayments([...booking.payments].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)));
+      const orderedPayments = [...booking.payments];
+      orderedPayments.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+      setPayments(orderedPayments);
     } else {
       setPayments([]);
     }
@@ -56,32 +63,36 @@ const Payments = ({ booking, setBooking }) => {
         setPayments(newPaymentsList);
         setBooking(result.data.updateOneBooking);
       }
-
-      console.log('booking updated');
-
-      setProcessing(false);
     } catch (ex) {
       console.log(ex);
-      setProcessing(false);
     }
+
+    setProcessing(false);
   };
 
-  const deleteOnePayment = async () => {
-    const newPaymentsArray = payments ? [...payments] : [];
-    newPaymentsArray.splice(indexPayment, 1);
+  const cancelPayment = async () => {
+    const newPaymentsArray = [...payments];
+    payments[indexPayment].status = PAYMENT_STATUS_CANCELED;
+
+    const finalPayment = newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+    const depositPayment =
+      newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+
+    const newBookingStatus = finalPayment ? BOOKING_PAID_STATUS : depositPayment ? BOOKING_DEPOSIT_CONFIRMATION_STATUS : booking.status;
 
     try {
-      const resultUpdateBookingPayment = await updateBooking({
+      const result = await updateBooking({
         variables: {
           bookingId: booking._id,
           updatedAt: new Date(),
           payments: newPaymentsArray,
-          status: BOOKING_DEPOSIT_CONFIRMATION_STATUS
+          status: newBookingStatus
         }
       });
-      setPayments(newPaymentsArray);
-      setBooking(resultUpdateBookingPayment.data.updateOneBooking);
-      console.log('Booking payment delete it.', resultUpdateBookingPayment.data.updateOneBooking);
+      if (result && result.data && result.data.updateOneBooking) {
+        setPayments(newPaymentsList);
+        setBooking(result.data.updateOneBooking);
+      }
     } catch (er) {
       console.log(er);
     }
@@ -173,7 +184,7 @@ const Payments = ({ booking, setBooking }) => {
                                 <span>Converting...</span>
                               </small>
                             )}
-                            {!processing && element.paymentName === 'final' ? (
+                            {!processing && element.paymentName === 'final' && element.status === PAYMENT_STATUS_SUCCEEDED ? (
                               !clickedConvert ? (
                                 <small>
                                   <br />
@@ -244,7 +255,7 @@ const Payments = ({ booking, setBooking }) => {
                       </td>
                       <td align="center">
                         <div className={` text-default`}>
-                          <span>{element.chargeUrl === CHARGE_URL ? 'Manual payment' : 'Automatic payment'}</span>
+                          <span>{element.chargeUrl === CHARGE_OUTSIDE_SYSTEM ? 'Manual' : 'Automatic'}</span>
                         </div>
                       </td>
                       <td align="center">
@@ -254,7 +265,7 @@ const Payments = ({ booking, setBooking }) => {
                       </td>
                       <td align="right">
                         <div className={`text-default'}`}>
-                          {element.chargeUrl === CHARGE_URL ? (
+                          {element.chargeUrl === CHARGE_OUTSIDE_SYSTEM && element.status === PAYMENT_STATUS_SUCCEEDED ? (
                             <div className="d-flex ">
                               <a
                                 className="mr-2"
@@ -264,20 +275,19 @@ const Payments = ({ booking, setBooking }) => {
                                   setDeleteModal(!deleteModal);
                                 }}
                                 href="#"
-                                title="Remove from list"
+                                title="Cancel payment"
                               >
-                                <Trash size={18} />
+                                <XSquare size={18} />
                               </a>
                               <a
                                 onClick={(e) => {
-                                  setCurrentPayment({ ...element });
                                   e.preventDefault();
-                                  setIndexPayment(index);
-                                  handleModal();
+                                  setCurrentPayment({ ...element, index });
                                   setMode('edit');
+                                  handleModal();
                                 }}
                                 href="#"
-                                title="Edit attendee"
+                                title="Edit payment"
                               >
                                 <Edit size={18} title="Edit" />
                               </a>
@@ -303,12 +313,12 @@ const Payments = ({ booking, setBooking }) => {
         open={modal}
         handleModal={handleModal}
         mode={mode}
+        setBooking={setBooking}
         booking={booking}
         payments={payments}
         setPayments={setPayments}
         currentPayment={currentPayment}
         setCurrentPayment={setCurrentPayment}
-        indexPayment={indexPayment}
       />
       <Modal
         isOpen={deleteModal}
@@ -319,7 +329,7 @@ const Payments = ({ booking, setBooking }) => {
         className="modal-dialog-centered border-0"
       >
         <ModalHeader toggle={() => setDeleteModal(!deleteModal)} close={CloseBtn}>
-          Delete Payment?
+          Cancel payment?
         </ModalHeader>
         <ModalFooter className="justify-content-center">
           <Button
@@ -335,11 +345,11 @@ const Payments = ({ booking, setBooking }) => {
             color="primary"
             onClick={(e) => {
               e.preventDefault();
-              deleteOnePayment();
+              cancelPayment();
               setDeleteModal(!deleteModal);
             }}
           >
-            Delete
+            Confirm
           </Button>
         </ModalFooter>
       </Modal>
