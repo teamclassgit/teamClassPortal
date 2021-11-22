@@ -1,12 +1,11 @@
+// @packages
 import { lazy } from 'react';
 
-// ** Document title
+// @constants
 const TemplateTitle = '%s - TeamClass Ops Dashboard';
-
-// ** Default Route
 const DefaultRoute = '/bookings';
 
-// ** Merge Routes
+// @routes
 const Routes = [
   {
     path: '/bookings',
@@ -18,8 +17,7 @@ const Routes = [
   },
   {
     path: '/booking/:id',
-    component: lazy(() => import('../../views/booking')),
-    layout: 'VerticalLayoutNoMenu'
+    component: lazy(() => import('../../views/booking'))
   },
   {
     path: '/generalInquiries',

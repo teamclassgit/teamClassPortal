@@ -219,11 +219,7 @@ const DataTableAttendees = ({ hasKit, booking, currentBookingId, attendees, save
           (item.zip && item.zip.toLowerCase().includes(value.toLowerCase())) ||
           (item.country && item.country.toLowerCase().includes(value.toLowerCase()));
 
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
+        return startsWith || includes;
       });
       setFilteredData(updatedData);
       setSearchValue(value);
@@ -366,16 +362,16 @@ const DataTableAttendees = ({ hasKit, booking, currentBookingId, attendees, save
           </Col>
         </Row>
         <DataTable
+          className="react-dataTable"
+          columns={columns}
+          data={searchValue.length ? filteredData : data}
           noHeader
           pagination
-          columns={columns}
-          paginationPerPage={7}
-          className="react-dataTable"
-          sortIcon={<ChevronDown size={10} />}
-          paginationDefaultPage={currentPage + 1}
           paginationComponent={CustomPagination}
-          data={searchValue.length ? filteredData : data}
+          paginationDefaultPage={currentPage + 1}
+          paginationPerPage={7}
           selectableRowsComponent={BootstrapCheckbox}
+          sortIcon={<ChevronDown size={10} />}
         />
       </Card>
       <AddNewAttendee

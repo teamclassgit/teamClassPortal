@@ -124,8 +124,8 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           pricePerson,
           minimum: classMinimum,
           salesTax,
-          attendeesAdded: 0, // ????
-          additionals: 0, // ?????
+          attendeesAdded: 0,
+          additionals: 0,
           calendarEvent: calendarEvents.find((element) => element.bookingId === _id),
           teamClass: classes.find((element) => element._id === teamClassId),
           closedReason,

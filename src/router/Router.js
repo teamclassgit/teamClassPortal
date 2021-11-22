@@ -39,7 +39,13 @@ const Router = () => {
   const DefaultLayout = layout === 'horizontal' ? 'HorizontalLayout' : 'VerticalLayout';
 
   // ** All of the available layouts
-  const Layouts = { BlankLayout, VerticalLayout, HorizontalLayout, VerticalLayoutNoMenu, VerticalLayoutNoTopBar };
+  const Layouts = { 
+    BlankLayout,
+    VerticalLayout,
+    HorizontalLayout,
+    VerticalLayoutNoMenu,
+    VerticalLayoutNoTopBar
+  };
 
   // ** Current Active Item
   const currentActiveItem = null;

@@ -1,15 +1,16 @@
-// ** Router Import
-import { useState, useEffect } from 'react';
-import Router from './router/Router';
-import UserContext from './context/UserContext';
-// ** Apollo client
+// @packages
 import { ApolloProvider } from '@apollo/client';
-import { app, apolloClient } from './utility/RealmApolloClient';
+
+// @scripts
+import { apolloClient } from './utility/RealmApolloClient';
+import Router from './router/Router';
 
 const App = (props) => {
   return (
     <ApolloProvider client={apolloClient}>
-      <Router />
+      <Router>
+        {props.children}
+      </Router>
     </ApolloProvider>
   );
 };

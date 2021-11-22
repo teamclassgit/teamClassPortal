@@ -1,22 +1,39 @@
-// ** React Imports
-import React, { Fragment, useState } from 'react';
-// ** Third Party Components
-import moment from 'moment';
+// @packages
 import Avatar from '@components/avatar';
-import DataTable from 'react-data-table-component';
-import { Edit2, ChevronDown } from 'react-feather';
-import ReactPaginate from 'react-paginate';
-import { Card } from 'reactstrap';
-import { getCustomerEmail, getClassTitle, getFormattedEventDate, getCustomerPhone, getCustomerCompany, getCoordinatorName } from '../common';
-import './TableBookings.scss';
 import CardLink from 'reactstrap/lib/CardLink';
+import DataTable from 'react-data-table-component';
+import PropTypes from 'prop-types';
+import ReactPaginate from 'react-paginate';
+import moment from 'moment';
+import { useHistory } from 'react-router';
+import { Card } from 'reactstrap';
+import { Edit2, ChevronDown } from 'react-feather';
+import { useState } from 'react';
 
-const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
+// @scripts
+import { 
+  getClassTitle,
+  getCoordinatorName,
+  getCustomerCompany,
+  getCustomerEmail,
+  getCustomerPhone,
+  getFormattedEventDate 
+} from '../common';
+
+// @styles
+import './TableBookings.scss';
+
+const DataTableClosedBookings = ({ 
+  filteredData,
+  customers,
+  classes,
+  calendarEvents,
+  coordinators,
+  handleEditModal
+}) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const history = useHistory();
 
-  console.log(customers);
-
-  // ** Table Common Column
   const columns = [
     {
       name: 'Updated',
@@ -169,7 +186,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
         return row.status === 'quote' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -177,7 +194,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -185,7 +202,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -193,7 +210,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -201,7 +218,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
         ) : row.status === 'confirmed' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -209,7 +226,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
         ) : row.status === 'paid' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -217,7 +234,7 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
         ) : row.status !== 'canceled' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`/booking/${row._id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -229,9 +246,12 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
     }
   ];
 
-  // ** Function to handle Pagination
   const handlePagination = (page) => {
     setCurrentPage(page.selected);
+  };
+
+  const handleEdit = (rowId) => {
+    history.push(`/booking/${rowId}`);
   };
 
   // ** Custom Pagination
@@ -261,24 +281,31 @@ const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEve
   );
 
   return (
-    <Fragment>
-      <Card>
-        <DataTable
-          noHeader
-          pagination
-          columns={columns}
-          defaultSortField={'updatedAt'}
-          defaultSortAsc={false}
-          paginationPerPage={8}
-          className="react-dataTable"
-          sortIcon={<ChevronDown size={10} />}
-          paginationDefaultPage={currentPage + 1}
-          paginationComponent={CustomPagination}
-          data={filteredData}
-        />
-      </Card>
-    </Fragment>
+    <Card>
+      <DataTable
+        noHeader
+        pagination
+        columns={columns}
+        defaultSortField={'updatedAt'}
+        defaultSortAsc={false}
+        paginationPerPage={8}
+        className="react-dataTable"
+        sortIcon={<ChevronDown size={10} />}
+        paginationDefaultPage={currentPage + 1}
+        paginationComponent={CustomPagination}
+        data={filteredData}
+      />
+    </Card>
   );
 };
 
 export default DataTableClosedBookings;
+
+DataTableClosedBookings.propTypes = {
+  calendarEvents: PropTypes.array.isRequired,
+  classes: PropTypes.object.isRequired,
+  coordinators: PropTypes.array.isRequired,
+  customers: PropTypes.array.isRequired,
+  filteredData: PropTypes.array.isRequired,
+  handleEditModal: PropTypes.func.isRequired
+};
