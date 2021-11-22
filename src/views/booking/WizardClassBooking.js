@@ -1,3 +1,14 @@
+// @packages
+import Breadcrumbs from '@components/breadcrumbs';
+import React, { useRef, useState, useEffect } from 'react';
+import Wizard from '@components/wizard';
+import moment from 'moment';
+import { Calendar, CreditCard, Users, DollarSign } from 'react-feather';
+import { Col, Row, Spinner } from 'reactstrap';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import { useParams, useHistory } from 'react-router-dom';
+
+// @scripts
 import Attendees from './steps/Attendees';
 import BillingInfo from './steps/BillingInfo';
 import BookingCheckoutSummary from './steps/BookingCheckoutSummary';
@@ -5,46 +16,39 @@ import Confirmation from './steps/Confirmation';
 import DateTimeConfirmation from './steps/DateTimeConfirmation';
 import InvoiceBuilder from './steps/InvoiceBuilder';
 import Payments from './steps/Payments';
-import React, { useRef, useState } from 'react';
-import Wizard from '@components/wizard';
-import moment from 'moment';
 import queryAttendeesByBookingId from '../../graphql/QueryAttendeesByBookingId';
 import queryBookingById from '../../graphql/QueryBookingById';
 import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByClassId';
 import queryClassById from '../../graphql/QueryClassById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
-import { Calendar, Check, CreditCard, Users, List, DollarSign, Settings } from 'react-feather';
-import { Col, Row, Spinner } from 'reactstrap';
 import { RUSH_FEE } from '../../utility/Constants';
 import { getBookingTotals } from '../../utility/Utils';
-import { useLazyQuery, useQuery } from '@apollo/client';
-import { useParams } from 'react-router-dom';
 
 const WizardClassBooking = () => {
-  const [bookingInfo, setBookingInfo] = React.useState(null);
-  const [confirmation, setConfirmation] = React.useState(true);
-  const [teamClass, setTeamClass] = React.useState(null);
-  const [customer, setCustomer] = React.useState(null);
-  const [availableEvents, setAvailableEvents] = React.useState(null);
+  const [attendees, setAttendees] = useState([]);
+  const [attendeesToInvoice, setAttendeesToInvoice] = useState(null);
+  const [availableEvents, setAvailableEvents] = useState(null);
+  const [bookingInfo, setBookingInfo] = useState(null);
+  const [calendarEvent, setCalendarEvent] = useState(null);
+  const [confirmation, setConfirmation] = useState(true);
+  const [customer, setCustomer] = useState(null);
+  const [discount, setDiscount] = useState(0);
+  const [initialDeposit, setInitialDeposit] = useState(0);
+  const [payment, setPayment] = useState(0);
+  const [realCountAttendees, setRealCountAttendees] = useState(0);
+  const [requestEventDate, setRequestEventDate] = useState(null);
   const [stepper, setStepper] = useState(null);
-  const [calendarEvent, setCalendarEvent] = React.useState(null);
-  const [attendees, setAttendees] = React.useState([]);
-  const [realCountAttendees, setRealCountAttendees] = React.useState(0);
-  const [totalWithoutFee, setTotalWithoutFee] = React.useState(0);
-  const [totalUnderGroupFee, setTotalUnderGroupFee] = React.useState(0);
-  const [attendeesToInvoice, setAttendeesToInvoice] = React.useState(null);
-  const [tax, setTax] = React.useState(0);
-  const [totalTax, setTotalTax] = React.useState(0);
-  const [discount, setDiscount] = React.useState(0);
-  const [totalDiscount, setTotalDiscount] = React.useState(0);
-  const [totalServiceFee, setTotalServiceFee] = React.useState(0);
-  const [totalRushFee, setTotalTotalRushFee] = React.useState(0);
-  const [totalCardFee, setTotalCardFee] = React.useState(0);
-  const [totalAddons, setTotalAddons] = React.useState(0);
-  const [total, setTotal] = React.useState(0);
-  const [payment, setPayment] = React.useState(0);
-  const [initialDeposit, setInitialDeposit] = React.useState(0);
-  const [requestEventDate, setRequestEventDate] = React.useState(null);
+  const [tax, setTax] = useState(0);
+  const [teamClass, setTeamClass] = useState(null);
+  const [total, setTotal] = useState(0);
+  const [totalAddons, setTotalAddons] = useState(0);
+  const [totalCardFee, setTotalCardFee] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
+  const [totalRushFee, setTotalTotalRushFee] = useState(0);
+  const [totalServiceFee, setTotalServiceFee] = useState(0);
+  const [totalTax, setTotalTax] = useState(0);
+  const [totalUnderGroupFee, setTotalUnderGroupFee] = useState(0);
+  const [totalWithoutFee, setTotalWithoutFee] = useState(0);
 
   const [getTeamClass, { ...classResult }] = useLazyQuery(queryClassById);
   const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById);
@@ -53,6 +57,7 @@ const WizardClassBooking = () => {
 
   const ref = useRef(null);
   const { id } = useParams();
+  const { history } = useHistory();
 
   const result = useQuery(queryBookingById, {
     variables: {
@@ -61,26 +66,25 @@ const WizardClassBooking = () => {
     pollInterval: 300000,
     onCompleted: (data) => {
       setBookingInfo(data.booking);
-      setTax((data.booking && data.booking.salesTax) || 0);
     }
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (bookingInfo && attendeesResult.data) {
       setAttendees(attendeesResult.data.attendees.map((element) => element));
       setRealCountAttendees(attendeesResult.data.attendees.length);
     }
   }, [attendeesResult.data]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (bookingInfo && classResult.data) setTeamClass(classResult.data.teamClass);
   }, [classResult.data]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (bookingInfo && customerResult.data) setCustomer(customerResult.data.customer);
   }, [customerResult.data]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (bookingInfo && calendarEventsByClassResult.data) {
       setAvailableEvents(calendarEventsByClassResult.data.calendarEvents.map((element) => element));
       const bookingEvent = calendarEventsByClassResult.data.calendarEvents.filter((element) => element.bookingId === bookingInfo._id);
@@ -89,7 +93,7 @@ const WizardClassBooking = () => {
     }
   }, [calendarEventsByClassResult.data]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (calendarEvent) {
       const eventDate = [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)];
       const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}`;
@@ -104,6 +108,10 @@ const WizardClassBooking = () => {
       setRequestEventDate(newCalendarEventOption);
     }
   }, [calendarEvent]);
+
+  useEffect(() => {
+    setConfirmation(false);
+  }, [attendees]);
 
   const getTotals = () => {
     if (!bookingInfo) return;
@@ -131,15 +139,17 @@ const WizardClassBooking = () => {
       ? bookingTotals.customDeposit
       : depositsPaid && depositsPaid.length > 0
         ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100
-        : 0; //amount is in cents
+        : 0;
 
     const finalPayment = bookingTotals.finalValue - initialDepositPaid;
     setInitialDeposit(initialDepositPaid.toFixed(2));
     setPayment(finalPayment.toFixed(2));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (bookingInfo) {
+      setTax(bookingInfo.salesTax || 0);
+
       getAttendees({
         variables: {
           bookingId: bookingInfo._id
@@ -249,20 +259,16 @@ const WizardClassBooking = () => {
   const stepsConfirmation = [
     {
       id: 'confirmation',
-      title: 'Confirmation',
-      subtitle: 'Booking summary',
-      icon: <Check size={18} />,
       content: <Confirmation stepper={stepper} type="wizard-horizontal" customer={customer} booking={bookingInfo} setConfirmation={setConfirmation} />
     }
   ];
 
-  const jumpToStep = (event) => {
-    //if (event.detail.to === 3) event.preventDefault()
-  };
-
   return bookingInfo && customer && teamClass ? (
     <Row>
-      <Col lg={9} md={12} sm={12}>
+      <Col xs={12}>
+        <Breadcrumbs breadCrumbActive={id} breadCrumbParent="Bookings" breadCrumbTitle="" noHome removeRightOptions />
+      </Col>
+      <Col lg={9} md={12} sm={12} xs={12}>
         <div className="modern-horizontal-wizard">
           {!confirmation && (
             <Wizard
@@ -292,7 +298,6 @@ const WizardClassBooking = () => {
           )}
         </div>
       </Col>
-
       <Col lg={3} md={12} sm={12}>
         <div>
           {bookingInfo && (

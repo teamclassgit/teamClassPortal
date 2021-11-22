@@ -110,6 +110,7 @@ export default gql`
       eventLink
       signUpStatusLink
       checkoutLink
+      taxExempt
       payments {
         amount
         paymentId

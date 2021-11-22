@@ -15,7 +15,7 @@ const GeneralInquiresList = () => {
   const [filteredGeneralInquiries, setFilteredGeneralInquiries] = useState([]);
   const [generalInquiries, setGeneralInquiries] = useState([]);
   const [generalInquiriesFilter, setGeneralInquiriesFilter] = useState({});
-  const [limit, setLimit] = useState(600);
+  const [limit, setLimit] = useState(200);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const { textFilterContext, dateFilterContext } = useContext(FiltersContext);
 

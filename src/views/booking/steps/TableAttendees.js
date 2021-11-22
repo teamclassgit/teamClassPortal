@@ -8,7 +8,6 @@ import Avatar from '@components/avatar';
 // ** Third Party Components
 import ReactPaginate from 'react-paginate';
 import DataTable from 'react-data-table-component';
-
 import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
 
 import {
@@ -218,11 +217,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           (item.zip && item.zip.toLowerCase().includes(value.toLowerCase())) ||
           (item.country && item.country.toLowerCase().includes(value.toLowerCase()));
 
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
+        return startsWith || includes;
       });
       setFilteredData(updatedData);
       setSearchValue(value);
@@ -360,16 +355,16 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           </Col>
         </Row>
         <DataTable
+          className="react-dataTable"
+          columns={columns}
+          data={searchValue.length ? filteredData : data}
           noHeader
           pagination
-          columns={columns}
-          paginationPerPage={7}
-          className="react-dataTable"
-          sortIcon={<ChevronDown size={10} />}
-          paginationDefaultPage={currentPage + 1}
           paginationComponent={CustomPagination}
-          data={searchValue.length ? filteredData : data}
+          paginationDefaultPage={currentPage + 1}
+          paginationPerPage={7}
           selectableRowsComponent={BootstrapCheckbox}
+          sortIcon={<ChevronDown size={10} />}
         />
       </Card>
       <AddNewAttendee

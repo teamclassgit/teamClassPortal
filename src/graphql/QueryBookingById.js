@@ -78,6 +78,7 @@ export default gql`
       eventLink
       signUpStatusLink
       checkoutLink
+      taxExempt
       invoiceDetails {
         item
         unitPrice

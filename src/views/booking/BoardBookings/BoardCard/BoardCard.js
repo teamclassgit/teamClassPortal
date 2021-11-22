@@ -1,13 +1,20 @@
+// @packages
+import Avatar from '@components/avatar';
+import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
+import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone } from 'react-feather';
 import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
-import { Calendar, Copy, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Edit } from 'react-feather';
-import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils';
-import './BoardCard.scss';
-import Avatar from '@components/avatar';
-import CopyClipboard from '../../../../components/CopyClipboard';
+import { useHistory } from 'react-router';
 
-function BoardCard ({
+// @scripts
+import CopyClipboard from '../../../../components/CopyClipboard';
+import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils';
+
+// @styles
+import './BoardCard.scss';
+
+const BoardCard = ({
   handleEditModal,
   content: {
     customerName,
@@ -28,7 +35,6 @@ function BoardCard ({
     pricePerson,
     minimum,
     salesTax,
-    additionals,
     calendarEvent,
     teamClass,
     customerId,
@@ -39,12 +45,14 @@ function BoardCard ({
     closedReason,
     notes
   }
-}) {
-  const [flippedCard, setFlippedCard] = useState(false);
+}) => {
   const [date, setDate] = useState(null);
+  const [flippedCard, setFlippedCard] = useState(false);
+  const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null);
   const [time, setTime] = useState(null);
   const [total, setTotal] = useState(0);
-  const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null);
+
+  const history = useHistory();
 
   const getTotals = () => {
     const bookingInfo = {
@@ -239,6 +247,10 @@ function BoardCard ({
     );
   };
 
+  const handleEdit = (rowId) => {
+    history.push(`/booking/${rowId}`);
+  };
+
   return (
     <>
       <Card className="card-board">
@@ -260,7 +272,7 @@ function BoardCard ({
               <CardLink href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time link'}>
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </CardLink>
-              <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -278,7 +290,7 @@ function BoardCard ({
               <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
               </CardLink>
-              <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -296,7 +308,7 @@ function BoardCard ({
               <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
               </CardLink>
-              <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -314,7 +326,7 @@ function BoardCard ({
               <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
               </CardLink>
-              <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -332,7 +344,7 @@ function BoardCard ({
               <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
               </CardLink>
-              <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
@@ -350,11 +362,11 @@ function BoardCard ({
               <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
               </CardLink>
-              <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
-          ) : status !== 'canceled' ? (
+          ) : status !== 'canceled' && (
             <div align="right">
               <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
                 <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
@@ -368,12 +380,10 @@ function BoardCard ({
               <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
               </CardLink>
-              <CardLink href={`/booking/${_id}`} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
-          ) : (
-            <></>
           )}
         </CardFooter>
 
@@ -387,6 +397,11 @@ function BoardCard ({
       </Card>
     </>
   );
-}
+};
 
 export default BoardCard;
+
+BoardCard.propTypes = {
+  handleEditModal: PropTypes.func.isRequired,
+  content: PropTypes.object.isRequired
+};
