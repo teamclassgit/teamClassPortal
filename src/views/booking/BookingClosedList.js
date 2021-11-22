@@ -198,9 +198,9 @@ const BookingList = () => {
           </div>
         ) : (
           filteredBookings &&
-          customers &&
-          calendarEvents &&
-          classes && (
+        customers &&
+        calendarEvents &&
+        classes && (
             <>
               <Col sm="12">
                 {bookings && bookings.length > 0 && (

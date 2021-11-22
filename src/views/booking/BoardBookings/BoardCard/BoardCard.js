@@ -133,7 +133,8 @@ const BoardCard = ({
                 currentStatus: status,
                 currentEventDurationHours: eventDurationHours,
                 currentClosedReason: closedReason,
-                currentNotes: notes
+                currentNotes: notes,
+                currentPayments: payments
               })
               }
               title={'Edit booking info'}
@@ -223,7 +224,8 @@ const BoardCard = ({
           currentStatus: status,
           currentEventDurationHours: eventDurationHours,
           currentClosedReason: closedReason,
-          currentNotes: notes
+          currentNotes: notes,
+          currentPayments: payments
         })
         }
         title={'Edit booking info'}
@@ -366,24 +368,26 @@ const BoardCard = ({
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
-          ) : status !== 'canceled' && (
-            <div align="right">
-              <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
-                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
-                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
-                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </CardLink>
-            </div>
+          ) : (
+            status !== 'canceled' && (
+              <div align="right">
+                <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+                  <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+                  <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+                  <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
+                  <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+                </CardLink>
+                <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+                </CardLink>
+              </div>
+            )
           )}
         </CardFooter>
 

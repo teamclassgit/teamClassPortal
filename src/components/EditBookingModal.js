@@ -32,12 +32,21 @@ import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCal
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
 import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import { useMutation } from '@apollo/client';
-import Avatar from '@components/avatar';
 import moment from 'moment';
 import classnames from 'classnames';
 
 import './EditBookingModal.scss';
-import { BOOKING_CLOSED_STATUS } from '../utility/Constants';
+import {
+  BOOKING_CLOSED_STATUS,
+  BOOKING_DATE_REQUESTED_STATUS,
+  BOOKING_DEPOSIT_CONFIRMATION_STATUS,
+  BOOKING_PAID_STATUS,
+  BOOKING_QUOTE_STATUS,
+  PAYMENT_STATUS_SUCCESS,
+  DATE_AND_TIME_RESERVED_STATUS,
+  DATE_AND_TIME_CONFIRMATION_STATUS,
+  DATE_AND_TIME_CANCELED_STATUS
+} from '../utility/Constants';
 
 const EditBookingModal = ({
   currentElement: {
@@ -60,7 +69,8 @@ const EditBookingModal = ({
     currentStatus,
     currentEventDurationHours,
     currentClosedReason,
-    currentNotes
+    currentNotes,
+    currentPayments
   },
   open,
   handleModal,
@@ -93,6 +103,11 @@ const EditBookingModal = ({
   const [active, setActive] = useState('1');
   const [processing, setProcessing] = useState(false);
   const [inputNote, setInputNote] = useState('');
+  const [calendarEvent, setCalendarEvent] = useState(null);
+  const [isOpenBooking, setIsOpenBooking] = useState(true);
+
+  // console.log('currentPayments', currentPayments);
+  // console.log('open', open);
 
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
 
@@ -143,6 +158,9 @@ const EditBookingModal = ({
     setBookingSignUpDeadline([currentSignUpDeadline]);
     setClosedBookingReason(currentClosedReason);
     setBookingNotes(currentNotes);
+
+    const filteredCalendarEvent = allCalendarEvents.find((element) => element.bookingId === bookingId);
+    if (filteredCalendarEvent) setCalendarEvent(filteredCalendarEvent);
   }, [bookingId]);
 
   useEffect(() => {
@@ -152,6 +170,10 @@ const EditBookingModal = ({
     }
   }, [bookingTeamClassId]);
 
+  useEffect(() => {
+    if (!open) setCalendarEvent('');
+  }, [open]);
+
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
   };
@@ -160,15 +182,36 @@ const EditBookingModal = ({
 
   const cancel = () => {
     setClosedBookingReason(null);
+    setIsOpenBooking(false);
     handleModal();
   };
 
   const groupSizeValidation = (size) => {
     setAttendeesValid(size > 0);
   };
-  const editBooking = async () => {
-    setProcessing(true);
 
+  const editBooking = async (openBooking) => {
+    setProcessing(true);
+    console.log('openBooking', openBooking);
+
+    let openBookingStatus;
+    let openCalendarStatus;
+    let closedBooking;
+
+    if (openBooking) {
+      openBookingStatus = changeOpenBookingStatus();
+      openCalendarStatus = changeEventStatus();
+      closedBooking = '';
+    } else {
+      closedBooking = closedBookingReason;
+    }
+
+    console.log('openBooking', openBooking);
+    console.log('openBookingStatus, openCalendarStatus: ', openBookingStatus, ', ', openCalendarStatus);
+
+    const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
+
+    console.log('closedBooking', closedBooking);
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
       const resultUpdateBooking = await updateBooking({
@@ -192,12 +235,12 @@ const EditBookingModal = ({
           discount: 0,
           createdAt,
           updatedAt: new Date(),
-          status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentStatus,
+          status: closedBooking ? BOOKING_CLOSED_STATUS : openBooking ? openBookingStatus : currentStatus,
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
           signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
-          closedReason: closedBookingReason,
+          closedReason: closedBooking,
           notes: bookingNotes
         }
       });
@@ -213,7 +256,7 @@ const EditBookingModal = ({
         ...allCustomers.filter((element) => element._id !== resultUpdateBooking.data.updateOneCustomer._id)
       ]);
 
-      if (closedBookingReason) {
+      if (closedBooking) {
         const resultEmail = await removeCampaignRequestQuote({
           variables: { customerEmail: customerEmail.toLowerCase() }
         });
@@ -226,29 +269,76 @@ const EditBookingModal = ({
           ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
         ]);
       }
+      if (calendarEventObject && calendarEventObject._id) {
+        let calendarEventStatus;
 
-      if (closedBookingReason === 'Lost' || closedBookingReason === 'Duplicated' || closedBookingReason === 'Mistake') {
-        const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
-        if (calendarEventObject) {
-          const resultStatusUpdated = await updateCalendarEventStatus({
-            variables: {
-              calendarEventId: calendarEventObject._id,
-              status: 'canceled'
-            }
-          });
-          console.log('Changing calendar event status', resultStatusUpdated);
+        if (
+          closedBooking === 'Lost' ||
+          closedBooking === 'Duplicated' ||
+          closedBooking === 'Mistake' ||
+          closedBooking === 'Test' ||
+          closedBooking === 'Won'
+        ) {
+          calendarEventStatus = DATE_AND_TIME_CANCELED_STATUS;
+        } else {
+          calendarEventStatus = openCalendarStatus;
         }
+
+        const resultStatusUpdated = await updateCalendarEventStatus({
+          variables: {
+            calendarEventId: calendarEventObject._id,
+            status: calendarEventStatus
+          }
+        });
+        console.log('Changing calendar event status', resultStatusUpdated);
       }
 
       setProcessing(false);
       setClosedBookingReason(null);
+      setIsOpenBooking(false);
     } catch (ex) {
       console.log(ex);
       setProcessing(false);
       setClosedBookingReason(null);
+      setIsOpenBooking(false);
     }
     // Hide modal
     handleModal();
+  };
+
+  const changeOpenBookingStatus = () => {
+    let bookingStatus = '';
+
+    if (!calendarEvent) {
+      bookingStatus = BOOKING_QUOTE_STATUS;
+    } else if (currentPayments && currentPayments.length > 0) {
+      const finalPayment = currentPayments.filter((element) => element.paymentName === 'final');
+      if (finalPayment.length > 0) {
+        bookingStatus = BOOKING_PAID_STATUS;
+      } else {
+        bookingStatus = BOOKING_DEPOSIT_CONFIRMATION_STATUS;
+      }
+    } else {
+      bookingStatus = BOOKING_DATE_REQUESTED_STATUS;
+    }
+    console.log('bookingStatus', bookingStatus);
+
+    return bookingStatus;
+  };
+
+  // console.log('calendarEvent', calendarEvent);
+  const changeEventStatus = () => {
+    const openBookingStatus = changeOpenBookingStatus();
+    let calendarEventStatus = '';
+
+    if (openBookingStatus === BOOKING_PAID_STATUS || openBookingStatus === BOOKING_DEPOSIT_CONFIRMATION_STATUS) {
+      calendarEventStatus = DATE_AND_TIME_CONFIRMATION_STATUS;
+    }
+    if (openBookingStatus === BOOKING_DATE_REQUESTED_STATUS) {
+      calendarEventStatus = DATE_AND_TIME_RESERVED_STATUS;
+    }
+    // console.log('calendarEventStatus', calendarEventStatus);
+    return calendarEventStatus;
   };
 
   const editNotes = async () => {
@@ -280,6 +370,7 @@ const EditBookingModal = ({
       setProcessing(false);
     }
   };
+
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   const toggle = (tab) => {
@@ -487,7 +578,7 @@ const EditBookingModal = ({
                 classNamePrefix="select"
                 placeholder="Select..."
                 value={{
-                  label: classVariant && `${classVariant.title  } $${  classVariant.pricePerson  }${classVariant.groupEvent ? '/group' : '/person'}`,
+                  label: classVariant && `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`,
                   value: classVariant
                 }}
                 options={
@@ -495,7 +586,7 @@ const EditBookingModal = ({
                   classVariantsOptions.map((element) => {
                     return {
                       value: element,
-                      label: `${element.title  } $${  element.pricePerson  }${element.groupEvent ? '/group' : '/person'}`
+                      label: `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                     };
                   })
                 }
@@ -571,7 +662,9 @@ const EditBookingModal = ({
                   className="mr-1"
                   size="sm"
                   color={closedBookingReason ? 'danger' : 'primary'}
-                  onClick={editBooking}
+                  onClick={() => {
+                    editBooking(!isOpenBooking);
+                  }}
                   disabled={
                     !customerName ||
                     !customerEmail ||
@@ -590,6 +683,34 @@ const EditBookingModal = ({
                       : processing
                         ? 'Saving...'
                         : 'Close booking?'}
+                </Button>
+                <Button color="secondary" size="sm" onClick={cancel} outline>
+                  Cancel
+                </Button>
+              </div>
+            )}
+            {currentStatus === BOOKING_CLOSED_STATUS && (
+              <div align="center">
+                <Button
+                  className="mr-1"
+                  size="sm"
+                  color={'danger'}
+                  onClick={() => {
+                    setIsOpenBooking(true);
+                    editBooking(isOpenBooking);
+                  }}
+                  disabled={
+                    !customerName ||
+                    !customerEmail ||
+                    !emailValid ||
+                    !customerPhone ||
+                    !coordinatorId ||
+                    !bookingTeamClassId ||
+                    !classVariant ||
+                    !groupSize
+                  }
+                >
+                  {processing ? 'Opening...' : 'Open Booking?'}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel

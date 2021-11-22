@@ -90,6 +90,7 @@ export const DEPOSIT = 0.25;
 export const DATE_AND_TIME_RESERVED_STATUS = 'reserved';
 export const DATE_AND_TIME_REJECTED_STATUS = 'rejected';
 export const DATE_AND_TIME_CONFIRMATION_STATUS = 'confirmed';
+export const DATE_AND_TIME_CANCELED_STATUS = 'canceled';
 export const BOOKING_DEPOSIT_CONFIRMATION_STATUS = 'confirmed';
 export const BOOKING_PAID_STATUS = 'paid';
 export const BOOKING_DATE_REQUESTED_STATUS = 'date-requested';
@@ -99,3 +100,8 @@ export const BOOKING_CLOSED_STATUS = 'closed';
 export const DEFAULT_TIME_ZONE = 'America/Chicago';
 export const DEFAULT_TIME_ZONE_LABEL = 'CT';
 export const DEFAULT_TIME_ZONE_LABEL_DESCRIPTION = 'Central Time';
+
+// deposit
+export const CHARGE_URL = 'outside-of-system';
+export const PAYMENT_STATUS_SUCCESS = 'succeeded';
+export const PAYMEN_STATUS_CANCEL = 'canceled';
