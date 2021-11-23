@@ -102,7 +102,6 @@ const EditBookingModal = ({
   const [calendarEvent, setCalendarEvent] = useState(null);
   const [isOpenBooking, setIsOpenBooking] = useState(false);
 
-  console.log('isOpenBooking', isOpenBooking);
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
@@ -325,7 +324,6 @@ const EditBookingModal = ({
   };
 
   const changeEventStatus = (openBookingStatus) => {
-    // const openBookingStatus = changeOpenBookingStatus();
     let calendarEventStatus = '';
 
     if (openBookingStatus === BOOKING_PAID_STATUS || openBookingStatus === BOOKING_DEPOSIT_CONFIRMATION_STATUS) {
