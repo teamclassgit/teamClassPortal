@@ -8,7 +8,8 @@ import Avatar from '@components/avatar';
 // ** Third Party Components
 import ReactPaginate from 'react-paginate';
 import DataTable from 'react-data-table-component';
-import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
+
+import { ChevronDown, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
 
 import {
   Badge,
@@ -29,6 +30,7 @@ import {
   UncontrolledButtonDropdown
 } from 'reactstrap';
 import ExportToExcel from '../../../components/ExportToExcel';
+import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
 
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
@@ -38,7 +40,7 @@ const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
   </div>
 ));
 
-const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee, deleteAttendee, updateAttendeesCount, teamClassInfo }) => {
+const DataTableAttendees = ({ hasKit, booking, currentBookingId, attendees, saveAttendee, deleteAttendee, updateAttendeesCount, teamClassInfo }) => {
   // ** States
   const [currentElement, setCurrentElement] = useState(null);
   const [data, setData] = useState(attendees);
@@ -273,7 +275,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           <CardTitle className="d-flex justify-content-end">
             <div className="d-flex justify-content-end">
               <div>
-                <UncontrolledButtonDropdown>
+                <UncontrolledButtonDropdown size="sm">
                   <DropdownToggle color="secondary" caret outline>
                     <Share size={15} />
                     <span className="align-middle ml-50">Bulk actions</span>
@@ -292,13 +294,15 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
                         smallText={<h6 className="small m-0 p-0">Use this template to build your list</h6>}
                       />
                     </DropdownItem>
-                    <DropdownItem className="w-100" onClick={handleModalUpload}>
-                      <Grid size={15} />
-                      <span className="align-middle ml-50">
-                        Upload data<br></br>
-                        <small>Excel file with your attendees</small>
-                      </span>
-                    </DropdownItem>
+                    {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+                      <DropdownItem className="w-100" onClick={handleModalUpload}>
+                        <Grid size={15} />
+                        <span className="align-middle ml-50">
+                          Upload data<br></br>
+                          <small>Excel file with your attendees</small>
+                        </span>
+                      </DropdownItem>
+                    )}
                     <DropdownItem className="align-middle w-100">
                       <ExportToExcel
                         apiData={attendeesExcelTable}
@@ -315,32 +319,35 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
-              <div className>
-                <Button
-                  className="ml-2"
-                  color="primary"
-                  onClick={(e) => {
-                    setMode('new');
-                    const newElementTemplate = {
-                      city: '',
-                      phone: '',
-                      bookingId: currentBookingId,
-                      zip: '',
-                      addressLine1: '',
-                      addressLine2: '',
-                      email: '',
-                      country: '',
-                      name: '',
-                      state: '',
-                      dinamycValues: []
-                    };
-                    setCurrentElement(newElementTemplate);
-                    handleModal();
-                  }}
-                >
-                  <Plus size={15} />
-                  <span className="align-middle ml-50">Add Attendee</span>
-                </Button>
+              <div>
+                {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+                  <Button
+                    className="ml-2"
+                    color="primary"
+                    onClick={(e) => {
+                      setMode('new');
+                      const newElementTemplate = {
+                        city: '',
+                        phone: '',
+                        bookingId: currentBookingId,
+                        zip: '',
+                        addressLine1: '',
+                        addressLine2: '',
+                        email: '',
+                        country: '',
+                        name: '',
+                        state: '',
+                        dinamycValues: []
+                      };
+                      setCurrentElement(newElementTemplate);
+                      handleModal();
+                    }}
+                    size="sm"
+                  >
+                    <Plus size={15} />
+                    <span className="align-middle ml-50">Add Attendee</span>
+                  </Button>
+                )}
               </div>
             </div>
           </CardTitle>
@@ -397,6 +404,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
         <ModalFooter className="justify-content-center">
           <Button
             color="secondary"
+            size="sm"
             onClick={(e) => {
               e.preventDefault();
               setElementToDelete(null);
@@ -407,6 +415,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           </Button>
           <Button
             color="primary"
+            size="sm"
             onClick={async (e) => {
               e.preventDefault();
               if (!elementToDelete) return;

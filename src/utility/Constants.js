@@ -17,7 +17,7 @@ export const DEFAULT_AVAILABILITY = [
     increment: 15,
     toMinutes: 0,
     dayOfWeek: 1,
-    fromHour: 7,
+    fromHour: 5,
     fromMinutes: 0,
     toHour: 23
   },
@@ -25,7 +25,7 @@ export const DEFAULT_AVAILABILITY = [
     increment: 15,
     toMinutes: 0,
     dayOfWeek: 2,
-    fromHour: 7,
+    fromHour: 5,
     fromMinutes: 0,
     toHour: 23
   },
@@ -33,7 +33,7 @@ export const DEFAULT_AVAILABILITY = [
     increment: 15,
     toMinutes: 0,
     dayOfWeek: 3,
-    fromHour: 7,
+    fromHour: 5,
     fromMinutes: 0,
     toHour: 23
   },
@@ -41,7 +41,7 @@ export const DEFAULT_AVAILABILITY = [
     increment: 15,
     toMinutes: 0,
     dayOfWeek: 4,
-    fromHour: 7,
+    fromHour: 5,
     fromMinutes: 0,
     toHour: 23
   },
@@ -49,7 +49,7 @@ export const DEFAULT_AVAILABILITY = [
     increment: 15,
     toMinutes: 0,
     dayOfWeek: 5,
-    fromHour: 7,
+    fromHour: 5,
     fromMinutes: 0,
     toHour: 23
   },
@@ -57,7 +57,7 @@ export const DEFAULT_AVAILABILITY = [
     increment: 15,
     toMinutes: 0,
     dayOfWeek: 6,
-    fromHour: 7,
+    fromHour: 5,
     fromMinutes: 0,
     toHour: 23
   },
@@ -65,7 +65,7 @@ export const DEFAULT_AVAILABILITY = [
     increment: 15,
     toMinutes: 0,
     dayOfWeek: 7,
-    fromHour: 7,
+    fromHour: 5,
     fromMinutes: 0,
     toHour: 23
   }
@@ -102,6 +102,6 @@ export const DEFAULT_TIME_ZONE_LABEL = 'CT';
 export const DEFAULT_TIME_ZONE_LABEL_DESCRIPTION = 'Central Time';
 
 // deposit
-export const CHARGE_URL = 'outside-of-system';
-export const PAYMENT_STATUS_SUCCESS = 'succeeded';
-export const PAYMEN_STATUS_CANCEL = 'canceled';
+export const CHARGE_OUTSIDE_SYSTEM = 'outside-of-system';
+export const PAYMENT_STATUS_SUCCEEDED = 'succeeded';
+export const PAYMENT_STATUS_CANCELED = 'canceled';
