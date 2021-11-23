@@ -10,7 +10,7 @@ import ReactPaginate from 'react-paginate';
 import DataTable from 'react-data-table-component';
 import moment from 'moment';
 
-import { ChevronDown, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
+import { ChevronDown, Edit, FileText, File, Grid, Plus, Share, Trash, X } from 'react-feather';
 
 import {
   Badge,
@@ -268,6 +268,60 @@ const DataTableAttendees = ({
     />
   );
 
+  // ** Converts table to CSV
+  function convertArrayOfObjectsToCSV (array) {
+    let result;
+    const columnDelimiter = ';';
+    const lineDelimiter = '\n';
+    const dynamicLabels = attendees[0].additionalFields && attendees[0].additionalFields.map((item) => item.name);
+    const keys = `name;email;phone;addressLine1;addressLine2;city;state;zip;country`;
+    const arraykeys = keys.split(';');
+    result = '';
+    result += arraykeys.join(columnDelimiter);
+    result += dynamicLabels && dynamicLabels.length > 0 ? `;${dynamicLabels.join(columnDelimiter)};bookingId` : `;bookingId`;
+    result += ``;
+    result += lineDelimiter;
+
+    array.forEach((item) => {
+      let ctr = 0;
+      arraykeys.forEach((key) => {
+        if (ctr > 0) result += columnDelimiter;
+        result += (item[key] && item[key].replace('#', '')) || '';
+        ctr++;
+      });
+      if (item.additionalFields && item.additionalFields.length > 0) {
+        result += columnDelimiter;
+        item.additionalFields.map((field) => {
+          result += field.value;
+          result += columnDelimiter;
+        });
+      } else {
+        result += columnDelimiter;
+      }
+      result += item['bookingId'];
+      result += lineDelimiter;
+    });
+    return result;
+  }
+  // ** Downloads CSV
+  function downloadCSV (array) {
+    const link = document.createElement('a');
+    let csv = convertArrayOfObjectsToCSV(array);
+    if (csv === null) return;
+
+    const filename = `${customer && customer.name}${customer && customer.company ? ', ' : ''}${
+      customer && customer.company ? customer.company : ''
+    }-${moment().format('LL')}-${teamClassInfo.title}`;
+
+    if (!csv.match(/^data:text\/csv/i)) {
+      csv = `data:text/csv;charset=utf-8,${csv}`;
+    }
+
+    link.setAttribute('href', encodeURI(csv));
+    link.setAttribute('download', filename);
+    link.click();
+  }
+
   return (
     <Fragment>
       <Card>
@@ -328,6 +382,13 @@ const DataTableAttendees = ({
                         }
                         smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
                       />
+                    </DropdownItem>
+                    <DropdownItem onClick={() => downloadCSV(attendees)} className="align-middle w-100">
+                      <File size={13} />
+                      <span className="mb-1">CSV File</span>
+                      <small>
+                        <h6 className="small">Download excel file with attendees</h6>
+                      </small>
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
