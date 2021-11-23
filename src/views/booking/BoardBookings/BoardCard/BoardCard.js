@@ -9,10 +9,12 @@ import { useHistory } from 'react-router';
 
 // @scripts
 import CopyClipboard from '../../../../components/CopyClipboard';
-import { capitalizeString, getBookingTotals, toAmPm } from '../../../../utility/Utils';
+import { capitalizeString, getBookingTotals, getEventFullDate, getSignUpDeadlineFromEventDate, toAmPm } from '../../../../utility/Utils';
 
 // @styles
 import './BoardCard.scss';
+import { DATE_AND_TIME_CONFIRMATION_STATUS, DATE_AND_TIME_REJECTED_STATUS, DAYS_BEFORE_EVENT_REGISTRATION, DEFAULT_TIME_ZONE_LABEL } from '../../../../utility/Constants';
+import { getEventDates } from '../../common';
 
 const BoardCard = ({
   handleEditModal,
@@ -26,7 +28,6 @@ const BoardCard = ({
     updatedAt,
     status,
     classTitle,
-    scheduled,
     eventDurationHours,
     email,
     phone,
@@ -36,7 +37,6 @@ const BoardCard = ({
     minimum,
     salesTax,
     calendarEvent,
-    teamClass,
     customerId,
     coordinatorName,
     payments,
@@ -47,6 +47,7 @@ const BoardCard = ({
   }
 }) => {
   const [date, setDate] = useState(null);
+  const [signUpDeadlineToShow, setSignUpDeadlineToShow] = useState(null);
   const [flippedCard, setFlippedCard] = useState(false);
   const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null);
   const [time, setTime] = useState(null);
@@ -82,12 +83,12 @@ const BoardCard = ({
     }
   }, [payments]);
 
-  const formatTime = () => toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, 'CT');
-
   useEffect(() => {
-    setDate(calendarEvent ? new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day) : null);
-    setTime(calendarEvent ? formatTime() : null);
-  }, [calendarEvent, teamClass]);
+    const dates = getEventDates(calendarEvent, signUpDeadline);
+    setDate(dates && dates.date);
+    setTime(dates && dates.time);
+    setSignUpDeadlineToShow(dates && dates.signUpDeadline);
+  }, [calendarEvent, signUpDeadline]);
 
   const cardBack = () => {
     return (
@@ -237,12 +238,27 @@ const BoardCard = ({
           <small className="text-xs">{classTitle}</small>
         </p>
 
-        <p className="m-0 p-0">
+        {calendarEvent ? (
+          <>
+            <p className="m-0 p-0">
+              <small>
+                <strong>Event: </strong>
+                {`${moment(date).format('MM/DD/YYYY')} ${time}`}
+              </small>
+            </p>
+            {calendarEvent.status === DATE_AND_TIME_CONFIRMATION_STATUS && <p className="m-0 p-0">
+              <small>
+                <strong>Sign-up by: </strong>
+                {signUpDeadlineToShow}
+              </small>
+            </p>}
+          </>
+        ) : <p className="m-0 p-0">
           <small>
             <strong>Updated: </strong>
             {moment(updatedAt).fromNow()}
           </small>
-        </p>
+        </p>}
       </div>
     );
   };
@@ -366,24 +382,26 @@ const BoardCard = ({
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </CardLink>
             </div>
-          ) : status !== 'canceled' && (
-            <div align="right">
-              <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
-                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
-                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
-                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </CardLink>
-            </div>
+          ) : (
+            status !== 'canceled' && (
+              <div align="right">
+                <CardLink href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+                  <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+                  <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+                  <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
+                  <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+                </CardLink>
+                <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+                </CardLink>
+              </div>
+            )
           )}
         </CardFooter>
 
@@ -391,6 +409,13 @@ const BoardCard = ({
           <CardFooter className="card-board-footer pr-1">
             <Badge size="sm" color={`light-${showFinalPaymentLabel}`} pill>
               Final Payment
+            </Badge>
+          </CardFooter>
+        )}
+        {calendarEvent && calendarEvent.status === DATE_AND_TIME_REJECTED_STATUS && (
+          <CardFooter className="card-board-footer pr-1">
+            <Badge size="sm" color={`light-warning`} pill>
+              Rejected
             </Badge>
           </CardFooter>
         )}
