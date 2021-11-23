@@ -1,10 +1,10 @@
-import { Fragment } from 'react';
-import { ArrowLeft, ArrowRight } from 'react-feather';
-import { Button, Col, Form, Row } from 'reactstrap';
+import { Fragment, useEffect, useState } from 'react';
+import { Col, Form, Row } from 'reactstrap';
 import TableAttendees from './TableAttendees';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import mutationUpsertAttendee from '../../../graphql/MutationUpsertAttendee';
 import mutationDeleteAttendee from '../../../graphql/MutationDeleteAttendee';
+import queryCustomerById from '../../../graphql/QueryCustomerById';
 
 // @styles
 import '@styles/react/libs/tables/react-dataTable-component.scss';
@@ -12,6 +12,21 @@ import '@styles/react/libs/tables/react-dataTable-component.scss';
 const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountAttendees }) => {
   const [upsertAttendee] = useMutation(mutationUpsertAttendee, {});
   const [removeAttendee] = useMutation(mutationDeleteAttendee, {});
+  const [customer, setCustomer] = useState(null);
+
+  const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById);
+
+  useEffect(() => {
+    getCustomer({
+      variables: {
+        customerId: booking.customerId
+      }
+    });
+  }, [booking]);
+
+  useEffect(() => {
+    if (booking && customerResult.data) setCustomer(customerResult.data.customer);
+  }, [customerResult.data]);
 
   const updateAttendeesCount = (newCount) => {
     setRealCountAttendees(newCount);
@@ -55,6 +70,7 @@ const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountA
               deleteAttendee={deleteAttendee}
               updateAttendeesCount={updateAttendeesCount}
               teamClassInfo={teamClass}
+              customer={customer}
             />
           </Col>
         </Row>

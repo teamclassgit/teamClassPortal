@@ -8,6 +8,7 @@ import Avatar from '@components/avatar';
 // ** Third Party Components
 import ReactPaginate from 'react-paginate';
 import DataTable from 'react-data-table-component';
+import moment from 'moment';
 
 import { ChevronDown, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
 
@@ -40,7 +41,17 @@ const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
   </div>
 ));
 
-const DataTableAttendees = ({ hasKit, booking, currentBookingId, attendees, saveAttendee, deleteAttendee, updateAttendeesCount, teamClassInfo }) => {
+const DataTableAttendees = ({
+  hasKit,
+  booking,
+  currentBookingId,
+  attendees,
+  saveAttendee,
+  deleteAttendee,
+  updateAttendeesCount,
+  teamClassInfo,
+  customer
+}) => {
   // ** States
   const [currentElement, setCurrentElement] = useState(null);
   const [data, setData] = useState(attendees);
@@ -306,7 +317,9 @@ const DataTableAttendees = ({ hasKit, booking, currentBookingId, attendees, save
                     <DropdownItem className="align-middle w-100">
                       <ExportToExcel
                         apiData={attendeesExcelTable}
-                        fileName={'SignUpStatus'}
+                        fileName={`${customer && customer.name}${customer && customer.company ? ', ' : ''}${
+                          customer && customer.company ? customer.company : ''
+                        }-${moment().format('LL')}-${teamClassInfo.title}`}
                         title={
                           <h6>
                             <FileText size={13} />
