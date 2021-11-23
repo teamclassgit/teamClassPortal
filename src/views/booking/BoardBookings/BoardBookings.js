@@ -38,7 +38,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
 
     if (column === 'date-requested') {
       return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf(column) > -1 && calendarEvent && calendarEvent.status === 'reserved';
+        return status.indexOf(column) > -1 && calendarEvent && (calendarEvent.status === 'reserved');
       });
     }
 
@@ -116,7 +116,6 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           eventCoordinatorId,
           coordinatorName: getCoordinatorName(eventCoordinatorId, coordinators),
           classTitle: getClassTitle(teamClassId, classes),
-          scheduled: getFormattedEventDate(_id, calendarEvents),
           email: getCustomerEmail(customerId, customers),
           phone: getCustomerPhone(customerId, customers),
           company: getCustomerCompany(customerId, customers),
@@ -127,7 +126,6 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           attendeesAdded: 0,
           additionals: 0,
           calendarEvent: calendarEvents.find((element) => element.bookingId === _id),
-          teamClass: classes.find((element) => element._id === teamClassId),
           closedReason,
           notes
         };
