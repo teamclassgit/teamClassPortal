@@ -24,7 +24,7 @@ const BookingList = () => {
   const genericFilter = {};
   const [bookingsFilter, setBookingsFilter] = useState({ status_nin: excludedBookings });
   const [bookings, setBookings] = useState([]);
-  const [limit, setLimit] = useState(200);
+  const [limit, setLimit] = useState(20000);
   const [customers, setCustomers] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [classes, setClasses] = useState([]);

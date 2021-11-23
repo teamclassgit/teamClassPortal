@@ -1,11 +1,11 @@
 export const BOOKING_STATUS = [
-  { label: 'Quote', value: 'quote', color: 'light-danger' },
-  { label: 'Date/Time requested', value: 'date-requested', color: 'light-danger' },
-  { label: 'Date/Time rejected', value: 'rejected', color: 'light-warning' },
-  { label: 'Date/Time accepted', value: 'accepted', color: 'light-warning' },
-  { label: 'Deposit paid', value: 'confirmed', color: 'light-success' },
-  { label: 'Paid (Full)', value: 'paid', color: 'light-danger' },
-  { label: 'Reviews', value: 'reviews', color: 'light-danger' }
+  { label: 'Quote', value: 'quote', color: 'light-danger', board: true },
+  { label: 'Date/Time requested', value: 'date-requested', color: 'light-danger', board: true },
+  { label: 'Date/Time rejected', value: 'rejected', color: 'light-warning', board: false },
+  { label: 'Date/Time accepted', value: 'accepted', color: 'light-warning', board: true },
+  { label: 'Deposit paid', value: 'confirmed', color: 'light-success', board: true },
+  { label: 'Paid (Full)', value: 'paid', color: 'light-danger', board: true },
+  { label: 'Reviews', value: 'reviews', color: 'light-danger', board: false }
 ];
 
 //scheduling
