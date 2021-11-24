@@ -273,7 +273,7 @@ const DataTableAttendees = ({
     let result;
     const columnDelimiter = ';';
     const lineDelimiter = '\n';
-    const dynamicLabels = attendees[0].additionalFields && attendees[0].additionalFields.map((item) => item.name);
+    const dynamicLabels = array.length > 0 && array[0].additionalFields && array[0].additionalFields.map((item) => item.name);
     const keys = `name;email;phone;addressLine1;addressLine2;city;state;zip;country`;
     const arraykeys = keys.split(';');
     result = '';
