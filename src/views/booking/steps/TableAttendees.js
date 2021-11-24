@@ -264,12 +264,10 @@ const DataTableAttendees = ({ hasKit, booking, currentBookingId, attendees, save
           <div className="d-flex flex-column bd-highlight">
             <p className="bd-highlight mb-0">Your list of attendees</p>
             <p className="bd-highlight">
-              {hasKit && (
-                <small>
-                  {` Attendees registered: `}
-                  <Badge color="primary"> {`${data.length}`}</Badge>
-                </small>
-              )}
+              <small>
+                {` Attendees registered: `}
+                <Badge color="primary"> {`${data.length || 0}`}</Badge>
+              </small>
             </p>
           </div>
           <CardTitle className="d-flex justify-content-end">

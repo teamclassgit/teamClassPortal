@@ -15,6 +15,7 @@ import { v4 as uuid } from 'uuid';
 const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, setData, updateAttendeesCount, teamClassInfo }) => {
   const [file, setFile] = useState(null);
   const [errors, setErrors] = useState([]);
+  const [showErrors, setShowErrors] = useState(false);
   const [fileData, setFileData] = useState([]);
   const [processing, setProcessing] = React.useState(false);
 
@@ -142,8 +143,15 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
         setErrors(rows.errors);
         setFileData(
           rows.rows.map((element) => {
-            element.bookingId = currentBookingId;
-            return element;
+            if (element.phone) {
+              element.phone = element.phone.toString();
+            }
+
+            if (element.zip) {
+              element.zip = element.zip.toString();
+            }
+
+            return { ...element, bookingId: currentBookingId };
           })
         );
       });
@@ -167,12 +175,19 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
               <Alert color="primary" isOpen={true}>
                 <div className="alert-body">
                   <span>
+                    <small>ProTip: Your file should match our template's structure</small>
+                    <br />
                     Number of rows: {fileData.length}
                     <br />
                     Errors: {errors.length}
                     <br />
-                    <small>ProTip: Your file should match our template's structure</small>
                   </span>
+                  {errors.length > 0 && (
+                    <textarea
+                      className="form-control"
+                      value={errors.map(({ row, column, error, value }) => `Row ${row} (${column}): ${error} ${value} `)}
+                    ></textarea>
+                  )}
                 </div>
               </Alert>
             )}
