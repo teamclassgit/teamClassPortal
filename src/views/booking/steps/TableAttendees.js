@@ -309,7 +309,9 @@ const DataTableAttendees = ({
     let csv = convertArrayOfObjectsToCSV(array);
     if (csv === null) return;
 
-    const filename = `${customer && customer.name}${customer && customer.company ? ', ' : ''}${customer && customer.company ? customer.company : ''}`;
+    const filename = `${customer && customer.name}${customer && customer.company ? ', ' : ''}${
+      customer && customer.company ? customer.company : ''
+    }-${moment().format('LL')}-${teamClassInfo.title}.csv`;
 
     if (!csv.match(/^data:text\/csv/i)) {
       csv = `data:text/csv;charset=utf-8,${csv}`;
