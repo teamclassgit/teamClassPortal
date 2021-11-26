@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from './Constants';
 import { isAnon, userData } from './RealmApolloClient';
 
@@ -14,9 +15,9 @@ export const htmlToString = (html) => html.replace(/<\/?[^>]+(>|$)/g, '');
 const isToday = (date) => {
   const today = new Date();
   return (
-  /* eslint-disable operator-linebreak */
+    /* eslint-disable operator-linebreak */
     date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()
-  /* eslint-enable */
+    /* eslint-enable */
   );
 };
 
@@ -201,6 +202,15 @@ export const absoluteUrl = (req, setLocalhost) => {
   return {
     protocol,
     host,
-    origin: `${protocol  }//${  host}`
+    origin: `${protocol}//${host}`
   };
+};
+
+export const getEventFullDate = (calendarEvent) => {
+  if (!calendarEvent) return;
+
+  const eventDate = new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day);
+  const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}`;
+
+  return moment(`${moment(eventDate).format('DD/MM/YYYY')} ${eventTime}`, 'DD/MM/YYYY HH:mm');
 };

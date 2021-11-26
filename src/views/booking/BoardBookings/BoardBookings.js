@@ -15,7 +15,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
 
   const getEmptyBoard = () => {
     return {
-      columns: BOOKING_STATUS.map(({ label, value }, index) => ({
+      columns: BOOKING_STATUS.filter((element) => element.board === true).map(({ label, value }, index) => ({
         id: index,
         title: label,
         cards: []
@@ -25,7 +25,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
 
   const getLoadingBoard = () => {
     return {
-      columns: BOOKING_STATUS.map(({ label, value }, index) => ({
+      columns: BOOKING_STATUS.filter((element) => element.board === true).map(({ label, value }, index) => ({
         id: index,
         title: 'Loading...',
         cards: []
@@ -38,19 +38,13 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
 
     if (column === 'date-requested') {
       return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf(column) > -1 && calendarEvent && calendarEvent.status === 'reserved';
+        return status.indexOf(column) > -1 && calendarEvent && (calendarEvent.status === 'reserved' || calendarEvent.status === 'rejected');
       });
     }
 
     if (column === 'accepted') {
       return bookingCards.filter(({ status, calendarEvent }) => {
         return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'confirmed';
-      });
-    }
-
-    if (column === 'rejected') {
-      return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'rejected';
       });
     }
 
@@ -65,12 +59,6 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
       return bookingCards.filter(({ status, payments }) => {
         const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
         return status.indexOf(column) > -1 && finalPayment;
-      });
-    }
-
-    if (column === 'reviews') {
-      return bookingCards.filter(({ status, payments }) => {
-        return status.indexOf('reviews') > -1 || (status.indexOf('confirmed') > -1 && (!payments || payments.length === 0));
       });
     }
 
@@ -116,7 +104,6 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           eventCoordinatorId,
           coordinatorName: getCoordinatorName(eventCoordinatorId, coordinators),
           classTitle: getClassTitle(teamClassId, classes),
-          scheduled: getFormattedEventDate(_id, calendarEvents),
           email: getCustomerEmail(customerId, customers),
           phone: getCustomerPhone(customerId, customers),
           company: getCustomerCompany(customerId, customers),
@@ -127,14 +114,13 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           attendeesAdded: 0,
           additionals: 0,
           calendarEvent: calendarEvents.find((element) => element.bookingId === _id),
-          teamClass: classes.find((element) => element._id === teamClassId),
           closedReason,
           notes
         };
       }
     );
     return {
-      columns: BOOKING_STATUS.map(({ label, value }, index) => ({
+      columns: BOOKING_STATUS.filter((element) => element.board === true).map(({ label, value }, index) => ({
         id: index,
         title: label,
         cards: getColumnData(bookingCards, value)

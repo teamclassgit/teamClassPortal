@@ -1,16 +1,8 @@
 // @packages
 import Avatar from '@components/avatar';
 import DataTable from 'react-data-table-component';
-import React, { forwardRef, useState, useEffect } from 'react';
-import ReactPaginate from 'react-paginate';
+
 import { ChevronDown, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
-
-// @scripts
-import AddNewAttendee from './AddNewAttendee';
-import UploadData from './UploadData';
-
-// @styles
-import '@styles/react/libs/tables/react-dataTable-component.scss';
 
 import {
   Badge,
@@ -31,6 +23,7 @@ import {
   UncontrolledButtonDropdown
 } from 'reactstrap';
 import ExportToExcel from '../../../components/ExportToExcel';
+import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
 
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
@@ -40,7 +33,7 @@ const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
   </div>
 ));
 
-const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee, deleteAttendee, updateAttendeesCount, teamClassInfo }) => {
+const DataTableAttendees = ({ hasKit, booking, currentBookingId, attendees, saveAttendee, deleteAttendee, updateAttendeesCount, teamClassInfo }) => {
   // ** States
   const [currentElement, setCurrentElement] = useState(null);
   const [data, setData] = useState(attendees);
@@ -264,18 +257,16 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           <div className="d-flex flex-column bd-highlight">
             <p className="bd-highlight mb-0">Your list of attendees</p>
             <p className="bd-highlight">
-              {hasKit && (
-                <small>
-                  {` Attendees registered: `}
-                  <Badge color="primary"> {`${data.length}`}</Badge>
-                </small>
-              )}
+              <small>
+                {` Attendees registered: `}
+                <Badge color="primary"> {`${data.length || 0}`}</Badge>
+              </small>
             </p>
           </div>
           <CardTitle className="d-flex justify-content-end">
             <div className="d-flex justify-content-end">
               <div>
-                <UncontrolledButtonDropdown>
+                <UncontrolledButtonDropdown size="sm">
                   <DropdownToggle color="secondary" caret outline>
                     <Share size={15} />
                     <span className="align-middle ml-50">Bulk actions</span>
@@ -294,13 +285,15 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
                         smallText={<h6 className="small m-0 p-0">Use this template to build your list</h6>}
                       />
                     </DropdownItem>
-                    <DropdownItem className="w-100" onClick={handleModalUpload}>
-                      <Grid size={15} />
-                      <span className="align-middle ml-50">
-                        Upload data<br></br>
-                        <small>Excel file with your attendees</small>
-                      </span>
-                    </DropdownItem>
+                    {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+                      <DropdownItem className="w-100" onClick={handleModalUpload}>
+                        <Grid size={15} />
+                        <span className="align-middle ml-50">
+                          Upload data<br></br>
+                          <small>Excel file with your attendees</small>
+                        </span>
+                      </DropdownItem>
+                    )}
                     <DropdownItem className="align-middle w-100">
                       <ExportToExcel
                         apiData={attendeesExcelTable}
@@ -317,32 +310,35 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
-              <div className>
-                <Button
-                  className="ml-2"
-                  color="primary"
-                  onClick={(e) => {
-                    setMode('new');
-                    const newElementTemplate = {
-                      city: '',
-                      phone: '',
-                      bookingId: currentBookingId,
-                      zip: '',
-                      addressLine1: '',
-                      addressLine2: '',
-                      email: '',
-                      country: '',
-                      name: '',
-                      state: '',
-                      dinamycValues: []
-                    };
-                    setCurrentElement(newElementTemplate);
-                    handleModal();
-                  }}
-                >
-                  <Plus size={15} />
-                  <span className="align-middle ml-50">Add Attendee</span>
-                </Button>
+              <div>
+                {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+                  <Button
+                    className="ml-2"
+                    color="primary"
+                    onClick={(e) => {
+                      setMode('new');
+                      const newElementTemplate = {
+                        city: '',
+                        phone: '',
+                        bookingId: currentBookingId,
+                        zip: '',
+                        addressLine1: '',
+                        addressLine2: '',
+                        email: '',
+                        country: '',
+                        name: '',
+                        state: '',
+                        dinamycValues: []
+                      };
+                      setCurrentElement(newElementTemplate);
+                      handleModal();
+                    }}
+                    size="sm"
+                  >
+                    <Plus size={15} />
+                    <span className="align-middle ml-50">Add Attendee</span>
+                  </Button>
+                )}
               </div>
             </div>
           </CardTitle>
@@ -399,6 +395,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
         <ModalFooter className="justify-content-center">
           <Button
             color="secondary"
+            size="sm"
             onClick={(e) => {
               e.preventDefault();
               setElementToDelete(null);
@@ -409,6 +406,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           </Button>
           <Button
             color="primary"
+            size="sm"
             onClick={async (e) => {
               e.preventDefault();
               if (!elementToDelete) return;

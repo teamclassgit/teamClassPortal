@@ -346,7 +346,7 @@ const DataTableBookings = ({
         columns={columns}
         defaultSortField={'updatedAt'}
         defaultSortAsc={false}
-        paginationPerPage={8}
+        paginationPerPage={15}
         className="react-dataTable"
         sortIcon={<ChevronDown size={10} />}
         paginationDefaultPage={currentPage + 1}

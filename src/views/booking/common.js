@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { toAmPm } from '../../utility/Utils';
-import { BOOKING_STATUS } from '../../utility/Constants';
+import { BOOKING_STATUS, DAYS_BEFORE_EVENT_REGISTRATION, DEFAULT_TIME_ZONE_LABEL } from '../../utility/Constants';
 
 export const getCustomerName = (customerId, customers) => {
   const result = customers.filter((element) => element._id === customerId);
@@ -51,4 +51,21 @@ export const getBookingValue = (rowStatus) => {
 export const getCoordinatorName = (coordinatorId, coordinators) => {
   const result = coordinators.find((element) => element._id === coordinatorId);
   return (result && result.name) || '';
+};
+
+export const getEventDates = (calendarEvent, signUpDeadline) => {
+  const dateObject = calendarEvent ? new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day) : null;
+  const timeObject = calendarEvent ? toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, DEFAULT_TIME_ZONE_LABEL) : null;
+  let finalSignUpDeadline = null;
+  if (calendarEvent && signUpDeadline) {
+    finalSignUpDeadline = `${moment(signUpDeadline).format('MM/DD/YYYY kk:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
+  } else if (!signUpDeadline) {
+    finalSignUpDeadline = `${moment(dateObject).subtract(DAYS_BEFORE_EVENT_REGISTRATION, 'days').format('MM/DD/YYYY')} ${timeObject}`;
+  }
+
+  return {
+    date: dateObject,
+    time: timeObject,
+    signUpDeadline: finalSignUpDeadline
+  };
 };
