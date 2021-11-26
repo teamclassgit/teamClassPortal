@@ -31,11 +31,14 @@ const BookingsHeader = ({
   customers,
   defaultLimit,
   generalInquiries,
+  discountCodes,
   isClosedBookings,
   isGeneralInquiries,
+  isDiscountCodes,
   isInProgressBookings,
   isPrivateRequest,
   onChangeLimit,
+  noCoordinators,
   privateRequests,
   setElementToAdd,
   setShowFiltersModal,
@@ -45,12 +48,14 @@ const BookingsHeader = ({
   showExport,
   showFilter,
   showLimit,
+  isBooking,
   showView,
   switchView,
   titleView
 }) => {
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
   const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([]);
+  const [discountCodesExcelTable, setDiscountCodesExcelTable] = useState([]);
   const [limit, setLimit] = useState(defaultLimit);
   const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([]);
   const [searchValue, setSearchValue] = useState(null);
@@ -58,12 +63,11 @@ const BookingsHeader = ({
 
   useEffect(() => {
     setTextFilterContext('');
-  }, [isInProgressBookings, isClosedBookings, isPrivateRequest, isGeneralInquiries]);
+  }, [isInProgressBookings, isClosedBookings, isPrivateRequest, isGeneralInquiries, isDiscountCodes, isBooking]);
 
   useEffect(() => {
     if (bookings) {
       const bookingsArray = [];
-
       const headers = [
         'Updated',
         'BookingId',
@@ -166,6 +170,31 @@ const BookingsHeader = ({
     setSearchValue(e.target.value);
   };
 
+  useEffect(() => {
+    if (discountCodes) {
+      const discountCodesArray = [];
+
+      const headers = ['Created', 'Expiration', 'Discount Code', 'Description', 'Active', 'Redemptions', 'Discount'];
+
+      discountCodesArray.push(headers);
+
+      for (const i in discountCodes) {
+        const row = [
+          discountCodes[i].createdAt,
+          discountCodes[i].expirationDate,
+          discountCodes[i].discountCode,
+          discountCodes[i].description,
+          discountCodes[i].active,
+          discountCodes[i].redemptions,
+          discountCodes[i].discount
+        ];
+
+        discountCodesArray.push(row);
+      }
+      setDiscountCodesExcelTable(discountCodesArray);
+    }
+  }, [discountCodes]);
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       setTextFilterContext({ type: 'text', value: searchValue });
@@ -186,7 +215,11 @@ const BookingsHeader = ({
                   setShowFiltersModal(true);
                 }}
               >
-                {coordinatorFilterContext ? coordinatorFilterContext.label.join(', ') : 'All Coordinators'}
+                {!noCoordinators && (
+                  coordinatorFilterContext 
+                    ? coordinatorFilterContext.label.join(', ') 
+                    : 'All Coordinators'
+                )}
               </a>
             </small>
           </CardTitle>
@@ -305,7 +338,19 @@ const BookingsHeader = ({
                             {' Excel File'}
                           </h6>
                         }
-                        smallText={<h6 className="small m-0 p-0">Download file with general inquiries</h6>}
+                        smallText={<h6 className="small m-0 p-0">Download file with General Inquiries</h6>}
+                      />
+                    ) : isDiscountCodes ? (
+                      <ExportToExcel
+                        apiData={discountCodesExcelTable}
+                        fileName={'Discount Codes'}
+                        title={
+                          <h6>
+                            <FileText size={13} />
+                            {' Excel File'}
+                          </h6>
+                        }
+                        smallText={<h6 className="small m-0 p-0">Download file with Discount Codes</h6>}
                       />
                     ) : (
                       <ExportToExcel
@@ -325,7 +370,7 @@ const BookingsHeader = ({
               </UncontrolledButtonDropdown>
             )}
 
-            {showAdd && (
+            {showAdd && isBooking && (
               <Button
                 outline
                 color="primary"
@@ -341,6 +386,29 @@ const BookingsHeader = ({
                   showAddModal();
                 }}
                 title="Add Booking"
+              >
+                <Plus size={13} />
+              </Button>
+            )}
+            {showAdd && isDiscountCodes && (
+              <Button
+                outline
+                color="primary"
+                onClick={(e) => {
+                  const newElement = {
+                    customerId: '',
+                    code: '',
+                    description: '',
+                    redemption: '',
+                    discount: '',
+                    maxDiscount: '',
+                    expirationDate: '',
+                    type: ''
+                  };
+                  setElementToAdd(newElement);
+                  showAddModal();
+                }}
+                title="Add Discount"
               >
                 <Plus size={13} />
               </Button>

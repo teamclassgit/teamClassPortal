@@ -22,13 +22,9 @@ import { getUserData } from '../../../../utility/Utils';
 import { logoutUser } from '../../../../utility/RealmApolloClient';
 
 const UserDropdown = () => {
-  // ** Store Vars
   const dispatch = useDispatch();
-
-  // ** State
   const [userData, setUserData] = useState(null);
 
-  //** ComponentDidMount
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
       setUserData(getUserData());

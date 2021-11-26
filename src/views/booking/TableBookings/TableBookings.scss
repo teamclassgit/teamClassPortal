@@ -110,7 +110,7 @@
     }
     .rdt_TableHead {
       .rdt_TableHeadRow {
-        background-color: $theme-dark-table-header-bg;
+        background-color: $theme-dark-table-header-bg ;
         border-color: $theme-dark-border-color;
         .rdt_TableCol {
           color: $theme-dark-body-color;
@@ -129,7 +129,7 @@
     }
     .rdt_TableBody {
       .expandable-content {
-        background-color: $theme-dark-table-bg;
+        background-color: red !important;
         color: $theme-dark-body-color;
       }
       .rdt_TableRow {

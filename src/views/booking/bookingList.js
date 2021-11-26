@@ -176,6 +176,7 @@ const BookingList = () => {
         bookings={filteredBookings}
         customers={customers}
         coordinators={coordinators}
+        isBooking
         classes={classes}
         calendarEvents={calendarEvents}
         defaultLimit={limit}

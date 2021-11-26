@@ -1,14 +1,16 @@
-// ** React Imports
-import React, { forwardRef, Fragment, useState } from 'react';
-// ** Add New Modal Component
+// @packages
+import Avatar from '@components/avatar';
+import DataTable from 'react-data-table-component';
+import React, { forwardRef, useState, useEffect } from 'react';
+import ReactPaginate from 'react-paginate';
+import { ChevronDown, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
+
+// @scripts
 import AddNewAttendee from './AddNewAttendee';
 import UploadData from './UploadData';
-// ** Custom Components
-import Avatar from '@components/avatar';
-// ** Third Party Components
-import ReactPaginate from 'react-paginate';
-import DataTable from 'react-data-table-component';
-import { ChevronDown, Download, Edit, FileText, Grid, Plus, Share, Trash, X } from 'react-feather';
+
+// @styles
+import '@styles/react/libs/tables/react-dataTable-component.scss';
 
 import {
   Badge,
@@ -59,7 +61,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
   // ** Function to handle Modal toggle
   const handleModalUpload = () => setModalUpload(!modalUpload);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setData(attendees);
   }, [attendees]);
 
@@ -149,7 +151,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
     }
   ];
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (attendees && teamClassInfo) {
       const attendeesArray = [];
 
@@ -256,7 +258,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
   );
 
   return (
-    <Fragment>
+    <>
       <Card>
         <CardHeader tag="h4" className="border-bottom ">
           <div className="d-flex flex-column bd-highlight">
@@ -423,7 +425,7 @@ const DataTableAttendees = ({ hasKit, currentBookingId, attendees, saveAttendee,
           </Button>
         </ModalFooter>
       </Modal>
-    </Fragment>
+    </>
   );
 };
 

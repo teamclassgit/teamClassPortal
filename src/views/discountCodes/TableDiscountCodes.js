@@ -1,0 +1,272 @@
+// @packages
+import Avatar from '@components/avatar';
+import CardLink from 'reactstrap/lib/CardLink';
+import DataTable from 'react-data-table-component';
+import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import ReactPaginate from 'react-paginate';
+import moment from 'moment';
+import { Card } from 'reactstrap';
+import { Edit2, ChevronDown, Check, X } from 'react-feather';
+import { useMutation } from '@apollo/client';
+
+// @scripts
+import mutationUpdateDiscountCode from '../../graphql/MutationUpdateDiscountCode';
+
+// @styles
+import '../booking/TableBookings/TableBookings.scss';
+
+const TableDiscountCodes = ({ 
+  filteredData,
+  handleEditModal,
+  bookings,
+  setBookings
+}) => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [data, setData] = useState([]);
+  const [updateDiscountCode] = useMutation(mutationUpdateDiscountCode, {});
+
+  useEffect(() => {
+    setData(filteredData);
+  }, [filteredData]);
+
+  const handleChangeValidCode = async (row) => {
+    try {
+      const updateInactiveCode = await updateDiscountCode({
+        variables: {
+          id: row._id,
+          discountCode: row.discountCode,
+          description: row.description,
+          expirationDate: row.expirationDate,
+          redemptions: row.redemptions,
+          customerId: row.customerId,
+          createdAt: row.createdAt,
+          updatedAt: row.updatedAt,
+          type: row.type,
+          discount: row.discount,
+          maxDiscount: row.maxDiscount,
+          active: false
+        }
+      });
+      setBookings([
+        updateInactiveCode.data.updateOneDiscountCode,
+        ...bookings.filter((element) => element._id !== updateInactiveCode.data.updateOneDiscountCode._id)
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleChangeInvalidCode = async (row) => {
+    try {
+      const updateActiveCode = await updateDiscountCode({
+        variables: {
+          id: row._id,
+          discountCode: row.discountCode,
+          description: row.description,
+          expirationDate: row.expirationDate,
+          redemptions: row.redemptions,
+          customerId: row.customerId,
+          createdAt: row.createdAt,
+          updatedAt: row.updatedAt,
+          type: row.type,
+          discount: row.discount,
+          maxDiscount: row.maxDiscount,
+          active: true
+        }
+      });
+      setBookings([
+        updateActiveCode.data.updateOneDiscountCode,
+        ...bookings.filter((element) => element._id !== updateActiveCode.data.updateOneDiscountCode._id)
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const columns = [
+    {
+      name: 'Created',
+      selector: 'date',
+      sortable: true,
+      maxWidth: '10%',
+      cell: (row) => (
+        <small>
+          {moment(row.createdAt).calendar(null, {
+            lastDay: '[Yesterday]',
+            sameDay: 'LT',
+            lastWeek: 'dddd',
+            sameElse: 'MMMM Do, YYYY'
+          })}
+        </small>
+      )
+    },
+    {
+      name: 'Expiration',
+      selector: 'expiration',
+      sortable: true,
+      maxWidth: '12%',
+      cell: (row) => (
+        <small>
+          {moment(row.expirationDate).calendar(null, {
+            lastDay: '[Yesterday]',
+            sameDay: 'LT',
+            lastWeek: 'dddd',
+            sameElse: 'MMMM Do, YYYY'
+          })}
+        </small>
+      )
+    },
+    {
+      name: 'Discount Code',
+      selector: 'discount_code',
+      sortable: true,
+      maxWidth: '13%',
+      cell: (row) => (
+        <small>
+          <div className="d-flex align-items-center">
+            <span className="d-block font-weight-bold">{row.discountCode}</span>
+          </div>
+        </small>
+      )
+    },
+    {
+      name: 'Description',
+      selector: 'description',
+      sortable: true,
+      maxWidth: '16%',
+      cell: (row) => (
+        <small>
+          <div className="d-flex align-items-center">
+            <span className="d-block font-weight-bold">{row.description}</span>
+          </div>
+        </small>
+      )
+    },
+    {
+      name: 'Active',
+      selector: 'active',
+      sortable: true,
+      maxWidth: '8%',
+      cell: (row) => {
+        return (
+          <small>
+            <span className="d-block font-weight-bold">{row.active ? "Active" : "Inactive"}</span>
+          </small>
+        );
+      }
+    },
+    {
+      name: 'Redemptions',
+      selector: 'redemptions',
+      sortable: true,
+      maxWidth: '10%',
+      cell: (row) => (
+        <small>
+          <span className="d-block font-weight-bold">{row.redemptions}</span>
+        </small>
+      )
+    },
+    {
+      name: 'Discount',
+      selector: 'discount',
+      sortable: true,
+      maxWidth: '8%',
+      cell: (row) => (
+        <small>
+          <span className="d-block font-weight-bold">{`${row.type === 'Percentage' ? `${(row.discount * 100)} %` : `${row.discount} $`}`}</span>
+        </small>
+      )
+    },
+    {
+      name: 'Actions',
+      allowOverflow: true,
+      maxWidth: '50px',
+      cell: (row) => {
+        return (
+          <small>
+            <div className="d-flex">
+              <CardLink 
+                onClick={row.active ? () => handleChangeValidCode(row) : () => handleChangeInvalidCode(row)} 
+                target={'_blank'} title={'Approve/Reject link'}
+              >
+                <Avatar color="light-primary" size="sm" icon={row.active ? <X /> : <Check />} />
+              </CardLink>
+              <CardLink onClick={() => {
+                handleEditModal({
+                  currentActive: row.active,
+                  currentCode: row.discountCode,
+                  currentCodeId: row._id,
+                  currentCreatedAt: row.createdAt,
+                  currentCustomerId: row.customerId,
+                  currentDescription: row.description,
+                  currentDiscount: row.discount,
+                  currentExpirationDate: row.expirationDate,
+                  currentMaxDiscount: row.maxDiscount,
+                  currentRedemption: row.redemptions,
+                  currentType: row.type
+                });
+              }} 
+              target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+              </CardLink>
+            </div>
+          </small>
+        );
+      }
+    }
+  ];
+
+  const handlePagination = (page) => {
+    setCurrentPage(page.selected);
+  };
+
+  const CustomPagination = () => (
+    <ReactPaginate
+      activeClassName="active"
+      breakClassName="page-item"
+      breakClassName="page-item"
+      breakLabel="..."
+      breakLinkClassName="page-link"
+      breakLinkClassName="page-link"
+      containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
+      forcePage={currentPage}
+      marginPagesDisplayed={2}
+      nextClassName="page-item next"
+      nextLabel=""
+      nextLinkClassName="page-link"
+      onPageChange={(page) => handlePagination(page)}
+      pageClassName="page-item"
+      pageCount={data.length / 7 || 1}
+      pageLinkClassName="page-link"
+      pageRangeDisplayed={2}
+      previousClassName="page-item prev"
+      previousLabel=""
+      previousLinkClassName="page-link"
+    />
+  );
+
+  return (
+    <Card>
+      <DataTable
+        className="react-dataTable"
+        columns={columns}
+        data={bookings}
+        defaultSortAsc={false}
+        defaultSortField={'updatedAt'}
+        noHeader
+        pagination
+        paginationComponent={CustomPagination}
+        paginationDefaultPage={currentPage + 1}
+        paginationPerPage={8}
+        sortIcon={<ChevronDown size={10} />}
+      />
+    </Card>
+  );
+};
+
+export default TableDiscountCodes;
+
+TableDiscountCodes.propTypes = {
+  filteredData: PropTypes.array.isRequired
+};

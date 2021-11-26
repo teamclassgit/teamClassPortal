@@ -309,6 +309,7 @@ const EditBookingModal = ({
     singleValue: (provided) => ({
       ...provided,
       padding: 0,
+      paddingBottom: 7,
       fontSize: 12
     })
   };
