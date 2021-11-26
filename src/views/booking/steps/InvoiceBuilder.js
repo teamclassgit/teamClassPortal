@@ -119,7 +119,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           discount: discount / 100,
           taxExempt,
           salesTax: taxExempt ? 0 : booking.salesTax > 0 ? booking.salesTax : SALES_TAX,
-          salesTaxState: taxExempt ? '' : booking.salesTax > 0 ? booking.salesTaxState : SALES_TAX_STATE,
+          salesTaxState: taxExempt ? '' : booking.salesTax > 0 && booking.salesTaxState ? booking.salesTaxState : SALES_TAX_STATE,
           updatedAt: new Date()
         }
       });
@@ -172,7 +172,9 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                     <div align="center">
                       Taxable
                       <br />
-                      <small>{taxExempt || !booking.salesTaxState ? '' : `(${booking.salesTaxState}, ${(booking.salesTax * 100).toFixed(2)}%)`}</small>
+                      <small>
+                        {taxExempt || !booking.salesTaxState ? '' : `(${booking.salesTaxState}, ${(booking.salesTax * 100).toFixed(2)}%)`}
+                      </small>
                     </div>
                   </th>
                   <th></th>
