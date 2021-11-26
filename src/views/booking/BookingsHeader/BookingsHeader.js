@@ -391,7 +391,7 @@ const BookingsHeader = ({
                 <Plus size={13} />
               </Button>
             )}
-            {showAdd && isDiscountCodes && userData.customData.role === 'Admin' && (
+            {showAdd && isDiscountCodes && userData?.customData?.role === 'Admin' && (
               <Button
                 outline
                 color="primary"

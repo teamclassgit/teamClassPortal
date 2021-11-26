@@ -177,7 +177,7 @@ const TableDiscountCodes = ({
         </small>
       )
     },
-    userData.customData.role === 'Admin' && (
+    userData?.customData?.role === 'Admin' && (
       {
         name: 'Actions',
         allowOverflow: true,

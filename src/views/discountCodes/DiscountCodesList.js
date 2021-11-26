@@ -53,7 +53,6 @@ const DiscountCodesList = () => {
   const handleSearch = (value) => {
     if (value.length) {
       const updatedData = discountCodesInformation.filter((item) => {
-        console.log(item);
         const startsWith =
           (item.discountCode && item.discountCode.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.description && item.description.toLowerCase().startsWith(value.toLowerCase()));
