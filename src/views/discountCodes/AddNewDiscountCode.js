@@ -1,12 +1,14 @@
 // @packages
 import 'cleave.js/dist/addons/cleave-phone.us';
 import React, { useEffect, useState } from 'react';
-import { Key, Percent, X, Tag, MessageCircle, DollarSign, User } from 'react-feather';
-import { useMutation } from '@apollo/client';
 import Select from 'react-select';
+import PropTypes from 'prop-types';
+import { Key, Percent, X, Tag, MessageCircle, DollarSign, User } from 'react-feather';
 import { selectThemeColors } from '@utils';
+import { useMutation } from '@apollo/client';
 import { v4 as uuid } from 'uuid';
 import {
+  Alert,
   Button,
   FormGroup,
   Input,
@@ -16,8 +18,7 @@ import {
   Label,
   Modal,
   ModalBody,
-  ModalHeader,
-  Alert
+  ModalHeader
 } from 'reactstrap';
 import Flatpickr from 'react-flatpickr';
 
@@ -29,23 +30,21 @@ import '@styles/react/libs/flatpickr/flatpickr.scss';
 
 const AddNewDiscountCode = ({ 
   baseElement,
-  bookings,
-  customers,
+  discountCodesInformation,
   handleModal,
   open,
-  setBookings,
-  setCustomers
+  setDiscountCodesInformation
 }) => {
-  const [createDiscountCode] = useMutation(mutationCreateDiscountCode, {});
-  const [newDiscount, setNewDiscount] = useState('');
-  const [newMaxDiscount, setNewMaxDiscount] = useState(null);
   const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
-  const [newDescription, setNewDescription] = useState('');
-  const [type, setType] = useState('');
+  const [createDiscountCode] = useMutation(mutationCreateDiscountCode, {});
   const [newCode, setNewCode] = useState('');
   const [newCustomerId, setNewCustomerId] = useState(null);
+  const [newDescription, setNewDescription] = useState('');
+  const [newDiscount, setNewDiscount] = useState('');
+  const [newMaxDiscount, setNewMaxDiscount] = useState(null);
   const [newRedemption, setNewRedemption] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [type, setType] = useState('');
   const [warning, setWarning] = useState({ open: false, message: '' });
 
   const allTypes = [
@@ -104,9 +103,9 @@ const AddNewDiscountCode = ({
         return;
       }
 
-      setBookings([
+      setDiscountCodesInformation([
         resultCreateDiscountCode.data.insertOneDiscountCode,
-        ...bookings.filter((element) => element._id !== resultCreateDiscountCode.data.insertOneDiscountCode._id)
+        ...discountCodesInformation.filter((element) => element._id !== resultCreateDiscountCode.data.insertOneDiscountCode._id)
       ]);
       setProcessing(false);
     } catch (ex) {
@@ -118,6 +117,38 @@ const AddNewDiscountCode = ({
 
   const cancel = () => {
     handleModal();
+  };
+
+  const handleDifferentType = () => {
+    if (type === 'Amount' && (newDiscount < 1 || newDiscount > 100)) {
+      setWarning({ open: true, message: 'Discount must be greater than 0 and less than 100' });
+    } else if (type === 'Percentage' && (newDiscount < 0 || newDiscount > 1)) {
+      setWarning({ open: true, message: 'Discount must be greater than 0 and less than 1' });
+    } else {
+      setWarning({ open: false, message: '' });
+    }
+  };
+
+  const sameCodeFilter = discountCodesInformation.map((discountCode) => {
+    if (discountCode.discountCode === newCode) {
+      return discountCode.discountCode;
+    }
+    return null;
+  });
+
+  const sameCode = sameCodeFilter.filter((item) => item !== null);
+
+  const handleDifferentCode = () => {
+    if (newCode.length > 0) {
+      setNewCode(newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''));
+    }
+    if (String(sameCode).length > 0) {
+      setWarning({ open: true, message: 'Discount Code already exists' });
+    } else if (newCode === '') {
+      setWarning({ open: true, message: 'Please enter Discount Code' });
+    } else {
+      setWarning({ open: false, message: '' });
+    }
   };
 
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
@@ -179,13 +210,8 @@ const AddNewDiscountCode = ({
                 placeholder="Discount Code *" 
                 value={newCode}
                 onChange={(e) => setNewCode(e.target.value)}
-                onBlur={() => {
-                  if (newCode === '') {
-                    setWarning({ open: true, message: 'Please enter discount code' });
-                  } else {
-                    setWarning({ open: false, message: '' });
-                  }
-                }}
+                onFocus={() => handleDifferentCode()}
+                onBlur={() => handleDifferentCode()}
               />
             </InputGroup>
           </FormGroup>
@@ -247,24 +273,8 @@ const AddNewDiscountCode = ({
                 placeholder="Discount *" 
                 value={newDiscount} 
                 onChange={(e) => setNewDiscount(e.target.value)}
-                onFocus={() => {
-                  if (type === 'Amount' && (newDiscount < 1 || newDiscount > 100)) {
-                    setWarning({ open: true, message: 'Discount must be greater than 0 and less than 100' });
-                  } else if (type === 'Percentage' && (newDiscount < 0 || newDiscount > 1)) {
-                    setWarning({ open: true, message: 'Discount must be greater than 0 and less than 1' });
-                  } else {
-                    setWarning({ open: false, message: '' });
-                  }
-                }}
-                onBlur={() => {
-                  if (type === 'Amount' && (newDiscount < 1 || newDiscount > 100)) {
-                    setWarning({ open: true, message: 'Discount must be greater than 0 and less than 100' });
-                  } else if (type === 'Percentage' && (newDiscount < 0 || newDiscount > 1)) {
-                    setWarning({ open: true, message: 'Discount must be greater than 0 and less than 1' });
-                  } else {
-                    setWarning({ open: false, message: '' });
-                  }
-                }}
+                onFocus={() => handleDifferentType()}
+                onBlur={() => handleDifferentType()}
               />
             </InputGroup>
           </FormGroup>
@@ -315,6 +325,13 @@ const AddNewDiscountCode = ({
             <Label for="date-time-picker">Expiration Date (Code)*</Label>
             <InputGroup size="sm">
               <Flatpickr
+                options={{
+                  disable: [
+                    function (date) {
+                      return date < new Date();
+                    }
+                  ]
+                }}
                 value={bookingSignUpDeadline}
                 dateformat="Y-m-d H:i"
                 data-enable-time
@@ -345,6 +362,7 @@ const AddNewDiscountCode = ({
               warning.open ||
               !newCode ||
               !type ||
+              String(sameCode).length > 0 ||
               newDescription.length < 5 ||
               type === 'Amount' && (newDiscount < 1 || newDiscount > 100) ||
               type === 'Percentage' && (newDiscount < 0 || newDiscount > 1) ||
@@ -378,3 +396,11 @@ const AddNewDiscountCode = ({
 };
 
 export default AddNewDiscountCode;
+
+AddNewDiscountCode.propTypes = {
+  baseElement: PropTypes.object.isRequired,
+  discountCodesInformation: PropTypes.array.isRequired,
+  handleModal: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  setDiscountCodesInformation: PropTypes.func.isRequired
+};

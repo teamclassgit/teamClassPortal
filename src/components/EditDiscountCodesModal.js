@@ -1,9 +1,11 @@
 // @packages
 import Flatpickr from 'react-flatpickr';
+import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { User, X, Key, Percent, Tag, MessageCircle, DollarSign } from 'react-feather';
 import {
+  Alert,
   Button,
   FormGroup,
   Input,
@@ -11,7 +13,6 @@ import {
   InputGroupAddon,
   InputGroupText,
   Label,
-  Alert,
   Modal,
   ModalBody,
   ModalHeader
@@ -38,12 +39,12 @@ const EditDiscountCodesModal = ({
     currentRedemption,
     currentType
   },
-  open,
-  handleModal,
-  bookings,
-  setBookings,
+  discountCodesInformation,
   editMode,
-  handleClose
+  handleClose,
+  handleModal,
+  open,
+  setDiscountCodesInformation
 }) => {
   const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
   const [closedBookingReason, setClosedBookingReason] = useState(null);
@@ -56,7 +57,6 @@ const EditDiscountCodesModal = ({
   const [processing, setProcessing] = useState(false);
   const [type, setType] = useState('Percentage');
   const [warning, setWarning] = useState({ open: false, message: '' });
-
   const [editDiscountCode] = useMutation(mutationEditDiscountCode, {});
 
   useEffect(() => {
@@ -81,6 +81,38 @@ const EditDiscountCodesModal = ({
 
   const cancel = () => {
     handleModal();
+  };
+
+  const handleDifferentType = () => {
+    if (type === 'Amount' && (newDiscount < 1 || newDiscount > 100)) {
+      setWarning({ open: true, message: 'Discount must be greater than 0 and less than 100' });
+    } else if (type === 'Percentage' && (newDiscount < 0 || newDiscount > 1)) {
+      setWarning({ open: true, message: 'Discount must be greater than 0 and less than 1' });
+    } else {
+      setWarning({ open: false, message: '' });
+    }
+  };
+
+  const sameCodeFilter = discountCodesInformation.map((discountCode) => {
+    if (discountCode.discountCode === newCode && discountCode.discountCode !== currentCode) {
+      return discountCode.discountCode;
+    }
+    return null;
+  });
+
+  const sameCode = sameCodeFilter.filter((item) => item !== null);
+
+  const handleDifferentCode = () => {
+    if (newCode.length > 0) {
+      setNewCode(newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''));
+    }
+    if (String(sameCode).length > 0) {
+      setWarning({ open: true, message: 'Discount Code already exists' });
+    } else if (newCode === '') {
+      setWarning({ open: true, message: 'Please enter Discount Code' });
+    } else {
+      setWarning({ open: false, message: '' });
+    }
   };
 
   const editBooking = async () => {
@@ -108,9 +140,9 @@ const EditDiscountCodesModal = ({
         return;
       }
 
-      setBookings([
+      setDiscountCodesInformation([
         resultEditDiscountCode.data.updateOneDiscountCode,
-        ...bookings.filter((element) => element._id !== resultEditDiscountCode.data.updateOneDiscountCode._id)
+        ...discountCodesInformation.filter((element) => element._id !== resultEditDiscountCode.data.updateOneDiscountCode._id)
       ]);
 
       setProcessing(false);
@@ -192,13 +224,8 @@ const EditDiscountCodesModal = ({
               placeholder="Discount Code *" 
               value={newCode} 
               onChange={(e) => setNewCode(e.target.value)}
-              onBlur={() => {
-                if (newCode === '') {
-                  setWarning({ open: true, message: 'Please enter discount code' });
-                } else {
-                  setWarning({ open: false, message: '' });
-                }
-              }}
+              onFocus={() => handleDifferentCode()}
+              onBlur={() => handleDifferentCode()}
             />
           </InputGroup>
         </FormGroup>
@@ -260,24 +287,8 @@ const EditDiscountCodesModal = ({
               placeholder="Discount *" 
               value={newDiscount} 
               onChange={(e) => setNewDiscount(e.target.value)}
-              onFocus={() => {
-                if (type === 'Amount' && (newDiscount < 1 || newDiscount > 100)) {
-                  setWarning({ open: true, message: 'Discount must be greater than 0 and less than 100' });
-                } else if (type === 'Percentage' && (newDiscount < 0 || newDiscount > 1)) {
-                  setWarning({ open: true, message: 'Discount must be greater than 0 and less than 1' });
-                } else {
-                  setWarning({ open: false, message: '' });
-                }
-              }}
-              onBlur={() => {
-                if (type === 'Amount' && (newDiscount < 1 || newDiscount > 100)) {
-                  setWarning({ open: true, message: 'Discount must be greater than 0 and less than 100' });
-                } else if (type === 'Percentage' && (newDiscount < 0 || newDiscount > 1)) {
-                  setWarning({ open: true, message: 'Discount must be greater than 0 and less than 1' });
-                } else {
-                  setWarning({ open: false, message: '' });
-                }
-              }}
+              onFocus={() => handleDifferentType()}
+              onBlur={() => handleDifferentType()}
             />
           </InputGroup>
         </FormGroup>
@@ -328,6 +339,13 @@ const EditDiscountCodesModal = ({
           <Label for="date-time-picker">Expiration Date (Code)*</Label>
           <InputGroup size="sm">
             <Flatpickr
+              options={{
+                disable: [
+                  function (date) {
+                    return date < new Date();
+                  }
+                ]
+              }}
               value={bookingSignUpDeadline}
               dateformat="Y-m-d H:i"
               data-enable-time
@@ -358,6 +376,7 @@ const EditDiscountCodesModal = ({
                 warning.open ||
                 !newCode ||
                 !type ||
+                String(sameCode).length > 0 ||
                 newDescription.length < 5 ||
                 type === 'Amount' && (newDiscount < 1 || newDiscount > 100) ||
                 type === 'Percentage' && (newDiscount < 0 || newDiscount > 1) ||
@@ -398,3 +417,12 @@ const EditDiscountCodesModal = ({
 };
 
 export default EditDiscountCodesModal;
+
+EditDiscountCodesModal.propTypes = {
+  discountCodesInformation: PropTypes.array.isRequired,
+  editMode: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  handleModal: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  setDiscountCodesInformation: PropTypes.func.isRequired
+};

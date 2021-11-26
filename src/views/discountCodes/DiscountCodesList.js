@@ -3,31 +3,32 @@ import moment from 'moment';
 import { Col, Spinner } from 'reactstrap';
 import { useQuery } from '@apollo/client';
 import { useState, useEffect, useContext } from 'react';
+import { isUserLoggedIn, getUserData } from '@utils';
 
 // @scripts
 import AddNewDiscountCode from './AddNewDiscountCode';
 import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
-import FiltersModal from '../booking/BoardBookings/FiltersModal';
+import EditDiscountCodesModal from '../../components/EditDiscountCodesModal';
 import TableDiscountCodes from '../discountCodes/TableDiscountCodes';
 import queryDiscountCodes from '../../graphql/QueryDiscountCodes';
-import EditDiscountCodesModal from '../../components/EditDiscountCodesModal';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
 
 const DiscountCodesList = () => {
-  const [bookings, setBookings] = useState([]);
+  const [discountCodesInformation, setDiscountCodesInformation] = useState([]);
+  const [currentElement, setCurrentElement] = useState({});
   const [customers, setCustomers] = useState([]);
-  const [discountCodes, setDiscountCodes] = useState([]);
   const [discountCodesFilter, setDiscountCodesFilter] = useState({});
   const [editModal, setEditModal] = useState(false);
   const [elementToAdd, setElementToAdd] = useState({});
   const [filteredDiscountCodes, setFilteredDiscountCodes] = useState([]);
   const [limit, setLimit] = useState(600);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showFiltersModal, setShowFiltersModal] = useState(false);
   const { textFilterContext, dateFilterContext } = useContext(FiltersContext);
-  const [currentElement, setCurrentElement] = useState({});
+
+  const [userData, setUserData] = useState(null);
 
   const handleEditModal = () => setEditModal(!editModal);
+  const handleModal = () => setShowAddModal(!showAddModal);
 
   const { ...allDiscountCodes } = useQuery(queryDiscountCodes, {
     fetchPolicy: 'no-cache',
@@ -39,35 +40,34 @@ const DiscountCodesList = () => {
 
   useEffect(() => {
     if (allDiscountCodes.data) {
-      setBookings(allDiscountCodes.data.discountCodes.map((element) => element));
+      setDiscountCodesInformation(allDiscountCodes.data.discountCodes.map((element) => element));
     }
   }, [allDiscountCodes.data]);
-
-  const handleModal = () => setShowAddModal(!showAddModal);
 
   useEffect(() => {
-    if (allDiscountCodes.data) {
-      setDiscountCodes(allDiscountCodes.data.discountCodes);
+    if (isUserLoggedIn() !== null) {
+      setUserData(getUserData());
     }
-  }, [allDiscountCodes.data]);
+  }, []);
 
   const handleSearch = (value) => {
     if (value.length) {
-      const updatedData = discountCodes.filter((item) => {
+      const updatedData = discountCodesInformation.filter((item) => {
+        console.log(item);
         const startsWith =
-          (item.name && item.name.toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.email && item.email.toLowerCase().startsWith(value.toLowerCase()));
-
+          (item.discountCode && item.discountCode.toLowerCase().startsWith(value.toLowerCase())) ||
+          (item.description && item.description.toLowerCase().startsWith(value.toLowerCase()));
+    
         const includes =
-          (item.name && item.name.toLowerCase().includes(value.toLowerCase())) ||
-          (item.email && item.email.toLowerCase().includes(value.toLowerCase()));
+          (item.discountCode && item.discountCode.toLowerCase().includes(value.toLowerCase())) ||
+          (item.description && item.description.toLowerCase().includes(value.toLowerCase()));
 
         return startsWith || includes;
       });
 
       setFilteredDiscountCodes(updatedData);
     } else {
-      setFilteredDiscountCodes(discountCodes);
+      setFilteredDiscountCodes(discountCodesInformation);
     }
   };
 
@@ -87,21 +87,22 @@ const DiscountCodesList = () => {
 
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '');
-  }, [textFilterContext, discountCodes]);
+  }, [textFilterContext, discountCodesInformation]);
 
   return (
     <>
       <BookingsHeader
-        discountCodes={filteredDiscountCodes}
-        showExport
-        showAddModal={() => handleModal()}
-        onChangeLimit={(newLimit) => setLimit(newLimit)}
-        showAdd
-        setElementToAdd={(d) => setElementToAdd(d)}
-        noCoordinators
+        userData={userData}
         defaultLimit={limit}
-        showLimit
+        discountCodes={filteredDiscountCodes}
         isDiscountCodes
+        noCoordinators
+        onChangeLimit={(newLimit) => setLimit(newLimit)}
+        setElementToAdd={(d) => setElementToAdd(d)}
+        showAdd
+        showAddModal={() => handleModal()}
+        showExport
+        showLimit
         titleView={'Discount Codes '}
       />
       {allDiscountCodes.loading ? (
@@ -115,9 +116,9 @@ const DiscountCodesList = () => {
             {filteredDiscountCodes && filteredDiscountCodes.length > 0 
               && 
               <TableDiscountCodes 
+                userData={userData}
                 filteredData={filteredDiscountCodes}
-                bookings={bookings}
-                setBookings={setBookings}
+                setDiscountCodesInformation={setDiscountCodesInformation}
                 handleEditModal={(element) => {
                   setCurrentElement(element);
                   handleEditModal();
@@ -125,31 +126,24 @@ const DiscountCodesList = () => {
               />
             }
           </Col>
-          <FiltersModal
-            open={showFiltersModal}
-            handleModal={() => setShowFiltersModal(!showFiltersModal)}
-            isFilterByClass={false}
-            isFilterByCoordinator={false}
-            isFilterByCreationDate={true}
-          />
           <AddNewDiscountCode
-            open={showAddModal}
-            handleModal={handleModal}
-            bookings={bookings}
-            setCustomers={setCustomers}
-            customers={customers}
             baseElement={elementToAdd}
-            setBookings={setBookings}
+            discountCodesInformation={discountCodesInformation}
+            customers={customers}
+            handleModal={handleModal}
+            open={showAddModal}
+            setDiscountCodesInformation={setDiscountCodesInformation}
+            setCustomers={setCustomers}
           />
           <EditDiscountCodesModal
-            open={editModal}
-            handleModal={handleEditModal}
+            discountCodesInformation={discountCodesInformation}
             currentElement={currentElement}
-            bookings={bookings}
-            setBookings={setBookings}
-            setCustomers={setCustomers}
+            editMode
             handleClose={() => setCurrentElement({})}
-            editMode={true}
+            handleModal={handleEditModal}
+            open={editModal}
+            setDiscountCodesInformation={setDiscountCodesInformation}
+            setCustomers={setCustomers}
           />
         </>
       )}

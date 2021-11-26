@@ -1,5 +1,5 @@
 // @packages
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { NavLink, useLocation, matchPath } from 'react-router-dom';
 
 // @scripts
@@ -7,7 +7,6 @@ import classnames from 'classnames';
 import navigation from '@src/navigation/vertical';
 import { Badge } from 'reactstrap';
 import { search, getAllParents } from '@layouts/utils';
-import { isUserLoggedIn, getUserData } from '@utils';
 
 const VerticalNavMenuLink = ({
   item,
@@ -24,7 +23,6 @@ const VerticalNavMenuLink = ({
 }) => {
   // ** Conditional Link Tag, if item has newTab or externalLink props use <a> tag else use NavLink
   const LinkTag = item.externalLink ? 'a' : NavLink;
-  const [userData, setUserData] = useState(null);
 
   // ** URL Vars
   const location = useLocation();
@@ -65,12 +63,6 @@ const VerticalNavMenuLink = ({
     }
   }, [location]);
 
-  useEffect(() => {
-    if (isUserLoggedIn() !== null) {
-      setUserData(getUserData());
-    }
-  }, []);
-
   return (
     <li
       className={classnames({
@@ -107,8 +99,8 @@ const VerticalNavMenuLink = ({
           parentItem ? resetActiveGroup(item.navLink) : resetActiveAndOpenGroups();
         }}
       >
-        {item.title === "Discount Codes" && userData?.customData?.role !== 'Admin' || item.icon}
-        <span className='menu-item text-truncate'>{item.title === "Discount Codes" && userData?.customData?.role !== 'Admin' || item.title}</span>
+        {item.icon}
+        <span className='menu-item text-truncate'>{item.title}</span>
         {item.badge && item.badgeText ? (
           <Badge className='ml-auto mr-1' color={item.badge} pill>
             {item.badgeText}

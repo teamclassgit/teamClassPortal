@@ -18,16 +18,15 @@ import '../booking/TableBookings/TableBookings.scss';
 
 const TableDiscountCodes = ({ 
   filteredData,
+  userData,
   handleEditModal,
-  bookings,
-  setBookings
+  setDiscountCodesInformation
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [data, setData] = useState([]);
   const [updateDiscountCode] = useMutation(mutationUpdateDiscountCode, {});
 
   useEffect(() => {
-    setData(filteredData);
+    setCurrentPage(0);
   }, [filteredData]);
 
   const handleChangeValidCode = async (row) => {
@@ -48,9 +47,9 @@ const TableDiscountCodes = ({
           active: false
         }
       });
-      setBookings([
+      setDiscountCodesInformation([
         updateInactiveCode.data.updateOneDiscountCode,
-        ...bookings.filter((element) => element._id !== updateInactiveCode.data.updateOneDiscountCode._id)
+        ...filteredData.filter((element) => element._id !== updateInactiveCode.data.updateOneDiscountCode._id)
       ]);
     } catch (error) {
       console.log(error);
@@ -75,9 +74,9 @@ const TableDiscountCodes = ({
           active: true
         }
       });
-      setBookings([
+      setDiscountCodesInformation([
         updateActiveCode.data.updateOneDiscountCode,
-        ...bookings.filter((element) => element._id !== updateActiveCode.data.updateOneDiscountCode._id)
+        ...filteredData.filter((element) => element._id !== updateActiveCode.data.updateOneDiscountCode._id)
       ]);
     } catch (error) {
       console.log(error);
@@ -178,43 +177,45 @@ const TableDiscountCodes = ({
         </small>
       )
     },
-    {
-      name: 'Actions',
-      allowOverflow: true,
-      maxWidth: '50px',
-      cell: (row) => {
-        return (
-          <small>
-            <div className="d-flex">
-              <CardLink 
-                onClick={row.active ? () => handleChangeValidCode(row) : () => handleChangeInvalidCode(row)} 
-                target={'_blank'} title={'Approve/Reject link'}
-              >
-                <Avatar color="light-primary" size="sm" icon={row.active ? <X /> : <Check />} />
-              </CardLink>
-              <CardLink onClick={() => {
-                handleEditModal({
-                  currentActive: row.active,
-                  currentCode: row.discountCode,
-                  currentCodeId: row._id,
-                  currentCreatedAt: row.createdAt,
-                  currentCustomerId: row.customerId,
-                  currentDescription: row.description,
-                  currentDiscount: row.discount,
-                  currentExpirationDate: row.expirationDate,
-                  currentMaxDiscount: row.maxDiscount,
-                  currentRedemption: row.redemptions,
-                  currentType: row.type
-                });
-              }} 
-              target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </CardLink>
-            </div>
-          </small>
-        );
+    userData.customData.role === 'Admin' && (
+      {
+        name: 'Actions',
+        allowOverflow: true,
+        maxWidth: '50px',
+        cell: (row) => {
+          return (
+            <small>
+              <div className="d-flex">
+                <CardLink 
+                  onClick={row.active ? () => handleChangeValidCode(row) : () => handleChangeInvalidCode(row)} 
+                  target={'_blank'} title={'Approve/Reject link'}
+                >
+                  <Avatar color="light-primary" size="sm" icon={row.active ? <X /> : <Check />} />
+                </CardLink>
+                <CardLink onClick={() => {
+                  handleEditModal({
+                    currentActive: row.active,
+                    currentCode: row.discountCode,
+                    currentCodeId: row._id,
+                    currentCreatedAt: row.createdAt,
+                    currentCustomerId: row.customerId,
+                    currentDescription: row.description,
+                    currentDiscount: row.discount,
+                    currentExpirationDate: row.expirationDate,
+                    currentMaxDiscount: row.maxDiscount,
+                    currentRedemption: row.redemptions,
+                    currentType: row.type
+                  });
+                }} 
+                target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+                </CardLink>
+              </div>
+            </small>
+          );
+        }
       }
-    }
+    )
   ];
 
   const handlePagination = (page) => {
@@ -237,7 +238,7 @@ const TableDiscountCodes = ({
       nextLinkClassName="page-link"
       onPageChange={(page) => handlePagination(page)}
       pageClassName="page-item"
-      pageCount={data.length / 7 || 1}
+      pageCount={filteredData.length / 8 || 1}
       pageLinkClassName="page-link"
       pageRangeDisplayed={2}
       previousClassName="page-item prev"
@@ -251,7 +252,7 @@ const TableDiscountCodes = ({
       <DataTable
         className="react-dataTable"
         columns={columns}
-        data={bookings}
+        data={filteredData}
         defaultSortAsc={false}
         defaultSortField={'updatedAt'}
         noHeader
@@ -268,5 +269,8 @@ const TableDiscountCodes = ({
 export default TableDiscountCodes;
 
 TableDiscountCodes.propTypes = {
-  filteredData: PropTypes.array.isRequired
+  filteredData: PropTypes.array.isRequired,
+  handleEditModal: PropTypes.func.isRequired,
+  userData: PropTypes.object.isRequired,
+  setDiscountCodesInformation: PropTypes.func.isRequired
 };

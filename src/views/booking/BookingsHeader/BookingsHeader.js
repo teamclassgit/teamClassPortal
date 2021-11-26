@@ -28,17 +28,19 @@ const BookingsHeader = ({
   calendarEvents,
   classes,
   coordinators,
+  userData,
   customers,
   defaultLimit,
-  generalInquiries,
   discountCodes,
+  generalInquiries,
+  isBooking,
   isClosedBookings,
-  isGeneralInquiries,
   isDiscountCodes,
+  isGeneralInquiries,
   isInProgressBookings,
   isPrivateRequest,
-  onChangeLimit,
   noCoordinators,
+  onChangeLimit,
   privateRequests,
   setElementToAdd,
   setShowFiltersModal,
@@ -48,14 +50,13 @@ const BookingsHeader = ({
   showExport,
   showFilter,
   showLimit,
-  isBooking,
   showView,
   switchView,
   titleView
 }) => {
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
-  const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([]);
   const [discountCodesExcelTable, setDiscountCodesExcelTable] = useState([]);
+  const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([]);
   const [limit, setLimit] = useState(defaultLimit);
   const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([]);
   const [searchValue, setSearchValue] = useState(null);
@@ -390,7 +391,7 @@ const BookingsHeader = ({
                 <Plus size={13} />
               </Button>
             )}
-            {showAdd && isDiscountCodes && (
+            {showAdd && isDiscountCodes && userData.customData.role === 'Admin' && (
               <Button
                 outline
                 color="primary"
@@ -448,7 +449,9 @@ BookingsHeader.propTypes = {
   isClosedBookings: PropTypes.bool.isRequired,
   isGeneralInquiries: PropTypes.bool.isRequired,
   isInProgressBookings: PropTypes.bool.isRequired,
+  isDiscountCodes: PropTypes.bool.isRequired,
   isPrivateRequests: PropTypes.bool.isRequired,
+  userData: PropTypes.object.isRequired,
   onChangeLimit: PropTypes.func.isRequired,
   privateRequests: PropTypes.array.isRequired,
   setElementToAdd: PropTypes.func.isRequired,
