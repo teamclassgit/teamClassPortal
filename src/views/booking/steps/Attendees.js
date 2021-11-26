@@ -1,36 +1,22 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import { Col, Form, Row } from 'reactstrap';
 import TableAttendees from './TableAttendees';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import mutationUpsertAttendee from '../../../graphql/MutationUpsertAttendee';
 import mutationDeleteAttendee from '../../../graphql/MutationDeleteAttendee';
-import queryCustomerById from '../../../graphql/QueryCustomerById';
 
 // @styles
 import '@styles/react/libs/tables/react-dataTable-component.scss';
 
-const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountAttendees }) => {
+const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountAttendees, customer }) => {
   const [upsertAttendee] = useMutation(mutationUpsertAttendee, {});
   const [removeAttendee] = useMutation(mutationDeleteAttendee, {});
-  const [customer, setCustomer] = useState(null);
-
-  const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById);
-
-  useEffect(() => {
-    getCustomer({
-      variables: {
-        customerId: booking.customerId
-      }
-    });
-  }, [booking]);
-
-  useEffect(() => {
-    if (booking && customerResult.data) setCustomer(customerResult.data.customer);
-  }, [customerResult.data]);
 
   const updateAttendeesCount = (newCount) => {
     setRealCountAttendees(newCount);
   };
+
+  console.log(customer);
 
   const saveAttendee = async (attendee) => {
     const result = await upsertAttendee({
