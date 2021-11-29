@@ -13,7 +13,12 @@ import { capitalizeString, getBookingTotals, getEventFullDate, getSignUpDeadline
 
 // @styles
 import './BoardCard.scss';
-import { DATE_AND_TIME_CONFIRMATION_STATUS, DATE_AND_TIME_REJECTED_STATUS, DAYS_BEFORE_EVENT_REGISTRATION, DEFAULT_TIME_ZONE_LABEL } from '../../../../utility/Constants';
+import {
+  DATE_AND_TIME_CONFIRMATION_STATUS,
+  DATE_AND_TIME_REJECTED_STATUS,
+  DAYS_BEFORE_EVENT_REGISTRATION,
+  DEFAULT_TIME_ZONE_LABEL
+} from '../../../../utility/Constants';
 import { getEventDates } from '../../common';
 
 const BoardCard = ({
@@ -43,7 +48,8 @@ const BoardCard = ({
     eventCoordinatorId,
     signUpDeadline,
     closedReason,
-    notes
+    notes,
+    hasInternationalAttendees
   }
 }) => {
   const [date, setDate] = useState(null);
@@ -179,8 +185,12 @@ const BoardCard = ({
                 <td className="text-right small align-top">~ ${total}</td>
               </tr>
               <tr>
-                <th className="font-weight-normal small pt-2">Created</th>
-                <td className="text-right small pt-2">{` ${moment(createdAt).format('LL')}`}</td>
+                <th className="font-weight-normal small pt-1">International Attendees?</th>
+                <td className="text-right small">{hasInternationalAttendees ? 'Yes' : 'No'}</td>
+              </tr>
+              <tr>
+                <th className="font-weight-normal small">Created</th>
+                <td className="text-right small pt-1">{` ${moment(createdAt).format('LL')}`}</td>
               </tr>
               <tr>
                 <th className="font-weight-normal small">Updated</th>
@@ -246,19 +256,23 @@ const BoardCard = ({
                 {`${moment(date).format('MM/DD/YYYY')} ${time}`}
               </small>
             </p>
-            {calendarEvent.status === DATE_AND_TIME_CONFIRMATION_STATUS && <p className="m-0 p-0">
-              <small>
-                <strong>Sign-up by: </strong>
-                {signUpDeadlineToShow}
-              </small>
-            </p>}
+            {calendarEvent.status === DATE_AND_TIME_CONFIRMATION_STATUS && (
+              <p className="m-0 p-0">
+                <small>
+                  <strong>Sign-up by: </strong>
+                  {signUpDeadlineToShow}
+                </small>
+              </p>
+            )}
           </>
-        ) : <p className="m-0 p-0">
-          <small>
-            <strong>Updated: </strong>
-            {moment(updatedAt).fromNow()}
-          </small>
-        </p>}
+        ) : (
+          <p className="m-0 p-0">
+            <small>
+              <strong>Updated: </strong>
+              {moment(updatedAt).fromNow()}
+            </small>
+          </p>
+        )}
       </div>
     );
   };
