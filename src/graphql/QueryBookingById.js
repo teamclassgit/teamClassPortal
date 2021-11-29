@@ -8,6 +8,7 @@ export default gql`
       expirationHours
       teamClassId
       eventCoordinatorId
+      hasInternationalAttendees
       classVariant {
         title
         notes
