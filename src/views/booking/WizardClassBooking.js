@@ -217,6 +217,7 @@ const WizardClassBooking = () => {
           teamClass={teamClass}
           booking={bookingInfo}
           setRealCountAttendees={setRealCountAttendees}
+          customer={customer}
         />
       )
     },

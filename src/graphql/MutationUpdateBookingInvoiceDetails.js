@@ -6,7 +6,7 @@ export default gql`
     $invoiceDetails: [BookingInvoiceDetailUpdateInput]!
     $discount: Float!
     $salesTax: Float!
-    $salesTaxState: String!
+    $salesTaxState: String
     $updatedAt: DateTime!
     $taxExempt: Boolean!
   ) {

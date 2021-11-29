@@ -12,6 +12,7 @@ import EditDiscountCodesModal from '../../components/EditDiscountCodesModal';
 import TableDiscountCodes from '../discountCodes/TableDiscountCodes';
 import queryDiscountCodes from '../../graphql/QueryDiscountCodes';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
+import queryAllCustomers from '../../graphql/QueryAllCustomers';
 
 const DiscountCodesList = () => {
   const [discountCodesInformation, setDiscountCodesInformation] = useState([]);
@@ -37,6 +38,18 @@ const DiscountCodesList = () => {
     },
     pollInterval: 300000
   });
+
+  const { ...allCustomersResult } = useQuery(queryAllCustomers, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      filter: discountCodesFilter
+    },
+    pollInterval: 200000
+  });
+
+  useEffect(() => {
+    if (allCustomersResult.data) setCustomers(allCustomersResult.data.customers);
+  }, [allCustomersResult.data]);
 
   useEffect(() => {
     if (allDiscountCodes.data) {
@@ -127,22 +140,22 @@ const DiscountCodesList = () => {
           </Col>
           <AddNewDiscountCode
             baseElement={elementToAdd}
-            discountCodesInformation={discountCodesInformation}
             customers={customers}
+            discountCodesInformation={discountCodesInformation}
             handleModal={handleModal}
             open={showAddModal}
             setDiscountCodesInformation={setDiscountCodesInformation}
-            setCustomers={setCustomers}
           />
           <EditDiscountCodesModal
-            discountCodesInformation={discountCodesInformation}
             currentElement={currentElement}
+            customers={customers}
+            discountCodesInformation={discountCodesInformation}
             editMode
             handleClose={() => setCurrentElement({})}
             handleModal={handleEditModal}
             open={editModal}
-            setDiscountCodesInformation={setDiscountCodesInformation}
             setCustomers={setCustomers}
+            setDiscountCodesInformation={setDiscountCodesInformation}
           />
         </>
       )}

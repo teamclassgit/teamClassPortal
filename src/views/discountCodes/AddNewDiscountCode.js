@@ -3,7 +3,7 @@ import 'cleave.js/dist/addons/cleave-phone.us';
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
-import { Key, Percent, X, Tag, MessageCircle, DollarSign, User } from 'react-feather';
+import { Key, Percent, X, Tag, MessageCircle, DollarSign } from 'react-feather';
 import { selectThemeColors } from '@utils';
 import { useMutation } from '@apollo/client';
 import { v4 as uuid } from 'uuid';
@@ -32,18 +32,19 @@ const AddNewDiscountCode = ({
   baseElement,
   discountCodesInformation,
   handleModal,
+  customers,
   open,
   setDiscountCodesInformation
 }) => {
   const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
   const [createDiscountCode] = useMutation(mutationCreateDiscountCode, {});
   const [newCode, setNewCode] = useState('');
-  const [newCustomerId, setNewCustomerId] = useState(null);
   const [newDescription, setNewDescription] = useState('');
   const [newDiscount, setNewDiscount] = useState('');
   const [newMaxDiscount, setNewMaxDiscount] = useState(null);
   const [newRedemption, setNewRedemption] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState('');
   const [type, setType] = useState('');
   const [warning, setWarning] = useState({ open: false, message: '' });
 
@@ -87,7 +88,7 @@ const AddNewDiscountCode = ({
           discountCode: newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''),
           description: newDescription,
           expirationDate: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
-          customerId: newCustomerId,
+          customerId: selectedCustomer,
           redemptions: newRedemption,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -155,7 +156,7 @@ const AddNewDiscountCode = ({
 
   useEffect(() => {
     if (baseElement) {
-      setNewCustomerId(baseElement.customerId);
+      setSelectedCustomer(baseElement.customerId);
       setNewCode(baseElement.code);
       setNewDescription(baseElement.description);
       setNewRedemption(baseElement.redemption);
@@ -182,23 +183,28 @@ const AddNewDiscountCode = ({
         </div>
         <div>
           <FormGroup>
-            <Label for="discount-code">Discount Code Information*</Label>
-            <InputGroup size="sm">
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  <User size={15} />
-                </InputGroupText>
-              </InputGroupAddon>
-              <Input
-                id="discount-code-customer-id"
-                placeholder="Customer Id"
-                type="text"
-                value={newCustomerId}
-                onChange={(e) => setNewCustomerId(e.target.value)}
-              />
-            </InputGroup>
+            <Label for="selectedCustomer">Select Customer</Label>
+            <Select
+              theme={selectThemeColors}
+              className="react-select"
+              classNamePrefix="select"
+              placeholder="Customer Name/Email *"
+              options={
+                customers &&
+                customers.map((element) => {
+                  return {
+                    value: element._id,
+                    label: `${element.name.split(' ')[0]} <${element.email}>`
+                  };
+                })
+              }
+              onChange={(option) => setSelectedCustomer(option.value)}
+              isClearable={false}
+              styles={selectStyles}
+            />
           </FormGroup>
           <FormGroup>
+            <Label for="discount-code">Discount Code Information*</Label>
             <InputGroup size="sm">
               <InputGroupAddon addonType="prepend">
                 <InputGroupText>

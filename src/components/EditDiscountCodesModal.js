@@ -3,7 +3,7 @@ import Flatpickr from 'react-flatpickr';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { User, X, Key, Percent, Tag, MessageCircle, DollarSign } from 'react-feather';
+import { X, Key, Percent, Tag, MessageCircle, DollarSign } from 'react-feather';
 import {
   Alert,
   Button,
@@ -43,24 +43,26 @@ const EditDiscountCodesModal = ({
   editMode,
   handleClose,
   handleModal,
+  customers,
   open,
   setDiscountCodesInformation
 }) => {
   const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
   const [closedBookingReason, setClosedBookingReason] = useState(null);
   const [newCode, setNewCode] = useState(null);
-  const [newCustomerId, setNewCustomerId] = useState(null);
   const [newDescription, setNewDescription] = useState(null);
   const [newDiscount, setNewDiscount] = useState(null);
   const [newMaxDiscount, setNewMaxDiscount] = useState(null);
   const [newRedemption, setNewRedemption] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [type, setType] = useState('Percentage');
+  const [selectedLabel,  setSelectedLabel] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState('');
   const [warning, setWarning] = useState({ open: false, message: '' });
   const [editDiscountCode] = useMutation(mutationEditDiscountCode, {});
 
   useEffect(() => {
-    setNewCustomerId(currentCustomerId);
+    setSelectedCustomer(currentCustomerId);
     setNewCode(currentCode);
     setNewDescription(currentDescription);
     setNewRedemption(currentRedemption);
@@ -124,7 +126,7 @@ const EditDiscountCodesModal = ({
           discountCode: newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''),
           description: newDescription,
           expirationDate: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline : undefined,
-          customerId: newCustomerId,
+          customerId: selectedCustomer,
           redemptions: newRedemption,
           createdAt: currentCreatedAt,
           updatedAt: new Date(),
@@ -177,6 +179,11 @@ const EditDiscountCodesModal = ({
     })
   };
 
+  const handleSelection = (option) => {
+    setSelectedCustomer(option.value);
+    setSelectedLabel(option.label);
+  };
+
   return (
     <Modal
       isOpen={open}
@@ -184,7 +191,7 @@ const EditDiscountCodesModal = ({
       className="sidebar-sm"
       modalClassName="modal-slide-in"
       contentClassName="pt-0"
-      onClosed={(e) => handleClose()}
+      onClosed={() => handleClose()}
     >
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">Edit Discount Code</h5>
@@ -196,23 +203,31 @@ const EditDiscountCodesModal = ({
           </Label>
         </FormGroup>
         <FormGroup>
-          <Label for="discount-code">Discount Code Information*</Label>
-          <InputGroup size="sm">
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                <User size={15} />
-              </InputGroupText>
-            </InputGroupAddon>
-            <Input
-              id="discount-code-customer-id"
-              placeholder="Customer Id"
-              type="text"
-              value={newCustomerId}
-              onChange={(e) => setNewCustomerId(e.target.value)}
-            />
-          </InputGroup>
+          <Label for="selectedCustomer">Select Customer</Label>
+          <Select
+            theme={selectThemeColors}
+            className="react-select"
+            value = {{
+              label: selectedLabel
+            }}
+            classNamePrefix="select"
+            placeholder="Customer Name/Email *"
+            options={
+              customers &&
+              customers.map((element) => {
+                return {
+                  value: element._id,
+                  label: `${element.name.split(' ')[0]} <${element.email}>`
+                };
+              })
+            }
+            onChange={(option) => handleSelection(option)}
+            isClearable={false}
+            styles={selectStyles}
+          />
         </FormGroup>
         <FormGroup>
+          <Label for="discount-code">Discount Code Information*</Label>
           <InputGroup size="sm">
             <InputGroupAddon addonType="prepend">
               <InputGroupText>
