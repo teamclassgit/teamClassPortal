@@ -22,6 +22,7 @@ import { useMutation } from '@apollo/client';
 
 // @scripts
 import mutationEditDiscountCode from '../graphql/MutationEditDiscountCode';
+import allTypes from './AllTypes.json';
 
 // @styles
 import './EditBookingModal.scss';
@@ -39,47 +40,37 @@ const EditDiscountCodesModal = ({
     currentRedemption,
     currentType
   },
+  customers,
   discountCodesInformation,
   editMode,
   handleClose,
   handleModal,
-  customers,
   open,
   setDiscountCodesInformation
 }) => {
   const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
   const [closedBookingReason, setClosedBookingReason] = useState(null);
+  const [editDiscountCode] = useMutation(mutationEditDiscountCode, {});
   const [newCode, setNewCode] = useState(null);
   const [newDescription, setNewDescription] = useState(null);
   const [newDiscount, setNewDiscount] = useState(null);
   const [newMaxDiscount, setNewMaxDiscount] = useState(null);
   const [newRedemption, setNewRedemption] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [type, setType] = useState('Percentage');
-  const [selectedLabel,  setSelectedLabel] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState('');
+  const [type, setType] = useState('Percentage');
   const [warning, setWarning] = useState({ open: false, message: '' });
-  const [editDiscountCode] = useMutation(mutationEditDiscountCode, {});
 
   useEffect(() => {
-    setSelectedCustomer(currentCustomerId);
+    setBookingSignUpDeadline(currentExpirationDate);
     setNewCode(currentCode);
     setNewDescription(currentDescription);
-    setNewRedemption(currentRedemption);
     setNewDiscount(currentDiscount);
     setNewMaxDiscount(currentMaxDiscount);
-    setBookingSignUpDeadline(currentExpirationDate);
+    setNewRedemption(currentRedemption);
+    setSelectedCustomer(currentCustomerId);
     setType(currentType);
   }, [currentCodeId]);
-
-  const allTypes = [
-    {
-      label: 'Percentage'
-    },
-    {
-      label: 'Amount'
-    }
-  ];
 
   const cancel = () => {
     handleModal();
@@ -103,6 +94,9 @@ const EditDiscountCodesModal = ({
   });
 
   const sameCode = sameCodeFilter.filter((item) => item !== null);
+
+  const findCustomer = customers.find((customer) => customer._id === selectedCustomer);
+  const findAllCustomerSelected = findCustomer ? `${findCustomer?.name?.split(' ')[0]} <${findCustomer?.email}>` : '';
 
   const handleDifferentCode = () => {
     if (newCode.length > 0) {
@@ -179,11 +173,6 @@ const EditDiscountCodesModal = ({
     })
   };
 
-  const handleSelection = (option) => {
-    setSelectedCustomer(option.value);
-    setSelectedLabel(option.label);
-  };
-
   return (
     <Modal
       isOpen={open}
@@ -208,10 +197,10 @@ const EditDiscountCodesModal = ({
             theme={selectThemeColors}
             className="react-select"
             value = {{
-              label: selectedLabel
+              label: findAllCustomerSelected
             }}
             classNamePrefix="select"
-            placeholder="Customer Name/Email *"
+            placeholder="Customer Name/Email "
             options={
               customers &&
               customers.map((element) => {
@@ -221,7 +210,7 @@ const EditDiscountCodesModal = ({
                 };
               })
             }
-            onChange={(option) => handleSelection(option)}
+            onChange={(option) => setSelectedCustomer(option.value)}
             isClearable={false}
             styles={selectStyles}
           />
@@ -254,6 +243,7 @@ const EditDiscountCodesModal = ({
             <Input
               id="discount-code-description"
               placeholder="Description *"
+              type="textarea"
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               onBlur={() => {
@@ -291,10 +281,39 @@ const EditDiscountCodesModal = ({
           </InputGroup>
         </FormGroup>
         <FormGroup>
+          <Label for="full-name">Type*</Label>
+          <Select
+            theme={selectThemeColors}
+            styles={selectStyles}
+            className="react-select"
+            classNamePrefix="select"
+            placeholder="Type..."
+            value={{
+              label: type
+            }}
+            options={
+              allTypes &&
+              allTypes.map((item) => {
+                return {
+                  label: item.label
+                };
+              })
+            }
+            onChange={(option) => {
+              setType(option.label);
+            }}
+            isClearable={false}
+          />
+        </FormGroup>
+        <FormGroup>
           <InputGroup size="sm">
             <InputGroupAddon addonType="prepend">
               <InputGroupText>
-                <Percent size={15} />
+                {type === 'Amount' ? (
+                  <DollarSign size={15} />
+                ) : (
+                  <Percent size={15} />
+                )} 
               </InputGroupText>
             </InputGroupAddon>
             <Input 
@@ -325,31 +344,6 @@ const EditDiscountCodesModal = ({
             </InputGroup>
           </FormGroup>
         )}
-        <FormGroup>
-          <Label for="full-name">Type*</Label>
-          <Select
-            theme={selectThemeColors}
-            styles={selectStyles}
-            className="react-select"
-            classNamePrefix="select"
-            placeholder="Type..."
-            value={{
-              label: type
-            }}
-            options={
-              allTypes &&
-              allTypes.map((item) => {
-                return {
-                  label: item.label
-                };
-              })
-            }
-            onChange={(option) => {
-              setType(option.label);
-            }}
-            isClearable={false}
-          />
-        </FormGroup>
         <FormGroup>
           <Label for="date-time-picker">Expiration Date (Code)*</Label>
           <InputGroup size="sm">
@@ -434,6 +428,8 @@ const EditDiscountCodesModal = ({
 export default EditDiscountCodesModal;
 
 EditDiscountCodesModal.propTypes = {
+  currentElement: PropTypes.object,
+  customers: PropTypes.array.isRequired,
   discountCodesInformation: PropTypes.array.isRequired,
   editMode: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,

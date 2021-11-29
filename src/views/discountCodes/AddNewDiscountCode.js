@@ -24,15 +24,16 @@ import Flatpickr from 'react-flatpickr';
 
 // @scripts
 import mutationCreateDiscountCode from '../../graphql/MutationCreateDiscountCode';
+import allTypes from '../../components/AllTypes.json';
 
 // @styles
 import '@styles/react/libs/flatpickr/flatpickr.scss';
 
 const AddNewDiscountCode = ({ 
   baseElement,
+  customers,
   discountCodesInformation,
   handleModal,
-  customers,
   open,
   setDiscountCodesInformation
 }) => {
@@ -45,17 +46,8 @@ const AddNewDiscountCode = ({
   const [newRedemption, setNewRedemption] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState('');
-  const [type, setType] = useState('');
+  const [type, setType] = useState('Percentage');
   const [warning, setWarning] = useState({ open: false, message: '' });
-
-  const allTypes = [
-    {
-      label: 'Percentage'
-    },
-    {
-      label: 'Amount'
-    }
-  ];
   
   const selectStyles = {
     control: (base) => ({
@@ -163,7 +155,6 @@ const AddNewDiscountCode = ({
       setNewDiscount(baseElement.discount);
       setNewMaxDiscount(baseElement.maxDiscount);
       setBookingSignUpDeadline(baseElement.expirationDate);
-      setType(baseElement.type);
       setWarning({ open: false, message: '' });
     }
   }, [baseElement]);
@@ -188,7 +179,7 @@ const AddNewDiscountCode = ({
               theme={selectThemeColors}
               className="react-select"
               classNamePrefix="select"
-              placeholder="Customer Name/Email *"
+              placeholder="Customer Name/Email "
               options={
                 customers &&
                 customers.map((element) => {
@@ -231,6 +222,7 @@ const AddNewDiscountCode = ({
               <Input
                 id="discount-code-description"
                 placeholder="Description *"
+                type="textarea"
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
                 onBlur={() => {
@@ -268,10 +260,39 @@ const AddNewDiscountCode = ({
             </InputGroup>
           </FormGroup>
           <FormGroup>
+            <Label for="full-name">Type*</Label>
+            <Select
+              theme={selectThemeColors}
+              styles={selectStyles}
+              className="react-select"
+              classNamePrefix="select"
+              placeholder="Type..."
+              value={{
+                label: type
+              }}
+              options={
+                allTypes &&
+                allTypes.map((item) => {
+                  return {
+                    label: item.label
+                  };
+                })
+              }
+              onChange={(option) => {
+                setType(option.label);
+              }}
+              isClearable={false}
+            />
+          </FormGroup>
+          <FormGroup>
             <InputGroup size="sm">
               <InputGroupAddon addonType="prepend">
                 <InputGroupText>
-                  <Percent size={15} />
+                  {type === 'Amount' ? (
+                    <DollarSign size={15} />
+                  ) : (
+                    <Percent size={15} />
+                  )} 
                 </InputGroupText>
               </InputGroupAddon>
               <Input 
@@ -302,31 +323,6 @@ const AddNewDiscountCode = ({
               </InputGroup>
             </FormGroup>
           )}
-          <FormGroup>
-            <Label for="full-name">Type*</Label>
-            <Select
-              theme={selectThemeColors}
-              styles={selectStyles}
-              className="react-select"
-              classNamePrefix="select"
-              placeholder="Type..."
-              value={{
-                label: type
-              }}
-              options={
-                allTypes &&
-                allTypes.map((item) => {
-                  return {
-                    label: item.label
-                  };
-                })
-              }
-              onChange={(option) => {
-                setType(option.label);
-              }}
-              isClearable={false}
-            />
-          </FormGroup>
           <FormGroup>
             <Label for="date-time-picker">Expiration Date (Code)*</Label>
             <InputGroup size="sm">
@@ -405,6 +401,7 @@ export default AddNewDiscountCode;
 
 AddNewDiscountCode.propTypes = {
   baseElement: PropTypes.object.isRequired,
+  customers: PropTypes.array.isRequired,
   discountCodesInformation: PropTypes.array.isRequired,
   handleModal: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,

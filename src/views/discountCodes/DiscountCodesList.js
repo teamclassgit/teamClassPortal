@@ -1,32 +1,31 @@
 // @packages
 import moment from 'moment';
 import { Col, Spinner } from 'reactstrap';
+import { isUserLoggedIn, getUserData } from '@utils';
 import { useQuery } from '@apollo/client';
 import { useState, useEffect, useContext } from 'react';
-import { isUserLoggedIn, getUserData } from '@utils';
 
 // @scripts
 import AddNewDiscountCode from './AddNewDiscountCode';
 import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
 import EditDiscountCodesModal from '../../components/EditDiscountCodesModal';
 import TableDiscountCodes from '../discountCodes/TableDiscountCodes';
+import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryDiscountCodes from '../../graphql/QueryDiscountCodes';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
 
 const DiscountCodesList = () => {
-  const [discountCodesInformation, setDiscountCodesInformation] = useState([]);
   const [currentElement, setCurrentElement] = useState({});
   const [customers, setCustomers] = useState([]);
   const [discountCodesFilter, setDiscountCodesFilter] = useState({});
+  const [discountCodesInformation, setDiscountCodesInformation] = useState([]);
   const [editModal, setEditModal] = useState(false);
   const [elementToAdd, setElementToAdd] = useState({});
   const [filteredDiscountCodes, setFilteredDiscountCodes] = useState([]);
   const [limit, setLimit] = useState(600);
   const [showAddModal, setShowAddModal] = useState(false);
-  const { textFilterContext, dateFilterContext } = useContext(FiltersContext);
-
   const [userData, setUserData] = useState(null);
+  const { textFilterContext, dateFilterContext } = useContext(FiltersContext);
 
   const handleEditModal = () => setEditModal(!editModal);
   const handleModal = () => setShowAddModal(!showAddModal);
@@ -76,7 +75,6 @@ const DiscountCodesList = () => {
 
         return startsWith || includes;
       });
-
       setFilteredDiscountCodes(updatedData);
     } else {
       setFilteredDiscountCodes(discountCodesInformation);
@@ -154,7 +152,6 @@ const DiscountCodesList = () => {
             handleClose={() => setCurrentElement({})}
             handleModal={handleEditModal}
             open={editModal}
-            setCustomers={setCustomers}
             setDiscountCodesInformation={setDiscountCodesInformation}
           />
         </>
