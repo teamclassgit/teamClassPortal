@@ -1,8 +1,10 @@
 [
   {
-    "label": "Percentage"
+    "label": "Percentage",
+    "value": "percentage"
   },
   {
-    "label": "Amount"
+    "label": "Amount",
+    "value": "amount"
   }
 ]

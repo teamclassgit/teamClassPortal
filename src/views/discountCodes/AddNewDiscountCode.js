@@ -173,27 +173,6 @@ const AddNewDiscountCode = ({
         </div>
         <div>
           <FormGroup>
-            <Label for="selectedCustomer">Select Customer</Label>
-            <Select
-              theme={selectThemeColors}
-              className="react-select"
-              classNamePrefix="select"
-              placeholder="Customer Name/Email "
-              options={
-                customers &&
-                customers.map((element) => {
-                  return {
-                    value: element._id,
-                    label: `${element.name.split(' ')[0]} <${element.email}>`
-                  };
-                })
-              }
-              onChange={(option) => setSelectedCustomer(option.value)}
-              isClearable={false}
-              styles={selectStyles}
-            />
-          </FormGroup>
-          <FormGroup>
             <Label for="discount-code">Discount Code Information*</Label>
             <InputGroup size="sm">
               <InputGroupAddon addonType="prepend">
@@ -259,28 +238,25 @@ const AddNewDiscountCode = ({
             </InputGroup>
           </FormGroup>
           <FormGroup>
-            <Label for="full-name">Type*</Label>
+            <Label for="Type">Type*</Label>
             <Select
+              defaultValue={{ label: type }}
               theme={selectThemeColors}
-              styles={selectStyles}
               className="react-select"
               classNamePrefix="select"
               placeholder="Type..."
-              value={{
-                label: type
-              }}
               options={
                 allTypes &&
-                allTypes.map((item) => {
+                allTypes.map((element) => {
                   return {
-                    label: item.label
+                    label: element.label,
+                    value: element.value
                   };
                 })
               }
-              onChange={(option) => {
-                setType(option.label);
-              }}
+              onChange={(option) => setType(option.label)}
               isClearable={false}
+              styles={selectStyles}
             />
           </FormGroup>
           <FormGroup>
@@ -353,6 +329,27 @@ const AddNewDiscountCode = ({
                 </small>
               </dt>
             )}
+          </FormGroup>
+          <FormGroup>
+            <Label for="selectedCustomer">Available for this customer only</Label>
+            <Select
+              theme={selectThemeColors}
+              className="react-select"
+              classNamePrefix="select"
+              placeholder="Customer Name/Email "
+              options={
+                customers &&
+                customers.map((element) => {
+                  return {
+                    value: element._id,
+                    label: `${element.name.split(' ')[0]} <${element.email}>`
+                  };
+                })
+              }
+              onChange={(option) => setSelectedCustomer(option.value)}
+              isClearable={false}
+              styles={selectStyles}
+            />
           </FormGroup>
         </div>
         <div align="center">

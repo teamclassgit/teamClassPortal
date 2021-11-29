@@ -3,11 +3,11 @@ import Avatar from '@components/avatar';
 import CardLink from 'reactstrap/lib/CardLink';
 import DataTable from 'react-data-table-component';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import moment from 'moment';
-import { Card } from 'reactstrap';
-import { Edit2, ChevronDown, Check, X } from 'react-feather';
+import { Card, CustomInput } from 'reactstrap';
+import { Edit2, ChevronDown } from 'react-feather';
 import { useMutation } from '@apollo/client';
 
 // @scripts
@@ -24,6 +24,10 @@ const TableDiscountCodes = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [updateDiscountCode] = useMutation(mutationUpdateDiscountCode, {});
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [filteredData]);
 
   const handleChangeValidCode = async (row) => {
     try {
@@ -100,7 +104,7 @@ const TableDiscountCodes = ({
       name: 'Expiration',
       selector: 'expirationDate',
       sortable: true,
-      maxWidth: '14%',
+      maxWidth: '16%',
       cell: (row) => (
         <small>
           {moment(row.expirationDate).calendar(null, {
@@ -116,7 +120,7 @@ const TableDiscountCodes = ({
       name: 'Discount Code',
       selector: 'discountCode',
       sortable: true,
-      maxWidth: '16%',
+      maxWidth: '18%',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -139,19 +143,6 @@ const TableDiscountCodes = ({
       )
     },
     {
-      name: 'Active',
-      selector: 'active',
-      sortable: true,
-      maxWidth: '10%',
-      cell: (row) => {
-        return (
-          <small>
-            <span className="d-block font-weight-bold">{row.active ? "Active" : "Inactive"}</span>
-          </small>
-        );
-      }
-    },
-    {
       name: 'Redemptions',
       selector: 'redemptions',
       sortable: true,
@@ -166,7 +157,7 @@ const TableDiscountCodes = ({
       name: 'Discount',
       selector: 'discount',
       sortable: true,
-      maxWidth:  '12%',
+      maxWidth:  '9%',
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{`${row.type === 'Percentage' ? `${(row.discount * 100)} %` : `${row.discount} $`}`}</span>
@@ -175,19 +166,41 @@ const TableDiscountCodes = ({
     },
     userData?.customData?.role === 'Admin' && (
       {
-        name: 'Actions',
+        name: 'Active',
         allowOverflow: true,
-        maxWidth: '50px',
+        maxWidth: '15%',
         cell: (row) => {
           return (
             <small>
               <div className="d-flex">
                 <CardLink 
                   onClick={row.active ? () => handleChangeValidCode(row) : () => handleChangeInvalidCode(row)} 
-                  target={'_blank'} title={'Approve/Reject link'}
+                  target={'_blank'} title={'Enable/Disable'}
                 >
-                  <Avatar color="light-primary" size="sm" icon={row.active ? <X /> : <Check />} />
+                  <CustomInput
+                    checked={row.active}
+                    className="custom-control-secondary"
+                    id={`customSwitch${row._id}`} 
+                    label={row.active ? 'Active' : 'Inactive'}
+                    name="enabled"
+                    type="switch"
+                  />
                 </CardLink>
+              </div>
+            </small>
+          );
+        }
+      }
+    ),
+    userData?.customData?.role === 'Admin' && (
+      {
+        name: 'Actions',
+        allowOverflow: true,
+        maxWidth: '15%',
+        cell: (row) => {
+          return (
+            <small>
+              <div className="d-flex">
                 <CardLink onClick={() => {
                   handleEditModal({
                     currentActive: row.active,
@@ -203,7 +216,7 @@ const TableDiscountCodes = ({
                     currentType: row.type
                   });
                 }} 
-                target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                target={'_blank'} title={'Edit'}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
                 </CardLink>
               </div>
@@ -249,6 +262,8 @@ const TableDiscountCodes = ({
         className="react-dataTable"
         columns={columns}
         data={filteredData}
+        defaultSortAsc={false}
+        defaultSortField="createdAt"
         noHeader
         pagination
         paginationComponent={CustomPagination}

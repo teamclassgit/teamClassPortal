@@ -59,7 +59,7 @@ const EditDiscountCodesModal = ({
   const [newRedemption, setNewRedemption] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState('');
-  const [type, setType] = useState('Percentage');
+  const [type, setType] = useState('');
   const [warning, setWarning] = useState({ open: false, message: '' });
   const updatedDate = bookingSignUpDeadline && bookingSignUpDeadline?.length > 0 && bookingSignUpDeadline ? bookingSignUpDeadline[0] : undefined;
 
@@ -194,30 +194,6 @@ const EditDiscountCodesModal = ({
           </Label>
         </FormGroup>
         <FormGroup>
-          <Label for="selectedCustomer">Select Customer</Label>
-          <Select
-            theme={selectThemeColors}
-            className="react-select"
-            value = {{
-              label: findAllCustomerSelected
-            }}
-            classNamePrefix="select"
-            placeholder="Customer Name/Email "
-            options={
-              customers &&
-              customers.map((element) => {
-                return {
-                  value: element._id,
-                  label: `${element.name.split(' ')[0]} <${element.email}>`
-                };
-              })
-            }
-            onChange={(option) => setSelectedCustomer(option.value)}
-            isClearable={false}
-            styles={selectStyles}
-          />
-        </FormGroup>
-        <FormGroup>
           <Label for="discount-code">Discount Code Information*</Label>
           <InputGroup size="sm">
             <InputGroupAddon addonType="prepend">
@@ -283,28 +259,25 @@ const EditDiscountCodesModal = ({
           </InputGroup>
         </FormGroup>
         <FormGroup>
-          <Label for="full-name">Type*</Label>
+          <Label for="Type">Type*</Label>
           <Select
+            defaultValue={{ label: currentType }}
             theme={selectThemeColors}
-            styles={selectStyles}
             className="react-select"
             classNamePrefix="select"
             placeholder="Type..."
-            value={{
-              label: type
-            }}
             options={
               allTypes &&
-              allTypes.map((item) => {
+              allTypes.map((element) => {
                 return {
-                  label: item.label
+                  label: element.label,
+                  value: element.value
                 };
               })
             }
-            onChange={(option) => {
-              setType(option.label);
-            }}
+            onChange={(option) => setType(option.label)}
             isClearable={false}
+            styles={selectStyles}
           />
         </FormGroup>
         <FormGroup>
@@ -377,6 +350,29 @@ const EditDiscountCodesModal = ({
               </small>
             </dt>
           )}
+        </FormGroup>
+        <FormGroup>
+          <Label for="selectedCustomer">Available for this customer only</Label>
+          <Select
+            className="react-select"
+            value = {{
+              label: findAllCustomerSelected
+            }}
+            classNamePrefix="select"
+            placeholder="Customer Name/Email "
+            options={
+              customers &&
+              customers.map((element) => {
+                return {
+                  value: element._id,
+                  label: `${element.name.split(' ')[0]} <${element.email}>`
+                };
+              })
+            }
+            onChange={(option) => setSelectedCustomer(option.value)}
+            isClearable={false}
+            styles={selectStyles}
+          />
         </FormGroup>
         {editMode && (
           <div align="center">
