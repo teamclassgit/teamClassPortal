@@ -3,7 +3,7 @@ import Avatar from '@components/avatar';
 import CardLink from 'reactstrap/lib/CardLink';
 import DataTable from 'react-data-table-component';
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import moment from 'moment';
 import { Card } from 'reactstrap';
@@ -24,10 +24,6 @@ const TableDiscountCodes = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [updateDiscountCode] = useMutation(mutationUpdateDiscountCode, {});
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [filteredData]);
 
   const handleChangeValidCode = async (row) => {
     try {
@@ -86,7 +82,7 @@ const TableDiscountCodes = ({
   const columns = [
     {
       name: 'Created',
-      selector: 'date',
+      selector: 'createdAt',
       sortable: true,
       maxWidth: '10%',
       cell: (row) => (
@@ -102,9 +98,9 @@ const TableDiscountCodes = ({
     },
     {
       name: 'Expiration',
-      selector: 'expiration',
+      selector: 'expirationDate',
       sortable: true,
-      maxWidth: '12%',
+      maxWidth: '14%',
       cell: (row) => (
         <small>
           {moment(row.expirationDate).calendar(null, {
@@ -118,9 +114,9 @@ const TableDiscountCodes = ({
     },
     {
       name: 'Discount Code',
-      selector: 'discount_code',
+      selector: 'discountCode',
       sortable: true,
-      maxWidth: '13%',
+      maxWidth: '16%',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -146,7 +142,7 @@ const TableDiscountCodes = ({
       name: 'Active',
       selector: 'active',
       sortable: true,
-      maxWidth: '8%',
+      maxWidth: '10%',
       cell: (row) => {
         return (
           <small>
@@ -159,7 +155,7 @@ const TableDiscountCodes = ({
       name: 'Redemptions',
       selector: 'redemptions',
       sortable: true,
-      maxWidth: '10%',
+      maxWidth: '11%',
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{row.redemptions}</span>
@@ -170,7 +166,7 @@ const TableDiscountCodes = ({
       name: 'Discount',
       selector: 'discount',
       sortable: true,
-      maxWidth: '8%',
+      maxWidth:  '12%',
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{`${row.type === 'Percentage' ? `${(row.discount * 100)} %` : `${row.discount} $`}`}</span>
@@ -253,8 +249,6 @@ const TableDiscountCodes = ({
         className="react-dataTable"
         columns={columns}
         data={filteredData}
-        defaultSortAsc={false}
-        defaultSortField={'updatedAt'}
         noHeader
         pagination
         paginationComponent={CustomPagination}

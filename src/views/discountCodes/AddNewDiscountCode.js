@@ -70,7 +70,6 @@ const AddNewDiscountCode = ({
     })
   };
 
-
   const saveNewBooking = async () => {
     setProcessing(true);
     try {

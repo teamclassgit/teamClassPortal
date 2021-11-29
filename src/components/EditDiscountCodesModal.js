@@ -29,6 +29,7 @@ import './EditBookingModal.scss';
 
 const EditDiscountCodesModal = ({
   currentElement: {
+    currentActive,
     currentCode,
     currentCodeId,
     currentCustomerId,
@@ -60,6 +61,7 @@ const EditDiscountCodesModal = ({
   const [selectedCustomer, setSelectedCustomer] = useState('');
   const [type, setType] = useState('Percentage');
   const [warning, setWarning] = useState({ open: false, message: '' });
+  const updatedDate = bookingSignUpDeadline && bookingSignUpDeadline?.length > 0 && bookingSignUpDeadline ? bookingSignUpDeadline[0] : undefined;
 
   useEffect(() => {
     setBookingSignUpDeadline(currentExpirationDate);
@@ -119,7 +121,7 @@ const EditDiscountCodesModal = ({
           id: currentCodeId,
           discountCode: newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''),
           description: newDescription,
-          expirationDate: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline : undefined,
+          expirationDate: updatedDate === '2' ? currentExpirationDate :  updatedDate,
           customerId: selectedCustomer,
           redemptions: newRedemption,
           createdAt: currentCreatedAt,
@@ -127,7 +129,7 @@ const EditDiscountCodesModal = ({
           type,
           discount: newDiscount,
           maxDiscount: newMaxDiscount ? newMaxDiscount : 0.0,
-          active: true
+          active: currentActive
         }
       });
         
