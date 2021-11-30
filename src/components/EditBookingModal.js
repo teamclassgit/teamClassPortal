@@ -704,10 +704,7 @@ const EditBookingModal = ({
                     !groupSize
                   }
                 >
-                  {processing ? 'Opening...' : 'Open Booking?'}
-                </Button>
-                <Button color="secondary" size="sm" onClick={cancel} outline>
-                  Cancel
+                  {processing ? 'Opening...' : 'Back to open status'}
                 </Button>
               </div>
             )}
