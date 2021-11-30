@@ -5,6 +5,7 @@ import { Sun, Moon, Menu } from 'react-feather';
 
 // @scripts
 import UserDropdown from './UserDropdown';
+import NotificationDropdown from './NotificationDropdown';
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
 
@@ -34,6 +35,7 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
       </div>
       <ul className='nav navbar-nav align-items-center ml-auto'>
         <UserDropdown />
+        <NotificationDropdown />
       </ul>
     </>
   );
