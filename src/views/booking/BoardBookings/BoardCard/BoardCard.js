@@ -13,7 +13,12 @@ import { capitalizeString, getBookingTotals, getEventFullDate, getSignUpDeadline
 
 // @styles
 import './BoardCard.scss';
-import { DATE_AND_TIME_CONFIRMATION_STATUS, DATE_AND_TIME_REJECTED_STATUS, DAYS_BEFORE_EVENT_REGISTRATION, DEFAULT_TIME_ZONE_LABEL } from '../../../../utility/Constants';
+import {
+  DATE_AND_TIME_CONFIRMATION_STATUS,
+  DATE_AND_TIME_REJECTED_STATUS,
+  DAYS_BEFORE_EVENT_REGISTRATION,
+  DEFAULT_TIME_ZONE_LABEL,
+  DATE_AND_TIME_RESERVED_STATUS } from '../../../../utility/Constants';
 import { getEventDates } from '../../common';
 
 const BoardCard = ({
@@ -288,9 +293,6 @@ const BoardCard = ({
               <CardLink href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time link'}>
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </CardLink>
-              <CardLink onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </CardLink>
             </div>
           ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
             <div align="right">
@@ -412,12 +414,28 @@ const BoardCard = ({
             </Badge>
           </CardFooter>
         )}
-        {calendarEvent && calendarEvent.status === DATE_AND_TIME_REJECTED_STATUS && (
-          <CardFooter className="card-board-footer pr-1">
-            <Badge size="sm" color={`light-warning`} pill>
-              Rejected
-            </Badge>
-          </CardFooter>
+        {status === 'date-requested' && (
+          calendarEvent && calendarEvent.status === DATE_AND_TIME_REJECTED_STATUS && (
+            <CardFooter className="card-board-footer pr-1">
+              <Badge size="sm" color={`light-warning`} pill>
+                Rejected
+              </Badge>
+            </CardFooter>
+          )
+          || calendarEvent && calendarEvent.status === DATE_AND_TIME_RESERVED_STATUS && (
+            <CardFooter className="card-board-footer pr-1">
+              <Badge size="sm" color={`primary`} pill>
+                Reserved
+              </Badge>
+            </CardFooter>
+          )
+          || calendarEvent && calendarEvent.status === DATE_AND_TIME_CONFIRMATION_STATUS && (
+            <CardFooter className="card-board-footer pr-1">
+              <Badge size="sm" color={`success`} pill>
+                Confirmed
+              </Badge>
+            </CardFooter>
+          )
         )}
       </Card>
     </>

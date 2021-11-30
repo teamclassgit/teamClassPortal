@@ -5,9 +5,12 @@ import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingS
 import BoardCard from './BoardCard/BoardCard';
 import Board from '@lourenci/react-kanban';
 import { BOOKING_STATUS } from '../../../utility/Constants';
+import { getEventFullDate } from '../../../utility/Utils';
 import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getFormattedEventDate, getCoordinatorName } from '../common';
 import './BoardBookings.scss';
 import '@lourenci/react-kanban/dist/styles.css';
+import moment from 'moment';
+
 
 const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {});
@@ -33,32 +36,36 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
     };
   };
 
+ 
   const getColumnData = (bookingCards, column) => {
     if (column === 'quote' || column === 'canceled') return bookingCards.filter(({ status }) => status.indexOf(column) > -1);
 
+    console.log("bookingCards", bookingCards);
+
     if (column === 'date-requested') {
       return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf(column) > -1 && calendarEvent && (calendarEvent.status === 'reserved' || calendarEvent.status === 'rejected');
+        return status.indexOf(column) > -1 && calendarEvent && (calendarEvent.status === 'reserved' || calendarEvent.status === 'rejected' || 
+        calendarEvent.status === 'confirmed');
       });
     }
 
-    if (column === 'accepted') {
-      return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'confirmed';
+    if (column === 'upcoming') {
+      return bookingCards.filter(({ status, payments, calendarEvent }) => {
+        if (payments && payments.length > 0 && moment(getEventFullDate(calendarEvent)).isAfter(moment().format())) {
+          const depositPayment = payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+          const finalPayment = payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+          return status.indexOf('confirmed') > -1 || status.indexOf('paid') > -1 && depositPayment && finalPayment;
+        }
       });
     }
 
-    if (column === 'confirmed') {
-      return bookingCards.filter(({ status, payments }) => {
-        const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
-        return status.indexOf(column) > -1 && depositPayment;
-      });
-    }
-
-    if (column === 'paid') {
-      return bookingCards.filter(({ status, payments }) => {
-        const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
-        return status.indexOf(column) > -1 && finalPayment;
+    if (column === 'past') {
+      return bookingCards.filter(({ status, payments, calendarEvent }) => {
+        if (payments && payments.length > 0 && moment(getEventFullDate(calendarEvent)).isBefore(moment().format())) {
+          const depositPayment = payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+          const finalPayment = payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+          return status.indexOf('confirmed') > -1 || status.indexOf('paid') > -1 && depositPayment && finalPayment;
+        }
       });
     }
 
