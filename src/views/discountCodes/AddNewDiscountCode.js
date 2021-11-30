@@ -37,7 +37,7 @@ const AddNewDiscountCode = ({
   open,
   setDiscountCodesInformation
 }) => {
-  const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
+  const [discountCodesDeadLine, setDiscountCodesDeadLine] = useState([]);
   const [createDiscountCode] = useMutation(mutationCreateDiscountCode, {});
   const [newCode, setNewCode] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -70,7 +70,7 @@ const AddNewDiscountCode = ({
     })
   };
 
-  const saveNewBooking = async () => {
+  const saveNewDiscountCode = async () => {
     setProcessing(true);
     try {
       const resultCreateDiscountCode = await createDiscountCode({
@@ -78,7 +78,7 @@ const AddNewDiscountCode = ({
           id: uuid(),
           discountCode: newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''),
           description: newDescription,
-          expirationDate: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
+          expirationDate: discountCodesDeadLine && discountCodesDeadLine.length > 0 ? discountCodesDeadLine[0] : undefined,
           customerId: selectedCustomer,
           redemptions: newRedemption,
           createdAt: new Date(),
@@ -153,7 +153,7 @@ const AddNewDiscountCode = ({
       setNewRedemption(baseElement.redemption);
       setNewDiscount(baseElement.discount);
       setNewMaxDiscount(baseElement.maxDiscount);
-      setBookingSignUpDeadline(baseElement.expirationDate);
+      setDiscountCodesDeadLine(baseElement.expirationDate);
       setWarning({ open: false, message: '' });
     }
   }, [baseElement]);
@@ -309,21 +309,21 @@ const AddNewDiscountCode = ({
                     }
                   ]
                 }}
-                value={bookingSignUpDeadline}
+                value={discountCodesDeadLine}
                 dateformat="Y-m-d H:i"
                 data-enable-time
                 id="discount-code-expiration-date"
                 className="form-control"
                 placeholder="Select Date..."
                 onChange={(selectedDates, dateStr, instance) => {
-                  setBookingSignUpDeadline(selectedDates);
+                  setDiscountCodesDeadLine(selectedDates);
                 }}
               />
             </InputGroup>
-            {bookingSignUpDeadline && (
+            {discountCodesDeadLine && (
               <dt className="text-right">
                 <small>
-                  <a href="#" onClick={(e) => setBookingSignUpDeadline([])}>
+                  <a href="#" onClick={(e) => setDiscountCodesDeadLine([])}>
                     clear
                   </a>
                 </small>
@@ -367,10 +367,10 @@ const AddNewDiscountCode = ({
               !newDiscount  ||
               !newRedemption ||
               (type === "Percentage" && !newMaxDiscount) ||
-              !(bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined)
+              !(discountCodesDeadLine && discountCodesDeadLine.length > 0 ? discountCodesDeadLine[0] : undefined)
             }
+            onClick={saveNewDiscountCode}
             size="sm"
-            onClick={saveNewBooking}
           >
             {processing ? 'Saving...' : 'Save'}
           </Button>

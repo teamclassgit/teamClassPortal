@@ -24,9 +24,6 @@ import { useMutation } from '@apollo/client';
 import mutationEditDiscountCode from '../graphql/MutationEditDiscountCode';
 import allTypes from './AllTypes.json';
 
-// @styles
-import './EditBookingModal.scss';
-
 const EditDiscountCodesModal = ({
   currentElement: {
     currentActive,
@@ -49,8 +46,7 @@ const EditDiscountCodesModal = ({
   open,
   setDiscountCodesInformation
 }) => {
-  const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
-  const [closedBookingReason, setClosedBookingReason] = useState(null);
+  const [discountCodesdDeadLine, setDiscountCodesDeadLine] = useState([]);
   const [editDiscountCode] = useMutation(mutationEditDiscountCode, {});
   const [newCode, setNewCode] = useState(null);
   const [newDescription, setNewDescription] = useState(null);
@@ -61,10 +57,10 @@ const EditDiscountCodesModal = ({
   const [selectedCustomer, setSelectedCustomer] = useState('');
   const [type, setType] = useState('');
   const [warning, setWarning] = useState({ open: false, message: '' });
-  const updatedDate = bookingSignUpDeadline && bookingSignUpDeadline?.length > 0 && bookingSignUpDeadline ? bookingSignUpDeadline[0] : undefined;
+  const updatedDate = discountCodesdDeadLine && discountCodesdDeadLine?.length > 0 && discountCodesdDeadLine ? discountCodesdDeadLine[0] : undefined;
 
   useEffect(() => {
-    setBookingSignUpDeadline(currentExpirationDate);
+    setDiscountCodesDeadLine(currentExpirationDate);
     setNewCode(currentCode);
     setNewDescription(currentDescription);
     setNewDiscount(currentDiscount);
@@ -113,7 +109,7 @@ const EditDiscountCodesModal = ({
     }
   };
 
-  const editBooking = async () => {
+  const editDiscountCodes = async () => {
     setProcessing(true);
     try {
       const resultEditDiscountCode = await editDiscountCode({
@@ -147,7 +143,6 @@ const EditDiscountCodesModal = ({
     } catch (ex) {
       console.log(ex);
       setProcessing(false);
-      setClosedBookingReason(null);
     }
     handleModal();
   };
@@ -330,21 +325,21 @@ const EditDiscountCodesModal = ({
                   }
                 ]
               }}
-              value={bookingSignUpDeadline}
+              value={discountCodesdDeadLine}
               dateformat="Y-m-d H:i"
               data-enable-time
               id="discount-code-expiration-date"
               className="form-control"
               placeholder="Select Date..."
               onChange={(selectedDates) => {
-                setBookingSignUpDeadline(selectedDates);
+                setDiscountCodesDeadLine(selectedDates);
               }}
             />
           </InputGroup>
-          {bookingSignUpDeadline && (
+          {discountCodesdDeadLine && (
             <dt className="text-right">
               <small>
-                <a href="#" onClick={() => setBookingSignUpDeadline([])}>
+                <a href="#" onClick={() => setDiscountCodesDeadLine([])}>
                   clear
                 </a>
               </small>
@@ -378,7 +373,7 @@ const EditDiscountCodesModal = ({
           <div align="center">
             <Button
               className="mr-1"
-              size="sm"
+              color="primary"
               disabled={
                 warning.open ||
                 !newCode ||
@@ -390,18 +385,12 @@ const EditDiscountCodesModal = ({
                 !newDiscount  ||
                 !newRedemption ||
                 (type === "Percentage" && !newMaxDiscount) ||
-                !(bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined)
+                !(discountCodesdDeadLine && discountCodesdDeadLine.length > 0 ? discountCodesdDeadLine[0] : undefined)
               }
-              color={closedBookingReason ? 'danger' : 'primary'}
-              onClick={editBooking}
+              onClick={editDiscountCodes}
+              size="sm"
             >
-              {!processing && !closedBookingReason
-                ? 'Save'
-                : closedBookingReason && processing
-                  ? 'Saving...'
-                  : processing
-                    ? 'Saving...'
-                    : 'Close booking?'}
+              {processing ? 'Saving...' : 'Save'}
             </Button>
             <Button color="secondary" size="sm" onClick={cancel} outline>
               Cancel
