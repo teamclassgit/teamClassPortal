@@ -7,12 +7,10 @@ import { Calendar, CreditCard, Users, DollarSign } from 'react-feather';
 import { Col, Row, Spinner } from 'reactstrap';
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { useParams, useHistory } from 'react-router-dom';
-
 // @scripts
 import Attendees from './steps/Attendees';
 import BillingInfo from './steps/BillingInfo';
 import BookingCheckoutSummary from './steps/BookingCheckoutSummary';
-import Confirmation from './steps/Confirmation';
 import DateTimeConfirmation from './steps/DateTimeConfirmation';
 import InvoiceBuilder from './steps/InvoiceBuilder';
 import Payments from './steps/Payments';
@@ -30,7 +28,6 @@ const WizardClassBooking = () => {
   const [availableEvents, setAvailableEvents] = useState(null);
   const [bookingInfo, setBookingInfo] = useState(null);
   const [calendarEvent, setCalendarEvent] = useState(null);
-  const [confirmation, setConfirmation] = useState(true);
   const [customer, setCustomer] = useState(null);
   const [discount, setDiscount] = useState(0);
   const [initialDeposit, setInitialDeposit] = useState(0);
@@ -108,10 +105,6 @@ const WizardClassBooking = () => {
       setRequestEventDate(newCalendarEventOption);
     }
   }, [calendarEvent]);
-
-  useEffect(() => {
-    setConfirmation(false);
-  }, [attendees]);
 
   const getTotals = () => {
     if (!bookingInfo) return;
@@ -255,13 +248,6 @@ const WizardClassBooking = () => {
     }
   ];
 
-  const stepsConfirmation = [
-    {
-      id: 'confirmation',
-      content: <Confirmation stepper={stepper} type="wizard-horizontal" customer={customer} booking={bookingInfo} setConfirmation={setConfirmation} />
-    }
-  ];
-
   return bookingInfo && customer && teamClass ? (
     <Row>
       <Col xs={12}>
@@ -269,32 +255,17 @@ const WizardClassBooking = () => {
       </Col>
       <Col lg={9} md={12} sm={12} xs={12}>
         <div className="modern-horizontal-wizard">
-          {!confirmation && (
-            <Wizard
-              type="modern-horizontal"
-              ref={ref}
-              steps={steps}
-              options={{
-                linear: false
-              }}
-              instance={(el) => {
-                setStepper(el);
-              }}
-            />
-          )}
-          {confirmation && (
-            <Wizard
-              type="modern-horizontal"
-              ref={ref}
-              steps={stepsConfirmation}
-              options={{
-                linear: false
-              }}
-              instance={(el) => {
-                setStepper(el);
-              }}
-            />
-          )}
+          <Wizard
+            type="modern-horizontal"
+            ref={ref}
+            steps={steps}
+            options={{
+              linear: false
+            }}
+            instance={(el) => {
+              setStepper(el);
+            }}
+          />
         </div>
       </Col>
       <Col lg={3} md={12} sm={12}>
