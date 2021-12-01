@@ -1,8 +1,9 @@
 // @packages
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 import { NavItem, NavLink } from 'reactstrap';
 import { Sun, Moon, Menu } from 'react-feather';
-import React, { useState, useEffect } from 'react';
+import { isUserLoggedIn } from '@utils';
 import { useQuery } from '@apollo/client';
 
 // @scripts
@@ -10,7 +11,6 @@ import UserDropdown from './UserDropdown';
 import NotificationDropdown from './NotificationDropdown';
 import queryAllMessageInteraction from '../../../../graphql/QueryAllMessageInteraction';
 import { getUserData } from '../../../../utility/Utils';
-import { isUserLoggedIn } from '@utils';
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
   const [messageInfo, setMessageInfo] = useState([]);

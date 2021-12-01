@@ -1,9 +1,9 @@
 // @packages
 import Avatar from '@components/avatar';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import React from 'react';
 import classnames from 'classnames';
 import { Bell } from 'react-feather';
-import React from 'react';
 import {
   Badge,
   Button,
@@ -13,15 +13,20 @@ import {
   Media,
   UncontrolledDropdown
 } from 'reactstrap';
+import { useHistory } from 'react-router';
 
 const NotificationDropdown = ({
   filterData
 }) => {
   /*eslint-disable */
+
+  const history = useHistory();
+
   const renderNotificationItems = () => {
     return (
       <PerfectScrollbar
         component='li'
+        onClick={handleChatClick}
         className='media-list scrollable-container'
         options={{
           wheelPropagation: false
@@ -69,6 +74,10 @@ const NotificationDropdown = ({
     )
   }
 
+  const handleChatClick = () => { 
+    history.push('/chat');
+  }
+
   return (
     <UncontrolledDropdown tag='li' className='dropdown-notification nav-item mr-25'>
       <DropdownToggle tag='a' className='nav-link' href='/' onClick={e => e.preventDefault()}>
@@ -92,7 +101,7 @@ const NotificationDropdown = ({
         </li>
         {renderNotificationItems()}
         <li className='dropdown-menu-footer'>
-          <Button.Ripple color='primary' block>
+          <Button.Ripple color='primary' block onClick={handleChatClick}>
             Read all notifications
           </Button.Ripple>
         </li>

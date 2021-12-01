@@ -12,6 +12,12 @@ const Routes = [
     component: lazy(() => import('../../views/booking/bookingList'))
   },
   {
+    appLayout: true,
+    className: 'chat-application',
+    component: lazy(() => import('../../views/chat/index')),
+    path: '/chat'
+  },
+  {
     path: '/closedBookings',
     component: lazy(() => import('../../views/booking/BookingClosedList'))
   },
