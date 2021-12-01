@@ -339,7 +339,7 @@ const DataTableAttendees = ({
                         }-${moment().format('LL')}-${teamClassInfo.title}.csv`}
                         title={
                           <h6>
-                            <FileText size={13} />
+                            <File size={13} />
                             {'   Csv File'}
                           </h6>
                         }
