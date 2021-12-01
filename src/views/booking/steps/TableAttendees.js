@@ -9,9 +9,7 @@ import Avatar from '@components/avatar';
 import ReactPaginate from 'react-paginate';
 import DataTable from 'react-data-table-component';
 import moment from 'moment';
-
 import { ChevronDown, Edit, FileText, File, Grid, Plus, Share, Trash, X } from 'react-feather';
-
 import {
   Badge,
   Button,
@@ -33,7 +31,6 @@ import {
 import ExportToExcel from '../../../components/ExportToExcel';
 import ExportToCsv from '../../../components/ExportToCsv';
 import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
-
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
   <div className="custom-control custom-checkbox">
@@ -41,7 +38,6 @@ const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
     <label className="custom-control-label" onClick={onClick} />
   </div>
 ));
-
 const DataTableAttendees = ({
   hasKit,
   booking,
@@ -66,32 +62,24 @@ const DataTableAttendees = ({
   const [elementToDelete, setElementToDelete] = useState(null);
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
   const [excelHeadersTemplate, setExcelHeadersTemplate] = useState([]);
-
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal);
-
   // ** Function to handle Modal toggle
   const handleModalUpload = () => setModalUpload(!modalUpload);
-
   React.useEffect(() => {
     setData(attendees);
   }, [attendees]);
-
   // ** Vars
   const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
-
   const status = {
     1: { title: 'Waiting', color: 'light-warning' },
     2: { title: 'Completed', color: 'light-success' }
   };
-
   const getStatus = (row) => {
     return row.addressLine1 && row.city && row.state && row.zip && row.country ? 2 : 1;
   };
-
   // ** Custom close btn
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setDeleteModal(!deleteModal)} />;
-
   // ** Table Common Column
   const columns = [
     {
@@ -126,7 +114,6 @@ const DataTableAttendees = ({
       sortable: true,
       maxWidth: '250px'
     },
-
     {
       name: 'Actions',
       allowOverflow: true,
@@ -162,20 +149,15 @@ const DataTableAttendees = ({
       }
     }
   ];
-
   React.useEffect(() => {
     if (attendees && teamClassInfo) {
       const attendeesArray = [];
-
       const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country'];
-
       for (const dynamicField in teamClassInfo.registrationFields) {
         headers.push(teamClassInfo.registrationFields[dynamicField].label);
       }
       setExcelHeadersTemplate([headers]);
-
       attendeesArray.push(headers);
-
       for (const i in attendees) {
         const attendeeInfo = attendees[i];
         const row = [
@@ -189,24 +171,19 @@ const DataTableAttendees = ({
           attendeeInfo.zip,
           attendeeInfo.country
         ];
-
         for (const dynamicField in attendeeInfo.additionalFields) {
           row.push(attendeeInfo.additionalFields[dynamicField].value);
         }
-
         attendeesArray.push(row);
       }
-
       setAttendeesExcelTable(attendeesArray);
     }
   }, [attendees, teamClassInfo]);
-
   // ** Function to handle filter
   const handleFilter = (e) => {
     const value = e.target.value;
     let updatedData = [];
     setSearchValue(value);
-
     if (value.length) {
       updatedData = data.filter((item) => {
         const startsWith =
@@ -219,7 +196,6 @@ const DataTableAttendees = ({
           (item.state && item.state.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.zip && item.zip.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.country && item.country.toLowerCase().startsWith(value.toLowerCase()));
-
         const includes =
           (item.name && item.name.toLowerCase().includes(value.toLowerCase())) ||
           (item.phone && item.phone.toLowerCase().includes(value.toLowerCase())) ||
@@ -230,19 +206,16 @@ const DataTableAttendees = ({
           (item.state && item.state.toLowerCase().includes(value.toLowerCase())) ||
           (item.zip && item.zip.toLowerCase().includes(value.toLowerCase())) ||
           (item.country && item.country.toLowerCase().includes(value.toLowerCase()));
-
         return startsWith || includes;
       });
       setFilteredData(updatedData);
       setSearchValue(value);
     }
   };
-
   // ** Function to handle Pagination
   const handlePagination = (page) => {
     setCurrentPage(page.selected);
   };
-
   // ** Custom Pagination
   const CustomPagination = () => (
     <ReactPaginate
@@ -268,6 +241,56 @@ const DataTableAttendees = ({
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
     />
   );
+
+  // ** Converts table to CSV
+  function convertArrayOfObjectsToCSV (array) {
+    let result;
+    const columnDelimiter = ';';
+    const lineDelimiter = '\n';
+    const dynamicLabels = array.length > 0 && array[0].additionalFields && array[0].additionalFields.map((item) => item.name);
+    const keys = `name;email;phone;addressLine1;addressLine2;city;state;zip;country`;
+    const arraykeys = keys.split(';');
+    result = '';
+    result += arraykeys.join(columnDelimiter);
+    result += dynamicLabels && dynamicLabels.length > 0 ? `;${dynamicLabels.join(columnDelimiter)};bookingId` : `;bookingId`;
+    result += ``;
+    result += lineDelimiter;
+    array.forEach((item) => {
+      let ctr = 0;
+      arraykeys.forEach((key) => {
+        if (ctr > 0) result += columnDelimiter;
+        result += (item[key] && item[key].replace('#', '')) || '';
+        ctr++;
+      });
+      if (item.additionalFields && item.additionalFields.length > 0) {
+        result += columnDelimiter;
+        item.additionalFields.map((field) => {
+          result += field.value;
+          result += columnDelimiter;
+        });
+      } else {
+        result += columnDelimiter;
+      }
+      result += item['bookingId'];
+      result += lineDelimiter;
+    });
+    return result;
+  }
+  // ** Downloads CSV
+  function downloadCSV (array) {
+    const link = document.createElement('a');
+    let csv = convertArrayOfObjectsToCSV(array);
+    if (csv === null) return;
+    const filename = `${customer && customer.name}${customer && customer.company ? ', ' : ''}${
+      customer && customer.company ? customer.company : ''
+    }-${moment().format('LL')}-${teamClassInfo.title}.csv`;
+    if (!csv.match(/^data:text\/csv/i)) {
+      csv = `data:text/csv;charset=utf-8,${csv}`;
+    }
+    link.setAttribute('href', encodeURI(csv));
+    link.setAttribute('download', filename);
+    link.click();
+  }
 
   return (
     <Fragment>
@@ -380,7 +403,6 @@ const DataTableAttendees = ({
             </div>
           </CardTitle>
         </CardHeader>
-
         <Row className="justify-content-end mx-0">
           <Col className="d-flex align-items-center justify-content-end mt-1 mb-1" md="6" sm="12">
             <Label className="mr-1" for="search-input">
@@ -463,5 +485,4 @@ const DataTableAttendees = ({
     </Fragment>
   );
 };
-
 export default DataTableAttendees;

@@ -122,11 +122,7 @@ const BookingList = () => {
           (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().includes(value.toLowerCase())) ||
           item._id.includes(value);
 
-        if (startsWith) {
-          return startsWith;
-        } else if (!startsWith && includes) {
-          return includes;
-        } else return null;
+        return startsWith || includes;
       });
 
       setFilteredBookings(updatedData);

@@ -386,6 +386,28 @@ const EditBookingModal = ({
     setInputNote('');
   };
 
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      height: 30,
+      minHeight: 30,
+      fontSize: 12
+    }),
+    option: (provided) => ({
+      ...provided,
+      borderBottom: '1px dotted',
+      padding: 10,
+      fontSize: 12
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      padding: 0,
+      paddingBottom: 7,
+      fontSize: 12
+    })
+  };
+
+
   return (
     <Modal
       isOpen={open}
