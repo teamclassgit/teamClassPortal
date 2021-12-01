@@ -11,26 +11,12 @@ import { Edit2, ChevronDown } from 'react-feather';
 import { useState } from 'react';
 
 // @scripts
-import { 
-  getClassTitle,
-  getCoordinatorName,
-  getCustomerCompany,
-  getCustomerEmail,
-  getCustomerPhone,
-  getFormattedEventDate 
-} from '../common';
+import { getClassTitle, getCoordinatorName, getCustomerCompany, getCustomerEmail, getCustomerPhone, getFormattedEventDate } from '../common';
 
 // @styles
 import './TableBookings.scss';
 
-const DataTableClosedBookings = ({ 
-  filteredData,
-  customers,
-  classes,
-  calendarEvents,
-  coordinators,
-  handleEditModal
-}) => {
+const DataTableClosedBookings = ({ filteredData, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const history = useHistory();
 
@@ -83,7 +69,8 @@ const DataTableClosedBookings = ({
                   currentStatus: row.status,
                   currentEventDurationHours: row.eventDurationHours,
                   currentClosedReason: row.closedReason,
-                  currentNotes: row.notes
+                  currentNotes: row.notes,
+                  currentPayments: row.payments
                 });
               }}
               title={`Edit booking info ${row._id}`}

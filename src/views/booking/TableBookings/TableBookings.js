@@ -12,24 +12,10 @@ import { useHistory } from 'react-router';
 import StatusSelector from './StatusSelector';
 import moment from 'moment';
 import { Card } from 'reactstrap';
-import {
-  getCustomerEmail,
-  getClassTitle,
-  getFormattedEventDate,
-  getCustomerPhone,
-  getCustomerCompany,
-  getCoordinatorName
-} from '../common';
+import { getCustomerEmail, getClassTitle, getFormattedEventDate, getCustomerPhone, getCustomerCompany, getCoordinatorName } from '../common';
 import './TableBookings.scss';
 
-const DataTableBookings = ({ 
-  calendarEvents,
-  classes,
-  coordinators,
-  customers,
-  filteredData,
-  handleEditModal
-}) => {
+const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, filteredData, handleEditModal }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const history = useHistory();
@@ -83,7 +69,8 @@ const DataTableBookings = ({
                   currentStatus: row.status,
                   currentEventDurationHours: row.eventDurationHours,
                   currentClosedReason: row.closedReason,
-                  currentNotes: row.notes
+                  currentNotes: row.notes,
+                  currentPayments: row.payments
                 });
               }}
               title={`Edit booking info ${row._id}`}
@@ -280,26 +267,28 @@ const DataTableBookings = ({
               </CardLink>
             </div>
           </small>
-        ) : row.status !== 'canceled' && (
-          <small>
-            <div className="d-flex">
-              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-                <Avatar color="light-primary" size="sm" icon={<User />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-                <Avatar color="light-primary" size="sm" icon={<Users />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
-                <Avatar color="secondary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-              </CardLink>
-            </div>
-          </small>
+        ) : (
+          row.status !== 'canceled' && (
+            <small>
+              <div className="d-flex">
+                <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                  <Avatar color="light-primary" size="sm" icon={<User />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                  <Avatar color="light-primary" size="sm" icon={<Users />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+                  <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
+                </CardLink>
+                <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+                  <Avatar color="secondary" size="sm" icon={<DollarSign />} />
+                </CardLink>
+                <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                </CardLink>
+              </div>
+            </small>
+          )
         );
       }
     }

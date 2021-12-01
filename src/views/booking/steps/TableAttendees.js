@@ -29,6 +29,7 @@ import {
   UncontrolledButtonDropdown
 } from 'reactstrap';
 import ExportToExcel from '../../../components/ExportToExcel';
+import ExportToCsv from '../../../components/ExportToCsv';
 import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
@@ -240,6 +241,7 @@ const DataTableAttendees = ({
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
     />
   );
+
   // ** Converts table to CSV
   function convertArrayOfObjectsToCSV (array) {
     let result;
@@ -289,6 +291,7 @@ const DataTableAttendees = ({
     link.setAttribute('download', filename);
     link.click();
   }
+
   return (
     <Fragment>
       <Card>
@@ -326,11 +329,12 @@ const DataTableAttendees = ({
                     </DropdownItem>
                     {booking && booking.status !== BOOKING_CLOSED_STATUS && (
                       <DropdownItem className="w-100" onClick={handleModalUpload}>
-                        <Grid size={15} />
-                        <span className="align-middle ml-50">
-                          Upload data<br></br>
+                        <>
+                          <h6>
+                            <Grid size={15} /> Upload data
+                          </h6>
                           <small>Excel file with your attendees</small>
-                        </span>
+                        </>
                       </DropdownItem>
                     )}
                     <DropdownItem className="align-middle w-100">
@@ -348,12 +352,20 @@ const DataTableAttendees = ({
                         smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
                       />
                     </DropdownItem>
-                    <DropdownItem onClick={() => downloadCSV(attendees)} className="align-middle w-100">
-                      <File size={13} />
-                      <span className="mb-1">CSV File</span>
-                      <small>
-                        <h6 className="small">Download excel file with attendees</h6>
-                      </small>
+                    <DropdownItem className="align-middle w-100">
+                      <ExportToCsv
+                        array={attendees}
+                        name={`${customer && customer.name}${customer && customer.company ? ', ' : ''}${
+                          customer && customer.company ? customer.company : ''
+                        }-${moment().format('LL')}-${teamClassInfo.title}.csv`}
+                        title={
+                          <h6>
+                            <File size={13} />
+                            {'   Csv File'}
+                          </h6>
+                        }
+                        smallText={<h6 className="small m-0 p-0">Download csv file with attendees</h6>}
+                      />
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
