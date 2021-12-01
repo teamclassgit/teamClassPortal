@@ -11,6 +11,7 @@ export default gql`
       classMinimum
       eventDurationHours
       eventCoordinatorId
+      hasInternationalAttendees
       pricePerson
       serviceFee
       salesTax
