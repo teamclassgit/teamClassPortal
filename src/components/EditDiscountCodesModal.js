@@ -75,10 +75,8 @@ const EditDiscountCodesModal = ({
   };
 
   const handleDifferentType = () => {
-    if (type === 'Amount' && (newDiscount < 1 || newDiscount > 100)) {
-      setWarning({ open: true, message: 'Discount must be greater than 0 and less than 100' });
-    } else if (type === 'Percentage' && (newDiscount < 0 || newDiscount > 1)) {
-      setWarning({ open: true, message: 'Discount must be greater than 0 and less than 1' });
+    if ((type === 'Amount' || type === 'Percentage') && (newDiscount < 0 || newDiscount > 100)) {
+      setWarning({ open: true, message: 'Discount must be greater or equal than 0 and less than 100' });
     } else {
       setWarning({ open: false, message: '' });
     }
@@ -380,8 +378,7 @@ const EditDiscountCodesModal = ({
                 !type ||
                 String(sameCode).length > 0 ||
                 newDescription.length < 5 ||
-                type === 'Amount' && (newDiscount < 1 || newDiscount > 100) ||
-                type === 'Percentage' && (newDiscount < 0 || newDiscount > 1) ||
+                (type === 'Amount' || type === 'Percentage') && (newDiscount < 0 || newDiscount > 100) ||
                 !newDiscount  ||
                 !newRedemption ||
                 (type === "Percentage" && !newMaxDiscount) ||

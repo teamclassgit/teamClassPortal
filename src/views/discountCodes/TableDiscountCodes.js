@@ -160,7 +160,7 @@ const TableDiscountCodes = ({
       maxWidth:  '9%',
       cell: (row) => (
         <small>
-          <span className="d-block font-weight-bold">{`${row.type === 'Percentage' ? `${(row.discount * 100)} %` : `${row.discount} $`}`}</span>
+          <span className="d-block font-weight-bold">{`${row.type === 'Percentage' ? `${(row.discount)} %` : `${row.discount} $`}`}</span>
         </small>
       )
     },
