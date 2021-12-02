@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export default gql`
   mutation updateBookingInvoiceDetails(
     $bookingId: String!
-    $invoiceDetails: [BookingInvoiceDetailUpdateInput]!
+    $invoiceDetails: [BookingInvoiceDetailUpdateInput!]!
     $discount: Float!
     $salesTax: Float!
     $salesTaxState: String

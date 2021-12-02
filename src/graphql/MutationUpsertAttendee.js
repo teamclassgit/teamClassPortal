@@ -13,7 +13,7 @@ export default gql`
     $state: String
     $zip: String
     $country: String
-    $additionalFields: [AttendeeAdditionalFieldInsertInput]
+    $additionalFields: [AttendeeAdditionalFieldInsertInput!]
   ) {
     upsertOneAttendee(
       query: { _id: $id }
