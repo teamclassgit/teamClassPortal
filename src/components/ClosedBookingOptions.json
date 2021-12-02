@@ -1,0 +1,26 @@
+[
+  {
+    "label": "",
+    "value": ""
+  },
+  {
+    "label": "Won",
+    "value": "Won"
+  },
+  {
+    "label": "Lost",
+    "value": "Lost"
+  },
+  {
+    "label": "Duplicated",
+    "value": "Duplicated"
+  },
+  {
+    "label": "Mistake",
+    "value": "Mistake"
+  },
+  {
+    "label": "Test",
+    "value": "Test"
+  }
+]

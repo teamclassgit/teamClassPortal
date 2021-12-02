@@ -19,23 +19,22 @@ import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
 import { getCustomerEmail, getClassTitle } from './common';
 
 const BookingList = () => {
-  const [genericFilter] = useState({});
-  const [bookingsFilter, setBookingsFilter] = useState({ status_in: 'closed' });
   const [bookings, setBookings] = useState([]);
-  const [limit, setLimit] = useState(200);
-  const [customers, setCustomers] = useState([]);
-  const [coordinators, setCoordinators] = useState([]);
-  const [classes, setClasses] = useState([]);
+  const [bookingsFilter, setBookingsFilter] = useState({ status_in: 'closed' });
   const [calendarEvents, setCalendarEvents] = useState([]);
-  const [showFiltersModal, setShowFiltersModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [classes, setClasses] = useState([]);
+  const [coordinators, setCoordinators] = useState([]);
   const [currentElement, setCurrentElement] = useState({});
-  const [elementToAdd, setElementToAdd] = useState({});
-  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
-  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [editModal, setEditModal] = useState(false);
+  const [elementToAdd, setElementToAdd] = useState({});
+  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [genericFilter] = useState({});
+  const [limit, setLimit] = useState(200);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showFiltersModal, setShowFiltersModal] = useState(false);
+  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
 
-  // ** Function to handle Modal toggle
   const handleEditModal = () => setEditModal(!editModal);
 
   const { ...allBookingsResult } = useQuery(queryAllBookings, {
@@ -159,7 +158,6 @@ const BookingList = () => {
     handleSearch((textFilterContext && textFilterContext.value) || '');
   }, [textFilterContext]);
 
-  // ** Function to handle Modal toggle
   return (
     <>
       <BookingsHeader

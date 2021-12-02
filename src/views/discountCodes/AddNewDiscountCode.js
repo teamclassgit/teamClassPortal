@@ -158,7 +158,12 @@ const AddNewDiscountCode = ({
   }, [baseElement]);
 
   return (
-    <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
+    <Modal 
+      className="sidebar-sm" 
+      contentClassName="pt-0"
+      isOpen={open} 
+      modalClassName="modal-slide-in" 
+    >
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">{'New Discount Code'}</h5>
       </ModalHeader>
