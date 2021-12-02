@@ -1,0 +1,18 @@
+[
+  {
+    "label": "Cash",
+    "value": "cash"
+  },
+  {
+    "label": "Card",
+    "value": "card"
+  },
+  {
+    "label": "Check",
+    "value": "check"
+  },
+  {
+    "label": "ACH",
+    "value": "ach"
+  }
+]
