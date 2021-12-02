@@ -76,7 +76,13 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
       );
     });
 
-    return calendarEvents && calendarEvents.length > 0;
+    //a blocked slot configured by the instructor for this class
+    const isBlockedSlot = calendarEvents && calendarEvents.find(element => element.isBlockedDate === true) ? true : false;
+
+    return {
+      hasEvents : calendarEvents && calendarEvents.length > 0 ? true : false,
+      isBlockedSlot
+    };
   };
 
   const getAvailableTimes = (selectedDate) => {
@@ -96,6 +102,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         const toHourAndMinutes = availability.toHour + availability.toMinutes / 60;
         for (let i = fromHourAndMinutes; i < toHourAndMinutes; i = i + incrementInHours) {
           const fullEndHour = i + teamClass.duration;
+          const hasEventsInSlot = hasEvents(selectedDate, i, fullEndHour, breakBetweenClasses);
           const fullMinutes = i * 60;
           let eHour = Math.floor(fullMinutes / 60);
           eHour = eHour < 10 ? `${eHour}` : eHour;
@@ -107,7 +114,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
             minutes: eMinutes,
             label: `${eHour}:${eMinutes}`,
             amPm: toAmPm(eHour, eMinutes, ''),
-            open: teamClass.multipleInstructors || !hasEvents(selectedDate, i, fullEndHour, breakBetweenClasses)
+            open: !hasEventsInSlot.isBlockedSlot && (teamClass.multipleInstructors || !hasEventsInSlot.hasEvents)
           });
         }
       }

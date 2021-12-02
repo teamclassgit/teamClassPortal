@@ -15,5 +15,6 @@ query ListCalendarEvents($classId:String!) {
       fromMinutes
       month
       rushFee
+      isBlockedDate
   }
 }`;

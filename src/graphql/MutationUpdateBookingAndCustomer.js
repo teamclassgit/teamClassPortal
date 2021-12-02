@@ -6,7 +6,7 @@ export default gql`
     $date: DateTime!
     $teamClassId: String!
     $classVariant: BookingClassVariantUpdateInput!
-    $notes: [BookingNoteUpdateInput]
+    $notes: [BookingNoteUpdateInput!]
     $instructorId: String
     $instructorName: String
     $customerId: String!

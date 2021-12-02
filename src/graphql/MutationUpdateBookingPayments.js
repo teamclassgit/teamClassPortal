@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  mutation updateBookingPayments($bookingId: String!, $payments: [BookingPaymentUpdateInput]!, $status: String!, $updatedAt: DateTime!) {
+  mutation updateBookingPayments($bookingId: String!, $payments: [BookingPaymentUpdateInput!]!, $status: String!, $updatedAt: DateTime!) {
     updateOneBooking(query: { _id: $bookingId }, set: { payments: $payments, updatedAt: $updatedAt, status: $status }) {
       _id
       date
