@@ -2,7 +2,7 @@
 import 'cleave.js/dist/addons/cleave-phone.us';
 import Cleave from 'cleave.js/react';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { Mail, Phone, User, X } from 'react-feather';
 import { v4 as uuid } from 'uuid';
@@ -105,10 +105,9 @@ const AddNewAttendee = ({
     handleModal();
   };
 
-  // ** Custom close btn
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentElement) {
       setNewName(currentElement.name);
       setNewEmail(currentElement.email);
@@ -123,7 +122,7 @@ const AddNewAttendee = ({
     }
   }, [currentElement]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let validationFields = true;
     if (newName && newEmail && newAddress1 && newCity && newState && newZip && newCountry) {
       validationFields = !newName || !newEmail || !newAddress1 || !newCity || !newState || !newZip || !newCountry;

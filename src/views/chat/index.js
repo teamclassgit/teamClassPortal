@@ -22,6 +22,8 @@ const AppChat = () => {
   const [userData, setUserData] = useState(null);
   const [messageInfo, setMessageInfo] = useState([]);
 
+  console.log(store);
+
   const { ...allMessageInteractionResults } = useQuery(queryAllMessageInteraction, {
     fetchPolicy: 'no-cache',
     variables: {

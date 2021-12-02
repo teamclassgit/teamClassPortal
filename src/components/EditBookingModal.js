@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Alert,
   Button,
   Card,
   CardBody,
-  CardHeader,
-  CardTitle,
   FormGroup,
   Input,
   InputGroup,
@@ -28,16 +25,72 @@ import Cleave from 'cleave.js/react';
 import { selectThemeColors } from '@utils';
 import Flatpickr from 'react-flatpickr';
 import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
+import mutationOpenBooking from '../graphql/MutationOpenBooking';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
 import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import { useMutation } from '@apollo/client';
-import Avatar from '@components/avatar';
 import moment from 'moment';
 import classnames from 'classnames';
-
+import {
+  BOOKING_CLOSED_STATUS,
+  BOOKING_DATE_REQUESTED_STATUS,
+  BOOKING_DEPOSIT_CONFIRMATION_STATUS,
+  BOOKING_PAID_STATUS,
+  BOOKING_QUOTE_STATUS,
+  DATE_AND_TIME_RESERVED_STATUS,
+  DATE_AND_TIME_CONFIRMATION_STATUS,
+  DATE_AND_TIME_CANCELED_STATUS
+} from '../utility/Constants';
 import './EditBookingModal.scss';
-import { BOOKING_CLOSED_STATUS } from '../utility/Constants';
+
+const closeBookingOptions = [
+  {
+    label: '',
+    value: ''
+  },
+  {
+    label: 'Won',
+    value: 'Won'
+  },
+  {
+    label: 'Lost',
+    value: 'Lost'
+  },
+  {
+    label: 'Duplicated',
+    value: 'Duplicated'
+  },
+  {
+    label: 'Mistake',
+    value: 'Mistake'
+  },
+  {
+    label: 'Test',
+    value: 'Test'
+  }
+];
+
+const selectStyles = {
+  control: (base) => ({
+    ...base,
+    height: 30,
+    minHeight: 30,
+    fontSize: 12
+  }),
+  option: (provided) => ({
+    ...provided,
+    borderBottom: '1px dotted',
+    padding: 10,
+    fontSize: 12
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    padding: 0,
+    fontSize: 12
+  })
+};
+
 
 const EditBookingModal = ({
   currentElement: {
@@ -60,7 +113,8 @@ const EditBookingModal = ({
     currentStatus,
     currentEventDurationHours,
     currentClosedReason,
-    currentNotes
+    currentNotes,
+    currentPayments
   },
   open,
   handleModal,
@@ -93,41 +147,13 @@ const EditBookingModal = ({
   const [active, setActive] = useState('1');
   const [processing, setProcessing] = useState(false);
   const [inputNote, setInputNote] = useState('');
+  const [calendarEvent, setCalendarEvent] = useState(null);
 
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
-
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
-
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
-
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
-
-  const closeBookingOptions = [
-    {
-      label: '',
-      value: ''
-    },
-    {
-      label: 'Won',
-      value: 'Won'
-    },
-    {
-      label: 'Lost',
-      value: 'Lost'
-    },
-    {
-      label: 'Duplicated',
-      value: 'Duplicated'
-    },
-    {
-      label: 'Mistake',
-      value: 'Mistake'
-    },
-    {
-      label: 'Test',
-      value: 'Test'
-    }
-  ];
+  const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
 
   useEffect(() => {
     setCustomerName(currentName);
@@ -143,6 +169,9 @@ const EditBookingModal = ({
     setBookingSignUpDeadline([currentSignUpDeadline]);
     setClosedBookingReason(currentClosedReason);
     setBookingNotes(currentNotes);
+
+    const filteredCalendarEvent = allCalendarEvents.find((element) => element.bookingId === bookingId);
+    if (filteredCalendarEvent) setCalendarEvent(filteredCalendarEvent);
   }, [bookingId]);
 
   useEffect(() => {
@@ -166,7 +195,46 @@ const EditBookingModal = ({
   const groupSizeValidation = (size) => {
     setAttendeesValid(size > 0);
   };
-  const editBooking = async () => {
+
+  const openBooking = async () => {
+    setProcessing(true);
+
+    try {
+      const reOpenBookingStatus = getStatusToReOpenBooking();
+      const resultUpdateBooking = await updateOpenBooking({
+        variables: {
+          bookingId,
+          updatedAt: new Date(),
+          status: reOpenBookingStatus
+        }
+      });
+
+      if (!resultUpdateBooking || !resultUpdateBooking.data) {
+        setProcessing(false);
+        return;
+      }
+      setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
+
+      const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
+      if (reOpenBookingStatus !== BOOKING_QUOTE_STATUS && calendarEventObject && calendarEventObject.status === DATE_AND_TIME_CANCELED_STATUS) {
+        const calendarEventStatus = getStatusToReOpenCalendarEvent(reOpenBookingStatus);
+        const resultStatusUpdated = await updateCalendarEventStatus({
+          variables: {
+            calendarEventId: calendarEventObject._id,
+            status: calendarEventStatus
+          }
+        });
+        console.log('Changing calendar event status', resultStatusUpdated);
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+
+    setProcessing(false);
+    handleModal();
+  };
+
+  const saveChangesBooking = async () => {
     setProcessing(true);
 
     try {
@@ -206,7 +274,6 @@ const EditBookingModal = ({
         setProcessing(false);
         return;
       }
-
       // Update customers object
       setCustomers([
         resultUpdateBooking.data.updateOneCustomer,
@@ -227,31 +294,57 @@ const EditBookingModal = ({
         ]);
       }
 
-      if (closedBookingReason === 'Lost' || closedBookingReason === 'Duplicated' || closedBookingReason === 'Mistake') {
+      if (
+        closedBookingReason === 'Lost' ||
+        closedBookingReason === 'Duplicated' ||
+        closedBookingReason === 'Mistake' ||
+        closedBookingReason === 'Test'
+      ) {
         const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
         if (calendarEventObject) {
           const resultStatusUpdated = await updateCalendarEventStatus({
             variables: {
               calendarEventId: calendarEventObject._id,
-              status: 'canceled'
+              status: DATE_AND_TIME_CANCELED_STATUS
             }
           });
           console.log('Changing calendar event status', resultStatusUpdated);
         }
       }
-
-      setProcessing(false);
-      setClosedBookingReason(null);
     } catch (ex) {
       console.log(ex);
-      setProcessing(false);
-      setClosedBookingReason(null);
     }
-    // Hide modal
+
+    setProcessing(false);
     handleModal();
   };
 
-  const editNotes = async () => {
+  const getStatusToReOpenBooking = () => {
+    if (!calendarEvent) {
+      return BOOKING_QUOTE_STATUS;
+    } else if (currentPayments && currentPayments.length > 0) {
+      const depositPayment =
+        currentPayments && currentPayments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+      const finalPayment = currentPayments && currentPayments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+      if (finalPayment) {
+        return BOOKING_PAID_STATUS;
+      } else if (depositPayment) {
+        return BOOKING_DEPOSIT_CONFIRMATION_STATUS;
+      }
+    }
+
+    return BOOKING_DATE_REQUESTED_STATUS;
+  };
+
+  const getStatusToReOpenCalendarEvent = (openBookingStatus) => {
+    let calendarEventStatus = DATE_AND_TIME_RESERVED_STATUS;
+    if (openBookingStatus === BOOKING_PAID_STATUS || openBookingStatus === BOOKING_DEPOSIT_CONFIRMATION_STATUS) {
+      calendarEventStatus = DATE_AND_TIME_CONFIRMATION_STATUS;
+    }
+    return calendarEventStatus;
+  };
+
+  const saveNotes = async () => {
     setProcessing(true);
     const newArray = bookingNotes ? [...bookingNotes] : [];
     const userData = getUserData();
@@ -274,12 +367,12 @@ const EditBookingModal = ({
         resultNotesUpdated.data.updateOneBooking,
         ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
       ]);
-      setProcessing(false);
     } catch (ex) {
       console.log(ex);
-      setProcessing(false);
     }
+    setProcessing(false);
   };
+
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   const toggle = (tab) => {
@@ -289,7 +382,7 @@ const EditBookingModal = ({
   };
 
   const onChangeNotes = () => {
-    editNotes();
+    saveNotes();
     setInputNote('');
   };
 
@@ -309,9 +402,11 @@ const EditBookingModal = ({
     singleValue: (provided) => ({
       ...provided,
       padding: 0,
+      paddingBottom: 7,
       fontSize: 12
     })
   };
+
 
   return (
     <Modal
@@ -370,7 +465,13 @@ const EditBookingModal = ({
                     <User size={15} />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input id="full-name" placeholder="Full Name *" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+                <Input
+                  id="full-name"
+                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                  placeholder="Full Name *"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
               </InputGroup>
             </FormGroup>
             <FormGroup>
@@ -383,6 +484,7 @@ const EditBookingModal = ({
                 <Input
                   type="email"
                   id="email"
+                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                   placeholder="Email *"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
@@ -403,6 +505,7 @@ const EditBookingModal = ({
                 <Cleave
                   className="form-control"
                   placeholder="Phone *"
+                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                   options={options}
                   id="phone"
                   value={customerPhone}
@@ -417,7 +520,13 @@ const EditBookingModal = ({
                     <Briefcase size={15} />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input id="company" placeholder="Company" value={customerCompany} onChange={(e) => setCustomerCompany(e.target.value)} />
+                <Input
+                  id="company"
+                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                  placeholder="Company"
+                  value={customerCompany}
+                  onChange={(e) => setCustomerCompany(e.target.value)}
+                />
               </InputGroup>
             </FormGroup>
             <FormGroup>
@@ -425,6 +534,7 @@ const EditBookingModal = ({
               <Select
                 theme={selectThemeColors}
                 styles={selectStyles}
+                isDisabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
@@ -452,6 +562,7 @@ const EditBookingModal = ({
               <Label for="full-name">Event Details*</Label>
               <Select
                 styles={selectStyles}
+                isDisabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                 theme={selectThemeColors}
                 className="react-select"
                 classNamePrefix="select"
@@ -482,12 +593,13 @@ const EditBookingModal = ({
               <Label for="full-name">Class Variant*</Label>
               <Select
                 theme={selectThemeColors}
+                isDisabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                 styles={selectStyles}
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
                 value={{
-                  label: classVariant && `${classVariant.title  } $${  classVariant.pricePerson  }${classVariant.groupEvent ? '/group' : '/person'}`,
+                  label: classVariant && `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`,
                   value: classVariant
                 }}
                 options={
@@ -495,7 +607,7 @@ const EditBookingModal = ({
                   classVariantsOptions.map((element) => {
                     return {
                       value: element,
-                      label: `${element.title  } $${  element.pricePerson  }${element.groupEvent ? '/group' : '/person'}`
+                      label: `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                     };
                   })
                 }
@@ -508,6 +620,7 @@ const EditBookingModal = ({
               <InputGroup size="sm">
                 <Input
                   id="attendees"
+                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                   placeholder="Group Size *"
                   value={groupSize}
                   onChange={(e) => setGroupSize(e.target.value)}
@@ -522,6 +635,7 @@ const EditBookingModal = ({
               <Label for="date-time-picker">Sign Up Deadline (Custom)</Label>
               <InputGroup size="sm">
                 <Flatpickr
+                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                   value={bookingSignUpDeadline}
                   dateformat="Y-m-d H:i"
                   data-enable-time
@@ -533,7 +647,7 @@ const EditBookingModal = ({
                   }}
                 />
               </InputGroup>
-              {bookingSignUpDeadline && (
+              {bookingSignUpDeadline && currentStatus !== BOOKING_CLOSED_STATUS && (
                 <dt className="text-right">
                   <small>
                     <a href="#" onClick={(e) => setBookingSignUpDeadline([])}>
@@ -544,26 +658,34 @@ const EditBookingModal = ({
               )}
             </FormGroup>
             <FormGroup>
-              <Label for="full-name">Close Booking</Label>
-              <Select
-                styles={selectStyles}
-                value={{
-                  label: closedBookingReason,
-                  value: closedBookingReason
-                }}
-                theme={selectThemeColors}
-                className="react-select"
-                classNamePrefix="select"
-                placeholder="Select one reason.."
-                options={closeBookingOptions.map((item) => {
-                  return {
-                    label: item.label,
-                    value: item.value
-                  };
-                })}
-                onChange={(option) => setClosedBookingReason(option.value)}
-                isClearable={false}
-              />
+              {currentStatus === BOOKING_CLOSED_STATUS ? (
+                <span className="text-lg">
+                  Closed with reason: <strong>{currentClosedReason}</strong>
+                </span>
+              ) : (
+                <>
+                  <Label for="full-name">Close this booking with reason: </Label>
+                  <Select
+                    styles={selectStyles}
+                    value={{
+                      label: closedBookingReason,
+                      value: closedBookingReason
+                    }}
+                    theme={selectThemeColors}
+                    className="react-select"
+                    classNamePrefix="select"
+                    placeholder="Select one reason.."
+                    options={closeBookingOptions.map((item) => {
+                      return {
+                        label: item.label,
+                        value: item.value
+                      };
+                    })}
+                    onChange={(option) => setClosedBookingReason(option.value)}
+                    isClearable={false}
+                  />
+                </>
+              )}
             </FormGroup>
             {editMode && (
               <div align="center">
@@ -571,7 +693,9 @@ const EditBookingModal = ({
                   className="mr-1"
                   size="sm"
                   color={closedBookingReason ? 'danger' : 'primary'}
-                  onClick={editBooking}
+                  onClick={() => {
+                    saveChangesBooking();
+                  }}
                   disabled={
                     !customerName ||
                     !customerEmail ||
@@ -593,6 +717,30 @@ const EditBookingModal = ({
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel
+                </Button>
+              </div>
+            )}
+            {currentStatus === BOOKING_CLOSED_STATUS && (
+              <div align="center">
+                <Button
+                  className="mr-1"
+                  size="sm"
+                  color={'danger'}
+                  onClick={() => {
+                    openBooking();
+                  }}
+                  disabled={
+                    !customerName ||
+                    !customerEmail ||
+                    !emailValid ||
+                    !customerPhone ||
+                    !coordinatorId ||
+                    !bookingTeamClassId ||
+                    !classVariant ||
+                    !groupSize
+                  }
+                >
+                  {processing ? 'Opening...' : 'Back to open status'}
                 </Button>
               </div>
             )}

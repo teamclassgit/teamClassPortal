@@ -140,7 +140,8 @@ const BoardCard = ({
                 currentStatus: status,
                 currentEventDurationHours: eventDurationHours,
                 currentClosedReason: closedReason,
-                currentNotes: notes
+                currentNotes: notes,
+                currentPayments: payments
               })
               }
               title={'Edit booking info'}
@@ -234,7 +235,8 @@ const BoardCard = ({
           currentStatus: status,
           currentEventDurationHours: eventDurationHours,
           currentClosedReason: closedReason,
-          currentNotes: notes
+          currentNotes: notes,
+          currentPayments: payments
         })
         }
         title={'Edit booking info'}

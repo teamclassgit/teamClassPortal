@@ -34,6 +34,10 @@ const Routes = [
     component: lazy(() => import('../../views/privateRequests/PrivateRequestsList'))
   },
   {
+    path: '/discountCodes',
+    component: lazy(() => import('../../views/discountCodes/DiscountCodesList'))
+  },
+  {
     path: '/login',
     component: lazy(() => import('../../views/Login')),
     layout: 'BlankLayout',

@@ -48,16 +48,14 @@ const SidebarLeft = ({
     variables: {
       filter: store
     },
-    pollInterval: 5000
+    pollInterval: 20000
   });
 
   useEffect(() => {
     if (allUsers.data) {
-      setDataAllUsers(allUsers.data.userData.filter(user => user._id === messageInfo[0].fromId));
+      setDataAllUsers(allUsers?.data?.userData.filter(user => user._id === messageInfo[0]?.fromId));
     }
   }, [allUsers.data]);
-
-  console.log(dataAllUsers);
 
   useEffect(() => {
     setStatus(userData?.status);
@@ -202,7 +200,7 @@ const SidebarLeft = ({
               </li>
             </ul>
             <div className='mt-3'>
-              <Button color='primary'>Logout</Button>
+              <Button disabled color='primary'>Save</Button>
             </div>
           </PerfectScrollbar>
         </div>

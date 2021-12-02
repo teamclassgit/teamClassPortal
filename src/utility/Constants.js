@@ -87,6 +87,7 @@ export const DEPOSIT = 0.25;
 export const DATE_AND_TIME_RESERVED_STATUS = 'reserved';
 export const DATE_AND_TIME_REJECTED_STATUS = 'rejected';
 export const DATE_AND_TIME_CONFIRMATION_STATUS = 'confirmed';
+export const DATE_AND_TIME_CANCELED_STATUS = 'canceled';
 export const BOOKING_DEPOSIT_CONFIRMATION_STATUS = 'confirmed';
 export const BOOKING_PAID_STATUS = 'paid';
 export const BOOKING_DATE_REQUESTED_STATUS = 'date-requested';
