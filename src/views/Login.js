@@ -1,7 +1,4 @@
 import { useState, useContext } from 'react';
-import { useSkin } from '@hooks/useSkin';
-import { Facebook, GitHub, Mail, Twitter } from 'react-feather';
-import { Link } from 'react-router-dom';
 import InputPasswordToggle from '@components/input-password-toggle';
 // ** Configs
 import themeConfig from '@configs/themeConfig';
@@ -12,10 +9,9 @@ import { FiltersContext } from '../context/FiltersContext/FiltersContext';
 import { getUserData } from '../utility/Utils';
 
 const Login = (props) => {
-  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext);
+  const { setCoordinatorFilterContext } = useContext(FiltersContext);
 
   const setDefaultFilters = (userData) => {
     if (userData && userData.customData && userData.customData.coordinatorId) setCoordinatorFilterContext({
@@ -92,28 +88,6 @@ const Login = (props) => {
                 </Alert>
               )}
             </Form>
-            {/*<p className="text-center mt-2">
-              <span className="mr-25">New on our platform?</span>
-              <Link to="/">
-                <span>Create an account</span>
-              </Link>
-            </p>
-            <div className="divider my-2">
-              <div className="divider-text">or</div>
-            </div>
-            <div className="auth-footer-btn d-flex justify-content-center">
-              <Button.Ripple color="facebook">
-                <Facebook size={14} />
-              </Button.Ripple>
-              <Button.Ripple color="twitter">
-                <Twitter size={14} />
-              </Button.Ripple>
-              <Button.Ripple color="google">
-                <Mail size={14} />
-              </Button.Ripple>
-              <Button.Ripple className="mr-0" color="github">
-                <GitHub size={14} />
-              </Button.Ripple></div>*/}
           </Col>
         </Col>
       </Row>

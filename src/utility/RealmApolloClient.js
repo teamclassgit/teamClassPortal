@@ -1,7 +1,6 @@
 import * as Realm from 'realm-web';
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ApolloLink } from 'apollo-link';
-import apolloLogger from 'apollo-link-logger';
 
 export const APP_ID = `${process.env.REACT_APP_GQL_APP_ID}`;
 const API_KEY = `${process.env.REACT_APP_GQL_API_KEY}`;

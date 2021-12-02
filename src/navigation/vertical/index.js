@@ -1,4 +1,4 @@
-import { Archive, BookOpen, Book, HelpCircle } from 'react-feather';
+import { Archive, BookOpen, Book, HelpCircle, Tag } from 'react-feather';
 
 export default [
   {
@@ -24,5 +24,11 @@ export default [
     title: 'General Inquiries',
     icon: <HelpCircle size={20} />,
     navLink: '/generalInquiries'
+  },
+  {
+    id: 'checkout5',
+    title: 'Discount Codes',
+    icon: <Tag size={20} />,
+    navLink: '/discountCodes'
   }
 ];
