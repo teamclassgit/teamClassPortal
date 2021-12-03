@@ -101,22 +101,14 @@ const BoardCard = ({
   useEffect(() => {
     const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
     const previousEventDays = moment(date).diff(moment(), 'days');
-    const date1 = new Date();
-    date1.setHours(0, 0, 0, 0);
-    const date2 = new Date(date);
-
-    const diff = date2.getTime() - date1.getTime();
-    const diffDays = diff / (1000 * 3600 * 24);
-    console.log('date1', date1, 'date2', date2);
-    console.log('diffDays', diffDays);
 
     if (!finalPayment) {
-      if (diffDays < 0) {
-        setAlertMessage(`Booking has not been paid and event was ${diffDays * -1} days ago.`);
+      if (previousEventDays < 0) {
+        setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
         setShowAlertEventPayment('danger');
       }
-      if (diffDays < 7 && diffDays >= 0) {
-        setAlertMessage(`Booking has not been paid and event is in ${diffDays} days.`);
+      if (previousEventDays < 7 && previousEventDays >= 0) {
+        setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
         setShowAlertEventPayment('warning');
       }
     }
