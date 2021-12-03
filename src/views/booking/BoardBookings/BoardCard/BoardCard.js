@@ -102,7 +102,7 @@ const BoardCard = ({
     const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
     const previousEventDays = moment(date).diff(moment(), 'days');
 
-    if (!finalPayment) {
+    if (payments && payments.length > 0 && !finalPayment) {
       if (previousEventDays < 0) {
         setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
         setShowAlertEventPayment('danger');
@@ -293,10 +293,12 @@ const BoardCard = ({
             </small>
           </p>
         )}
-        {payments && payments.length > 0 && (
+        {alertMessage ? (
           <Alert color={showAlertEventPayment} className="m-0 p-0">
             <div className="alert-body small">{alertMessage}</div>
           </Alert>
+        ) : (
+          ''
         )}
       </div>
     );
