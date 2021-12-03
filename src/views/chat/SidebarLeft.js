@@ -6,21 +6,21 @@ import { X, Search } from 'react-feather';
 import { formatDateToMonthShort } from '@utils';
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import queryAllUsers from '../../graphql/QueryAllUsers';
+import { useMutation } from '@apollo/client';
+import { 
+  Badge,
+  Button,
+  CardText,
+  CustomInput,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText
+} from 'reactstrap';
 
 // @scripts
 import { selectChat } from '../../redux/actions/chat';
-import { 
-  CardText,
-  InputGroup,
-  InputGroupAddon,
-  Input,
-  InputGroupText,
-  Badge,
-  CustomInput,
-  Button
-} from 'reactstrap';
+import mutationUpdateAllUsers from '../../graphql/MutationUpdateAllUsers';
 
 const SidebarLeft = ({
   handleSidebar,
@@ -28,34 +28,35 @@ const SidebarLeft = ({
   sidebar,
   userData,
   messageInfo,
-  setMessageInfo,
   store,
   userSidebarLeft
 }) => {
-  const { chats, userProfile } = store;
-
+  const { chats } = store;
   const dispatch = useDispatch();
 
   const [about, setAbout] = useState('');
-  const [query, setQuery] = useState('');
   const [active, setActive] = useState({});
-  const [status, setStatus] = useState('online');
   const [filteredChat, setFilteredChat] = useState([]);
-  const [dataAllUsers, setDataAllUsers] = useState([]);
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('online');
+  const [updateAllUsers] = useMutation(mutationUpdateAllUsers, {});
 
-  const { ...allUsers } = useQuery(queryAllUsers, {
-    fetchPolicy: 'no-cache',
-    variables: {
-      filter: store
-    },
-    pollInterval: 20000
-  });
-
-  useEffect(() => {
-    if (allUsers.data) {
-      setDataAllUsers(allUsers?.data?.userData.filter(user => user._id === messageInfo[0]?.fromId));
+  const allUsers = async () => {
+    try {
+      await updateAllUsers({
+        variables: {
+          description: about,
+          email: userData.email,
+          id: userData._id,
+          name: userData.name,
+          role: userData.role,
+          status
+        }
+      });
+    } catch (ex) {
+      console.log(ex);
     }
-  }, [allUsers.data]);
+  };
 
   useEffect(() => {
     setStatus(userData?.status);
@@ -135,7 +136,14 @@ const SidebarLeft = ({
               <X size={14} />
             </div>
             <div className='header-profile-sidebar'>
-              <Avatar className='box-shadow-1 avatar-border' img={userProfile.avatar} status={status} size='xl' />
+              <Avatar
+                size= 'xl'
+                className='avatar-border'
+                color={`light-dark`} 
+                content={(userData && userData['name']) || 'Uknown'} 
+                initials
+                status={status}
+              />
               <h4 className='chat-user-name'>{userData?.name}</h4>
               <span className='user-post'>{userData?.role}</span>
             </div>
@@ -153,7 +161,7 @@ const SidebarLeft = ({
                 })}
               />
               <small className='counter-value float-right'>
-                <span className='char-count'>{userData?.description ? userData.description.length : 0}</span>/ 120
+                <span className='char-count'>{userData?.description ? userData?.description?.length : 0}</span>/ 120
               </small>
             </div>
             <h6 className='section-label mb-1 mt-3'>Status</h6>
@@ -200,7 +208,16 @@ const SidebarLeft = ({
               </li>
             </ul>
             <div className='mt-3'>
-              <Button disabled color='primary'>Save</Button>
+              <Button 
+                disabled={
+                  about.length === userData?.description?.length || 
+                  status === userData?.status
+                }
+                color='primary' 
+                onClick={allUsers}
+              >
+                Save
+              </Button>
             </div>
           </PerfectScrollbar>
         </div>
@@ -215,15 +232,13 @@ const SidebarLeft = ({
           <div className='chat-fixed-search'>
             <div className='d-flex align-items-center w-100'>
               <div className='sidebar-profile-toggle' onClick={handleUserSidebarLeft}>
-                {Object.keys(userProfile).length ? (
-                  <Avatar
-                    className='avatar-border'
-                    img={userProfile.avatar}
-                    status={status}
-                    imgHeight='42'
-                    imgWidth='42'
-                  />
-                ) : null}
+                <Avatar
+                  className='avatar-border'
+                  color={`light-dark`} 
+                  content={(userData && userData['name']) || 'Uknown'} 
+                  initials
+                  status={status}
+                />
               </div>
               <InputGroup className='input-group-merge ml-1 w-100'>
                 <InputGroupAddon addonType='prepend'>

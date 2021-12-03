@@ -14,12 +14,15 @@ import moment from 'moment';
 import { capitalizeString } from '../../../utility/Utils';
 import StatusSelector from '../TableBookings/StatusSelector';
 
+import styles from './BookingCheckoutSummary.module.scss';
+
 const BookingCheckoutSummary = ({
   teamClass,
   bookingInfo,
   requestEventDate,
   calendarEvent,
   totalWithoutFee,
+  chat,
   totalAddons,
   totalServiceFee,
   totalCardFee,
@@ -34,11 +37,11 @@ const BookingCheckoutSummary = ({
   attendeesToInvoice
 }) => {
   return (
-    <div>
-      <Card>
+    <div className={chat && styles.container}>
+      <Card className={chat && styles.subContainer}>
         <CardHeader>
           <h4 className="text-center">
-            {teamClass.title}
+            {teamClass?.title}
             <br />
             <br />
             <Badge className="booking-checkout-summary-priceBadge">
@@ -52,9 +55,9 @@ const BookingCheckoutSummary = ({
             <Media className="align-items-center">
               <img
                 src={
-                  teamClass.catalogImage && teamClass.catalogImage.indexOf('https:') !== -1
-                    ? teamClass.catalogImage
-                    : `/content/img/photo/listing/${teamClass.catalogImage}`
+                  teamClass?.catalogImage && teamClass?.catalogImage.indexOf('https:') !== -1
+                    ? teamClass?.catalogImage
+                    : `/content/img/photo/listing/${teamClass?.catalogImage}`
                 }
                 width={100}
                 height={67}

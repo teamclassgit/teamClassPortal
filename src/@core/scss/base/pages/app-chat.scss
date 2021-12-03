@@ -206,6 +206,11 @@ $chat-profile-sidebar-head-height: 200px;
   // User chat window css
   .chat-app-window {
     height: 100%;
+    width: calc(100% - #{$chat-sidebar-width} - 30px);
+
+    @media screen and (max-width: 2500px) {
+      width: calc(98% - #{$chat-sidebar-width + 8px});
+    }
 
     // Before starting chat
     .start-chat-area,

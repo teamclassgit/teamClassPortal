@@ -5,14 +5,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // @scripts
 import Chat from './Chat';
-import Sidebar from './SidebarLeft';
+import SidebarLeft from './SidebarLeft';
 import UserProfileSidebar from './UserProfileSidebar';
 import { useQuery } from '@apollo/client';
 import { getUserData } from '../../utility/Utils';
 import { getUserProfile, getChatContacts } from '../../redux/actions/chat';
 import { isUserLoggedIn } from '@utils';
 import queryAllMessageInteraction from '../../graphql/QueryAllMessageInteraction';
+import SidebarRight from './SidebarRight';
 
+// @styles
 import '@styles/base/pages/app-chat.scss';
 import '@styles/base/pages/app-chat-list.scss';
 
@@ -21,8 +23,6 @@ const AppChat = () => {
   const store = useSelector(state => state.chat);
   const [userData, setUserData] = useState(null);
   const [messageInfo, setMessageInfo] = useState([]);
-
-  console.log(store);
 
   const { ...allMessageInteractionResults } = useQuery(queryAllMessageInteraction, {
     fetchPolicy: 'no-cache',
@@ -67,7 +67,7 @@ const AppChat = () => {
 
   return (
     <>
-      <Sidebar
+      <SidebarLeft
         store={store}
         userData={userData}
         sidebar={sidebar}
@@ -101,6 +101,16 @@ const AppChat = () => {
           </div>
         </div>
       </div>
+      <SidebarRight
+        store={store}
+        userData={userData}
+        sidebar={sidebar}
+        messageInfo={messageInfo}
+        setMessageInfo={setMessageInfo}
+        handleSidebar={handleSidebar}
+        userSidebarLeft={userSidebarLeft}
+        handleUserSidebarLeft={handleUserSidebarLeft}
+      />
     </>
   );
 };
