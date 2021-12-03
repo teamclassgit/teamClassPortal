@@ -4,26 +4,30 @@ import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 import Select from 'react-select';
 import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from 'reactstrap';
+import closeBookingOptions from '../../../components/ClosedBookingOptions.json';
 
 // @scripts
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
 
-const FiltersModal = ({ 
+const FiltersModal = ({
   classes,
   coordinators,
   handleModal,
   isFilterByClass,
   isFilterByCoordinator,
   isFilterByCreationDate,
+  isFilterByClosedReason,
   open
 }) => {
   const { classFilterContext, setClassFilterContext } = useContext(FiltersContext);
   const { coordinatorFilterContext, setCoordinatorFilterContext } = useContext(FiltersContext);
   const { dateFilterContext, setDateFilterContext } = useContext(FiltersContext);
+  const { closedReasonFilterContext, setClosedReasonFilterContext } = useContext(FiltersContext);
 
   const [filterByClass, setFilterByClass] = useState(classFilterContext);
   const [filterByCoordinator, setFilterByCoordinator] = useState(coordinatorFilterContext);
   const [filterByDate, setFilterByDate] = useState(dateFilterContext);
+  const [filterByClosedReason, setFilterByClosedReason] = useState(closedReasonFilterContext);
 
   const classOptions = classes && classes.map(({ title, _id }) => ({ value: _id, label: title }));
   const getClassFilterDefaultValue = () => {
@@ -42,10 +46,26 @@ const FiltersModal = ({
     return null;
   };
 
+  const closedReasonOptions = closeBookingOptions.map((item) => {
+    return {
+      label: item.label,
+      value: item.value
+    };
+  });
+  const getClosedReasonFilterDefaultValue = () => {
+    if (closedReasonFilterContext) {
+      return closedReasonOptions.find((opt) => opt.value === closedReasonFilterContext.value);
+    }
+    return [];
+  };
+
   const handleApplyFilters = () => {
     setClassFilterContext(filterByClass && filterByClass.value ? filterByClass : null);
-    setCoordinatorFilterContext(filterByCoordinator && filterByCoordinator.value && filterByCoordinator.value.length > 0 ? filterByCoordinator : null);
+    setCoordinatorFilterContext(
+      filterByCoordinator && filterByCoordinator.value && filterByCoordinator.value.length > 0 ? filterByCoordinator : null
+    );
     setDateFilterContext(filterByDate && filterByDate.value ? filterByDate : null);
+    setClosedReasonFilterContext(filterByClosedReason && filterByClosedReason.value ? filterByClosedReason : null);
     handleModal();
   };
 
@@ -53,6 +73,7 @@ const FiltersModal = ({
     setClassFilterContext(null);
     setCoordinatorFilterContext(null);
     setDateFilterContext(null);
+    setClosedReasonFilterContext(null);
     handleModal();
   };
 
@@ -74,8 +95,8 @@ const FiltersModal = ({
               Filter by class
             </Label>
             <Select
-              classNamePrefix='select'
-              className='react-select'
+              classNamePrefix="select"
+              className="react-select"
               defaultValue={getClassFilterDefaultValue()}
               options={classOptions}
               onChange={(e) => {
@@ -92,7 +113,7 @@ const FiltersModal = ({
             <Select
               defaultValue={getCoordinatorFilterDefaultValue()}
               options={coordinatorOptions}
-              classNamePrefix='select'
+              classNamePrefix="select"
               onChange={(e) => {
                 setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) });
               }}
@@ -117,6 +138,23 @@ const FiltersModal = ({
               }
               options={{
                 mode: 'range'
+              }}
+            />
+          </FormGroup>
+        )}
+        {isFilterByClosedReason && (
+          <FormGroup>
+            <Label for="exampleSelect" className="text-dark">
+              Filter by closed reason
+            </Label>
+            <Select
+              classNamePrefix="select"
+              className="react-select"
+              defaultValue={getClosedReasonFilterDefaultValue()}
+              options={closedReasonOptions}
+              classNamePrefix="select"
+              onChange={(e) => {
+                setFilterByClosedReason({ type: 'closedReason', value: e.value, label: e.label });
               }}
             />
           </FormGroup>
