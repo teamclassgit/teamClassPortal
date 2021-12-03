@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone } from 'react-feather';
-import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
+import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
 import { useHistory } from 'react-router';
 
 // @scripts
@@ -58,6 +58,8 @@ const BoardCard = ({
   const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null);
   const [time, setTime] = useState(null);
   const [total, setTotal] = useState(0);
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [showAlertEventPayment, setShowAlertEventPayment] = useState(null);
 
   const history = useHistory();
 
@@ -95,6 +97,22 @@ const BoardCard = ({
     setTime(dates && dates.time);
     setSignUpDeadlineToShow(dates && dates.signUpDeadline);
   }, [calendarEvent, signUpDeadline]);
+
+  useEffect(() => {
+    const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+    const previousEventDays = moment(date).diff(moment(), 'days');
+
+    if (payments && payments.length > 0 && !finalPayment) {
+      if (previousEventDays < 0) {
+        setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
+        setShowAlertEventPayment('danger');
+      }
+      if (previousEventDays < 7 && previousEventDays >= 0) {
+        setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
+        setShowAlertEventPayment('warning');
+      }
+    }
+  }, [date, payments]);
 
   const cardBack = () => {
     return (
@@ -274,6 +292,13 @@ const BoardCard = ({
               {moment(updatedAt).fromNow()}
             </small>
           </p>
+        )}
+        {alertMessage ? (
+          <Alert color={showAlertEventPayment} className="m-0 p-0">
+            <div className="alert-body small">{alertMessage}</div>
+          </Alert>
+        ) : (
+          ''
         )}
       </div>
     );
