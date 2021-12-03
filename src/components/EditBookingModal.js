@@ -1,3 +1,4 @@
+// @packages
 import React, { useState, useEffect } from 'react';
 import {
   Button,
@@ -12,163 +13,120 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
-  TabContent,
-  TabPane,
   Nav,
   NavItem,
-  NavLink
+  NavLink,
+  TabContent,
+  TabPane
 } from 'reactstrap';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather';
-import Select from 'react-select';
-import { getUserData, isValidEmail } from '../utility/Utils';
 import Cleave from 'cleave.js/react';
-import { selectThemeColors } from '@utils';
 import Flatpickr from 'react-flatpickr';
-import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
+import Select from 'react-select';
+import classnames from 'classnames';
+import moment from 'moment';
+import { useMutation } from '@apollo/client';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather';
+
+// @scripts
+import closeBookingOptions from './ClosedBookingOptions.json';
 import mutationOpenBooking from '../graphql/MutationOpenBooking';
+import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
+import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
-import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
-import { useMutation } from '@apollo/client';
-import moment from 'moment';
-import classnames from 'classnames';
+import { getUserData, isValidEmail } from '../utility/Utils';
+import { selectThemeColors } from '@utils';
 import {
   BOOKING_CLOSED_STATUS,
   BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
   BOOKING_PAID_STATUS,
   BOOKING_QUOTE_STATUS,
-  DATE_AND_TIME_RESERVED_STATUS,
+  DATE_AND_TIME_CANCELED_STATUS,
   DATE_AND_TIME_CONFIRMATION_STATUS,
-  DATE_AND_TIME_CANCELED_STATUS
+  DATE_AND_TIME_RESERVED_STATUS
 } from '../utility/Constants';
+
+// @styles
 import './EditBookingModal.scss';
-
-const closeBookingOptions = [
-  {
-    label: '',
-    value: ''
-  },
-  {
-    label: 'Won',
-    value: 'Won'
-  },
-  {
-    label: 'Lost',
-    value: 'Lost'
-  },
-  {
-    label: 'Duplicated',
-    value: 'Duplicated'
-  },
-  {
-    label: 'Mistake',
-    value: 'Mistake'
-  },
-  {
-    label: 'Test',
-    value: 'Test'
-  }
-];
-
-const selectStyles = {
-  control: (base) => ({
-    ...base,
-    height: 30,
-    minHeight: 30,
-    fontSize: 12
-  }),
-  option: (provided) => ({
-    ...provided,
-    borderBottom: '1px dotted',
-    padding: 10,
-    fontSize: 12
-  }),
-  singleValue: (provided) => ({
-    ...provided,
-    padding: 0,
-    fontSize: 12
-  })
-};
-
 
 const EditBookingModal = ({
   currentElement: {
     bookingId,
-    currentCustomerId,
-    currentName,
-    currentEmail,
-    currentPhone,
-    currentCompany,
-    currentCoordinatorName,
-    currentCoordinatorId,
-    currentTeamclassId,
-    currentTeamclassName,
-    currentGroupSize,
-    currentSignUpDeadline,
-    currentClassVariant,
-    currentServiceFee,
-    currentSalesTax,
     createdAt,
-    currentStatus,
-    currentEventDurationHours,
+    currentClassVariant,
     currentClosedReason,
+    currentCompany,
+    currentCoordinatorId,
+    currentCoordinatorName,
+    currentCustomerId,
+    currentEmail,
+    currentEventDurationHours,
+    currentGroupSize,
+    currentName,
     currentNotes,
-    currentPayments
+    currentPayments,
+    currentPhone,
+    currentSalesTax,
+    currentServiceFee,
+    currentSignUpDeadline,
+    currentStatus,
+    currentTeamclassId,
+    currentTeamclassName
   },
-  open,
-  handleModal,
-  setCustomers,
-  setBookings,
-  allCoordinators,
-  allClasses,
   allBookings,
-  allCustomers,
   allCalendarEvents,
+  allClasses,
+  allCoordinators,
+  allCustomers,
+  editMode,
   handleClose,
-  editMode
+  handleModal,
+  open,
+  setBookings,
+  setCustomers
 }) => {
-  const [customerName, setCustomerName] = useState(null);
-  const [customerEmail, setCustomerEmail] = useState(null);
-  const [emailValid, setEmailValid] = useState(true);
-  const [customerPhone, setCustomerPhone] = useState(null);
-  const [customerCompany, setCustomerCompany] = useState(null);
-  const [coordinatorName, setCoordinatorName] = useState(null);
-  const [coordinatorId, setCoordinatorId] = useState(null);
+  const [active, setActive] = useState('1');
+  const [attendeesValid, setAttendeesValid] = useState(true);
+  const [bookingNotes, setBookingNotes] = useState([]);
+  const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
   const [bookingTeamClassId, setBookingTeamClassId] = useState(null);
   const [bookingTeamClassName, setBookingTeamClassName] = useState(null);
-  const [classVariantsOptions, setClassVariantsOptions] = useState([]);
-  const [classVariant, setClassVariant] = useState(null);
-  const [groupSize, setGroupSize] = useState(null);
-  const [attendeesValid, setAttendeesValid] = useState(true);
-  const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
-  const [closedBookingReason, setClosedBookingReason] = useState(null);
-  const [bookingNotes, setBookingNotes] = useState([]);
-  const [active, setActive] = useState('1');
-  const [processing, setProcessing] = useState(false);
-  const [inputNote, setInputNote] = useState('');
   const [calendarEvent, setCalendarEvent] = useState(null);
+  const [classVariant, setClassVariant] = useState(null);
+  const [classVariantsOptions, setClassVariantsOptions] = useState([]);
+  const [closedBookingReason, setClosedBookingReason] = useState(null);
+  const [coordinatorId, setCoordinatorId] = useState(null);
+  const [coordinatorName, setCoordinatorName] = useState(null);
+  const [customerCompany, setCustomerCompany] = useState(null);
+  const [customerEmail, setCustomerEmail] = useState(null);
+  const [customerName, setCustomerName] = useState(null);
+  const [customerPhone, setCustomerPhone] = useState(null);
+  const [emailValid, setEmailValid] = useState(true);
+  const [groupSize, setGroupSize] = useState(null);
+  const [inputNote, setInputNote] = useState('');
+  const [processing, setProcessing] = useState(false);
 
-  const [updateBooking] = useMutation(mutationUpdateBooking, {});
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
-  const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
+  const [updateBooking] = useMutation(mutationUpdateBooking, {});
+  const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
 
   useEffect(() => {
-    setCustomerName(currentName);
-    setCustomerEmail(currentEmail);
-    setCustomerPhone(currentPhone);
-    setCustomerCompany(currentCompany);
-    setCoordinatorId(currentCoordinatorId);
-    setCoordinatorName(currentCoordinatorName);
+    setBookingNotes(currentNotes);
+    setBookingSignUpDeadline([currentSignUpDeadline]);
     setBookingTeamClassId(currentTeamclassId);
     setBookingTeamClassName(currentTeamclassName);
     setClassVariant(currentClassVariant);
-    setGroupSize(currentGroupSize);
-    setBookingSignUpDeadline([currentSignUpDeadline]);
     setClosedBookingReason(currentClosedReason);
-    setBookingNotes(currentNotes);
+    setCoordinatorId(currentCoordinatorId);
+    setCoordinatorName(currentCoordinatorName);
+    setCustomerCompany(currentCompany);
+    setCustomerEmail(currentEmail);
+    setCustomerName(currentName);
+    setCustomerPhone(currentPhone);
+    setGroupSize(currentGroupSize);
 
     const filteredCalendarEvent = allCalendarEvents.find((element) => element.bookingId === bookingId);
     if (filteredCalendarEvent) setCalendarEvent(filteredCalendarEvent);
@@ -242,7 +200,7 @@ const EditBookingModal = ({
       const resultUpdateBooking = await updateBooking({
         variables: {
           bookingId,
-          date: new Date(), // combine with quotaTime
+          date: new Date(),
           teamClassId: bookingTeamClassId,
           classVariant,
           instructorId: teamClass.instructorId,
@@ -274,7 +232,7 @@ const EditBookingModal = ({
         setProcessing(false);
         return;
       }
-      // Update customers object
+
       setCustomers([
         resultUpdateBooking.data.updateOneCustomer,
         ...allCustomers.filter((element) => element._id !== resultUpdateBooking.data.updateOneCustomer._id)
@@ -287,7 +245,7 @@ const EditBookingModal = ({
         console.log('Remove campaign before redirecting:', resultEmail);
         setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
       } else {
-        // Update bookings object
+
         setBookings([
           resultUpdateBooking.data.updateOneBooking,
           ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
@@ -411,11 +369,10 @@ const EditBookingModal = ({
   return (
     <Modal
       isOpen={open}
-      toggle={handleModal}
       className="sidebar-sm"
       modalClassName="modal-slide-in"
       contentClassName="pt-0"
-      onClosed={(e) => handleClose()}
+      onClosed={() => handleClose()}
     >
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">Edit Booking</h5>
@@ -741,6 +698,9 @@ const EditBookingModal = ({
                   }
                 >
                   {processing ? 'Opening...' : 'Back to open status'}
+                </Button>
+                <Button color="secondary" size="sm" onClick={cancel} outline>
+                  Cancel
                 </Button>
               </div>
             )}

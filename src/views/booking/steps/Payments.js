@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
-import { Badge, Button, Card, Col, Modal, ModalHeader, ModalFooter, Row, Table } from 'reactstrap';
-import { useMutation } from '@apollo/client';
-import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
+// @packages
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import AddPaymentModal from './AddPaymentModal';
 import { Edit, Plus, X, XSquare } from 'react-feather';
+import { useMutation } from '@apollo/client';
+import { 
+  Badge,
+  Button,
+  Card,
+  Col,
+  Modal,
+  ModalHeader,
+  ModalFooter,
+  Row,
+  Table
+} from 'reactstrap';
+
+// @scripts
+import AddPaymentModal from './AddPaymentModal';
+import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
 import { capitalizeString } from '../../../utility/Utils';
 import {
   BOOKING_CLOSED_STATUS,
@@ -19,19 +32,18 @@ import {
 
 const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
-  const [processing, setProcessing] = React.useState(false);
-  const [clickedConvert, setClickedConvert] = React.useState(false);
-  const [payments, setPayments] = React.useState([]);
+  const [processing, setProcessing] = useState(false);
+  const [clickedConvert, setClickedConvert] = useState(false);
+  const [payments, setPayments] = useState([]);
   const [modal, setModal] = useState(false);
   const [mode, setMode] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [indexPayment, setIndexPayment] = useState(null);
   const [updateBooking] = useMutation(mutationUpdateBookingPayments, {});
 
-  // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (booking && booking.payments) {
       const orderedPayments = [...booking.payments];
       orderedPayments.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
@@ -41,7 +53,6 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     }
   }, [booking]);
 
-  // ** Custom close btn
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={() => setDeleteModal(!deleteModal)} />;
 
   const convertFinalPaymentToDeposit = async (payment) => {
@@ -319,21 +330,18 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
         </div>
       )}
       <AddPaymentModal
-        open={modal}
+        booking={booking}
+        currentPayment={currentPayment}
         handleModal={handleModal}
         mode={mode}
-        setBooking={setBooking}
-        booking={booking}
+        open={modal}
         payments={payments}
-        setPayments={setPayments}
-        currentPayment={currentPayment}
+        setBooking={setBooking}
         setCurrentPayment={setCurrentPayment}
+        setPayments={setPayments}
       />
       <Modal
         isOpen={deleteModal}
-        toggle={() => {
-          setDeleteModal(!deleteModal);
-        }}
         backdrop={false}
         className="modal-dialog-centered border-0"
       >

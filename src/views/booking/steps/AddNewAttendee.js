@@ -9,7 +9,18 @@ import { v4 as uuid } from 'uuid';
 
 // @scripts
 import countriesData from '../../../data/countries.json';
-import { Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { 
+  Button,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader 
+} from 'reactstrap';
 import { isValidEmail } from '../../../utility/Utils';
 
 // @styles
@@ -109,16 +120,16 @@ const AddNewAttendee = ({
 
   useEffect(() => {
     if (currentElement) {
-      setNewName(currentElement.name);
-      setNewEmail(currentElement.email);
-      setNewPhone(currentElement.phone);
+      setDynamicValues(currentElement.additionalFields);
       setNewAddress1(currentElement.addressLine1);
       setNewAddress2(currentElement.addressLine2);
       setNewCity(currentElement.city);
+      setNewCountry(currentElement.country);
+      setNewEmail(currentElement.email);
+      setNewName(currentElement.name);
+      setNewPhone(currentElement.phone);
       setNewState(currentElement.state);
       setNewZip(currentElement.zip);
-      setNewCountry(currentElement.country);
-      setDynamicValues(currentElement.additionalFields);
     }
   }, [currentElement]);
 
@@ -157,7 +168,12 @@ const AddNewAttendee = ({
   };
 
   return (
-    <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
+    <Modal 
+      className="sidebar-sm" 
+      contentClassName="pt-0"
+      isOpen={open} 
+      modalClassName="modal-slide-in" 
+    >
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
         {mode === 'edit' ? <h5 className="modal-title">Edit Attendee</h5> : <h5 className="modal-title">New Attendee</h5>}
       </ModalHeader>

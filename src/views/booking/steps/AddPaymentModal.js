@@ -1,31 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Phone, User, X } from 'react-feather';
-import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from 'reactstrap';
+// @packages
 import Flatpickr from 'react-flatpickr';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { selectThemeColors } from '@utils';
-import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
+import { 
+  Button,
+  Col,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Row 
+} from 'reactstrap';
+import { Mail, Phone, User, X } from 'react-feather';
 import { useMutation } from '@apollo/client';
+
+// @scripts
 import {
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
   BOOKING_PAID_STATUS,
   CHARGE_OUTSIDE_SYSTEM,
   PAYMENT_STATUS_SUCCEEDED
 } from '../../../utility/Constants';
+import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
+import paymentMethodOptions from './PaymentMethodOptions.json';
 import { capitalizeString, isValidEmail } from '../../../utility/Utils';
+import { selectThemeColors } from '@utils';
 
-const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payments, setPayments, currentPayment, setCurrentPayment }) => {
-  const [newName, setNewName] = useState(null);
-  const [newEmail, setNewEmail] = useState(null);
+const AddPaymentModal = ({ 
+  booking,
+  currentPayment,
+  handleModal, 
+  mode,
+  open,
+  payments,
+  setBooking,
+  setCurrentPayment,
+  setPayments
+}) => {
   const [emailValid, setEmailValid] = useState(true);
-  const [newPhone, setNewPhone] = useState(null);
   const [newAmount, setNewAmount] = useState(null);
   const [newCardBrand, setNewCardBrand] = useState(null);
   const [newCardLastFourDigits, setNewCardLastFourDigits] = useState(null);
+  const [newEmail, setNewEmail] = useState(null);
+  const [newName, setNewName] = useState(null);
   const [newPaymentCreationDate, setNewPaymentCreationDate] = useState([]);
-  const [newPaymentName, setNewPaymentName] = useState(null);
-  const [newPaymentMethod, setNewPaymentMethod] = useState(null);
   const [newPaymentId, setNewPaymentId] = useState(null);
+  const [newPaymentMethod, setNewPaymentMethod] = useState(null);
+  const [newPaymentName, setNewPaymentName] = useState(null);
+  const [newPhone, setNewPhone] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [updateBookingPayment] = useMutation(mutationUpdateBookingPayments, {});
 
@@ -43,52 +70,33 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
     });
   }
 
-  const paymentMethodOptions = [
-    {
-      label: 'Cash',
-      value: 'cash'
-    },
-    {
-      label: 'Card',
-      value: 'card'
-    },
-    {
-      label: 'Check',
-      value: 'check'
-    },
-    {
-      label: 'ACH',
-      value: 'ach'
-    }
-  ];
-
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
   };
 
   useEffect(() => {
     if (currentPayment) {
-      setNewName(currentPayment.name);
-      setNewEmail(currentPayment.email);
-      setNewPhone(currentPayment.phone);
       setNewAmount(currentPayment.amount / 100);
       setNewCardBrand(currentPayment.cardBrand);
       setNewCardLastFourDigits(currentPayment.cardLast4);
+      setNewEmail(currentPayment.email);
+      setNewName(currentPayment.name);
       setNewPaymentCreationDate([currentPayment.createdAt]);
-      setNewPaymentName(currentPayment.paymentName);
-      setNewPaymentMethod(currentPayment.paymentMethod);
       setNewPaymentId(currentPayment.paymentId);
+      setNewPaymentMethod(currentPayment.paymentMethod);
+      setNewPaymentName(currentPayment.paymentName);
+      setNewPhone(currentPayment.phone);
     } else {
-      setNewName('');
-      setNewEmail('');
-      setNewPhone('');
       setNewAmount(0);
       setNewCardBrand('');
       setNewCardLastFourDigits('');
+      setNewEmail('');
+      setNewName('');
       setNewPaymentCreationDate([]);
-      setNewPaymentName('');
-      setNewPaymentMethod('');
       setNewPaymentId('');
+      setNewPaymentMethod('');
+      setNewPaymentName('');
+      setNewPhone('');
     }
   }, [currentPayment]);
 
@@ -103,7 +111,7 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
     setCurrentPayment(null);
     handleModal();
   };
-  // ** Custom close btn
+
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   const updateBookingPaymentInfo = async () => {
@@ -162,7 +170,12 @@ const AddPaymentModal = ({ open, handleModal, mode, booking, setBooking, payment
   };
 
   return (
-    <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
+    <Modal 
+      className="sidebar-sm" 
+      contentClassName="pt-0"
+      isOpen={open} 
+      modalClassName="modal-slide-in" 
+    >
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
         {mode === 'edit' ? <h5 className="modal-title">Edit Payment</h5> : <h5 className="modal-title">New Payment</h5>}
       </ModalHeader>
