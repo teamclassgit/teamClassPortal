@@ -89,7 +89,7 @@ const BoardCard = ({
     if (depositPayment || finalPayment) {
       setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger');
       
-      if (date) {
+      if (date && !finalPayment) {
         const previousEventDays = moment(date).diff(moment(), 'days');
         if (previousEventDays < 0) {
           setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
