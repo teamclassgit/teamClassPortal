@@ -92,12 +92,11 @@ const BoardCard = ({
       if (date) {
         const previousEventDays = moment(date).diff(moment(), 'days');
         if (previousEventDays < 0) {
-         setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
-         setShowAlertEventPayment('danger');
-        }
-        else if (previousEventDays < 7 && previousEventDays >= 0) {
-         setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
-         setShowAlertEventPayment('warning');
+          setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
+          setShowAlertEventPayment('danger');
+        } else if (previousEventDays < 7 && previousEventDays >= 0) {
+          setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
+          setShowAlertEventPayment('warning');
         }
       }
       
