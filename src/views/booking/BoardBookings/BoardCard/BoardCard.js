@@ -88,8 +88,21 @@ const BoardCard = ({
 
     if (depositPayment || finalPayment) {
       setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger');
+      
+      if (date) {
+        const previousEventDays = moment(date).diff(moment(), 'days');
+        if (previousEventDays < 0) {
+         setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
+         setShowAlertEventPayment('danger');
+        }
+        else if (previousEventDays < 7 && previousEventDays >= 0) {
+         setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
+         setShowAlertEventPayment('warning');
+        }
+      }
+      
     }
-  }, [payments]);
+  }, [payments, date]);
 
   useEffect(() => {
     const dates = getEventDates(calendarEvent, signUpDeadline);
@@ -97,22 +110,6 @@ const BoardCard = ({
     setTime(dates && dates.time);
     setSignUpDeadlineToShow(dates && dates.signUpDeadline);
   }, [calendarEvent, signUpDeadline]);
-
-  useEffect(() => {
-    const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
-    const previousEventDays = moment(date).diff(moment(), 'days');
-
-    if (payments && payments.length > 0 && !finalPayment) {
-      if (previousEventDays < 0) {
-        setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
-        setShowAlertEventPayment('danger');
-      }
-      if (previousEventDays < 7 && previousEventDays >= 0) {
-        setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
-        setShowAlertEventPayment('warning');
-      }
-    }
-  }, [date, payments]);
 
   const cardBack = () => {
     return (
