@@ -98,16 +98,17 @@ const BoardCard = ({
   }, [calendarEvent, signUpDeadline]);
 
   useEffect(() => {
-    if (signUpDeadline) {
-      const isRegistrationDeadlinePast = moment(signUpDeadline).isBefore(moment());
+    if (signUpDeadline && date) {
+      const isRegistrationDeadlinePast = moment(signUpDeadline).isBefore(moment().format());
 
-      console.log(new Date(signUpDeadline), '>', new Date(), isRegistrationDeadlinePast);
-      console.log(new Date(date), new Date(), new Date(date) > new Date());
-      if (moment(date).isAfter(moment())) {
-        setSignUpRegistrationClass('signup-deadline');
+      if (isRegistrationDeadlinePast && moment(date).isAfter(moment().format())) {
+        setSignUpRegistrationClass(true);
       }
     }
   }, [signUpDeadline, date]);
+  console.log('date:', moment(date), '>', 'current:', moment().format(), moment(date).isAfter(moment().format()));
+  console.log('date', date);
+  console.log('signUpDeadline:', signUpDeadline, '<', 'current:', moment().format(), moment(signUpDeadline).isBefore(moment().format()));
 
   const cardBack = () => {
     return (
@@ -273,10 +274,12 @@ const BoardCard = ({
             </p>
             {calendarEvent.status === DATE_AND_TIME_CONFIRMATION_STATUS && (
               <p className="m-0 p-0">
-                <small className={signUpRegistrationClass}>
-                  <strong>Sign-up by: </strong>
-                  {signUpDeadlineToShow}
-                </small>
+                <div>
+                  <small>
+                    <strong>Sign-up by: </strong>
+                    <span className={signUpRegistrationClass ? 'signup-deadline' : ''}>{signUpDeadlineToShow}</span>
+                  </small>
+                </div>
               </p>
             )}
           </>
