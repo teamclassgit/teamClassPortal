@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client";
+import { gql } from '@apollo/client';
 
 export default gql`
 mutation requestPreferredTime(
@@ -48,8 +48,88 @@ mutation requestPreferredTime(
       rushFee
   }
   updateOneBooking(query: {_id: $bookingId}, set: {updatedAt: $updatedAt, status: $bookingStatus, rushFee:$rushFee}) {
-     _id
-     status
-     rushFee
+      _id
+      date
+      expirationHours
+      teamClassId
+      eventCoordinatorId
+      classVariant {
+        title
+        notes
+        minimum
+        maximum
+        duration
+        pricePerson
+        hasKit
+        order
+        active
+        groupEvent
+      }
+      addons {
+        icon
+        color
+        name
+        description
+        multipleUnits
+        unitPrice
+        unit
+        order
+        active
+      }
+      payments {
+        addressLine1
+        addressLine2
+        amount
+        cardBrand
+        cardExpMonth
+        cardExpYear
+        cardLast4
+        cardFunding
+        cardCountry
+        chargeUrl
+        city
+        country
+        createdAt
+        email
+        livemode
+        name
+        paymentId
+        paymentName
+        paymentMethod
+        phone
+        state
+        status
+      }
+      instructorId
+      instructorName
+      customerId
+      customerName
+      eventDate
+      eventDurationHours
+      attendees
+      classMinimum
+      pricePerson
+      serviceFee
+      rushFee
+      salesTax
+      salesTaxState
+      discount
+      status
+      eventLink
+      signUpStatusLink
+      checkoutLink
+      taxExempt
+      invoiceDetails {
+        item
+        unitPrice
+        units
+        priceEditable
+        unitsEditable
+        taxable
+        readOnly
+      }
+      createdAt
+      createdAt
+      updatedAt
   }
 }`;

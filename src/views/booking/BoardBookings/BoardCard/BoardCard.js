@@ -74,7 +74,7 @@ const BoardCard = ({
       salesTax
     };
 
-    const bookingTotals = getBookingTotals(bookingInfo, false, salesTax, true);
+    const bookingTotals = getBookingTotals(bookingInfo, calendarEvent && calendarEvent.rushFee ? true : false, salesTax, true);
     setTotal(bookingTotals.finalValue.toFixed(2));
   };
 
@@ -88,7 +88,7 @@ const BoardCard = ({
 
     if (depositPayment || finalPayment) {
       setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger');
-      
+
       if (date && !finalPayment) {
         const previousEventDays = moment(date).diff(moment(), 'days');
         if (previousEventDays < 0) {
@@ -99,7 +99,6 @@ const BoardCard = ({
           setShowAlertEventPayment('warning');
         }
       }
-      
     }
   }, [payments, date]);
 
