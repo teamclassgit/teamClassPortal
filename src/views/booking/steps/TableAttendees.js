@@ -152,7 +152,12 @@ const DataTableAttendees = ({
   React.useEffect(() => {
     if (attendees && teamClassInfo) {
       const attendeesArray = [];
-      const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country'];
+      const headers = ['Name', 'Email', 'Phone'];
+
+      if (booking.classVariant && booking.classVariant.hasKit) {
+        headers.push('AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country');
+      }
+
       for (const dynamicField in teamClassInfo.registrationFields) {
         headers.push(teamClassInfo.registrationFields[dynamicField].label);
       }
@@ -164,12 +169,12 @@ const DataTableAttendees = ({
           attendeeInfo.name,
           attendeeInfo.email,
           attendeeInfo.phone,
-          attendeeInfo.addressLine1,
-          attendeeInfo.addressLine2,
-          attendeeInfo.city,
-          attendeeInfo.state,
-          attendeeInfo.zip,
-          attendeeInfo.country
+          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.addressLine1,
+          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.addressLine2,
+          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.city,
+          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.state,
+          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.zip,
+          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.country
         ];
         for (const dynamicField in attendeeInfo.additionalFields) {
           row.push(attendeeInfo.additionalFields[dynamicField].value);
@@ -436,6 +441,7 @@ const DataTableAttendees = ({
         mode={mode}
         teamClassInfo={teamClassInfo}
         hasKit={hasKit}
+        booking={booking}
       />
       <UploadData
         open={modalUpload}
