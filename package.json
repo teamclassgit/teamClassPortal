@@ -17,6 +17,7 @@
     "@lourenci/react-kanban": "2.1.0",
     "@stripe/react-stripe-js": "1.4.1",
     "@stripe/stripe-js": "1.15.0",
+    "@twilio/conversations": "2.0.0",
     "@uppy/react": "1.10.8",
     "animate.css": "4.1.1",
     "apexcharts": "3.23.0",

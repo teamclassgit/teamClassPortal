@@ -1,18 +1,18 @@
 // @packages
 import classnames from 'classnames';
-import { useState, useEffect } from 'react';
+import { isUserLoggedIn } from '@utils';
 import { useDispatch, useSelector } from 'react-redux';
+import { useQuery } from '@apollo/client';
+import { useState, useEffect } from 'react';
 
 // @scripts
 import Chat from './Chat';
 import SidebarLeft from './SidebarLeft';
+import SidebarRight from './SidebarRight';
 import UserProfileSidebar from './UserProfileSidebar';
-import { useQuery } from '@apollo/client';
+import queryAllMessageInteraction from '../../graphql/QueryAllMessageInteraction';
 import { getUserData } from '../../utility/Utils';
 import { getUserProfile, getChatContacts } from '../../redux/actions/chat';
-import { isUserLoggedIn } from '@utils';
-import queryAllMessageInteraction from '../../graphql/QueryAllMessageInteraction';
-import SidebarRight from './SidebarRight';
 
 // @styles
 import '@styles/base/pages/app-chat.scss';
@@ -68,14 +68,14 @@ const AppChat = () => {
   return (
     <>
       <SidebarLeft
-        store={store}
-        userData={userData}
-        sidebar={sidebar}
+        handleSidebar={handleSidebar}
+        handleUserSidebarLeft={handleUserSidebarLeft}
         messageInfo={messageInfo}
         setMessageInfo={setMessageInfo}
-        handleSidebar={handleSidebar}
+        sidebar={sidebar}
+        store={store}
+        userData={userData}
         userSidebarLeft={userSidebarLeft}
-        handleUserSidebarLeft={handleUserSidebarLeft}
       />
       <div className='content-right'>
         <div className='content-wrapper'>

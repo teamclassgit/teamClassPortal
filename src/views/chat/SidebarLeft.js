@@ -22,13 +22,16 @@ import {
 import { selectChat } from '../../redux/actions/chat';
 import mutationUpdateAllUsers from '../../graphql/MutationUpdateAllUsers';
 
+// @styles
+import styles from './SidebarLeft.module.scss';
+
 const SidebarLeft = ({
   handleSidebar,
   handleUserSidebarLeft,
-  sidebar,
-  userData,
   messageInfo,
+  sidebar,
   store,
+  userData,
   userSidebarLeft
 }) => {
   const { chats } = store;
@@ -82,8 +85,6 @@ const SidebarLeft = ({
         const arrToMap = query.length && filteredChat.length ? filteredChat : chats;
 
         return arrToMap.map(item => {
-          const time = formatDateToMonthShort(item.chat.lastMessage ? item.chat.lastMessage.time : new Date());
-
           return (
             <li
               className={classnames({
@@ -92,21 +93,24 @@ const SidebarLeft = ({
               key={item.id}
               onClick={() => handleUserClick('chat', item.id)}
             >
-              <Avatar img={item.avatar} imgHeight='42' imgWidth='42' status={item.status} />
-              <div className='chat-info flex-grow-1'>
-                <h5 className='mb-0'>{item.fullName}</h5>
-                <CardText className='text-truncate'>
-                  {item.chat.lastMessage ? item.chat.lastMessage.message : chats[chats.length - 1].message}
-                </CardText>
-              </div>
-              <div className='chat-meta text-nowrap'>
-                <small className='float-right mb-25 chat-time ml-25'>{time}</small>
-                {item.chat.unseenMsgs >= 1 ? (
-                  <Badge className='float-right' color='danger' pill>
-                    {item.chat.unseenMsgs}
-                  </Badge>
-                ) : null}
-              </div>
+              <ul>
+                <div className={styles.container}>
+                  <h6 className={styles.h6}>Booking: </h6>
+                  <h6>1229291</h6>
+                </div>
+                <div className={styles.container}>
+                  <h6 className={styles.h6}>Customer: </h6>
+                  <h6>12292912</h6>
+                </div>
+                <div className={styles.container}>
+                  <h6 className={styles.h6}>Class: </h6>
+                  <h6>1229291212</h6>
+                </div>
+                <div className={styles.container}>
+                  <h6 className={styles.h6}>Event Date: </h6>
+                  <h6>1229291212811</h6>
+                </div>
+              </ul>
             </li>
           );
         });
