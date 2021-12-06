@@ -71,6 +71,7 @@ export default gql`
       classMinimum
       pricePerson
       serviceFee
+      rushFee
       salesTax
       salesTaxState
       discount

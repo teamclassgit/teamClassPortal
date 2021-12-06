@@ -33,7 +33,8 @@ const BookingList = () => {
   const [limit, setLimit] = useState(200);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
-  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
+  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext, closedReasonFilterContext } =
+    useContext(FiltersContext);
 
   const handleEditModal = () => setEditModal(!editModal);
 
@@ -151,8 +152,12 @@ const BookingList = () => {
       };
     }
 
+    if (closedReasonFilterContext) {
+      query = { ...query, closedReason: closedReasonFilterContext.value };
+    }
+
     setBookingsFilter(query);
-  }, [classFilterContext, coordinatorFilterContext, dateFilterContext]);
+  }, [classFilterContext, coordinatorFilterContext, dateFilterContext, closedReasonFilterContext]);
 
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '');
@@ -220,6 +225,7 @@ const BookingList = () => {
                 isFilterByClass={true}
                 isFilterByCoordinator={true}
                 isFilterByCreationDate={true}
+                isFilterByClosedReason={true}
                 open={showFiltersModal}
               />
               <AddNewBooking

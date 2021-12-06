@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import NumberInput from '@components/number-input';
 import { DollarSign, MinusCircle, PlusCircle } from 'react-feather';
-import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
+import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, RUSH_FEE, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
 import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText } from 'reactstrap';
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
