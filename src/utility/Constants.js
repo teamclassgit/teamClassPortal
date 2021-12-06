@@ -76,7 +76,7 @@ export const DAYS_AFTER_CURRENT_DATE_CONSIDERED_RUSH_DATE = 15;
 export const DAYS_BEFORE_EVENT_REGISTRATION = 14;
 
 //Fees
-export const RUSH_FEE = 0;
+export const RUSH_FEE = 35;
 export const SERVICE_FEE = 0.1;
 export const CREDIT_CARD_FEE = 0.03;
 export const SALES_TAX = 0.0825;

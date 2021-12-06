@@ -7,7 +7,8 @@ import {
   DATE_AND_TIME_CONFIRMATION_STATUS,
   DATE_AND_TIME_RESERVED_STATUS,
   DEFAULT_TIME_ZONE_LABEL,
-  DEFAULT_TIME_ZONE_LABEL_DESCRIPTION
+  DEFAULT_TIME_ZONE_LABEL_DESCRIPTION,
+  RUSH_FEE
 } from '../../../utility/Constants';
 
 import moment from 'moment';
@@ -31,7 +32,9 @@ const BookingCheckoutSummary = ({
   deposit,
   finalPayment,
   showFinalPaymentLine,
-  attendeesToInvoice
+  attendeesToInvoice,
+  isRushDate,
+  totalRushFee
 }) => {
   return (
     <div>
@@ -171,6 +174,18 @@ const BookingCheckoutSummary = ({
                 <th className="font-weight-normal text-sm pt-1">Booking fee ({bookingInfo.serviceFee * 100}%)</th>
                 <td className="text-right pt-1 text-sm">${totalServiceFee}</td>
               </tr>
+              {isRushDate() && totalRushFee > 0 && (
+                <tr>
+                  <th className="font-weight-normal text-sm pt-1">
+                    {`Rush fee ($${(bookingInfo.rushFee || RUSH_FEE.toFixed(2))}`} x {` ${ 
+                      attendeesToInvoice < bookingInfo.classVariant.classMinimum
+                        ? bookingInfo.classVariant.classMinimum
+                        : attendeesToInvoice 
+                    })`}{" "}
+                  </th>
+                  <td className="text-right pt-1 text-sm">${totalRushFee}</td>
+                </tr>
+              )}
               {tax > 0 ? (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">Sales Tax ({(tax * 100).toFixed(2)}%)</th>
