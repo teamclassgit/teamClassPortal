@@ -58,6 +58,7 @@ const BoardCard = ({
   const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null);
   const [time, setTime] = useState(null);
   const [total, setTotal] = useState(0);
+  const [signUpRegistrationClass, setSignUpRegistrationClass] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [showAlertEventPayment, setShowAlertEventPayment] = useState(null);
 
@@ -108,6 +109,18 @@ const BoardCard = ({
     setTime(dates && dates.time);
     setSignUpDeadlineToShow(dates && dates.signUpDeadline);
   }, [calendarEvent, signUpDeadline]);
+
+  useEffect(() => {
+    showAlertDeadline();
+  }, [signUpDeadline, date]);
+
+  const showAlertDeadline = () => {
+    if (!moment(signUpDeadline).isAfter(moment().format()) && moment(date).isAfter(moment().format())) {
+      setSignUpRegistrationClass(true);
+    } else {
+      setSignUpRegistrationClass(false);
+    }
+  };
 
   const cardBack = () => {
     return (
@@ -273,10 +286,12 @@ const BoardCard = ({
             </p>
             {calendarEvent.status === DATE_AND_TIME_CONFIRMATION_STATUS && (
               <p className="m-0 p-0">
-                <small>
-                  <strong>Sign-up by: </strong>
-                  {signUpDeadlineToShow}
-                </small>
+                <div>
+                  <small>
+                    <strong>Sign-up by: </strong>
+                    <span className={signUpRegistrationClass && 'signup-deadline'}>{signUpDeadlineToShow}</span>
+                  </small>
+                </div>
               </p>
             )}
           </>
