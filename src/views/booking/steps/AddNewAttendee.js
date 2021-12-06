@@ -126,11 +126,9 @@ const AddNewAttendee = ({
   useEffect(() => {
     let validationFields = true;
     if (newName && newEmail) {
-      console.log('VERIFICANDO basic');
       validationFields = !newName || !newEmail;
     }
     if (booking.classVariant.hasKit) {
-      console.log('VERIFICANDO');
       validationFields = !newAddress1 || !newCity || !newState || !newZip || !newCountry;
     }
     if (teamClassInfo.registrationFields) {
@@ -161,8 +159,6 @@ const AddNewAttendee = ({
       setDynamicValues(newDynamicValues);
     }
   };
-
-  console.log('booking', booking.classVariant.hasKit);
 
   return (
     <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={open} modalClassName="modal-slide-in">
