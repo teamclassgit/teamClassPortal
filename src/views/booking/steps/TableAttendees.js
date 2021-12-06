@@ -169,12 +169,12 @@ const DataTableAttendees = ({
           attendeeInfo.name,
           attendeeInfo.email,
           attendeeInfo.phone,
-          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.addressLine1,
-          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.addressLine2,
-          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.city,
-          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.state,
-          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.zip,
-          booking.classVariant && booking.classVariant.hasKit && attendeeInfo.country
+          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.addressLine1 : '',
+          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.addressLine2 : '',
+          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.city : '',
+          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.state : '',
+          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.zip : '',
+          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.country : ''
         ];
         for (const dynamicField in attendeeInfo.additionalFields) {
           row.push(attendeeInfo.additionalFields[dynamicField].value);
