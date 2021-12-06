@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone } from 'react-feather';
-import { Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
+import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
 import { useHistory } from 'react-router';
 
 // @scripts
@@ -58,6 +58,8 @@ const BoardCard = ({
   const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null);
   const [time, setTime] = useState(null);
   const [total, setTotal] = useState(0);
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [showAlertEventPayment, setShowAlertEventPayment] = useState(null);
 
   const history = useHistory();
 
@@ -86,8 +88,20 @@ const BoardCard = ({
 
     if (depositPayment || finalPayment) {
       setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger');
+      
+      if (date && !finalPayment) {
+        const previousEventDays = moment(date).diff(moment(), 'days');
+        if (previousEventDays < 0) {
+          setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
+          setShowAlertEventPayment('danger');
+        } else if (previousEventDays < 7 && previousEventDays >= 0) {
+          setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
+          setShowAlertEventPayment('warning');
+        }
+      }
+      
     }
-  }, [payments]);
+  }, [payments, date]);
 
   useEffect(() => {
     const dates = getEventDates(calendarEvent, signUpDeadline);
@@ -274,6 +288,13 @@ const BoardCard = ({
               {moment(updatedAt).fromNow()}
             </small>
           </p>
+        )}
+        {alertMessage ? (
+          <Alert color={showAlertEventPayment} className="m-0 p-0">
+            <div className="alert-body small">{alertMessage}</div>
+          </Alert>
+        ) : (
+          ''
         )}
       </div>
     );
