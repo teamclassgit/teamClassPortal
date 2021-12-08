@@ -168,7 +168,7 @@ const BookingList = () => {
       }
     });
 
-  }, [bookingsFilter]);
+  }, [bookingsFilter, limit]);
 
   // ** Function to handle Modal toggle
   return (

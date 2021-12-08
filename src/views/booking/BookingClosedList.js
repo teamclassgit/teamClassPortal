@@ -170,7 +170,7 @@ const BookingList = () => {
       }
     });
 
-  }, [bookingsFilter]);
+  }, [bookingsFilter, limit]);
 
   return (
     <>

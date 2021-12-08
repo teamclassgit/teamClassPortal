@@ -25,7 +25,8 @@ const PrivateRequestsList = () => {
   const { ...allPrivateRequests } = useQuery(queryAllPrivateClassRequest, {
     fetchPolicy: 'no-cache',
     variables: {
-      filter: privateClassRequestsFilter
+      filter: privateClassRequestsFilter,
+      limit
     },
     pollInterval: 300000,
     onCompleted: (data) => {

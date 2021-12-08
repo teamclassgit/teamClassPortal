@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query GetAllQuestions($filter: QuestionQueryInput!) {
-    questions(limit: 1000, query: $filter, sortBy: DATE_DESC) {
+  query GetAllQuestions($filter: QuestionQueryInput!, $limit: Int!) {
+    questions(limit: $limit, query: $filter, sortBy: DATE_DESC) {
       _id
       date
       inquiry
