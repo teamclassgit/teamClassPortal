@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import moment from 'moment';
 import { Col, Spinner } from 'reactstrap';
-import { useQuery } from '@apollo/client';
+import { useQuery, useLazyQuery } from '@apollo/client';
 
 // @scripts
 import AddNewBooking from './AddNewBooking';
@@ -38,72 +38,70 @@ const BookingList = () => {
 
   const handleEditModal = () => setEditModal(!editModal);
 
-  const { ...allBookingsResult } = useQuery(queryAllBookings, {
+  const [getBookings, { ...allBookingsResult }] = useLazyQuery(queryAllBookings, {
     fetchPolicy: 'no-cache',
-    variables: {
-      filter: bookingsFilter,
-      limit
-    },
-    pollInterval: 300000
-  });
-
-  useEffect(() => {
-    if (allBookingsResult.data) {
-      setBookings(allBookingsResult.data.bookings.map((element) => element));
+    pollInterval: 200000,
+    onCompleted: (data) => {
+      if (data) setBookings(data.bookings.map((element) => element));
     }
-  }, [allBookingsResult.data]);
+  });
 
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '');
   }, [bookings]);
 
-  const { ...allCalendarEventsResults } = useQuery(queryAllCalendarEvents, {
+  const [getCalendarEvents, { ...allCalendarEventsResults }] = useLazyQuery(queryAllCalendarEvents, {
     fetchPolicy: 'no-cache',
-    variables: {
-      filter: genericFilter
-    },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data) {
+        setCalendarEvents(data.calendarEvents);
+        getBookings({
+          variables: {
+            filter: bookingsFilter,
+            limit
+          }
+        });
+      }
+    }
   });
-
-  useEffect(() => {
-    if (allCalendarEventsResults.data) setCalendarEvents(allCalendarEventsResults.data.calendarEvents);
-  }, [allCalendarEventsResults.data]);
 
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
     fetchPolicy: 'no-cache',
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
   });
 
   const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
-    fetchPolicy: 'no-cache',
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data) setCoordinators(data.eventCoordinators);
+    },
+    pollInterval: 200000
   });
-
-  useEffect(() => {
-    if (allCustomersResult.data) setCustomers(allCustomersResult.data.customers);
-  }, [allCustomersResult.data]);
-
-  useEffect(() => {
-    if (allCoordinatorResult.data) setCoordinators(allCoordinatorResult.data.eventCoordinators);
-  }, [allCoordinatorResult.data]);
 
   const { ...allClasses } = useQuery(queryAllClasses, {
-    fetchPolicy: 'no-cache',
+    pollInterval: 200000,
     variables: {
-      filter: genericFilter
+      filter: {isActive: true}
     },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data && data.teamClasses) {
+        setClasses(data.teamClasses);
+        getCalendarEvents({
+          variables: {
+            filter: genericFilter
+          }
+        });
+      }
+    }
   });
-
-  useEffect(() => {
-    if (allClasses.data) setClasses(allClasses.data.teamClasses);
-  }, [allClasses.data]);
 
   const handleModal = () => setShowAddModal(!showAddModal);
 
@@ -162,6 +160,17 @@ const BookingList = () => {
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '');
   }, [textFilterContext]);
+
+  useEffect(() => {
+
+    if (calendarEvents && customers && classes) getBookings({
+      variables: {
+        filter: bookingsFilter,
+        limit
+      }
+    });
+
+  }, [bookingsFilter]);
 
   return (
     <>
