@@ -9,18 +9,7 @@ import { v4 as uuid } from 'uuid';
 
 // @scripts
 import countriesData from '../../../data/countries.json';
-import { 
-  Button,
-  FormGroup,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Label,
-  Modal,
-  ModalBody,
-  ModalHeader 
-} from 'reactstrap';
+import { Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { isValidEmail } from '../../../utility/Utils';
 
 // @styles
@@ -36,7 +25,8 @@ const AddNewAttendee = ({
   saveAttendee,
   setData,
   teamClassInfo,
-  updateAttendeesCount
+  updateAttendeesCount,
+  booking
 }) => {
   const [dynamicValues, setDynamicValues] = useState([]);
   const [dynamicValuesValidation, setDynamicValuesValidation] = useState(true);
@@ -135,8 +125,11 @@ const AddNewAttendee = ({
 
   useEffect(() => {
     let validationFields = true;
-    if (newName && newEmail && newAddress1 && newCity && newState && newZip && newCountry) {
-      validationFields = !newName || !newEmail || !newAddress1 || !newCity || !newState || !newZip || !newCountry;
+    if (newName && newEmail) {
+      validationFields = !newName || !newEmail;
+    }
+    if (booking.classVariant.hasKit) {
+      validationFields = !newAddress1 || !newCity || !newState || !newZip || !newCountry;
     }
     if (teamClassInfo.registrationFields) {
       teamClassInfo.registrationFields.map((field) => {
@@ -168,12 +161,7 @@ const AddNewAttendee = ({
   };
 
   return (
-    <Modal 
-      className="sidebar-sm" 
-      contentClassName="pt-0"
-      isOpen={open} 
-      modalClassName="modal-slide-in" 
-    >
+    <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={open} modalClassName="modal-slide-in">
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
         {mode === 'edit' ? <h5 className="modal-title">Edit Attendee</h5> : <h5 className="modal-title">New Attendee</h5>}
       </ModalHeader>
@@ -227,53 +215,69 @@ const AddNewAttendee = ({
             />
           </InputGroup>
         </FormGroup>
-        <FormGroup>
-          <Label for="addressLine1">Shipping Address</Label>
-          <InputGroup>
-            <Input
-              id="addressLine1"
-              placeholder="Address Line 1*"
-              required={true}
-              value={newAddress1}
-              onChange={(e) => setNewAddress1(e.target.value)}
-            />
-          </InputGroup>
-        </FormGroup>
-        <FormGroup>
-          <InputGroup>
-            <Input id="addressLine2" placeholder="Address Line 2" value={newAddress2} onChange={(e) => setNewAddress2(e.target.value)} />
-            <Input id="city" placeholder="City*" required={true} value={newCity} onChange={(e) => setNewCity(e.target.value)} />
-          </InputGroup>
-        </FormGroup>
-        <FormGroup>
-          <InputGroup>
-            <Input id="state" placeholder="State*" value={newState} onChange={(e) => setNewState(e.target.value)} />
-            <Input
-              id="zip"
-              type="number"
-              placeholder="Zip Code*"
-              required={true}
-              value={newZip}
-              onChange={(e) => {
-                setNewZip(e.target.value);
-              }}
-            />
-          </InputGroup>
-        </FormGroup>
-        <FormGroup className="">
-          <Label for="country">Country*</Label>
-          <Select
-            className="selectpicker"
-            classNamePrefix='select'
-            id="country"
-            name="country"
-            onChange={(option) => setNewCountry(option.label)}
-            options={shippingCountries}
-            placeholder="Select.."
-            required={true}
-            value={{ label: newCountry, value: newCountry }}
-          />
-        </FormGroup>
+        {booking.classVariant.hasKit && (
+          <FormGroup>
+            <FormGroup>
+              <Label for="addressLine1">Shipping Address</Label>
+              <InputGroup>
+                <Input
+                  id="addressLine1"
+                  placeholder="Address Line 1*"
+                  required={booking.classVariant.hasKit ? true : false}
+                  value={newAddress1}
+                  onChange={(e) => setNewAddress1(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <InputGroup>
+                <Input id="addressLine2" placeholder="Address Line 2" value={newAddress2} onChange={(e) => setNewAddress2(e.target.value)} />
+                <Input
+                  id="city"
+                  placeholder="City*"
+                  required={booking.classVariant.hasKit ? true : false}
+                  value={newCity}
+                  onChange={(e) => setNewCity(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <InputGroup>
+                <Input
+                  id="state"
+                  placeholder="State*"
+                  required={booking.classVariant.hasKit ? true : false}
+                  value={newState}
+                  onChange={(e) => setNewState(e.target.value)}
+                />
+                <Input
+                  id="zip"
+                  type="number"
+                  placeholder="Zip Code*"
+                  required={booking.classVariant.hasKit ? true : false}
+                  value={newZip}
+                  onChange={(e) => {
+                    setNewZip(e.target.value);
+                  }}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup className="">
+              <Label for="country">Country*</Label>
+              <Select
+                className="selectpicker"
+                classNamePrefix="select"
+                id="country"
+                name="country"
+                onChange={(option) => setNewCountry(option.label)}
+                options={shippingCountries}
+                placeholder="Select.."
+                required={booking.classVariant.hasKit ? true : false}
+                value={{ label: newCountry, value: newCountry }}
+              />
+            </FormGroup>
+          </FormGroup>
+        )}
         {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? (
           <Label className="mb-1" for="full-name">
             Additional information
@@ -353,7 +357,7 @@ const AddNewAttendee = ({
                         })
                       }
                       isMulti
-                      classNamePrefix='select'
+                      classNamePrefix="select"
                       required={field.required}
                       name={field.label}
                       options={field.listItems.map((element) => {
@@ -394,4 +398,3 @@ AddNewAttendee.propTypes = {
   teamClassInfo: PropTypes.object,
   updateAttendeesCount: PropTypes.func
 };
-
