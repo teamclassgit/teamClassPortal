@@ -89,7 +89,7 @@ const BookingList = () => {
   const { ...allClasses } = useQuery(queryAllClasses, {
     pollInterval: 200000,
     variables: {
-      filter: {isActive: true}
+      filter: genericFilter
     },
     onCompleted: (data) => {
       if (data && data.teamClasses) {
