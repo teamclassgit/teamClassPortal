@@ -153,7 +153,6 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           title: label,
           cards: columnData,
           totalBookings: totalBookings.toFixed(2),
-          // totalBookings: totalBookings[columnData.length - 1],
           numberOfBookings
         };
       })
