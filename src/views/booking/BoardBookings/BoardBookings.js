@@ -217,7 +217,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
                       <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
                     </div>
                     <div className="pl-1">
-                      <strong>~${totalBookings}</strong>
+                      <strong>${totalBookings}</strong>
                       <CardText className="font-small-1">Amount</CardText>
                     </div>
                   </div>
