@@ -1,5 +1,6 @@
+const total = 53;
 export const BOOKING_STATUS = [
-  { label: 'Quote', value: 'quote', color: 'light-danger', board: true },
+  { label: `Quote`, value: 'quote', color: 'light-danger', board: true },
   { label: 'Date/Time requested', value: 'date-requested', color: 'light-danger', board: true },
   { label: 'Date/Time rejected', value: 'rejected', color: 'light-warning', board: false },
   { label: 'Date/Time accepted', value: 'accepted', color: 'light-warning', board: true },
