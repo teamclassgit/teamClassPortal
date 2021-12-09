@@ -1,17 +1,25 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { Row } from 'reactstrap';
+import { Card, CardText, Row, Media } from 'reactstrap';
 import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus';
 import BoardCard from './BoardCard/BoardCard';
 import Board from '@lourenci/react-kanban';
 import { BOOKING_STATUS } from '../../../utility/Constants';
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getFormattedEventDate, getCoordinatorName } from '../common';
+import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName } from '../common';
 import './BoardBookings.scss';
 import '@lourenci/react-kanban/dist/styles.css';
+import { getBookingTotals } from '../../../utility/Utils';
+import Avatar from '@components/avatar';
+import { DollarSign, TrendingUp } from 'react-feather';
 
 const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {});
   const [loading, setLoading] = useState(true);
+
+  const getTotalBooking = (bookingInfo, calendarEvent) => {
+    const bookingTotals = getBookingTotals(bookingInfo, calendarEvent && calendarEvent.rushFee ? true : false, bookingInfo.salesTax, true);
+    return bookingTotals.finalValue.toFixed(2);
+  };
 
   const getEmptyBoard = () => {
     return {
@@ -117,16 +125,41 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
           calendarEvent: calendarEvents.find((element) => element.bookingId === _id),
           closedReason,
           notes,
+          bookingTotal: getTotalBooking(
+            {
+              classVariant,
+              classMinimum,
+              pricePerson,
+              serviceFee,
+              payments,
+              attendees,
+              salesTax
+            },
+            calendarEvents.find((element) => element.bookingId === _id)
+          ),
           hasInternationalAttendees
         };
       }
     );
+
     return {
-      columns: BOOKING_STATUS.filter((element) => element.board === true).map(({ label, value }, index) => ({
-        id: index,
-        title: label,
-        cards: getColumnData(bookingCards, value)
-      }))
+      columns: BOOKING_STATUS.filter((element) => element.board === true).map(({ label, value }, index) => {
+        const columnData = getColumnData(bookingCards, value);
+        let sum = 0;
+        const totalBookings = columnData.map((item) => {
+          sum = sum + parseFloat(item.bookingTotal);
+          return sum.toFixed(2);
+        });
+        const numberOfBookings = columnData.length;
+
+        return {
+          id: index,
+          title: label,
+          cards: columnData,
+          totalBookings: totalBookings[columnData.length - 1],
+          numberOfBookings
+        };
+      })
     };
   };
 
@@ -163,6 +196,35 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
     <>
       <Row>
         <Board
+          renderColumnHeader={({ title, totalBookings, numberOfBookings }) => (
+            <>
+              <h5 className="">
+                <strong>{title}</strong>
+              </h5>
+              <Card className="card-board p-0 pt-1 pb-1  ">
+                <div className="d-flex justify-content-around">
+                  <div className="d-flex justify-content-around font-small-3 ">
+                    <div>
+                      <Avatar className="" color="light-primary" icon={<TrendingUp size={18} />} />
+                    </div>
+                    <div className="pl-1">
+                      <strong>{numberOfBookings}</strong>
+                      <CardText className="font-small-1">Events</CardText>
+                    </div>
+                  </div>
+                  <div className="d-flex justify-content-around font-small-3">
+                    <div>
+                      <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
+                    </div>
+                    <div className="pl-1">
+                      <strong>~${totalBookings}</strong>
+                      <CardText className="font-small-1">Amount</CardText>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </>
+          )}
           disableColumnDrag={true}
           onNewCardConfirm={(draftCard) => ({
             id: new Date().getTime(),

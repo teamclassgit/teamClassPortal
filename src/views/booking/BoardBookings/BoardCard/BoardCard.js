@@ -49,6 +49,7 @@ const BoardCard = ({
     signUpDeadline,
     closedReason,
     notes,
+    bookingTotal,
     hasInternationalAttendees
   }
 }) => {
@@ -64,24 +65,24 @@ const BoardCard = ({
 
   const history = useHistory();
 
-  const getTotals = () => {
-    const bookingInfo = {
-      classVariant,
-      classMinimum: minimum,
-      pricePerson,
-      serviceFee,
-      payments,
-      attendees,
-      salesTax
-    };
+  // const getTotals = () => {
+  //   const bookingInfo = {
+  //     classVariant,
+  //     classMinimum: minimum,
+  //     pricePerson,
+  //     serviceFee,
+  //     payments,
+  //     attendees,
+  //     salesTax
+  //   };
 
-    const bookingTotals = getBookingTotals(bookingInfo, calendarEvent && calendarEvent.rushFee ? true : false, salesTax, true);
-    setTotal(bookingTotals.finalValue.toFixed(2));
-  };
+  //   const bookingTotals = getBookingTotals(bookingInfo, calendarEvent && calendarEvent.rushFee ? true : false, salesTax, true);
+  //   setTotal(bookingTotals.finalValue.toFixed(2));
+  // };
 
-  useEffect(() => {
-    getTotals();
-  }, [classVariant]);
+  // useEffect(() => {
+  //   getTotals();
+  // }, [classVariant]);
 
   useEffect(() => {
     const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
@@ -209,7 +210,7 @@ const BoardCard = ({
               </tr>
               <tr>
                 <th className="font-weight-normal small">Total</th>
-                <td className="text-right small align-top">~ ${total}</td>
+                <td className="text-right small align-top">~ ${bookingTotal}</td>
               </tr>
               <tr>
                 <th className="font-weight-normal small pt-1">International Attendees?</th>
@@ -271,7 +272,7 @@ const BoardCard = ({
           <small>
             <strong>{capitalizeString(customerName)}</strong>
           </small>
-          <span className="text-primary small">{` ~ $${total}`}</span>
+          <span className="text-primary small">{` ~ $${bookingTotal}`}</span>
           <br />
           <small className="text-xs">{classTitle}</small>
         </p>
