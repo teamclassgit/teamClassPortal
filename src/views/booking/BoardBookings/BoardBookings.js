@@ -18,7 +18,7 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
 
   const getTotalBooking = (bookingInfo, calendarEvent) => {
     const bookingTotals = getBookingTotals(bookingInfo, calendarEvent && calendarEvent.rushFee ? true : false, bookingInfo.salesTax, true);
-    return bookingTotals.finalValue.toFixed(2);
+    return bookingTotals.finalValue;
   };
 
   const getEmptyBoard = () => {
@@ -145,18 +145,15 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
     return {
       columns: BOOKING_STATUS.filter((element) => element.board === true).map(({ label, value }, index) => {
         const columnData = getColumnData(bookingCards, value);
-        let sum = 0;
-        const totalBookings = columnData.map((item) => {
-          sum = sum + parseFloat(item.bookingTotal);
-          return sum.toFixed(2);
-        });
+        const totalBookings = columnData.reduce((previousValue, currentValue) => previousValue + currentValue.bookingTotal, 0);
         const numberOfBookings = columnData.length;
 
         return {
           id: index,
           title: label,
           cards: columnData,
-          totalBookings: totalBookings[columnData.length - 1],
+          totalBookings: totalBookings.toFixed(2),
+          // totalBookings: totalBookings[columnData.length - 1],
           numberOfBookings
         };
       })
