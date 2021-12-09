@@ -198,27 +198,31 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
         <Board
           renderColumnHeader={({ title, totalBookings, numberOfBookings }) => (
             <>
-              <h5 className="">
+              <h5>
                 <strong>{title}</strong>
               </h5>
-              <Card className="card-board p-0 pt-1 pb-1  ">
+              <Card className="card-board">
                 <div className="d-flex justify-content-around">
-                  <div className="d-flex justify-content-around font-small-3 ">
+                  <div className="d-flex justify-content-aorund d-flex align-items-center font-small-3 ">
                     <div>
-                      <Avatar className="" color="light-primary" icon={<TrendingUp size={18} />} />
+                      <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
                     </div>
-                    <div className="pl-1">
-                      <strong>{numberOfBookings}</strong>
-                      <CardText className="font-small-1">Events</CardText>
+                    <div className="pl-1 m-0">
+                      <div>
+                        <strong>{numberOfBookings}</strong>
+                      </div>
+                      <div className="font-small-1">Events</div>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-around font-small-3">
+                  <div className="d-flex justify-content-around d-flex align-items-center font-small-3">
                     <div>
                       <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
                     </div>
-                    <div className="pl-1">
-                      <strong>${totalBookings}</strong>
-                      <CardText className="font-small-1">Amount</CardText>
+                    <div className="pl-1 m-0">
+                      <div>
+                        <strong>${totalBookings ? totalBookings : '0'}</strong>
+                      </div>
+                      <div className="font-small-1">Total</div>
                     </div>
                   </div>
                 </div>
