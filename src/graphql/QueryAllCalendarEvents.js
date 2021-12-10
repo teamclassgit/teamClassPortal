@@ -15,5 +15,16 @@ query GetCalendarEvents($filter:CalendarEventQueryInput!) {
       fromMinutes
       month
       rushFee
+      rescheduleRequest {
+        year
+        month
+        day
+        fromHour
+        fromMinutes
+        toHour
+        toMinutes
+        rushFee
+        requestedAt
+      }
   }
 }`;

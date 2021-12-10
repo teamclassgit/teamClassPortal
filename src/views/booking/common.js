@@ -63,9 +63,20 @@ export const getEventDates = (calendarEvent, signUpDeadline) => {
     finalSignUpDeadline = `${moment(dateObject).subtract(DAYS_BEFORE_EVENT_REGISTRATION, 'days').format('MM/DD/YYYY')} ${timeObject}`;
   }
 
-  return {
+  const dates = {
     date: dateObject,
     time: timeObject,
-    signUpDeadline: finalSignUpDeadline
+    signUpDeadline: finalSignUpDeadline,
+    rescheduleDateTime: undefined
   };
+
+  if (calendarEvent && calendarEvent.rescheduleRequest) {
+    const rescheduleTime = toAmPm(calendarEvent.rescheduleRequest.fromHour, calendarEvent.rescheduleRequest.fromMinutes, DEFAULT_TIME_ZONE_LABEL);
+    const rescheduleDateTime = `${moment(
+      new Date(calendarEvent.rescheduleRequest.year, calendarEvent.rescheduleRequest.month - 1, calendarEvent.rescheduleRequest.day)
+    ).format('MM/DD/YYYY')} ${rescheduleTime}`;
+    dates.rescheduleDateTime = rescheduleDateTime;
+  }
+
+  return dates;
 };
