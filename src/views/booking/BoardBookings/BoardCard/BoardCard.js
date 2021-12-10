@@ -99,20 +99,26 @@ const BoardCard = ({
   }, [calendarEvent, signUpDeadline]);
 
   useEffect(() => {
+    const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
     const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
-    const previousEventDays = moment(date).diff(moment(), 'days');
 
-    if (payments && payments.length > 0 && !finalPayment) {
-      if (previousEventDays < 0) {
-        setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
-        setShowAlertEventPayment('danger');
-      }
-      if (previousEventDays < 7 && previousEventDays >= 0) {
-        setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
-        setShowAlertEventPayment('warning');
+    if (depositPayment || finalPayment) {
+      setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger');
+
+      if (date && !finalPayment) {
+        const previousEventDays = moment(date).diff(moment(), 'days');
+        if (previousEventDays < 0) {
+          setAlertMessage({ _id, message: `Booking has not been paid and event was ${previousEventDays * -1} days ago.` });
+          setShowAlertEventPayment('danger');
+        } else if (previousEventDays < 7 && previousEventDays >= 0) {
+          setAlertMessage({ _id, message: `Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.` });
+          setShowAlertEventPayment('warning');
+        } else {
+          setAlertMessage(null);
+        }
       }
     }
-  }, [date, payments]);
+  }, [payments, date]);
 
   const cardBack = () => {
     return (
@@ -293,13 +299,10 @@ const BoardCard = ({
             </small>
           </p>
         )}
-        {alertMessage ? (
-          <Alert color={showAlertEventPayment} className="m-0 p-0">
-            <div className="alert-body small">{alertMessage}</div>
-          </Alert>
-        ) : (
-          ''
-        )}
+
+        <Alert isOpen={alertMessage && alertMessage._id === _id ? true : false} color={showAlertEventPayment} className="m-0 p-0">
+          <div className="alert-body small">{alertMessage && alertMessage.message}</div>
+        </Alert>
       </div>
     );
   };
