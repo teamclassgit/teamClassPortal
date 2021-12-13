@@ -76,11 +76,18 @@ const BoardCard = ({
       if (date && !finalPayment) {
         const previousEventDays = moment(date).diff(moment(), 'days');
         if (previousEventDays < 0) {
-          setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
+          setAlertMessage({ _id, message: `Booking has not been paid and event was ${previousEventDays * -1} days ago.` });
           setShowAlertEventPayment('danger');
         } else if (previousEventDays < 7 && previousEventDays >= 0) {
-          setAlertMessage(`Booking has not been paid and event is in ${previousEventDays === 0 ? 0 : previousEventDays + 1} days.`);
+          setAlertMessage({
+            _id,
+            message: `Booking has not been paid and event is in ${
+              moment(date).format('MM/DD/YYYY') === moment().format('MM/DD/YYYY') ? 0 : previousEventDays + 1
+            } days.`
+          });
           setShowAlertEventPayment('warning');
+        } else {
+          setAlertMessage(null);
         }
       }
     }
@@ -266,9 +273,18 @@ const BoardCard = ({
               <small>
                 <strong>Event: </strong>
                 {`${moment(date).format('MM/DD/YYYY')} ${time} `}
-              </small>{calendarEvent.rescheduleRequest && (<small>
-                <span><strong><br/>Reschedule: </strong>{rescheduleDateTime}</span>
-              </small>)}
+              </small>
+              {calendarEvent.rescheduleRequest && (
+                <small>
+                  <span>
+                    <strong>
+                      <br />
+                      Reschedule:{' '}
+                    </strong>
+                    {rescheduleDateTime}
+                  </span>
+                </small>
+              )}
             </p>
             {calendarEvent.status === DATE_AND_TIME_CONFIRMATION_STATUS && (
               <p className="m-0 p-0">
@@ -289,13 +305,9 @@ const BoardCard = ({
             </small>
           </p>
         )}
-        {alertMessage ? (
-          <Alert color={showAlertEventPayment} className="m-0 p-0">
-            <div className="alert-body small">{alertMessage}</div>
-          </Alert>
-        ) : (
-          ''
-        )}
+        <Alert isOpen={alertMessage && alertMessage._id === _id ? true : false} color={showAlertEventPayment} className="m-0 p-0">
+          <div className="alert-body small">{alertMessage && alertMessage.message}</div>
+        </Alert>
       </div>
     );
   };
@@ -322,7 +334,12 @@ const BoardCard = ({
         <CardFooter className="card-board-footer">
           {status === 'quote' ? (
             <div align="right">
-              <a className="mr-1" href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${_id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
               <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
@@ -331,10 +348,20 @@ const BoardCard = ({
             </div>
           ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
             <div align="right">
-              <a className="mr-1" href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${_id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/date-time-confirmation/${_id}`} target={'_blank'} title={'Approve/Reject link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/date-time-confirmation/${_id}`}
+                target={'_blank'}
+                title={'Approve/Reject link'}
+              >
                 <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
               </a>
               <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
@@ -343,7 +370,12 @@ const BoardCard = ({
             </div>
           ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
             <div>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${_id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
               <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
@@ -361,7 +393,12 @@ const BoardCard = ({
             </div>
           ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
             <div align="right">
-              <a className="mr-1" href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Select date and time link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${_id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
               <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
@@ -389,27 +426,29 @@ const BoardCard = ({
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
-          ) : status === 'paid' && (
-            <div align="right">
-              <a className="mr-1" href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Reschedule link'}>
-                <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
-                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
-                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
-                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
-              </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </a>
-            </div>
+          ) : (
+            status === 'paid' && (
+              <div align="right">
+                <a className="mr-1" href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Reschedule link'}>
+                  <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
+                </a>
+                <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+                  <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
+                </a>
+                <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+                  <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
+                </a>
+                <a className="mr-1" href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+                  <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
+                </a>
+                <a className="mr-1" href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
+                  <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
+                </a>
+                <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
+                </a>
+              </div>
+            )
           )}
         </CardFooter>
 
