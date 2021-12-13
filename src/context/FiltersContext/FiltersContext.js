@@ -1,4 +1,5 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
+import { getUserData } from '../../utility/Utils';
 
 export const FiltersContext = createContext();
 
@@ -7,6 +8,17 @@ const FiltersContextProvider = (props) => {
   const [coordinatorFilterContext, setCoordinatorFilterContext] = useState(null);
   const [textFilterContext, setTextFilterContext] = useState(null);
   const [dateFilterContext, setDateFilterContext] = useState(null);
+  const [closedReasonFilterContext, setClosedReasonFilterContext] = useState(null);
+
+  useEffect(() => {
+    const userData = getUserData();
+    if (userData && userData.customData && userData.customData.coordinatorId) setCoordinatorFilterContext({
+      type: 'coordinator',
+      value: [userData.customData.coordinatorId],
+      label: [userData.customData.name]
+    });
+  }, []);
+
 
   return (
     <FiltersContext.Provider
@@ -18,7 +30,9 @@ const FiltersContextProvider = (props) => {
         textFilterContext,
         setTextFilterContext,
         dateFilterContext,
-        setDateFilterContext
+        setDateFilterContext,
+        closedReasonFilterContext,
+        setClosedReasonFilterContext
       }}
     >
       {props.children}

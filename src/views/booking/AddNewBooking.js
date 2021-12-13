@@ -1,10 +1,13 @@
-// ** React Imports
+// @packages
+import Cleave from 'cleave.js/react';
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { selectThemeColors } from '@utils';
-// ** Third Party Components
 import { Mail, Phone, User, X, Briefcase } from 'react-feather';
+import { selectThemeColors } from '@utils';
+import { useMutation } from '@apollo/client';
+import { v4 as uuid } from 'uuid';
 import {
+  Alert,
   Button,
   FormGroup,
   Input,
@@ -14,40 +17,47 @@ import {
   Label,
   Modal,
   ModalBody,
-  ModalHeader,
-  CustomInput,
-  Alert
+  ModalHeader
 } from 'reactstrap';
 
-// ** Styles
+// @styles
 import '@styles/react/libs/flatpickr/flatpickr.scss';
-import Cleave from 'cleave.js/react';
-import 'cleave.js/dist/addons/cleave-phone.us';
-import { isValidEmail, getUserData } from '../../utility/Utils';
-import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer';
-import { useMutation } from '@apollo/client';
-import { v4 as uuid } from 'uuid';
-import { BOOKING_QUOTE_STATUS } from '../../utility/Constants';
 
-const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, setCustomers, setBookings, classes, coordinators }) => {
+// @scripts
+import 'cleave.js/dist/addons/cleave-phone.us';
+import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer';
+import { BOOKING_QUOTE_STATUS } from '../../utility/Constants';
+import { isValidEmail, getUserData } from '../../utility/Utils';
+
+const AddNewBooking = ({ 
+  baseElement,
+  bookings,
+  classes,
+  coordinators,
+  customers,
+  handleModal,
+  open,
+  setBookings,
+  setCustomers
+}) => {
+  const [attendeesValid, setAttendeesValid] = useState(true);
+  const [classVariant, setClassVariant] = useState(null);
+  const [classVariantsOptions, setClassVariantsOptions] = useState([]);
+  const [createBooking] = useMutation(mutationNewBooking, {});
+  const [defaultCoordinatorOption, setDefaultCoordinatorOption] = useState([]);
+  const [emailValid, setEmailValid] = useState(true);
   const [isOldCustomer, setIsOldCustomer] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newPhone, setNewPhone] = useState('');
-  const [newCompany, setNewCompany] = useState('');
   const [newAttendees, setNewAttendees] = useState('');
+  const [newCompany, setNewCompany] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newPhone, setNewPhone] = useState('');
+  const [oneCoordinator, setOneCoordinator] = useState(null);
+  const [phoneValid, setPhoneValid] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [processing, setProcessing] = useState(false);
-  const [emailValid, setEmailValid] = useState(true);
-  const [phoneValid, setPhoneValid] = useState(true);
-  const [attendeesValid, setAttendeesValid] = useState(true);
   const [warning, setWarning] = useState({ open: false, message: '' });
-  const [createBooking] = useMutation(mutationNewBooking, {});
-  const [classVariantsOptions, setClassVariantsOptions] = useState([]);
-  const [classVariant, setClassVariant] = useState(null);
-  const [oneCoordinator, setOneCoordinator] = useState(null);
-  const [defaultCoordinatorOption, setDefaultCoordinatorOption] = useState([]);
 
   const serviceFeeValue = 0.1;
   const salesTaxValue = 0.0825;
@@ -135,13 +145,11 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
         return;
       }
 
-      // Update customers object
       setCustomers([
         resultCreateBooking.data.upsertOneCustomer,
         ...customers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
       ]);
 
-      // Update bookings object
       setBookings([
         resultCreateBooking.data.insertOneBooking,
         ...bookings.filter((element) => element._id !== resultCreateBooking.data.insertOneBooking._id)
@@ -153,7 +161,6 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
       console.log(ex);
       setProcessing(false);
     }
-    // Hide modal
     handleModal();
   };
 
@@ -163,7 +170,6 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
     handleModal();
   };
 
-  // ** Custom close btn
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   useEffect(() => {
@@ -206,7 +212,12 @@ const AddNewBooking = ({ open, handleModal, bookings, baseElement, customers, se
   };
 
   return (
-    <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
+    <Modal 
+      className="sidebar-sm" 
+      contentClassName="pt-0"
+      isOpen={open} 
+      modalClassName="modal-slide-in" 
+    >
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">{'New Booking'}</h5>
       </ModalHeader>

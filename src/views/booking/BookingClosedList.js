@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import moment from 'moment';
 import { Col, Spinner } from 'reactstrap';
-import { useQuery } from '@apollo/client';
+import { useQuery, useLazyQuery } from '@apollo/client';
 
 // @scripts
 import AddNewBooking from './AddNewBooking';
@@ -19,91 +19,89 @@ import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
 import { getCustomerEmail, getClassTitle } from './common';
 
 const BookingList = () => {
-  const [genericFilter] = useState({});
-  const [bookingsFilter, setBookingsFilter] = useState({ status_in: 'closed' });
   const [bookings, setBookings] = useState([]);
-  const [limit, setLimit] = useState(200);
-  const [customers, setCustomers] = useState([]);
-  const [coordinators, setCoordinators] = useState([]);
-  const [classes, setClasses] = useState([]);
+  const [bookingsFilter, setBookingsFilter] = useState({ status_in: 'closed' });
   const [calendarEvents, setCalendarEvents] = useState([]);
-  const [showFiltersModal, setShowFiltersModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [classes, setClasses] = useState([]);
+  const [coordinators, setCoordinators] = useState([]);
   const [currentElement, setCurrentElement] = useState({});
-  const [elementToAdd, setElementToAdd] = useState({});
-  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
-  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [editModal, setEditModal] = useState(false);
+  const [elementToAdd, setElementToAdd] = useState({});
+  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [genericFilter] = useState({});
+  const [limit, setLimit] = useState(200);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showFiltersModal, setShowFiltersModal] = useState(false);
+  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext, closedReasonFilterContext } =
+    useContext(FiltersContext);
 
-  // ** Function to handle Modal toggle
   const handleEditModal = () => setEditModal(!editModal);
 
-  const { ...allBookingsResult } = useQuery(queryAllBookings, {
+  const [getBookings, { ...allBookingsResult }] = useLazyQuery(queryAllBookings, {
     fetchPolicy: 'no-cache',
-    variables: {
-      filter: bookingsFilter,
-      limit
-    },
-    pollInterval: 300000
-  });
-
-  useEffect(() => {
-    if (allBookingsResult.data) {
-      setBookings(allBookingsResult.data.bookings.map((element) => element));
+    pollInterval: 200000,
+    onCompleted: (data) => {
+      if (data) setBookings(data.bookings.map((element) => element));
     }
-  }, [allBookingsResult.data]);
+  });
 
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '');
   }, [bookings]);
 
-  const { ...allCalendarEventsResults } = useQuery(queryAllCalendarEvents, {
+  const [getCalendarEvents, { ...allCalendarEventsResults }] = useLazyQuery(queryAllCalendarEvents, {
     fetchPolicy: 'no-cache',
-    variables: {
-      filter: genericFilter
-    },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data) {
+        setCalendarEvents(data.calendarEvents);
+        getBookings({
+          variables: {
+            filter: bookingsFilter,
+            limit
+          }
+        });
+      }
+    }
   });
-
-  useEffect(() => {
-    if (allCalendarEventsResults.data) setCalendarEvents(allCalendarEventsResults.data.calendarEvents);
-  }, [allCalendarEventsResults.data]);
 
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
     fetchPolicy: 'no-cache',
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
   });
 
   const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
-    fetchPolicy: 'no-cache',
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data) setCoordinators(data.eventCoordinators);
+    },
+    pollInterval: 200000
   });
-
-  useEffect(() => {
-    if (allCustomersResult.data) setCustomers(allCustomersResult.data.customers);
-  }, [allCustomersResult.data]);
-
-  useEffect(() => {
-    if (allCoordinatorResult.data) setCoordinators(allCoordinatorResult.data.eventCoordinators);
-  }, [allCoordinatorResult.data]);
 
   const { ...allClasses } = useQuery(queryAllClasses, {
-    fetchPolicy: 'no-cache',
+    pollInterval: 200000,
     variables: {
       filter: genericFilter
     },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data && data.teamClasses) {
+        setClasses(data.teamClasses);
+        getCalendarEvents({
+          variables: {
+            filter: genericFilter
+          }
+        });
+      }
+    }
   });
-
-  useEffect(() => {
-    if (allClasses.data) setClasses(allClasses.data.teamClasses);
-  }, [allClasses.data]);
 
   const handleModal = () => setShowAddModal(!showAddModal);
 
@@ -152,14 +150,28 @@ const BookingList = () => {
       };
     }
 
+    if (closedReasonFilterContext) {
+      query = { ...query, closedReason: closedReasonFilterContext.value };
+    }
+
     setBookingsFilter(query);
-  }, [classFilterContext, coordinatorFilterContext, dateFilterContext]);
+  }, [classFilterContext, coordinatorFilterContext, dateFilterContext, closedReasonFilterContext]);
 
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '');
   }, [textFilterContext]);
 
-  // ** Function to handle Modal toggle
+  useEffect(() => {
+
+    if (calendarEvents && customers && classes) getBookings({
+      variables: {
+        filter: bookingsFilter,
+        limit
+      }
+    });
+
+  }, [bookingsFilter, limit]);
+
   return (
     <>
       <BookingsHeader
@@ -222,6 +234,7 @@ const BookingList = () => {
                 isFilterByClass={true}
                 isFilterByCoordinator={true}
                 isFilterByCreationDate={true}
+                isFilterByClosedReason={true}
                 open={showFiltersModal}
               />
               <AddNewBooking

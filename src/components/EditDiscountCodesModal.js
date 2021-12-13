@@ -170,11 +170,10 @@ const EditDiscountCodesModal = ({
 
   return (
     <Modal
-      isOpen={open}
-      toggle={handleModal}
       className="sidebar-sm"
-      modalClassName="modal-slide-in"
       contentClassName="pt-0"
+      isOpen={open}
+      modalClassName="modal-slide-in"
       onClosed={() => handleClose()}
     >
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">

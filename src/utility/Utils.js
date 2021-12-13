@@ -155,14 +155,14 @@ export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, 
   const underGroupFee = attendees > minimum || (bookingInfo.classVariant && bookingInfo.classVariant.groupEvent) ? 0 : price * (minimum - attendees);
 
   let cardFee = 0;
-  const rushFee = isRushDate ? withoutFee * RUSH_FEE : 0;
-
+  const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
+  const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
   const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * SERVICE_FEE;
   const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
   const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
   let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + tax - totalDiscount;
-
+  
   if (isCardFeeIncluded) {
     cardFee = finalValue * CREDIT_CARD_FEE;
     finalValue = finalValue + cardFee;

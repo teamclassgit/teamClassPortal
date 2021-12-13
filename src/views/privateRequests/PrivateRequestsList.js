@@ -25,28 +25,24 @@ const PrivateRequestsList = () => {
   const { ...allPrivateRequests } = useQuery(queryAllPrivateClassRequest, {
     fetchPolicy: 'no-cache',
     variables: {
-      filter: privateClassRequestsFilter
+      filter: privateClassRequestsFilter,
+      limit
     },
-    pollInterval: 300000
-  });
-
-  useEffect(() => {
-    if (allPrivateRequests.data) {
-      setPrivateClassRequests(allPrivateRequests.data.privateClassRequests);
+    pollInterval: 300000,
+    onCompleted: (data) => {
+      if (data) setPrivateClassRequests(data.privateClassRequests);
     }
-  }, [allPrivateRequests.data]);
+  });
 
   const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
-    fetchPolicy: 'no-cache',
     variables: {
-      filter: privateClassRequestsFilter
+      filter: {}
     },
-    pollInterval: 300000
+    onCompleted: (data) => {
+      if (data) setCoordinators(data.eventCoordinators);
+    },
+    pollInterval: 200000
   });
-
-  useEffect(() => {
-    if (allCoordinatorResult.data) setCoordinators(allCoordinatorResult.data.eventCoordinators);
-  }, [allCoordinatorResult.data]);
 
   const handleSearch = (value) => {
     if (value.length) {
