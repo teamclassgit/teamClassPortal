@@ -145,12 +145,12 @@ const ChatLog = ({
                 <Avatar
                   imgHeight='36'
                   imgWidth='36'
-                  img={selectedUser.contact.avatar}
-                  status={selectedUser.contact.status}
+                  img={selectedUser?.contact?.avatar}
+                  status={selectedUser?.contact?.status}
                   className='avatar-border user-profile-toggle m-0 mr-1'
                   onClick={() => handleAvatarClick(selectedUser.contact)}
                 />
-                <h6 className='mb-0'>{selectedUser.contact.fullName}</h6>
+                <h6 className='mb-0'>{selectedUser?.contact?.fullName}</h6>
               </div>
             </header>
           </div>

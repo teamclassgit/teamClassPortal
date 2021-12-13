@@ -3,14 +3,11 @@ import Avatar from '@components/avatar';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import classnames from 'classnames';
 import { X, Search } from 'react-feather';
-import { formatDateToMonthShort } from '@utils';
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { 
-  Badge,
   Button,
-  CardText,
   CustomInput,
   Input,
   InputGroup,
@@ -21,6 +18,8 @@ import {
 // @scripts
 import { selectChat } from '../../redux/actions/chat';
 import mutationUpdateAllUsers from '../../graphql/MutationUpdateAllUsers';
+import ConversationsList from './ConversationsList';
+import queryConversationsDetail from '../../graphql/QueryConversationsDetail';
 
 // @styles
 import styles from './SidebarLeft.module.scss';
@@ -40,6 +39,8 @@ const SidebarLeft = ({
   const [about, setAbout] = useState('');
   const [active, setActive] = useState({});
   const [filteredChat, setFilteredChat] = useState([]);
+  const [listHidden, hideList] = useState(false);
+  const [info, setInfo] = useState(null);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('online');
   const [updateAllUsers] = useMutation(mutationUpdateAllUsers, {});
@@ -60,6 +61,20 @@ const SidebarLeft = ({
       console.log(ex);
     }
   };
+
+  const { ...allConversationsDetail } = useQuery(queryConversationsDetail, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      filter: query
+    },
+    pollInterval: 5000
+  });
+
+  useEffect(() => {
+    if (allConversationsDetail.data) {
+      setInfo(allConversationsDetail.data);
+    }
+  }, [allConversationsDetail.data]);
 
   useEffect(() => {
     setStatus(userData?.status);
@@ -96,19 +111,19 @@ const SidebarLeft = ({
               <ul>
                 <div className={styles.container}>
                   <h6 className={styles.h6}>Booking: </h6>
-                  <h6>1229291</h6>
+                  <h6>61980ff38ca9b18a414b1190</h6>
                 </div>
                 <div className={styles.container}>
                   <h6 className={styles.h6}>Customer: </h6>
-                  <h6>12292912</h6>
+                  <h6>Vanessa Gatihi</h6>
                 </div>
                 <div className={styles.container}>
                   <h6 className={styles.h6}>Class: </h6>
-                  <h6>1229291212</h6>
+                  <h6>Holiday Cannoli</h6>
                 </div>
                 <div className={styles.container}>
                   <h6 className={styles.h6}>Event Date: </h6>
-                  <h6>1229291212811</h6>
+                  <h6>Mayo 14 2022</h6>
                 </div>
               </ul>
             </li>
@@ -262,6 +277,13 @@ const SidebarLeft = ({
           <PerfectScrollbar className='chat-user-list-wrapper list-group' options={{ wheelPropagation: false }}>
             <h4 className='chat-list-title'>Chats</h4>
             <ul className='chat-users-list chat-list media-list'>{renderChats()}</ul>
+            <ConversationsList />
+            <Button 
+              className='btn btn-primary btn-block'
+              color='primary' 
+            >
+              Create New Conversation
+            </Button>
           </PerfectScrollbar>
         </div>
       </div>

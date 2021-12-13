@@ -11,16 +11,27 @@ import UserDropdown from './UserDropdown';
 import NotificationDropdown from './NotificationDropdown';
 import queryAllMessageInteraction from '../../../../graphql/QueryAllMessageInteraction';
 import { getUserData } from '../../../../utility/Utils';
+import tokenGenerator from '../../../../views/chat/token-generator'; 
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
   const [messageInfo, setMessageInfo] = useState([]);
   const [filter] = useState('');
   const [userData, setUserData] = useState(null);
+  const {identity, token} = tokenGenerator();
 
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
       setUserData(getUserData());
     }
+  }, []);
+
+  useEffect(() => {
+    if (isUserLoggedIn() !== null) {
+      localStorage.setItem('userData', identity);
+      localStorage.setItem('password', identity);
+      localStorage.setItem('token', token);
+    }
+    tokenGenerator();
   }, []);
 
   const ThemeToggler = () => {

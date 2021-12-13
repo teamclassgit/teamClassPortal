@@ -14,7 +14,7 @@ const Routes = [
   {
     appLayout: true,
     className: 'chat-application',
-    component: lazy(() => import('../../views/chat/Twilio')),
+    component: lazy(() => import('../../views/chat')),
     path: '/chat'
   },
   {

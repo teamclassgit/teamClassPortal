@@ -1,24 +1,44 @@
-const initialState = {
-  chats: [],
-  contacts: [],
-  userProfile: {},
-  selectedUser: {}
-};
+import tokenReducer from "./tokenReducer";
+import convoReducer from "./convoReducer";
+import sidReducer from "./currentConvoReducer";
+import messageReducer from "./messageListReducer";
+import loadingReducer from "./loadingReducer";
+import participantReducer from "./participantsReducer";
+import unreadMessagesReducer from "./unreadMessagesReducer";
+import attachmentsReducer from "./attachmentsReducer";
+import typingDataReducer from "./typingDataReducer";
+import lastReadIndexReducer from "./lastReadIndexReducer";
+import notificationsReducer from "./notificationsReducer";
+import chatReducer from "./chatReducer";
 
-const chatReducer = (state = initialState, action) => {
-  switch (action.type) {
-  case 'GET_USER_PROFILE':
-    return { ...state, userProfile: action.userProfile };
-  case 'GET_CHAT_CONTACTS':
-    return { ...state, chats: action.data.chatsContacts, contacts: action.data.contacts };
-  case 'SELECT_CHAT':
-    return { ...state, selectedUser: action.data };
-  case 'SEND_MSG':
-    const newMsg = action.data.response.chat;
-    return { ...state, selectedUser: { ...state.selectedUser, chat: newMsg } };
-  default:
-    return state;
+import { combineReducers } from "redux";
+
+const reducers = (state, action) => {
+  if (action.type === 'LOGOUT') {
+    localStorage.removeItem("username");
+    localStorage.removeItem("password");
+    return appReducer(initialState, action);
   }
+
+  return appReducer(state, action);
 };
 
-export default chatReducer;
+const appReducer = combineReducers({
+  token: tokenReducer,
+  convo: convoReducer,
+  sid: sidReducer,
+  chats: chatReducer,
+  contacts: chatReducer,
+  selectedUser: chatReducer,
+  userProfile: chatReducer,
+  lastReadIndex: lastReadIndexReducer,
+  messages: messageReducer,
+  loadingStatus: loadingReducer,
+  participants: participantReducer,
+  unreadMessages: unreadMessagesReducer,
+  attachments: attachmentsReducer,
+  typingData: typingDataReducer,
+  notifications: notificationsReducer
+});
+
+export default reducers;
