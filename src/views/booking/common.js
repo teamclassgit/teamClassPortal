@@ -33,7 +33,7 @@ export const getFormattedEventDate = (bookingId, calendarEvents) => {
     const calendarEvent = result[0];
     const date = new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day);
     const time = toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, '');
-    return `${moment(date).format('LL')} ${time}`;
+    return `${moment(date).format('LL')} ${time} ${DEFAULT_TIME_ZONE_LABEL}`;
   }
   return '';
 };
@@ -51,6 +51,39 @@ export const getBookingValue = (rowStatus) => {
 export const getCoordinatorName = (coordinatorId, coordinators) => {
   const result = coordinators.find((element) => element._id === coordinatorId);
   return (result && result.name) || '';
+};
+
+export const getFinalPaymentPaid = (bookingInfo) => {
+  const finalPaymentPaid =
+    bookingInfo && bookingInfo.payments && bookingInfo.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+
+  const paidAmount = finalPaymentPaid ? finalPaymentPaid.amount / 100 : 0;
+  return paidAmount.toFixed(2);
+};
+
+export const getDepositPaid = (bookingInfo) => {
+  const depositsPaid =
+    bookingInfo &&
+    bookingInfo.payments &&
+    bookingInfo.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+
+  const initialDepositPaid =
+    depositsPaid && depositsPaid.length > 0 ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100 : 0; //amount is in cents
+
+  return initialDepositPaid.toFixed(2);
+};
+
+export const getLastPaymentDate = (bookingInfo) => {
+  const dates =
+    bookingInfo &&
+    bookingInfo.payments &&
+    bookingInfo.payments.filter((element) => element.status === 'succeeded').map((payment) => payment.createdAt);
+
+  if (!dates || dates.length === 0) return;
+
+  dates.sort();
+  dates.reverse();
+  return moment(dates[0]).format('MM-DD-YYYY');
 };
 
 export const getEventDates = (calendarEvent, signUpDeadline) => {

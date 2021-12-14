@@ -128,8 +128,6 @@ const WizardClassBooking = () => {
       bookingInfo.payments &&
       bookingInfo.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
 
-    console.log(depositsPaid);
-
     const initialDepositPaid = bookingTotals.customDeposit
       ? bookingTotals.customDeposit
       : depositsPaid && depositsPaid.length > 0
