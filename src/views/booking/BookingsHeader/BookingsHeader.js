@@ -21,7 +21,17 @@ import PropTypes from 'prop-types';
 // @scripts
 import ExportToExcel from '../../../components/ExportToExcel';
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName, getFormattedEventDate } from '../common';
+import {
+  getCustomerPhone,
+  getCustomerCompany,
+  getCustomerEmail,
+  getClassTitle,
+  getCoordinatorName,
+  getFormattedEventDate,
+  getDepositPaid,
+  getFinalPaymentPaid,
+  getLastPaymentDate
+} from '../common';
 
 const BookingsHeader = ({
   bookings,
@@ -83,6 +93,9 @@ const BookingsHeader = ({
         'Class Variants',
         'Price',
         'Group Size',
+        'Deposit paid',
+        'Final Payment Paid',
+        'Last Payment Date',
         'Sign Up Deadline',
         'Close Booking Reason',
         'Event Date'
@@ -107,6 +120,9 @@ const BookingsHeader = ({
           bookingInfo.classVariant && bookingInfo.classVariant.title,
           bookingInfo.classVariant && bookingInfo.classVariant.pricePerson + (bookingInfo.classVariant.groupEvent ? ' /Group' : ' /Person'),
           bookingInfo.attendees,
+          getDepositPaid(bookingInfo),
+          getFinalPaymentPaid(bookingInfo),
+          getLastPaymentDate(bookingInfo),
           bookingInfo.signUpDeadline,
           bookingInfo.closedReason,
           getFormattedEventDate(bookingInfo._id, calendarEvents)
@@ -216,23 +232,14 @@ const BookingsHeader = ({
                   setShowFiltersModal(true);
                 }}
               >
-                {!noCoordinators && (
-                  coordinatorFilterContext 
-                    ? coordinatorFilterContext.label.join(', ') 
-                    : 'All Coordinators'
-                )}
+                {!noCoordinators && (coordinatorFilterContext ? coordinatorFilterContext.label.join(', ') : 'All Coordinators')}
               </a>
             </small>
           </CardTitle>
         </Col>
         <Col className="mb-1 d-flex" lg="6" md="12">
           <InputGroup className="mr-2">
-            <Input
-              type="text"
-              onKeyPress={handleKeyPress}
-              value={searchValue}
-              onChange={handleChange}
-            />
+            <Input type="text" onKeyPress={handleKeyPress} value={searchValue} onChange={handleChange} />
             <InputGroupAddon addonType="append">
               <Button
                 color="primary"
@@ -466,4 +473,3 @@ BookingsHeader.propTypes = {
   switchView: PropTypes.bool.isRequired,
   titleView: PropTypes.string.isRequired
 };
-
