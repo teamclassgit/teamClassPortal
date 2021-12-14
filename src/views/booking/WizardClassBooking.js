@@ -249,6 +249,7 @@ const WizardClassBooking = () => {
           setBooking={setBookingInfo}
           teamClass={teamClass}
           realCountAttendees={realCountAttendees}
+          calendarEvent={calendarEvent}
         ></InvoiceBuilder>
       )
     }
