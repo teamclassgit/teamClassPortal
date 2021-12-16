@@ -84,8 +84,8 @@ const AddNewAttendee = ({
   const [newState, setNewState] = useState('');
   const [newZip, setNewZip] = useState('');
   const [processing, setProcessing] = useState(false);
-  const [isDeliverKit, setIsDeliverKit] = useState(false);
-  const [deliverKitReason, setDeliverKitReason] = useState(null);
+  const [isDeliverKit, setIsDeliverKit] = useState(true);
+  const [deliverKitReason, setDeliverKitReason] = useState('');
   const [messageAlert, setMessageAlert] = useState(null);
 
   const options = { phone: true, phoneRegionCode: 'US' };
@@ -114,7 +114,6 @@ const AddNewAttendee = ({
     }
   }, [newState, newCountry]);
 
-  console.log('teamClassInfo', teamClassInfo);
   const canDeliverKitToAddress = (state, country, kitHasAlcohol) => {
     let isShippingAlcohol = false;
     isShippingAlcohol = noShippingAlcoholStates.find(
