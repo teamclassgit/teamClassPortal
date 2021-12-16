@@ -19,6 +19,8 @@ export default gql`
       country
       email
       phone
+      canDeliverKit
+      canDeliverKitReason
       kitFullFitment {
         shipmentTrackingNumber
         carrier

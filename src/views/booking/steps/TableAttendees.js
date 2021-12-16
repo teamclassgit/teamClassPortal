@@ -161,6 +161,11 @@ const DataTableAttendees = ({
       for (const dynamicField in teamClassInfo.registrationFields) {
         headers.push(teamClassInfo.registrationFields[dynamicField].label);
       }
+
+      teamClassInfo.variants.map((item) => {
+        if (item.kitHasAlcohol) headers.push('Delivery Restriction');
+      });
+
       setExcelHeadersTemplate([headers]);
       attendeesArray.push(headers);
       for (const i in attendees) {
@@ -179,6 +184,7 @@ const DataTableAttendees = ({
         for (const dynamicField in attendeeInfo.additionalFields) {
           row.push(attendeeInfo.additionalFields[dynamicField].value);
         }
+        if (attendeeInfo.canDeliverKitReason) row.push(attendeeInfo.canDeliverKitReason);
         attendeesArray.push(row);
       }
       setAttendeesExcelTable(attendeesArray);
@@ -257,7 +263,8 @@ const DataTableAttendees = ({
     const arraykeys = keys.split(';');
     result = '';
     result += arraykeys.join(columnDelimiter);
-    result += dynamicLabels && dynamicLabels.length > 0 ? `;${dynamicLabels.join(columnDelimiter)};bookingId` : `;bookingId`;
+    result += dynamicLabels && dynamicLabels.length > 0 && `;${dynamicLabels.join(columnDelimiter)}`;
+    result += teamClassInfo.variants.map((item) => item.kitHasAlcohol && ';Delivery Restriction').join(columnDelimiter);
     result += ``;
     result += lineDelimiter;
     array.forEach((item) => {
@@ -276,7 +283,7 @@ const DataTableAttendees = ({
       } else {
         result += columnDelimiter;
       }
-      result += item['bookingId'];
+      if (item.canDeliverKitReason) result += item.canDeliverKitReason;
       result += lineDelimiter;
     });
     return result;

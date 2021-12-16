@@ -9,11 +9,54 @@ import { v4 as uuid } from 'uuid';
 
 // @scripts
 import countriesData from '../../../data/countries.json';
-import { Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { Alert, Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { isValidEmail } from '../../../utility/Utils';
 
 // @styles
 import '@styles/react/libs/flatpickr/flatpickr.scss';
+
+const noShippingAlcoholStates = [
+  {
+    name: 'utah',
+    abbreviation: 'UT'
+  },
+  {
+    name: 'oklahoma',
+    abbreviation: 'OK'
+  },
+  {
+    name: 'arkansas',
+    abbreviation: 'AR'
+  },
+  {
+    name: 'mississippi',
+    abbreviation: 'MS'
+  },
+  {
+    name: 'alabama',
+    abbreviation: 'AL'
+  },
+  {
+    name: 'Alaska',
+    abbreviation: 'AK'
+  },
+  {
+    name: 'delaware',
+    abbreviation: 'DE'
+  },
+  {
+    name: 'rhode Island',
+    abbreviation: 'RI'
+  },
+  {
+    name: 'Hawaii',
+    abbreviation: 'HI'
+  },
+  {
+    name: 'Kentucky',
+    abbreviation: 'KY'
+  }
+];
 
 const AddNewAttendee = ({
   currentBookingId,
@@ -41,6 +84,9 @@ const AddNewAttendee = ({
   const [newState, setNewState] = useState('');
   const [newZip, setNewZip] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [isDeliverKit, setIsDeliverKit] = useState(false);
+  const [deliverKitReason, setDeliverKitReason] = useState(null);
+  const [messageAlert, setMessageAlert] = useState(null);
 
   const options = { phone: true, phoneRegionCode: 'US' };
 
@@ -53,6 +99,36 @@ const AddNewAttendee = ({
 
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
+  };
+
+  useEffect(() => {
+    if (newState || newCountry) {
+      const alcoholVariant = teamClassInfo.variants.map((item) => item.kitHasAlcohol);
+      teamClassInfo.variants.map((item) => {
+        if (item.hasKit && item.kitHasAlcohol) {
+          const answer = canDeliverKitToAddress(newState, newCountry, alcoholVariant);
+          setIsDeliverKit(answer.canDeliverKit);
+          setDeliverKitReason(answer.canDeliverKitReason);
+        }
+      });
+    }
+  }, [newState, newCountry]);
+
+  console.log('teamClassInfo', teamClassInfo);
+  const canDeliverKitToAddress = (state, country, kitHasAlcohol) => {
+    let isShippingAlcohol = false;
+    isShippingAlcohol = noShippingAlcoholStates.find(
+      (item) => item.name.toLowerCase() === (state && state.toLowerCase()) || item.abbreviation.toLowerCase() === (state && state.toLowerCase())
+    )
+      ? true
+      : false;
+    if (isShippingAlcohol || (country && country !== 'United States of America')) {
+      setMessageAlert("Notice: kit contains alcohol and can't be delivered to your address due to shipping restrictions.");
+      return { canDeliverKit: false, canDeliverKitReason: 'Alcohol can not be delivery to shipping address' };
+    } else {
+      setMessageAlert(null);
+      return { canDeliverKit: true, canDeliverKitReason: '' };
+    }
   };
 
   const saveNewAttendee = async () => {
@@ -84,6 +160,8 @@ const AddNewAttendee = ({
         country: newCountry,
         name: newName,
         state: newState,
+        canDeliverKit: isDeliverKit,
+        canDeliverKitReason: deliverKitReason,
         additionalFields
       };
 
@@ -277,6 +355,11 @@ const AddNewAttendee = ({
               />
             </FormGroup>
           </FormGroup>
+        )}
+        {messageAlert && (
+          <Alert color="warning" className="p-1 small">
+            {messageAlert}
+          </Alert>
         )}
         {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? (
           <Label className="mb-1" for="full-name">
