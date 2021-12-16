@@ -132,6 +132,13 @@ $chat-profile-sidebar-head-height: 200px;
       color: $primary;
       margin: 2rem 1.286rem 0.5rem;
     }
+    .button-fixed {
+      margin: 0 0 0 2rem;
+      padding: 0.5rem 1.286rem;
+      cursor: pointer;
+      position: absolute;
+      bottom: 10px;
+    }
     // Sidebar chat list
     .chat-user-list-wrapper {
       position: relative;

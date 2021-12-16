@@ -1,9 +1,13 @@
+// @packages
 import { useEffect, useState } from "react";
-import { Conversation, Message, Participant } from "@twilio/conversations";
-import { Box } from "@twilio-paste/core";
-import { useTheme } from "@twilio-paste/theme";
+import { AlertTriangle, BellOff, BookOpen, Check, Send } from "react-feather";
 
-function calculateUnreadMessagesWidth (count) {
+//  @scripts
+import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
+import { getMessageStatus } from './Apis';
+import { NOTIFICATION_LEVEL } from "./Constants";
+
+const calculateUnreadMessagesWidth = (count) => {
   if (count === 0 || !count) {
     return 0;
   }
@@ -16,9 +20,9 @@ function calculateUnreadMessagesWidth (count) {
   context.font = "bold 14px Inter";
   const width = context.measureText(countAsString).width;
   return width + 32;
-}
+};
 
-function truncateMiddle (text, countWidth) {
+const truncateMiddle = (text, countWidth) => {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
   if (!context) {
@@ -36,9 +40,9 @@ function truncateMiddle (text, countWidth) {
     return `${text.substr(0, endLeft)  }...${  text.substr(startRight)}`;
   }
   return text;
-}
+};
 
-function getLastMessageTime (messages) {
+const getLastMessageTime = (messages) => {
   if (messages === undefined || messages === null || messages.length === 0) {
     return "";
   }
@@ -79,7 +83,7 @@ function getLastMessageTime (messages) {
     return "1 year ago";
   }
   return `${diffInYears  } years ago`;
-}
+};
 
 const ConversationView = (
   props
@@ -90,6 +94,12 @@ const ConversationView = (
     convo.friendlyName ?? convo.sid,
     calculateUnreadMessagesWidth(unreadMessagesCount)
   );
+
+  const textColor =
+    unreadMessagesCount > 0
+      ? "white"
+      : "black";
+  const muted = convo.notificationLevel === NOTIFICATION_LEVEL.MUTED;
 
   const [lastMsgStatus, setLastMsgStatus] = useState("");
   const time = getLastMessageTime(props.messages);
@@ -128,80 +138,71 @@ const ConversationView = (
   }, [convo, myMessage, lastMessage, props.participants, props.typingInfo]);
 
   return (
-    <Box
+    <div
       style={{
-        width: 320,
-        paddingTop: 14,
+        backgroundColor,
+        cursor: "pointer",
         paddingBottom: 14,
         paddingLeft: 16,
         paddingRight: 16,
-        cursor: "pointer",
-        backgroundColor
+        paddingTop: 16,
+        width: 360
       }}
       id={convoId}
       className="name"
-      onMouseOver={() => {
-        if (convo.sid === props.currentConvoSid) {
-          return;
-        }
-        setBackgroundColor('#f5f5f5');
-      }}
-      onMouseOut={() => {
-        if (convo.sid === props.currentConvoSid) {
-          return;
-        }
-        setBackgroundColor('transparent');
-      }}
       onClick={props.onClick}
     >
-      <Box
-        style={{
-          backgroundColor
-        }}
-      >
-        <Box display="flex">
-          <Box
+      <div>
+        <div display="flex">
+          <div
             style={{
-              width: 288,
+              width: 300,
               fontFamily: "Inter",
-              fontWeight: 'bold',
               fontSize: 14,
-              color: 'black'
+              color: muted
+                ? "gray"
+                : "black"
             }}
           >
-            <span style={{ verticalAlign: "top", paddingLeft: 0 }}>
+            {muted ? <BellOff size={20} /> : null}
+            <span style={{ verticalAlign: "top", paddingLeft: muted ? 4 : 0 }}>
               {title}
             </span>
-          </Box>
+          </div>
           {unreadMessagesCount > 0 && (
-            <Box paddingLeft="space30">
-              <Box
-                backgroundColor="colorBackgroundBrandStronger"
-                color="colorTextInverse"
-                fontFamily="fontFamilyText"
-                fontWeight="fontWeightBold"
-                fontSize="fontSize30"
-                lineHeight="lineHeight30"
-                paddingLeft="space30"
-                paddingRight="space30"
-                style={{ borderRadius: 12, opacity: muted ? 0.2 : 1 }}
+            <div style={{
+              paddingLeft: 8
+            }}>
+              <div
+                style={{ 
+                  borderRadius: 12, 
+                  opacity: muted ? 0.2 : 1,
+                  backgroundColor: 'black',
+                  color: 'black',
+                  fontFamily: 'Inter',
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                  lineHeight: '12px',
+                  paddingLeft: 4,
+                  paddingRight: 4
+                }}
               >
                 {unreadMessagesCount}
-              </Box>
-            </Box>
+              </div>
+            </div>
           )}
-        </Box>
-        <Box
+        </div>
+        <div
           style={{
             paddingTop: 4,
-            color: 'black',
-            fontWeight: 'bold',
+            color: textColor,
+            fontWeight: "300",
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between"
           }}
         >
-          <Box
+          <div
             style={{
               display: "flex",
               flexDirection: "row",
@@ -210,24 +211,44 @@ const ConversationView = (
               textOverflow: "ellipsis"
             }}
           >
-            <Box>
-              
-            </Box>
-            <Box
+            {!props.typingInfo.length ? (
+              <div>
+                {lastMsgStatus === MessageStatus.Sending && props.myMessage && (
+                  <div style={{ paddingRight: 6 }}>
+                    <Send size={20}/>
+                  </div>
+                )}
+                {lastMsgStatus === MessageStatus.Delivered && props.myMessage && (
+                  <div style={{ paddingRight: 6 }}>
+                    <Check size={20} />
+                  </div>
+                )}
+                {lastMsgStatus === MessageStatus.Failed && props.myMessage && (
+                  <div style={{ paddingRight: 6 }}>
+                    <AlertTriangle size={20}/>
+                  </div>
+                )}
+                {lastMsgStatus === MessageStatus.Read && props.myMessage && (
+                  <div style={{ paddingRight: 6 }}>
+                    <BookOpen size={20}/>
+                  </div>
+                )}
+              </div>
+            ) : null}
+            <div
               style={{
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis"
               }}
             >
-              
-            </Box>
-          </Box>
-          <Box style={{ whiteSpace: "nowrap", paddingLeft: 4 }}></Box>
-        </Box>
-      </Box>
-    </Box>
+              {lastMessage}
+            </div>
+          </div>
+          <div style={{ whiteSpace: "nowrap", paddingLeft: 4 }}>{time}</div>
+        </div>
+      </div>
+    </div>
   );
 };
-
 export default ConversationView;

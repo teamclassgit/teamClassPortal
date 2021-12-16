@@ -1,98 +1,99 @@
-import { bindActionCreators } from "redux";
+// @packages
 import { useDispatch, useSelector } from "react-redux";
+
+// @scripts 
 import ConversationView from "./ConversationsView";
-import * as chat from '../../redux/actions/chat';
 import { unexpectedErrorNotification} from './helpers';
-
-function getLastMessage (messages, typingData) {
-  if (messages === undefined || messages === null) {
-    return "Loading...";
-  }
-  if (typingData.length) {
-    return getTypingMessage(typingData);
-  }
-  if (messages.length === 0) {
-    return "No messages";
-  }
-  if (!!messages[messages.length - 1].media) {
-    return "Media message";
-  }
-  return messages[messages.length - 1].body;
-}
-
-function isMyMessage (messages) {
-  if (messages === undefined || messages === null || messages.length === 0) {
-    return false;
-  }
-  return messages[messages.length - 1].author ===
-    localStorage.getItem("username")
-    ? messages[messages.length - 1]
-    : false;
-}
-
-async function updateCurrentConvo (
-  setSid,
-  convo,
-  updateParticipants
-) {
-  setSid(convo.sid);
-
-  try {
-    const participants = await convo.getParticipants();
-    updateParticipants(participants, convo.sid);
-  } catch {
-    return Promise.reject(UNEXPECTED_ERROR_MESSAGE);
-  }
-}
-
-function setUnreadMessagesCount (
-  currentconvoSid,
-  convoSid,
-  unreadMessages,
+import {
+  addNotifications,
+  setLastReadIndex,
+  updateCurrentConversation,
+  updateParticipants,
   updateUnreadMessages
-) {
-  if (currentconvoSid === convoSid && unreadMessages[convoSid] !== 0) {
-    updateUnreadMessages(convoSid, 0);
-    return 0;
-  }
-  if (currentconvoSid === convoSid) {
-    return 0;
-  }
-  return unreadMessages[convoSid];
-}
+} from '../../redux/actions/chat';
 
 const ConversationsList = () => {
-  const sid = useSelector((state) => state.reducer.sid);
-  const conversations = useSelector((state) => state.reducer.convo);
+  const conversations = useSelector((state) => state.reducer.convo.convo);
   const messages = useSelector((state) => state.reducer.messages);
-  const unreadMessages = useSelector((state) => state.reducer.unreadMessages);
   const participants = useSelector((state) => state.reducer.participants);
-  const typingData = useSelector((state) => state.reducer.typingData);
+  const sid = useSelector((state) => state.reducer.sid.sid);
+  const typingData = useSelector((state) => state.reducer.typingData.typingData);
+  const unreadMessages = useSelector((state) => state.reducer.unreadMessages.unreadMessages);
 
   const dispatch = useDispatch();
-  const {
-    updateCurrentConversation,
-    updateParticipants,
-    updateUnreadMessages,
-    setLastReadIndex,
-    addNotifications
-  } = bindActionCreators(chat, dispatch);
 
   if (conversations === undefined || conversations === null) {
     return <div className="empty" />;
   }
 
+  const updateCurrentConvo = async (updateCurrentConvo, convo, updateParticipants) => {
+    dispatch(updateCurrentConvo(convo.sid));
+  
+    try {
+      const participants = await convo.getParticipants();
+      dispatch(updateParticipants(participants, convo.sid));
+    } catch (e) {
+      return Promise.reject('Error getting participants');
+    }
+  };
+
+  const setUnreadMessagesCount = (
+    currentconvoSid,
+    convoSid,
+    unreadMessages,
+    updateUnreadMessages
+  ) => {
+    if (currentconvoSid === convoSid && unreadMessages[convoSid] !== 0) {
+      dispatch(updateUnreadMessages(convoSid, 0));
+      return 0;
+    }
+    if (currentconvoSid === convoSid) {
+      return 0;
+    }
+    return unreadMessages[convoSid];
+  };
+
+  const isMyMessage = (messages) => {
+    if (messages === undefined || messages === null || messages.length === 0) {
+      return false;
+    }
+    return messages[messages.length - 1].author ===
+      localStorage.getItem("username")
+      ? messages[messages.length - 1]
+      : false;
+  };
+
+  const getLastMessage = (messages, typingData) => {
+    if (messages === undefined || messages === null) {
+      return "Loading...";
+    }
+    if (typingData.length) {
+      return getTypingMessage(typingData);
+    }
+    if (messages.length === 0) {
+      return "No messages";
+    }
+    if (!!messages[messages.length - 1].media) {
+      return "Media message";
+    }
+    return messages[messages.length - 1].body;
+  };
+
+  if (messages === undefined || messages === null) { 
+    return <div className="empty" />;
+  }
+
   return (
     <div id="conversation-list">
-      {conversations?.convo.map((convo) => (
+      {conversations?.map((convo) => (
         <ConversationView
           key={convo.sid}
           convoId={convo.sid}
-          setSid={updateCurrentConversation}
+          setSid={dispatch(updateCurrentConversation)}
           currentConvoSid={sid}
           lastMessage={getLastMessage(
-            messages[convo.sid],
-            typingData[convo.sid] ?? []
+            messages[convo?.sid] ?? [],
+            typingData[convo?.sid] ?? []
           )}
           messages={messages[convo.sid]}
           typingInfo={typingData[convo.sid] ?? []}
@@ -108,21 +109,16 @@ const ConversationsList = () => {
           convo={convo}
           onClick={async () => {
             try {
-              setLastReadIndex(convo.lastReadMessageIndex ?? -1);
+              dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));
               await updateCurrentConvo(
                 updateCurrentConversation,
                 convo,
                 updateParticipants
               );
-              updateUnreadMessages(convo.sid, 0);
-              const lastMessage =
-                messages[convo.sid].length &&
-                messages[convo.sid][messages[convo.sid].length - 1];
-              if (lastMessage && lastMessage.index !== -1) {
-                await convo.updateLastReadMessageIndex(lastMessage.index);
-              }
-            } catch {
+              dispatch(updateUnreadMessages(convo.sid, 0));
+            } catch (e) {
               unexpectedErrorNotification(addNotifications);
+              console.log(e);
             }
           }}
         />
