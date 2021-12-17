@@ -14,6 +14,7 @@ import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
 import { getCustomerEmail, getClassTitle } from '../booking/common';
+import FiltersModal from '../booking/BoardBookings/FiltersModal';
 
 const BookingCalendarList = () => {
   const excludedBookings = ['closed', 'canceled'];
@@ -181,13 +182,23 @@ const BookingCalendarList = () => {
         classes={classes}
         calendarEvents={calendarEvents}
         defaultLimit={limit}
-        showLimit={true}
+        showLimit={false}
         showExport={true}
         showAdd={false}
         showFilter={true}
         showView={false}
         titleView={'Events Calendar '}
-        isClosedBookings={true}
+        isClosedBookings={false}
+      />
+      <FiltersModal
+        open={showFiltersModal}
+        handleModal={() => setShowFiltersModal(!showFiltersModal)}
+        classes={classes}
+        coordinators={coordinators}
+        calendarEvents={calendarEvents}
+        isFilterByClass={true}
+        isFilterByCoordinator={true}
+        isFilterByCreationDate={true}
       />
       <Calendar bookings={bookings} calendarEvents={calendarEvents} classes={classes} customers={customers} />
     </>
