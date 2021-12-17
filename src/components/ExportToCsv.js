@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ExportToCsv = ({ array, title, smallText, name }) => {
+const ExportToCsv = ({ array, title, smallText, name, teamClassInfo }) => {
   // ** Converts table to CSV
   function convertArrayOfObjectsToCSV (array) {
     let result;
@@ -11,7 +11,7 @@ const ExportToCsv = ({ array, title, smallText, name }) => {
     const arraykeys = keys.split(';');
     result = '';
     result += arraykeys.join(columnDelimiter);
-    result += dynamicLabels && dynamicLabels.length > 0 ? `;${dynamicLabels.join(columnDelimiter)};bookingId` : `;bookingId`;
+    result += teamClassInfo.variants.map((item) => item.kitHasAlcohol && ';Delivery Restriction').join(columnDelimiter);
     result += ``;
     result += lineDelimiter;
 
@@ -31,7 +31,7 @@ const ExportToCsv = ({ array, title, smallText, name }) => {
       } else {
         result += columnDelimiter;
       }
-      result += item['bookingId'];
+      if (item.canDeliverKitReason) result += item.canDeliverKitReason;
       result += lineDelimiter;
     });
     return result;
