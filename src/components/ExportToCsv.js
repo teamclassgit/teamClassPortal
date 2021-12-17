@@ -11,6 +11,7 @@ const ExportToCsv = ({ array, title, smallText, name, teamClassInfo }) => {
     const arraykeys = keys.split(';');
     result = '';
     result += arraykeys.join(columnDelimiter);
+    result += dynamicLabels && dynamicLabels.length > 0 && `;${dynamicLabels.join(columnDelimiter)}`;
     result += teamClassInfo.variants.map((item) => item.kitHasAlcohol && ';Delivery Restriction').join(columnDelimiter);
     result += ``;
     result += lineDelimiter;
