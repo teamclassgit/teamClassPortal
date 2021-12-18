@@ -73,6 +73,10 @@ const Calendar = ({ bookings, calendarEvents, classes, customers }) => {
         </ModalHeader>
         <ModalBody>
           <p>
+            <strong>Booking Id: </strong>
+            {modalBookingInfo && modalBookingInfo.bookingId}
+          </p>
+          <p>
             <strong>Name: </strong>
             {modalBookingInfo && modalBookingInfo.customerName}
           </p>
