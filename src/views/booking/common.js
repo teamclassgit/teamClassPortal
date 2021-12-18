@@ -38,19 +38,6 @@ export const getFormattedEventDate = (bookingId, calendarEvents) => {
   return '';
 };
 
-export const getFormattedEventDate2 = (bookingId, calendarEvents) => {
-  const result = calendarEvents.filter((element) => element.bookingId === bookingId);
-  if (result && result.length > 0) {
-    const calendarEvent = result[0];
-    const date = new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day);
-    const time = toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, '');
-    console.log(time);
-    // return `${moment(date)} ${time} ${DEFAULT_TIME_ZONE_LABEL}`;
-    return `${moment(date).format('LL')} ${time} ${DEFAULT_TIME_ZONE_LABEL}`;
-  }
-  return '';
-};
-
 export const getBookingColor = (rowStatus) => {
   const resBookingColor = BOOKING_STATUS.find((bng) => bng.value === rowStatus);
   return resBookingColor ? resBookingColor.color : 'primary';

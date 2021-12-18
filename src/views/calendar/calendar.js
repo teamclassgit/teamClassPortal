@@ -12,15 +12,7 @@ import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Alert } from 'react
 import moment from 'moment';
 import './calendar.scss';
 import { BOOKING_DATE_REQUESTED_STATUS } from '../../utility/Constants';
-import {
-  getClassTitle,
-  getFormattedEventDate,
-  getCustomerName,
-  getCustomerCompany,
-  getCustomerPhone,
-  getCustomerEmail,
-  getFormattedEventDate2
-} from '../booking/common';
+import { getClassTitle, getFormattedEventDate, getCustomerName, getCustomerCompany, getCustomerPhone, getCustomerEmail } from '../booking/common';
 
 const Calendar = ({ bookings, calendarEvents, classes, customers }) => {
   const [events, setEvents] = useState([]);
@@ -37,8 +29,6 @@ const Calendar = ({ bookings, calendarEvents, classes, customers }) => {
       setFilteredCalendarEvents(confirmedCalendarEvents);
     }
   }, [calendarEvents]);
-
-  console.log('filteredCalendarEvents', filteredCalendarEvents);
 
   useEffect(() => {
     if (bookings && filteredCalendarEvents && classes) {
@@ -68,7 +58,6 @@ const Calendar = ({ bookings, calendarEvents, classes, customers }) => {
       });
     }
   }, [bookings, filteredCalendarEvents, classes]);
-  console.log(events);
 
   return (
     <>

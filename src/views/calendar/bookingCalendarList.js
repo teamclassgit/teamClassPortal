@@ -1,7 +1,7 @@
 // @packages
 import React, { useState, useEffect, useContext } from 'react';
 import moment from 'moment';
-import { Col, Spinner } from 'reactstrap';
+import { Spinner } from 'reactstrap';
 import { useQuery, useLazyQuery } from '@apollo/client';
 
 // @scripts
@@ -13,7 +13,7 @@ import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
-import { getCustomerEmail, getClassTitle } from '../booking/common';
+import { getCustomerEmail, getClassTitle, getCustomerCompany } from '../booking/common';
 import FiltersModal from '../booking/BoardBookings/FiltersModal';
 
 const BookingCalendarList = () => {
@@ -26,16 +26,10 @@ const BookingCalendarList = () => {
   const [coordinators, setCoordinators] = useState([]);
   const [classes, setClasses] = useState([]);
   const [calendarEvents, setCalendarEvents] = useState([]);
-  const [switchView, setSwitchView] = useState(false);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [currentElement, setCurrentElement] = useState({});
   const [elementToAdd, setElementToAdd] = useState({});
   const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
   const [filteredBookings, setFilteredBookings] = useState([]);
-  const [editModal, setEditModal] = useState(false);
-
-  const handleEditModal = () => setEditModal(!editModal);
 
   const [getBookings, { ...allBookingsResult }] = useLazyQuery(queryAllBookings, {
     fetchPolicy: 'no-cache',
@@ -97,8 +91,6 @@ const BookingCalendarList = () => {
       }
     }
   });
-
-  const handleModal = () => setShowAddModal(!showAddModal);
 
   const handleSearch = (value) => {
     if (value.length) {
@@ -165,7 +157,6 @@ const BookingCalendarList = () => {
     });
   }, [bookingsFilter, limit]);
 
-  // ** Function to handle Modal toggle
   return (
     <>
       <p>Calendar</p>
@@ -198,9 +189,16 @@ const BookingCalendarList = () => {
         calendarEvents={calendarEvents}
         isFilterByClass={true}
         isFilterByCoordinator={true}
-        isFilterByCreationDate={true}
+        isFilterByCreationDate={false}
       />
-      <Calendar bookings={bookings} calendarEvents={calendarEvents} classes={classes} customers={customers} />
+      {allBookingsResult.loading || allCalendarEventsResults.loading || allClasses.loading || allCustomersResult.loading ? (
+        <div>
+          <Spinner className="mr-25" />
+          <Spinner type="grow" />
+        </div>
+      ) : (
+        <Calendar bookings={filteredBookings} calendarEvents={calendarEvents} classes={classes} customers={customers} />
+      )}
     </>
   );
 };
