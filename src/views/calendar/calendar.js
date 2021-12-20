@@ -34,7 +34,6 @@ const Calendar = ({ bookings, calendarEvents, classes, customers }) => {
     if (bookings && filteredCalendarEvents && classes) {
       const eventsArray = [];
       bookings.map((item, index) => {
-        const formatDate = getFormattedEventDate(item._id, filteredCalendarEvents);
         eventsArray.push({
           title: `${
             getCustomerCompany(item.customerId, customers) ? getCustomerCompany(item.customerId, customers).concat(' / ') : ''
@@ -50,7 +49,7 @@ const Calendar = ({ bookings, calendarEvents, classes, customers }) => {
             item.classVariant && `${item.classVariant.title} $${item.classVariant.pricePerson}${item.classVariant.groupEvent ? '/group' : '/person'}`,
           signUpDeadline: item.signUpDeadline,
           eventDate: getFormattedEventDate(item._id, filteredCalendarEvents),
-          date: moment(getFormattedEventDate(item._id, filteredCalendarEvents), 'LL').format('YYYY-MM-DD HH:mm'),
+          date: moment(getFormattedEventDate(item._id, filteredCalendarEvents), 'LLL').format('YYYY-MM-DD HH:mm'),
           backgroundColor: item.status === BOOKING_DATE_REQUESTED_STATUS ? '#FF6563' : '#557FE7',
           status: item.status
         });
