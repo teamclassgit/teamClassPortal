@@ -159,7 +159,6 @@ const BookingCalendarList = () => {
 
   return (
     <>
-      <p>Calendar</p>
       <BookingsHeader
         setShowFiltersModal={(val) => setShowFiltersModal(val)}
         showAddModal={() => handleModal()}
