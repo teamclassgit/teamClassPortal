@@ -1,15 +1,17 @@
-import tokenReducer from "./tokenReducer";
-import convoReducer from "./convoReducer";
-import sidReducer from "./currentConvoReducer";
-import messageReducer from "./messageListReducer";
-import loadingReducer from "./loadingReducer";
-import participantReducer from "./participantsReducer";
-import unreadMessagesReducer from "./unreadMessagesReducer";
+// @packages
 import attachmentsReducer from "./attachmentsReducer";
-import typingDataReducer from "./typingDataReducer";
-import lastReadIndexReducer from "./lastReadIndexReducer";
-import notificationsReducer from "./notificationsReducer";
 import chatReducer from "./chatReducer";
+import convoReducer from "./convoReducer";
+import lastReadIndexReducer from "./lastReadIndexReducer";
+import loadingReducer from "./loadingReducer";
+import messageReducer from "./messageListReducer";
+import notificationsReducer from "./notificationsReducer";
+import participantReducer from "./participantsReducer";
+import sidReducer from "./currentConvoReducer";
+import tokenReducer from "./tokenReducer";
+import typingDataReducer from "./typingDataReducer";
+import unreadMessagesReducer from "./unreadMessagesReducer";
+import infoReducer from "./infoReducer";
 
 import { combineReducers } from "redux";
 
@@ -24,21 +26,22 @@ const reducers = (state, action) => {
 };
 
 const appReducer = combineReducers({
-  token: tokenReducer,
-  convo: convoReducer,
-  sid: sidReducer,
+  attachments: attachmentsReducer,
   chats: chatReducer,
   contacts: chatReducer,
-  selectedUser: chatReducer,
-  userProfile: chatReducer,
+  information: infoReducer,
+  convo: convoReducer,
   lastReadIndex: lastReadIndexReducer,
-  messages: messageReducer,
   loadingStatus: loadingReducer,
+  messages: messageReducer,
+  notifications: notificationsReducer,
   participants: participantReducer,
-  unreadMessages: unreadMessagesReducer,
-  attachments: attachmentsReducer,
+  selectedUser: chatReducer,
+  sid: sidReducer,
+  token: tokenReducer,
   typingData: typingDataReducer,
-  notifications: notificationsReducer
+  unreadMessages: unreadMessagesReducer,
+  userProfile: chatReducer
 });
 
 export default reducers;

@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { bindActionCreators } from "redux";
 import { saveAs } from "file-saver";
 
-import { getBlobFile, getMessageStatus } from "./Apis";
+import { useTheme } from "@twilio-paste/theme";
+
+import { getBlobFile, getMessageStatus } from './Apis';
 import MessageView from "./MessageView";
 import MessageFile from "./MessageFile";
 import Horizon from "./Horizon";
@@ -11,8 +14,8 @@ import {
   unexpectedErrorNotification
 } from "./helpers";
 import {
-  addAttachment, addNotifications
-} from '../../redux/actions/chat';
+  addAttachment
+} from '../../redux/actions/chat/index';
 
 function getMessageTime (message) {
   const dateCreated = message.dateCreated;
@@ -49,12 +52,15 @@ const MessageList = (props) => {
     return <div className="empty" />;
   }
 
+  const theme = useTheme();
   const myRef = useRef(null);
   const messagesLength = messages.length;
 
   const dispatch = useDispatch();
-
-  const conversationAttachments = useSelector((state) => state.reducer.attachments[conversation.sid]);
+  
+  const conversationAttachments = useSelector(
+    (state) => state.reducer.attachments[conversation.sid]
+  );
 
   const [imagePreview, setImagePreview] = useState({
     message : null,
@@ -107,8 +113,8 @@ const MessageList = (props) => {
 
   const onDownloadAttachment = async (message) => {
     setFileLoading(Object.assign({}, fileLoading, { [message.sid]: true }));
-    const blob = await getBlobFile(message.media, addNotifications);
-    addAttachment(props.conversation.sid, message.sid, blob);
+    const blob = await getBlobFile(message.media);
+    dispatch(addAttachment(props.conversation.sid, message.sid, blob));
     setFileLoading(Object.assign({}, fileLoading, { [message.sid]: false }));
   };
 
@@ -173,16 +179,10 @@ const MessageList = (props) => {
                 props.participants
               )}
               onDeleteMessage={async () => {
-                console.log(message);
                 try {
                   await message.remove();
-                  successNotification({
-                    message: "Message deleted.",
-                    addNotifications
-                  });
-                } catch (e) {
-                  unexpectedErrorNotification(addNotifications);
-                  console.log(e);
+                } catch (error) {
+                  console.log(error);
                 }
               }}
               topPadding={setTopPadding(index)}

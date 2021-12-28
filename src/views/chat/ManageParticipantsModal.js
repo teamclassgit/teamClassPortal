@@ -1,5 +1,5 @@
 import {
-  Box,
+  div,
   TBody,
   Td,
   Th,
@@ -9,9 +9,8 @@ import {
 import { ModalBody, Table } from "reactstrap";
 import { MenuButton, Menu, MenuItem, useMenuState } from "@twilio-paste/menu";
 import { Text } from "@twilio-paste/text";
-import { ChevronDownIcon } from "@twilio-paste/icons/esm/ChevronDownIcon";
 import Avatar from '@components/avatar';
-import { User, Anchor, ChevronDown } from 'react-feather';
+import { User, Anchor, ChevronDown, Trash } from 'react-feather';
 
 import ConvoModal from "./ConvoModal";
 
@@ -28,7 +27,7 @@ const ManageParticipantsModal = (
         title={props.title}
         modalBody={
           <ModalBody>
-            <Box
+            <div
               style={{
                 display: "flex",
                 flexDirection: "row",
@@ -37,43 +36,29 @@ const ManageParticipantsModal = (
                 paddingTop: "6px"
               }}
             >
-              <Box
+              <div
                 fontFamily="fontFamilyText"
                 fontWeight="fontWeightBold"
                 fontSize="fontSize30"
                 lineHeight="lineHeight60"
               >
                 Participants ({props.participantsCount})
-              </Box>
+              </div>
               <MenuButton {...menu} variant="secondary">
                 Add Participant <ChevronDown decorative size="20" />
               </MenuButton>
               <Menu {...menu} aria-label="Preferences">
                 <MenuItem
                   {...menu}
-                  onClick={() => props.onClick(Content.AddSMS)}
-                >
-                  SMS Participant
-                </MenuItem>
-                <MenuItem
-                  {...menu}
                   onClick={() => {
-                    props.onClick(Content.AddWhatsApp);
-                  }}
-                >
-                  WhatsApp Participant
-                </MenuItem>
-                <MenuItem
-                  {...menu}
-                  onClick={() => {
-                    props.onClick(Content.AddChat);
+                    props.onClick("Add chat participant");
                   }}
                 >
                   Chat Participant
                 </MenuItem>
               </Menu>
-            </Box>
-            <Box
+            </div>
+            <div
               style={{
                 marginTop: "12px",
                 overflow: "hidden",
@@ -95,13 +80,9 @@ const ManageParticipantsModal = (
                       <Tr key={user.sid}>
                         <Td width="size20">
                           <Avatar
-                            size="sizeIcon80"
-                            name={
-                              (user.identity ||
-                                user.attributes["friendlyName"]) ??
-                              "unknown"
-                            }
-                            icon={User}
+                            color={`light-dark`} 
+                            content={(user && user?.identity) || 'Unknown'} 
+                            initials
                           />
                         </Td>
                         <Td textAlign="left">
@@ -116,18 +97,18 @@ const ManageParticipantsModal = (
                         <Td textAlign="right">
                           {user.identity !==
                           localStorage.getItem("username") ? (
-                              <Anchor
+                              <Trash
                                 href="#"
                                 onClick={() => props.onParticipantRemove(user)}
                               >
                               Remove
-                              </Anchor>
+                              </Trash>
                             ) : null}
                         </Td>
                       </Tr>
                     ))
                   ) : (
-                    <Box
+                    <div
                       style={{
                         display: "flex",
                         justifyContent: "center",
@@ -136,12 +117,12 @@ const ManageParticipantsModal = (
                         height: "400px"
                       }}
                     >
-                      <Box
+                      <div
                         style={{
                           color: "#606B85"
                         }}
                       >
-                        <Box
+                        <div
                           style={{
                             display: "flex",
                             justifyContent: "center",
@@ -156,7 +137,7 @@ const ManageParticipantsModal = (
                               color: "#606B85"
                             }}
                           />
-                        </Box>
+                        </div>
                         <Text
                           as="p"
                           fontSize="fontSize40"
@@ -166,12 +147,12 @@ const ManageParticipantsModal = (
                         >
                           No participants
                         </Text>
-                      </Box>
-                    </Box>
+                      </div>
+                    </div>
                   )}
                 </TBody>
               </Table>
-            </Box>
+            </div>
           </ModalBody>
         }
       />

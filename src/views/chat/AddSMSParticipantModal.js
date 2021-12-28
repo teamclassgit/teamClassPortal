@@ -1,6 +1,6 @@
 import { ModalBody, Box } from "@twilio-paste/core";
 import ModalInputField from "./ModalInputField";
-import AddParticipantFooter from "./addParticipantFooter";
+import AddParticipantFooter from "./AddParticipantFooter";
 import ConvoModal from "./ConvoModal";
 
 const AddSMSParticipantModal = (

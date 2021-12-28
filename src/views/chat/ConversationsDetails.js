@@ -1,19 +1,21 @@
+// @packages
+import { Badge } from "reactstrap";
+
 // @scripts
 import Settings from "./Settings";
 
 const ConversationDetails = ({
-  convoSid,
   convo,
-  participants
+  convoSid,
+  participants,
+  conversation
 }) => {
-
   return (
     <div
       style={{
-        minHeight: 65,
-        maxHeight: 65,
-        paddingLeft: 16,
-        paddingRight: 16,
+        minHeight: 50,
+        maxHeight: 50,
+        marginBottom: 16,
         borderBottomStyle: "solid",
         borderBottomWidth: 1,
         borderBottomColor: '#ebe9f1'
@@ -22,7 +24,7 @@ const ConversationDetails = ({
       <div
         style={{
           height: "100%",
-          maxWidth: "70%",
+          maxWidth: "calc(100% - 100px)",
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between"
@@ -32,6 +34,10 @@ const ConversationDetails = ({
           style={{
             alignItems: "center",
             display: "flex",
+            paddingLeft: 16,
+            paddingRight: 16,
+            paddingTop: 8,
+            paddingBottom: 8,
             flexDirection: "row",
             fontFamily: "fontFamilyText",
             fontSize: 16,
@@ -45,7 +51,7 @@ const ConversationDetails = ({
 
           }}        
         >
-          {convo.friendlyName ?? convoSid}
+          {conversation?.instructor?.name} & team
         </div>
         <div
           style={{
@@ -73,6 +79,24 @@ const ConversationDetails = ({
           </div>
           <Settings convo={convo} participants={participants} />
         </div>
+      </div>
+      <div 
+        style={{
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingBottom: 8,
+          minHeight: 65,
+          textAlign: "initial",
+          paddingTop: 14,
+          maxHeight: 65,
+          borderBottomStyle: "solid",
+          borderBottomWidth: 1,
+          borderBottomColor: '#ebe9f1'
+        }} 
+      >
+        <Badge className="booking-checkout-summary-priceBadge">
+          Coordinator and instructor
+        </Badge>
       </div>
     </div>
   );

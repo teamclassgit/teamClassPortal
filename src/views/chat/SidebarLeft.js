@@ -2,55 +2,32 @@
 import Avatar from '@components/avatar';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import classnames from 'classnames';
-import { X } from 'react-feather';
-import { useDispatch } from 'react-redux';
+import { X, Search } from 'react-feather';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { 
-  Button
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Input
 } from 'reactstrap';
 
 // @scripts
-import ConversationTitleModal from "./ConversationTitleModal";
 import ConversationsList from './ConversationsList';
-import queryConversationsDetail from '../../graphql/QueryConversationsDetail';
-import { addConversation } from "./Apis";
 import SidebarInfo from './SidebarInfo';
-import {
-  updateCurrentConversation,
-  addNotifications,
-  updateParticipants
-} from '../../redux/actions/chat';
 
 const SidebarLeft = ({
   client,
   handleSidebar,
   handleUserSidebarLeft,
+  infoDetails,
+  inputValue,
+  setInfoDetails,
+  setInputValue,
   sidebar,
   userData,
   userSidebarLeft
 }) => {
-  const [info, setInfo] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState('online');
-
-  const dispatch = useDispatch();
-
-  const handleOpen = () => setIsModalOpen(true);
-
-  const { ...allConversationsDetail } = useQuery(queryConversationsDetail, {
-    fetchPolicy: 'no-cache',
-    variables: {
-      bookingId: '1'
-    },
-    pollInterval: 5000
-  });
-
-  useEffect(() => {
-    if (allConversationsDetail.data) {
-      setInfo(allConversationsDetail.data);
-    }
-  }, [allConversationsDetail.data]);
 
   useEffect(() => {
     setStatus(userData?.status);
@@ -66,9 +43,9 @@ const SidebarLeft = ({
         >
           <SidebarInfo 
             handleUserSidebarLeft={handleUserSidebarLeft}
-            userData={userData}
-            status={status}
             setStatus={setStatus}
+            status={status}
+            userData={userData}
           />
         </div>
         <div
@@ -78,6 +55,9 @@ const SidebarLeft = ({
         >
           <div className='sidebar-close-icon' onClick={handleSidebar}>
             <X size={14} />
+          </div>
+          <div className='chat-fixed-title'>
+            <h4>Conversations</h4>
           </div>
           <div className='chat-fixed-search'>
             <div className='d-flex align-items-center w-100'>
@@ -89,38 +69,39 @@ const SidebarLeft = ({
                   status={status}
                 />
               </div>
+              <InputGroup className='input-group-merge ml-1 w-100'>
+                <InputGroupAddon addonType='prepend'>
+                  <InputGroupText className='round'>
+                    <Search className='text-muted' size={14} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  className='round'
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder='Search a booking conversation'
+                  type='text'
+                  value={inputValue}
+                />
+              </InputGroup>
             </div>
           </div>
-          <PerfectScrollbar className='chat-user-list-wrapper list-group' options={{ wheelPropagation: false }}>
+          <PerfectScrollbar 
+            className='chat-user-list-wrapper list-group' 
+            options={{ wheelPropagation: false }}
+            style={{
+              height: 'calc(100vh - 210px)'
+            }}
+          >
             <h4 className='chat-list-title'>Chats</h4>
-            <ConversationsList />
-            <div className='button-fixed'>
-              <Button
-                className='btn btn-primary btn-block'
-                color='primary' 
-                onClick={handleOpen}
-              >
-                Create New Conversation
-              </Button>
-            </div>
-            <ConversationTitleModal
-              title=""
-              type="new"
-              isModalOpen={isModalOpen}
-              onCancel={() => {
-                setIsModalOpen(false);
-              }}
-              onSave={async (title) => {
-                const convo = await addConversation(
-                  title,
-                  updateParticipants,
-                  addNotifications,
-                  client
-                );
-                setIsModalOpen(false);
-                dispatch(updateCurrentConversation(convo.sid));
-              }}
-            />
+            {client?.connectionState !== "denied" && (
+              <ConversationsList
+                client={client}
+                info={infoDetails}
+                setInfo={setInfoDetails}
+                userData={userData}
+                value={inputValue}
+              />
+            )}
           </PerfectScrollbar>
         </div>
       </div>

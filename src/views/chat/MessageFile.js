@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
-import { Box, Text, Truncate } from "@twilio-paste/core";
-import { ProductAssetsIcon } from "@twilio-paste/icons/cjs/ProductAssetsIcon";
-import { CloseIcon } from "@twilio-paste/icons/cjs/CloseIcon";
+// @packages
+import { Text, Truncate } from "@twilio-paste/core";
 import { Button, Spinner } from 'reactstrap';
+import { CloseIcon } from "@twilio-paste/icons/cjs/CloseIcon";
 import { DownloadIcon } from "@twilio-paste/icons/cjs/DownloadIcon";
+import { ProductAssetsIcon } from "@twilio-paste/icons/cjs/ProductAssetsIcon";
+import { useEffect, useState } from "react";
 
+// @scripts
 import { getFileUrl } from "./Apis";
 
 const MessageFile = ({
@@ -87,7 +89,7 @@ const MessageFile = ({
     );
   } else {
     return (
-      <Box
+      <div
         style={{
           display: "flex",
           alignItems: "center",
@@ -104,7 +106,7 @@ const MessageFile = ({
         }}
         onClick={type === "view" ? (file ? onOpen : onDownload) : undefined}
       >
-        <Box
+        <div
           style={{
             marginRight: "16px",
             alignItems: "start"
@@ -139,9 +141,9 @@ const MessageFile = ({
               }}
             />
           )}
-        </Box>
+        </div>
 
-        <Box
+        <div
           style={{
             maxWidth: "calc(100% - 42px)"
           }}
@@ -159,11 +161,11 @@ const MessageFile = ({
               {!file && type === "view" ? " - Click to download" : ""}
             </Text>
           )}
-        </Box>
+        </div>
 
         {onRemove ? (
           <Button variant="link" onClick={onRemove}>
-            <Box
+            <div
               style={{
                 backgroundColor: "#06033A",
                 borderRadius: "10px",
@@ -177,10 +179,10 @@ const MessageFile = ({
                 title="Remove file"
                 color="colorTextBrandInverse"
               />
-            </Box>
+            </div>
           </Button>
         ) : null}
-      </Box>
+      </div>
     );
   }
 };

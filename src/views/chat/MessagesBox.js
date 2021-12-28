@@ -101,11 +101,12 @@ const MessagesBox = (props) => {
       style={{
         display: "flex",
         flexDirection: "column-reverse",
-        height: "100%",
+        width: "100%",
+        position: 'relative',
         overflow: "scroll",
-        paddingLeft: 30,
-        paddingRight: 360,
-        width: 'calc(100% - 20px)'
+        overflowX: "hidden",
+        marginTop: 50,
+        height: "100%"
       }}
     >
       <InfiniteScroll
@@ -121,12 +122,13 @@ const MessagesBox = (props) => {
         style={{
           display: "flex",
           overflow: "hidden",
-          flexDirection: "column-reverse"
+          flexDirection: "column-reverse",
+          height: "200%"
         }}
         inverse={true}
         scrollThreshold="20px"
       >
-        <div ref={listRef} style={{ overflow: "scroll" }}>
+        <div ref={listRef} style={{ overflow: "scroll", overflowY: "hidden", height: '110%' }}>
           <MessageList
             messages={messages}
             conversation={convo}

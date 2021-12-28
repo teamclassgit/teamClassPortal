@@ -1,6 +1,7 @@
 // @packages
 import React, { useState, createRef } from "react";
 import { Spinner } from "reactstrap";
+import { useDispatch } from "react-redux";
 
 // @scripts
 import AddChatParticipantModal from "./AddChatMemberModal";
@@ -16,7 +17,8 @@ import {
 import {
   updateCurrentConversation,
   updateConversation, 
-  addNotifications
+  addNotifications,
+  informationId
 } from "../../redux/actions/chat";
 import {
   CONVERSATION_MESSAGES,
@@ -24,7 +26,10 @@ import {
   WHATSAPP_PREFIX
 } from "./Constants";
 
-const Settings = (props) => {
+const Settings = ({
+  convo,
+  participants
+}) => {
   const [error, setError] = useState("");
   const [errorProxy, setErrorProxy] = useState("");
   const [isAddChatOpen, setIsAddChatOpen] = useState(false);
@@ -34,6 +39,8 @@ const Settings = (props) => {
   const [isManageParticipantOpen, setIsManageParticipantOpen] = useState(false);
   const [name, setName] = useState("");
   const [nameProxy, setNameProxy] = useState("");
+
+  const dispatch = useDispatch();
 
   const handleChatOpen = () => setIsAddChatOpen(true);
   const handleChatClose = () => setIsAddChatOpen(false);
@@ -63,49 +70,44 @@ const Settings = (props) => {
         onParticipantListOpen={() => setIsManageParticipantOpen(true)}
         leaveConvo={async () => {
           try {
-            await props.convo.leave();
-            successNotification({
-              message: CONVERSATION_MESSAGES.LEFT,
-              addNotifications
-            });
-            updateCurrentConversation("");
-          } catch {
-            unexpectedErrorNotification(addNotifications);
+            await convo.leave();
+            dispatch(updateCurrentConversation(""));
+            dispatch(informationId(""));
+            console.log(`Conversation ${convo.sid} left`);
+          } catch (e) {
+            console.log(e);
           }
         }}
-        updateConvo={(val) => props.convo
+        updateConvo={(val) => convo
           .updateFriendlyName(val)
           .then((convo) => {
-            updateConversation(convo.sid, convo);
-            successNotification({
-              message: CONVERSATION_MESSAGES.NAME_CHANGED,
-              addNotifications
-            });
+            dispatch(updateConversation(convo.sid, convo));
+            console.log(`Conversation ${convo.sid} updated`);
           })
           .catch((e) => {
             console.log(e);
           })
         }
-        conversation={props.convo}
-        addNotifications={addNotifications}
+        conversation={convo}
+        addNotifications={'addNotifications'}
       />
       {isManageParticipantOpen && (
         <ManageParticipantsModal
           handleClose={handleParticipantClose}
           isModalOpen={isManageParticipantOpen}
           title="Manage Participants"
-          participantsCount={props.participants.length}
-          participantsList={props.participants}
+          participantsCount={participants.length}
+          participantsList={participants}
           onClick={(content) => {
             handleParticipantClose();
             switch (content) {
-            case Content.AddSMS:
+            case "Add SMS participant":
               handleSMSOpen();
               return null;
-            case Content.AddWhatsApp:
+            case "Add WhatsApp participant":
               handleWhatsAppOpen();
               return null;
-            case Content.AddChat:
+            case "Add chat participant":
               handleChatOpen();
               return null;
             default:
@@ -113,7 +115,7 @@ const Settings = (props) => {
             }
           }}
           onParticipantRemove={async (participant) => {
-            await removeParticipant(props.convo, participant, addNotifications);
+            await removeParticipant(convo, participant);
           }}
         />
       )}
@@ -149,7 +151,7 @@ const Settings = (props) => {
                 SMS_PREFIX + name,
                 SMS_PREFIX + nameProxy,
                 false,
-                props.convo,
+                convo,
                 addNotifications
               );
               emptyData();
@@ -192,7 +194,7 @@ const Settings = (props) => {
                 WHATSAPP_PREFIX + name,
                 WHATSAPP_PREFIX + nameProxy,
                 false,
-                props.convo,
+                convo,
                 addNotifications
               );
               emptyData();
@@ -229,8 +231,7 @@ const Settings = (props) => {
                 name,
                 nameProxy,
                 true,
-                props.convo,
-                addNotifications
+                convo
               );
               emptyData();
             } catch (e) {

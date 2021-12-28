@@ -55,7 +55,7 @@ const MessageInput = (
               `0 6px ${  props.assets.length ? "12" : "4"  }px 6px`
             }`,
             borderRadius: "4px",
-            width: 'calc(100% - 400px)'
+            width: 'calc(100% - 100px)'
           }}
           onFocus={(e) => e.currentTarget.setSelectionRange(cursorPosition, cursorPosition)}
           onKeyPress={props.onKeyPress}

@@ -175,9 +175,10 @@ const VerticalLayout = props => {
       ></div>
       {/* Vertical Nav Menu Overlay */}
 
-      {themeConfig.layout.customizer === true ? (
+      {!themeConfig.layout.customizer === true ? (
         <Customizer
           skin={skin}
+          onlyChat
           setSkin={setSkin}
           footerType={footerType}
           setFooterType={setFooterType}

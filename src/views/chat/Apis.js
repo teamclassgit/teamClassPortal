@@ -1,19 +1,13 @@
+// @packages
 import axios from "axios";
-import {
-  Conversation,
-  Message,
-  Participant,
-  Media,
-  Paginator
-} from "@twilio/conversations";
 
+// @scripts
 import {
   CONVERSATION_MESSAGES,
   CONVERSATION_PAGE_SIZE,
   PARTICIPANT_MESSAGES,
   UNEXPECTED_ERROR_MESSAGE
 } from "./Constants";
-
 import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
 
 export const getToken = async (username, password) => {
@@ -35,7 +29,7 @@ export const getToken = async (username, password) => {
 
 export const getConversationParticipants = async (conversation) => await conversation.getParticipants();
 
-export async function addConversation (name, updateParticipants, addNotifications, client) {
+export async function addConversation (name, updateParticipants, client, dispatch) {
   if (name.length > 0 && client !== undefined) {
     try {
       const conversation = await client.createConversation({
@@ -44,9 +38,7 @@ export async function addConversation (name, updateParticipants, addNotification
       await conversation.join();
 
       const participants = await getConversationParticipants(conversation);
-      updateParticipants(participants, conversation.sid);
-
-      console.log(`Conversation ${conversation.sid} created`);
+      dispatch(updateParticipants(participants, conversation.sid));
 
       return conversation;
     } catch (e) {
@@ -144,16 +136,12 @@ export async function addParticipant (
   name,
   proxyName,
   chatParticipant,
-  convo,
-  addNotifications
+  convo
 ) {
   if (chatParticipant && name.length > 0 && convo !== undefined) {
     try {
       const result = await convo.add(name);
-      successNotification({
-        message: PARTICIPANT_MESSAGES.ADDED,
-        addNotifications
-      });
+      console.log('success');
       return result;
     } catch (e) {
       return Promise.reject(e);
@@ -170,13 +158,12 @@ export async function addParticipant (
         friendlyName: name
       });
       successNotification({
-        message: 'Participant added',
-        addNotifications
+        message: 'Participant added'
       });
 
       return result;
     } catch (e) {
-      unexpectedErrorNotification(addNotifications);
+      console.log(e);
 
       return Promise.reject(e);
     }
@@ -186,17 +173,15 @@ export async function addParticipant (
 
 export const removeParticipant = async (
   conversation,
-  participant,
-  addNotifications
+  participant
 ) => {
+  console.log(participant);
+  console.log(conversation);
   try {
     await conversation.removeParticipant(participant);
-    successNotification({
-      message: 'Participant removed',
-      addNotifications
-    });
-  } catch {
-    unexpectedErrorNotification(addNotifications);
+    console.log('success');
+  } catch (e) {
+    console.log(e);
     return Promise.reject('Error');
   }
 };

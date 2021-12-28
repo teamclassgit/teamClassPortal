@@ -4,13 +4,14 @@ import { useState } from 'react';
 // ** Third Party Components
 import Select from 'react-select';
 import classnames from 'classnames';
-import { Settings, X } from 'react-feather';
+import { MessageSquare, X } from 'react-feather';
 import { CustomInput, FormGroup } from 'reactstrap';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { selectThemeColors } from '@utils';
 
 // ** Styles
 import '@styles/react/libs/react-select/_react-select.scss';
+import { useHistory } from 'react-router-dom';
 
 const Customizer = props => {
   // ** Props
@@ -30,6 +31,7 @@ const Customizer = props => {
     isHidden,
     setIsHidden,
     contentWidth,
+    onlyChat,
     setContentWidth,
     menuCollapsed,
     setMenuCollapsed,
@@ -202,154 +204,163 @@ const Customizer = props => {
   // ** Get Current Transition
   const transitionValue = transitionOptions.find(i => i.value === transition);
 
+  const history = useHistory();
+
+  const handleChat = () => {
+    history.push('/chat');
+  };
+
   return (
     <div
       className={classnames('customizer d-none d-md-block', {
         open: openCustomizer
       })}
     >
-      <a href='/' className='customizer-toggle d-flex align-items-center justify-content-center' onClick={handleToggle}>
-        <Settings size={14} className='spinner' />
+      <a href='/chat' className='customizer-toggle d-flex align-items-center justify-content-center' onClick={onlyChat ? handleChat : handleToggle}>
+        <MessageSquare size={14}/>
       </a>
-      <PerfectScrollbar className='customizer-content'>
-        <div className='customizer-header px-2 pt-1 pb-0 position-relative'>
-          <h4 className='mb-0'>Theme Customizer</h4>
-          <p className='m-0'>Customize & Preview in Real Time</p>
-          <a href='/' className='customizer-close' onClick={handleToggle}>
-            <X />
-          </a>
-        </div>
 
-        <hr />
+      {!onlyChat && (
+        <PerfectScrollbar className='customizer-content'>
+          <div className='customizer-header px-2 pt-1 pb-0 position-relative'>
+            <h4 className='mb-0'>Theme Customizer</h4>
+            <p className='m-0'>Customize & Preview in Real Time</p>
+            <a href='/' className='customizer-close' onClick={handleToggle}>
+              <X />
+            </a>
+          </div>
 
-        <div className='px-2'>
-          <FormGroup className='mb-2'>
-            <p className='font-weight-bold'>Skin</p>
-            <div className='d-flex'>{renderSkinsRadio()}</div>
-          </FormGroup>
+          <hr />
 
-          <FormGroup className='mb-2'>
-            <p className='font-weight-bold'>Content Width</p>
-            <div className='d-flex'>
-              <CustomInput
-                type='radio'
-                id='full-width'
-                className='mr-1'
-                label='Full Width'
-                checked={contentWidth === 'full'}
-                onChange={() => setContentWidth('full')}
-              />
-              <CustomInput
-                type='radio'
-                id='boxes'
-                label='Boxed'
-                checked={contentWidth === 'boxed'}
-                onChange={() => setContentWidth('boxed')}
-              />
-            </div>
-          </FormGroup>
-
-          <FormGroup className='mb-2'>
-            <div className='d-flex'>
-              <p className='font-weight-bold mr-auto mb-0'>RTL</p>
-              <CustomInput type='switch' id='rtl' name='RTL' checked={isRtl} onChange={() => setIsRtl(!isRtl)} />
-            </div>
-          </FormGroup>
-
-          <FormGroup className='mb-2'>
-            <div className='d-flex justify-content-between align-items-center'>
-              <p className='font-weight-bold mb-0'>Router Transition</p>
-              <Select
-                theme={selectThemeColors}
-                className='react-select'
-                classNamePrefix='select'
-                defaultValue={transitionOptions[0]}
-                value={transitionValue}
-                options={transitionOptions}
-                isClearable={false}
-                onChange={({ value }) => setTransition(value)}
-              />
-            </div>
-          </FormGroup>
-        </div>
-
-        <hr />
-
-        <div className='px-2'>
-          <p className='font-weight-bold'>Menu Layout</p>
-          <FormGroup className='mb-2'>
-            <div className='d-flex align-items-center'>
-              <CustomInput
-                type='radio'
-                id='vertical-layout'
-                label='Vertical'
-                checked={layout === 'VerticalLayout'}
-                onChange={() => setLayout('vertical')}
-                className='mr-1'
-              />
-              <CustomInput
-                type='radio'
-                id='horizontal-layout'
-                label='Horizontal'
-                checked={layout === 'HorizontalLayout'}
-                onChange={() => setLayout('horizontal')}
-              />
-            </div>
-          </FormGroup>
-          {layout !== 'HorizontalLayout' ? (
+          <div className='px-2'>
             <FormGroup className='mb-2'>
-              <div className='d-flex align-items-center'>
-                <p className='font-weight-bold mr-auto mb-0'>Menu Collapsed</p>
+              <p className='font-weight-bold'>Skin</p>
+              <div className='d-flex'>{renderSkinsRadio()}</div>
+            </FormGroup>
+
+            <FormGroup className='mb-2'>
+              <p className='font-weight-bold'>Content Width</p>
+              <div className='d-flex'>
                 <CustomInput
-                  type='switch'
-                  id='menu-collapsed'
-                  name='menu-collapsed'
-                  checked={menuCollapsed}
-                  onChange={() => setMenuCollapsed(!menuCollapsed)}
+                  type='radio'
+                  id='full-width'
+                  className='mr-1'
+                  label='Full Width'
+                  checked={contentWidth === 'full'}
+                  onChange={() => setContentWidth('full')}
+                />
+                <CustomInput
+                  type='radio'
+                  id='boxes'
+                  label='Boxed'
+                  checked={contentWidth === 'boxed'}
+                  onChange={() => setContentWidth('boxed')}
                 />
               </div>
             </FormGroup>
-          ) : null}
 
-          <FormGroup className='mb-2'>
-            <div className='d-flex align-items-center'>
-              <p className='font-weight-bold mr-auto mb-0'>Menu Hidden</p>
-              <CustomInput
-                type='switch'
-                id='menu-hidden'
-                name='menu-hidden'
-                checked={isHidden}
-                onChange={() => setIsHidden(!isHidden)}
-              />
-            </div>
-          </FormGroup>
-        </div>
-
-        <hr />
-
-        <div className='px-2'>
-          {layout !== 'HorizontalLayout' ? (
             <FormGroup className='mb-2'>
-              <p className='font-weight-bold'>Navbar Color</p>
-              <ul className='list-inline unstyled-list'>{renderNavbarColors()}</ul>
+              <div className='d-flex'>
+                <p className='font-weight-bold mr-auto mb-0'>RTL</p>
+                <CustomInput type='switch' id='rtl' name='RTL' checked={isRtl} onChange={() => setIsRtl(!isRtl)} />
+              </div>
             </FormGroup>
-          ) : null}
 
-          <FormGroup className='mb-2'>
-            <p className='font-weight-bold'>{layout === 'HorizontalLayout' ? 'Menu' : 'Navbar'} Type</p>
-            <div className='d-flex'>{renderNavbarTypeRadio()}</div>
-          </FormGroup>
-        </div>
+            <FormGroup className='mb-2'>
+              <div className='d-flex justify-content-between align-items-center'>
+                <p className='font-weight-bold mb-0'>Router Transition</p>
+                <Select
+                  theme={selectThemeColors}
+                  className='react-select'
+                  classNamePrefix='select'
+                  defaultValue={transitionOptions[0]}
+                  value={transitionValue}
+                  options={transitionOptions}
+                  isClearable={false}
+                  onChange={({ value }) => setTransition(value)}
+                />
+              </div>
+            </FormGroup>
+          </div>
 
-        <hr />
+          <hr />
 
-        <div className='px-2'>
-          <FormGroup className='mb-2'>
-            <p className='font-weight-bold'>Footer Type</p>
-            <div className='d-flex'>{renderFooterTypeRadio()}</div>
-          </FormGroup>
-        </div>
-      </PerfectScrollbar>
+          <div className='px-2'>
+            <p className='font-weight-bold'>Menu Layout</p>
+            <FormGroup className='mb-2'>
+              <div className='d-flex align-items-center'>
+                <CustomInput
+                  type='radio'
+                  id='vertical-layout'
+                  label='Vertical'
+                  checked={layout === 'VerticalLayout'}
+                  onChange={() => setLayout('vertical')}
+                  className='mr-1'
+                />
+                <CustomInput
+                  type='radio'
+                  id='horizontal-layout'
+                  label='Horizontal'
+                  checked={layout === 'HorizontalLayout'}
+                  onChange={() => setLayout('horizontal')}
+                />
+              </div>
+            </FormGroup>
+            {layout !== 'HorizontalLayout' ? (
+              <FormGroup className='mb-2'>
+                <div className='d-flex align-items-center'>
+                  <p className='font-weight-bold mr-auto mb-0'>Menu Collapsed</p>
+                  <CustomInput
+                    type='switch'
+                    id='menu-collapsed'
+                    name='menu-collapsed'
+                    checked={menuCollapsed}
+                    onChange={() => setMenuCollapsed(!menuCollapsed)}
+                  />
+                </div>
+              </FormGroup>
+            ) : null}
+
+            <FormGroup className='mb-2'>
+              <div className='d-flex align-items-center'>
+                <p className='font-weight-bold mr-auto mb-0'>Menu Hidden</p>
+                <CustomInput
+                  type='switch'
+                  id='menu-hidden'
+                  name='menu-hidden'
+                  checked={isHidden}
+                  onChange={() => setIsHidden(!isHidden)}
+                />
+              </div>
+            </FormGroup>
+          </div>
+
+          <hr />
+
+          <div className='px-2'>
+            {layout !== 'HorizontalLayout' ? (
+              <FormGroup className='mb-2'>
+                <p className='font-weight-bold'>Navbar Color</p>
+                <ul className='list-inline unstyled-list'>{renderNavbarColors()}</ul>
+              </FormGroup>
+            ) : null}
+
+            <FormGroup className='mb-2'>
+              <p className='font-weight-bold'>{layout === 'HorizontalLayout' ? 'Menu' : 'Navbar'} Type</p>
+              <div className='d-flex'>{renderNavbarTypeRadio()}</div>
+            </FormGroup>
+          </div>
+
+          <hr />
+
+          <div className='px-2'>
+            <FormGroup className='mb-2'>
+              <p className='font-weight-bold'>Footer Type</p>
+              <div className='d-flex'>{renderFooterTypeRadio()}</div>
+            </FormGroup>
+          </div>
+        </PerfectScrollbar>
+      )}
     </div>
   );
 };

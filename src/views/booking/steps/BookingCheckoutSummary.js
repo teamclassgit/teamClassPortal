@@ -25,6 +25,7 @@ const BookingCheckoutSummary = ({
   chat,
   totalAddons,
   totalServiceFee,
+  changeSpace,
   totalCardFee,
   tax,
   totalTax,
@@ -50,7 +51,7 @@ const BookingCheckoutSummary = ({
             </Badge>
           </h4>
         </CardHeader>
-        <CardBody className="p-0">
+        <CardBody className={changeSpace && styles.changeSpaceCard}>
           <div className="text-block pb-1 pt-1 pl-2 pr-2 booking-checkout-summary-imageBox">
             <Media className="align-items-center">
               <img

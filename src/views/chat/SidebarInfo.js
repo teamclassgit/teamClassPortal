@@ -16,9 +16,9 @@ import mutationUpdateAllUsers from '../../graphql/MutationUpdateAllUsers';
 
 const SidebarInfo = ({
   handleUserSidebarLeft,
-  userData,
+  setStatus,
   status,
-  setStatus
+  userData
 }) => {
   const [about, setAbout] = useState('');
   const [updateAllUsers] = useMutation(mutationUpdateAllUsers, {});
@@ -28,13 +28,14 @@ const SidebarInfo = ({
       await updateAllUsers({
         variables: {
           description: about,
-          email: userData.email,
-          id: userData._id,
-          name: userData.name,
-          role: userData.role,
+          email: userData?.email,
+          id: userData?._id,
+          name: userData?.name,
+          role: userData?.role,
           status
         }
       });
+      handleUserSidebarLeft();
     } catch (ex) {
       console.log(ex);
     }
@@ -48,11 +49,11 @@ const SidebarInfo = ({
         </div>
         <div className='header-profile-sidebar'>
           <Avatar
-            size= 'xl'
             className='avatar-border'
             color={`light-dark`} 
             content={(userData && userData['name']) || 'Uknown'} 
             initials
+            size= 'xl'
             status={status}
           />
           <h4 className='chat-user-name'>{userData?.name}</h4>
@@ -63,13 +64,13 @@ const SidebarInfo = ({
         <h6 className='section-label mb-1'>About</h6>
         <div className='about-user'>
           <Input
-            rows='5'
-            defaultValue={userData?.description}
-            type='textarea'
-            onChange={e => setAbout(e.target.value)}
             className={classnames('char-textarea', {
               'text-danger': about && about.length > 120
             })}
+            defaultValue={userData?.description}
+            onChange={e => setAbout(e.target.value)}
+            rows='5'
+            type='textarea'
           />
           <small className='counter-value float-right'>
             <span className='char-count'>{userData?.description ? userData?.description?.length : 0}</span>/ 120
@@ -79,55 +80,67 @@ const SidebarInfo = ({
         <ul className='list-unstyled user-status'>
           <li className='pb-1'>
             <CustomInput
-              type='radio'
+              checked={status === 'online'}
               className='custom-control-primary'
               id='online'
               label='Online'
-              onChange={e => setStatus('online')}
-              checked={status === 'online'}
+              onChange={() => setStatus('online')}
+              type='radio'
             />
           </li>
           <li className='pb-1'>
             <CustomInput
-              type='radio'
+              checked={status === 'busy'}
               className='custom-control-danger'
               id='busy'
               label='Do Not Disturb'
-              onChange={e => setStatus('busy')}
-              checked={status === 'busy'}
+              onChange={() => setStatus('busy')}
+              type='radio'
             />
           </li>
           <li className='pb-1'>
             <CustomInput
-              type='radio'
+              checked={status === 'away'}
               className='custom-control-warning'
               id='away'
               label='Away'
-              onChange={e => setStatus('away')}
-              checked={status === 'away'}
+              onChange={() => setStatus('away')}
+              type='radio'
             />
           </li>
           <li className='pb-1'>
             <CustomInput
-              type='radio'
+              checked={status === 'offline'}
               className='custom-control-secondary'
               id='offline'
               label='Offline'
-              onChange={e => setStatus('offline')}
-              checked={status === 'offline'}
+              onChange={() => setStatus('offline')}
+              type='radio'
             />
           </li>
         </ul>
-        <div className='mt-3'>
+        <div 
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            marginTop: '1rem'
+          }}
+        >
           <Button 
             disabled={
-              about.length === userData?.description?.length || 
+              about?.length === userData?.description?.length && 
               status === userData?.status
             }
             color='primary' 
             onClick={allUsers}
           >
             Save
+          </Button>
+          <Button 
+            onClick={handleUserSidebarLeft}
+            color='primary'
+          >
+            Cancel
           </Button>
         </div>
       </PerfectScrollbar>

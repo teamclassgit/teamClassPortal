@@ -1,11 +1,21 @@
 // @packages
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { AlertTriangle, BellOff, BookOpen, Check, Send } from "react-feather";
+import { Button } from "reactstrap";
 
 //  @scripts
 import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
-import { getMessageStatus } from './Apis';
+import { getMessageStatus, addConversation } from './Apis';
 import { NOTIFICATION_LEVEL } from "./Constants";
+import RenderList from "./RenderList";
+import ConversationTitleBookingModal from './ConversationTitleBookingModal';
+import {
+  updateCurrentConversation,
+  addNotifications,
+  updateParticipants,
+  informationId
+} from '../../redux/actions/chat';
 
 const calculateUnreadMessagesWidth = (count) => {
   if (count === 0 || !count) {
@@ -88,10 +98,16 @@ const getLastMessageTime = (messages) => {
 const ConversationView = (
   props
 ) => {
-  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount } = props;
+  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount, client } = props;
   const [backgroundColor, setBackgroundColor] = useState();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const handleOpen = () => setIsModalOpen(true);
+
   const title = truncateMiddle(
-    convo.friendlyName ?? convo.sid,
+    convo?.friendlyName ?? convo?.sid,
     calculateUnreadMessagesWidth(unreadMessagesCount)
   );
 
@@ -99,21 +115,22 @@ const ConversationView = (
     unreadMessagesCount > 0
       ? "white"
       : "black";
-  const muted = convo.notificationLevel === NOTIFICATION_LEVEL.MUTED;
+  const muted = convo?.notificationLevel === NOTIFICATION_LEVEL.MUTED;
 
   const [lastMsgStatus, setLastMsgStatus] = useState("");
-  const time = getLastMessageTime(props.messages);
+
+  const time = getLastMessageTime(props?.messages);
 
   useEffect(() => {
-    if (props.currentConvoSid === convo.sid) {
+    if ((props?.infoId === convo?._id)) {
       setBackgroundColor('#f5f5f5');
       return;
     }
     setBackgroundColor('transparent');
-  }, [props.currentConvoSid, convo.sid]);
+  }, [props]);
 
   useEffect(() => {
-    if (myMessage && !props.typingInfo.length) {
+    if (myMessage && !props?.typingInfo?.length) {
       getMessageStatus(convo, myMessage, props.participants).then(
         (statuses) => {
           if (statuses[MessageStatus.Read]) {
@@ -165,9 +182,11 @@ const ConversationView = (
             }}
           >
             {muted ? <BellOff size={20} /> : null}
-            <span style={{ verticalAlign: "top", paddingLeft: muted ? 4 : 0 }}>
-              {title}
-            </span>
+            <RenderList
+              convo={convo}
+              muted={muted}
+              title={title}
+            />
           </div>
           {unreadMessagesCount > 0 && (
             <div style={{
@@ -211,7 +230,7 @@ const ConversationView = (
               textOverflow: "ellipsis"
             }}
           >
-            {!props.typingInfo.length ? (
+            {!props?.typingInfo?.length ? (
               <div>
                 {lastMsgStatus === MessageStatus.Sending && props.myMessage && (
                   <div style={{ paddingRight: 6 }}>

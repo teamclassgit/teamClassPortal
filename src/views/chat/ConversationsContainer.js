@@ -4,12 +4,18 @@ import { useSelector } from "react-redux";
 // @scripts
 import ConversationsDetails from "./ConversationsDetails";
 import MessagesBox from "./MessagesBox";
+import StartConversation from "./StartConversation";
 import MessageInputField from "./MessageInputField";
 import {
   pushMessages
 } from "../../redux/actions/chat";
 
-const ConversationContainer = (props) => {
+const ConversationContainer = ({
+  conversation,
+  client,
+  openedNotConversations,
+  openedConversationInfo
+}) => {
   const lastReadIndex = useSelector((state) => state.reducer.lastReadIndex.lastReadIndex);
   const loadingStatus = useSelector((state) => state.reducer.loadingStatus.loading);
   const messages = useSelector((state) => state.reducer.messages);
@@ -20,24 +26,27 @@ const ConversationContainer = (props) => {
   return (
     <div style={{
       height: "100%",
+      width: sid && conversation && client ? "calc(100% - 300px)" : "100%",
       display: "flex",
       flexDirection: "column",
       backgroundColor: "#ffffff"
-    }}>
-      {sid && props.conversation && props.client ? (
+    }}
+    >
+      {sid && conversation && client ? (
         <>
           <ConversationsDetails
             convoSid={sid}
-            convo={props.conversation}
+            convo={conversation}
+            conversation={openedConversationInfo}
             participants={participants}
           />
 
           <MessagesBox
             key={sid}
             convoSid={sid}
-            convo={props.conversation}
+            convo={conversation}
             addMessage={pushMessages}
-            client={props.client}
+            client={client}
             messages={messages[sid] ?? []}
             loadingState={loadingStatus}
             participants={participants}
@@ -46,28 +55,17 @@ const ConversationContainer = (props) => {
 
           <MessageInputField
             convoSid={sid}
-            client={props.client}
+            client={client}
             messages={messages[sid]}
-            convo={props.conversation}
+            convo={conversation}
             typingData={typingData}
           />
         </>
       ) : (
-        <>
-          <div 
-            style={{
-              display: "flex",
-              height: "100%",
-              flexDirection: "column",
-              fontFamily: "Inter",
-              fontSize: 30,
-              fontWeight: 'normal',
-              color: 'black'
-            }}
-          >
-            Select a conversation on the left to get started.
-          </div>
-        </>
+        <StartConversation 
+          client={client}
+          info={openedNotConversations}
+        />
       )}
     </div>
   );

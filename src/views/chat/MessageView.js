@@ -19,8 +19,6 @@ const MessageView = (
 ) => {
   const { message, getStatus, onDeleteMessage } = props;
 
-  console.log(props);
-
   const [status, setStatus] = useState({});
   const sid = useSelector((state) => state.reducer.sid.sid);
   const participants = useSelector((state) => state.reducer.participants)[sid] ?? [];

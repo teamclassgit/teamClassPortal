@@ -1,17 +1,28 @@
+// @packages
 import { ModalBody } from "reactstrap";
-import ModalInputField from "./ModalInputField";
+
+// @scripts
 import AddParticipantFooter from "./AddParticipantFooter";
 import ConvoModal from "./ConvoModal";
+import ModalInputField from "./ModalInputField";
 
-const AddChatParticipantModal = (
-  props
-) => {
+const AddChatParticipantModal = ({
+  isModalOpen,
+  handleClose,
+  title,
+  nameInputRef,
+  name,
+  onBack,
+  setName,
+  error,
+  action
+}) => {
   return (
     <>
       <ConvoModal
-        handleClose={() => props.handleClose()}
-        isModalOpen={props.isModalOpen}
-        title={props.title}
+        handleClose={() => handleClose()}
+        isModalOpen={isModalOpen}
+        title={title}
         modalBody={
           <ModalBody>
             <h3>Add Chat participant</h3>
@@ -19,11 +30,10 @@ const AddChatParticipantModal = (
               <ModalInputField
                 label="User identity"
                 isFocused={true}
-                input={props.name}
+                input={name}
                 placeholder="exampleusername"
-                onChange={props.setName}
-                error={props.error}
-                // error_text="Enter a valid user identity."
+                onChange={setName}
+                error={error}
                 help_text="The identity used by the participant in Conversations."
               />
             </div>
@@ -31,12 +41,12 @@ const AddChatParticipantModal = (
         }
         modalFooter={
           <AddParticipantFooter
-            isSaveDisabled={!props.name.trim() || !!props.error}
-            actionName={ActionName.Save}
+            isSaveDisabled={!name.trim() || !!error}
+            actionName={'save'}
             onBack={() => {
-              props.onBack();
+              onBack();
             }}
-            action={props.action}
+            action={action}
           />
         }
       />

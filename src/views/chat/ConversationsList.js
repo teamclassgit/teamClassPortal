@@ -1,24 +1,35 @@
 // @packages
 import { useDispatch, useSelector } from "react-redux";
+import { useQuery } from '@apollo/client';
+import { useState, useEffect } from "react";
 
 // @scripts 
 import ConversationView from "./ConversationsView";
 import { unexpectedErrorNotification} from './helpers';
 import {
   addNotifications,
+  informationId,
   setLastReadIndex,
   updateCurrentConversation,
   updateParticipants,
   updateUnreadMessages
 } from '../../redux/actions/chat';
+import queryConversationsDetail from '../../graphql/QueryConversationsDetail';
 
-const ConversationsList = () => {
+const ConversationsList = ({ 
+  userData,
+  client,
+  value,
+  info,
+  setInfo
+}) => {
   const conversations = useSelector((state) => state.reducer.convo.convo);
   const messages = useSelector((state) => state.reducer.messages);
   const participants = useSelector((state) => state.reducer.participants);
   const sid = useSelector((state) => state.reducer.sid.sid);
   const typingData = useSelector((state) => state.reducer.typingData.typingData);
   const unreadMessages = useSelector((state) => state.reducer.unreadMessages.unreadMessages);
+  const infoId = useSelector((state) => state.reducer.information.info);
 
   const dispatch = useDispatch();
 
@@ -26,14 +37,17 @@ const ConversationsList = () => {
     return <div className="empty" />;
   }
 
-  const updateCurrentConvo = async (updateCurrentConvo, convo, updateParticipants) => {
-    dispatch(updateCurrentConvo(convo.sid));
+  const updateCurrentConvo = async (updateCurrentConvo, convo, updateParticipants, convoId) => {
+    dispatch(updateCurrentConvo(convo?.sid));
+    dispatch(informationId(convoId ?? null));
   
-    try {
-      const participants = await convo.getParticipants();
-      dispatch(updateParticipants(participants, convo.sid));
-    } catch (e) {
-      return Promise.reject('Error getting participants');
+    if (sid !== undefined && sid !== null) {
+      try {
+        const participants = await convo.getParticipants();
+        dispatch(updateParticipants(participants, convo?.sid));
+      } catch (e) {
+        return Promise.reject(e);
+      }
     }
   };
 
@@ -83,46 +97,86 @@ const ConversationsList = () => {
     return <div className="empty" />;
   }
 
+  useQuery(queryConversationsDetail, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      bookingIds: conversations.map((convo) => convo?.friendlyName),
+      userId: userData?._id,
+      searchText: value,
+      limit: 10
+    },
+    onCompleted: (data) => {
+      setInfo(data.getConversationsDetails);
+    },
+    pollInterval: 2000
+  });
+
+  const newConversation = (item) => conversations.find((convo) => (item?._id === convo?.channelState?.friendlyName));
+
+  useEffect(() => {
+    if (conversations.length > 0) {
+      const dataWithConversations = info?.map((item) => {
+        if (newConversation(item)) {
+          return {
+            ...newConversation(item),
+            ...item
+          };
+        } else {
+          return item;
+        }
+      });
+      setInfo(dataWithConversations);
+    }
+  }, [conversations]);
+
   return (
     <div id="conversation-list">
-      {conversations?.map((convo) => (
-        <ConversationView
-          key={convo.sid}
-          convoId={convo.sid}
-          setSid={dispatch(updateCurrentConversation)}
-          currentConvoSid={sid}
-          lastMessage={getLastMessage(
-            messages[convo?.sid] ?? [],
-            typingData[convo?.sid] ?? []
-          )}
-          messages={messages[convo.sid]}
-          typingInfo={typingData[convo.sid] ?? []}
-          myMessage={isMyMessage(messages[convo.sid])}
-          unreadMessagesCount={setUnreadMessagesCount(
-            sid,
-            convo.sid,
-            unreadMessages,
-            updateUnreadMessages
-          )}
-          updateUnreadMessages={updateUnreadMessages}
-          participants={participants[convo.sid] ?? []}
-          convo={convo}
-          onClick={async () => {
-            try {
-              dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));
-              await updateCurrentConvo(
-                updateCurrentConversation,
-                convo,
-                updateParticipants
-              );
-              dispatch(updateUnreadMessages(convo.sid, 0));
-            } catch (e) {
-              unexpectedErrorNotification(addNotifications);
-              console.log(e);
-            }
-          }}
-        />
-      ))}
+      {info?.map((convo) => {
+        return (
+          <ConversationView
+            key={convo?.sid || convo?._id}
+            longInfo={convo?._id}
+            info={info}
+            client={client}
+            userData={userData}
+            infoId={infoId}
+            convoId={convo?.sid || convo?._id}
+            setSid={updateCurrentConversation}
+            currentConvoSid={sid}
+            lastMessage={getLastMessage(
+              messages[convo?.sid] ?? [],
+              typingData[convo?.sid] ?? []
+            )}
+            messages={messages[convo.sid]}
+            typingInfo={typingData[convo.sid] ?? []}
+            myMessage={isMyMessage(messages[convo.sid])}
+            unreadMessagesCount={setUnreadMessagesCount(
+              sid,
+              convo.sid,
+              unreadMessages,
+              updateUnreadMessages
+            )}
+            updateUnreadMessages={updateUnreadMessages}
+            participants={participants[convo.sid] ?? []}
+            convo={convo}
+            otherConvo={conversations}
+            onClick={async () => {
+              try {
+                dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));
+                await updateCurrentConvo(
+                  updateCurrentConversation,
+                  conversations.find((item) => item?.sid === convo?.sid),
+                  updateParticipants,
+                  convo?._id
+                );
+                dispatch(updateUnreadMessages(convo.sid, 0));
+              } catch (e) {
+                console.log(e);
+              }
+            }}
+          />
+        );
+      })}
     </div>
   );
 };

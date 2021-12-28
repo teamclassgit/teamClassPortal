@@ -25,7 +25,7 @@ const MessageInputField = (props) => {
     setMessage("");
     setFiles([]);
     setFilesInputKey(Date.now().toString());
-  }, [props.convo]);
+  }, []);
 
   useEffect(() => {
     if (!files.length) {
@@ -116,7 +116,7 @@ const MessageInputField = (props) => {
       }
       await convo.updateLastReadMessageIndex(Math.max(...indexes));
     } catch (e) {
-      unexpectedErrorNotification(e);
+      console.log(e);
       return Promise.reject(e);
     }
   };

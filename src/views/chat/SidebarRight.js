@@ -13,7 +13,9 @@ import queryBookingById from '../../graphql/QueryBookingById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
 import { getBookingTotals } from '../../utility/Utils';
 
-const SidebarRight = () => {
+const SidebarRight = ({
+  conversation
+}) => {
   const [attendees, setAttendees] = useState([]);
   const [attendeesToInvoice, setAttendeesToInvoice] = useState(null);
   const [availableEvents, setAvailableEvents] = useState(null);
@@ -43,7 +45,7 @@ const SidebarRight = () => {
   const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById);
   const [getTeamClass, { ...classResult }] = useLazyQuery(queryClassById);
 
-  const id = "ff36ab9f-be2c-42da-9345-288b6b5feb45";
+  const id = conversation?.channelState?.friendlyName;
   useQuery(queryBookingById, {
     variables: {
       bookingId: id
@@ -163,10 +165,26 @@ const SidebarRight = () => {
         <div
           className={classnames('chat-profile-sidebar')}
         >
+          <div style={{
+            display: 'flex',
+            padding: '10.5px',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            width: '111%',
+            backgroundColor: 'white',
+            borderLeft: '1px solid #ebe9f1',
+            borderBottom: '1px solid #ebe9f1'
+          }}>
+            <h4>
+              Details
+            </h4>
+          </div>
           {bookingInfo && (
             <BookingCheckoutSummary
               teamClass={teamClass}
               chat
+              changeSpace
               bookingInfo={bookingInfo}
               requestEventDate={requestEventDate}
               calendarEvent={calendarEvent}

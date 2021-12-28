@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import {
   Menu,
-  MenuButton,
   MenuItem,
   MenuSeparator,
+  MenuButton,
   useMenuState
 } from "@twilio-paste/menu";
 import {
@@ -13,18 +13,15 @@ import {
   MediaBody
 } from "@twilio-paste/media-object";
 import { Text } from "@twilio-paste/text";
-import { MoreVertical, ArrowLeft as ArrowBackIcon, Edit, User } from "react-feather";
+import { MoreVertical, ArrowLeft as ArrowBackIcon, User, Bell } from "react-feather";
 
 // @scripts
-import ConversationTitleModal from "./ConversationTitleModal";
 import { NOTIFICATION_LEVEL } from "./Constants";
-import { unexpectedErrorNotification } from "./helpers";
 
 const SettingsMenu = (
   props
 ) => {
   const menu = useMenuState();
-  const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
   const { friendlyName, notificationLevel } = props.conversation;
   const muted = notificationLevel === NOTIFICATION_LEVEL.MUTED;
 
@@ -46,45 +43,15 @@ const SettingsMenu = (
         <MoreVertical title="Settings" />
       </MenuButton>
       <Menu {...menu} aria-label="Preferences">
-        <div style={{
-          position: 'relative',
-          left: -20
-        }}>
-          <MenuItem {...menu}>
-            <MediaObject verticalAlign="center">
-              <MediaFigure spacing="space20">
-                <Edit
-                  title="edit"
-                  color="colorTextIcon"
-                />
-              </MediaFigure>
-              <MediaBody onClick={() => setIsTitleModalOpen(true)}>
-                Edit Conversation name
-              </MediaBody>
-              <ConversationTitleModal
-                title={friendlyName}
-                type="edit"
-                isModalOpen={isTitleModalOpen}
-                onCancel={() => {
-                  setIsTitleModalOpen(false);
-                }}
-                onSave={async (title) => {
-                  try {
-                    await props.updateConvo(title);
-                  } catch {
-                    unexpectedErrorNotification(props.addNotifications);
-                  }
-                  setIsTitleModalOpen(false);
-                }}
-              />
-            </MediaObject>
-          </MenuItem>
-        </div>
         <MenuItem {...menu}>
           <MediaObject verticalAlign="center" onClick={toggleMuteConversation}>
-            <MediaFigure spacing="space20">
+            <Bell 
+              spacing="space20"
+              color={muted ? "gray" : "black"}
+              size={16}
+            >
               {muted ? 'Unmute' : 'Mute'}
-            </MediaFigure>
+            </Bell>
             <MediaBody>{muted ? "Unmute" : "Mute"} Conversation</MediaBody>
           </MediaObject>
         </MenuItem>
@@ -92,9 +59,10 @@ const SettingsMenu = (
           <MediaObject verticalAlign="center">
             <MediaFigure spacing="space20">
               <User
+                size={16}
                 decorative={false}
                 title="information"
-                color="colorTextIcon"
+                color='black'
               />
             </MediaFigure>
             <MediaBody>Manage Participants</MediaBody>
@@ -105,9 +73,10 @@ const SettingsMenu = (
           <MediaObject verticalAlign="center">
             <MediaFigure spacing="space20">
               <ArrowBackIcon
+                size={16}
                 decorative={false}
                 title="information"
-                color="colorTextError"
+                color='black'
               />
             </MediaFigure>
             <MediaBody>

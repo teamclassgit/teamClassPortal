@@ -1,27 +1,26 @@
 // @packages
 import React from "react";
-import { ArrowBackIcon } from "@twilio-paste/icons/esm/ArrowBackIcon";
+import { ArrowLeft } from "react-feather";
 import { Button, ModalFooter } from 'reactstrap';
 import { ModalFooterActions } from "@twilio-paste/modal";
 
 const AddParticipantFooter = (
   props
 ) => {
-  console.log(props);
   return (
     <>
       <ModalFooter>
         <ModalFooterActions justify="start">
           <Button
-            variant="secondary"
+            color="primary"
             onClick={() => {
               props.onBack();
             }}
           >
-            <ArrowBackIcon
+            <ArrowLeft
+              size={16}
               decorative={true}
               title="Back to manage participants"
-              size="sizeIcon10"
             />
             Back
           </Button>
@@ -29,7 +28,7 @@ const AddParticipantFooter = (
         <ModalFooterActions>
           <Button
             disabled={props.isSaveDisabled ?? false}
-            variant="primary"
+            color="primary"
             onClick={() => {
               props.action();
             }}

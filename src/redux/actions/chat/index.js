@@ -171,3 +171,12 @@ export const removeNotifications = (toIndex) => {
     });
   };
 };
+
+export const informationId = (infoId) => {
+  return dispatch => {
+    dispatch({
+      type: 'CONVERSATION_INFO',
+      payload: infoId
+    });
+  };
+};

@@ -1,30 +1,35 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-query getConversationsDetails ($bookingsIds: [String!]) {
-  getConversationsDetails (input : {bookingsIds : $bookingsIds}) {
-     _id
-     createdAt
-     status
-     customer {
-       name
-       email
-     }
-     classTitle
-     classOption   
-     coordinator {
-       name
-       email
-     }
-     attendees
-     calendarEvent {
-      day
-      month
-      year
-      fromHour
-      fromMinutes
+  query getConversationsDetails ($bookingIds: [String!], $userId: String!, $searchText: String!, $limit: Int){
+    getConversationsDetails (input: {bookingIds: $bookingIds, userId: $userId, searchText: $searchText, limit: $limit}) {
+      _id
+      createdAt
       status
+      customer {
+        name
+        email
+        company
+      }
+      classTitle
+      classOption   
+      coordinator {
+        name
+        email
+      }
+      instructor {
+        name
+        email
+      }
+      attendees
+      calendarEvent {
+        day
+        month
+        year
+        fromHour
+        fromMinutes
+        status
+      }
     }
   }
-}
 `;
