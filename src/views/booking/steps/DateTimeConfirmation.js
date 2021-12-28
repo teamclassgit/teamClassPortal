@@ -12,13 +12,14 @@ import {
   BOOKING_QUOTE_STATUS,
   DATE_AND_TIME_CONFIRMATION_STATUS,
   BOOKING_DATE_REQUESTED_STATUS,
-  BOOKING_CLOSED_STATUS
+  BOOKING_CLOSED_STATUS,
+  RUSH_FEE
 } from '../../../utility/Constants';
 import { useMutation } from '@apollo/client';
 import mutationRequestPreferredTime from '../../../graphql/MutationRequestPreferredTime';
 import { v4 as uuid } from 'uuid';
 
-const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, calendarEvent, setCalendarEvent, booking, teamClass }) => {
+const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, calendarEvent, setCalendarEvent, booking, setBooking, teamClass }) => {
   const [date, setDate] = React.useState(null);
   const [time, setTime] = React.useState(null);
   const [availableTimes, setAvailableTimes] = React.useState(null);
@@ -41,6 +42,9 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
   };
 
   const isRushDate = () => {
+    
+    if (booking && booking.classVariant && !booking.classVariant.hasKit) return false;
+
     const today = new Date();
     const reference = new Date();
     reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_CONSIDERED_RUSH_DATE); //15 days
@@ -77,10 +81,10 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
     });
 
     //a blocked slot configured by the instructor for this class
-    const isBlockedSlot = calendarEvents && calendarEvents.find(element => element.isBlockedDate === true) ? true : false;
+    const isBlockedSlot = calendarEvents && calendarEvents.find((element) => element.isBlockedDate === true) ? true : false;
 
     return {
-      hasEvents : calendarEvents && calendarEvents.length > 0 ? true : false,
+      hasEvents: calendarEvents && calendarEvents.length > 0 ? true : false,
       isBlockedSlot
     };
   };
@@ -177,7 +181,10 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         variables: calendarEventData
       });
 
-      if (result && result.data) setCalendarEvent(result.data.upsertOneCalendarEvent);
+      if (result && result.data) {
+        setCalendarEvent(result.data.upsertOneCalendarEvent);
+        setBooking(result.data.updateOneBooking);
+      }
 
       console.log('calendar event saved');
 
@@ -219,8 +226,8 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
                   <Button.Ripple
                     key={`time${index}`}
                     className="btn-sm"
-                    disabled={(isDateInThePast() || isDateTooEarly() || !element.open) && !(time === element.label)}
-                    color="primary"
+                    disabled={(isDateInThePast() || isDateTooEarly()) && !(time === element.label)}
+                    color={element.open || (time === element.label) ? 'primary' : 'secondary'}
                     tag={Col}
                     lg={4}
                     md={6}
@@ -244,7 +251,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
                 <Alert color="danger" isOpen={isRushDate()}>
                   <div className="alert-body">
                     <AlertCircle size={15} />
-                    <span className="ml-1">Rush fee may be required.</span>
+                    <span className="ml-1">Rush fee of ${RUSH_FEE} per attendee will be applied.</span>
                   </div>
                 </Alert>
               )}

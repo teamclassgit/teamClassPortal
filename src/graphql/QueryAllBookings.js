@@ -28,6 +28,7 @@ export default gql`
         paymentId
         paymentName
         status
+        createdAt
       }
       notes {
         note

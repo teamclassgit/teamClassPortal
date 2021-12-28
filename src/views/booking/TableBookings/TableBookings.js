@@ -12,7 +12,17 @@ import { useHistory } from 'react-router';
 import StatusSelector from './StatusSelector';
 import moment from 'moment';
 import { Card } from 'reactstrap';
-import { getCustomerEmail, getClassTitle, getFormattedEventDate, getCustomerPhone, getCustomerCompany, getCoordinatorName } from '../common';
+import {
+  getCustomerEmail,
+  getClassTitle,
+  getFormattedEventDate,
+  getCustomerPhone,
+  getCustomerCompany,
+  getCoordinatorName,
+  getDepositPaid,
+  getFinalPaymentPaid,
+  getLastPaymentDate
+} from '../common';
 import './TableBookings.scss';
 
 const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, filteredData, handleEditModal }) => {
@@ -117,6 +127,19 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
+      name: 'Company',
+      selector: 'customer.company',
+      sortable: true,
+      maxWidth: '200px',
+      cell: (row) => (
+        <small>
+          <div className="d-flex align-items-center">
+            <span className="d-block font-weight-bold">{getCustomerCompany(row.customerId, customers)}</span>
+          </div>
+        </small>
+      )
+    },
+    {
       name: 'Class',
       selector: 'teamClassId',
       sortable: true,
@@ -150,6 +173,39 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
+      name: 'Deposit paid',
+      selector: 'payments',
+      sortable: false,
+      maxWidth: '140px',
+      cell: (row) => (
+        <small>
+          <span className="d-block font-weight-bold">{getDepositPaid(row)}</span>
+        </small>
+      )
+    },
+    {
+      name: 'Final payment paid',
+      selector: 'payments',
+      sortable: false,
+      maxWidth: '140px',
+      cell: (row) => (
+        <small>
+          <span className="d-block font-weight-bold">{getFinalPaymentPaid(row)}</span>
+        </small>
+      )
+    },
+    {
+      name: 'Last payment date',
+      selector: 'payments',
+      sortable: false,
+      maxWidth: '140px',
+      cell: (row) => (
+        <small>
+          <span className="d-block font-weight-bold">{getLastPaymentDate(row)}</span>
+        </small>
+      )
+    },
+    {
       name: 'Actions',
       allowOverflow: true,
       maxWidth: '400px',
@@ -159,133 +215,127 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
         return row.status === 'quote' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`https://www.teamclass.com/booking/select-date-time/${row._id}`} target={'_blank'} title={'Select date and time link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
                 <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              </a>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-              </CardLink>
+              </a>
             </div>
           </small>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
+                <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+              </a>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`}
+                target={'_blank'}
+                title={'Approve/Reject link'}
+              >
                 <Avatar color="light-primary" size="sm" icon={<Check />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-                <Avatar color="light-primary" size="sm" icon={<User />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-                <Avatar color="light-primary" size="sm" icon={<Users />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              </a>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-              </CardLink>
+              </a>
             </div>
           </small>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
-                <Avatar color="light-primary" size="sm" icon={<Check />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-                <Avatar color="light-primary" size="sm" icon={<User />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-                <Avatar color="light-primary" size="sm" icon={<Users />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
+                <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+              </a>
+              <a className="mr-1" href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              </a>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-              </CardLink>
+              </a>
             </div>
           </small>
         ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`} target={'_blank'} title={'Approve/Reject link'}>
-                <Avatar color="light-primary" size="sm" icon={<Check />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-                <Avatar color="light-primary" size="sm" icon={<User />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-                <Avatar color="light-primary" size="sm" icon={<Users />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(row._id)} title={'Time / Attendees / Invoice Builder'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
+                <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+              </a>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-              </CardLink>
+              </a>
             </div>
           </small>
         ) : row.status === 'confirmed' ? (
           <small>
             <div className="d-flex">
-              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+              <a
+                className="mr-1"
+                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                target={'_blank'}
+                title={'Select date and time link'}
+              >
+                <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+              </a>
+              <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
                 <Avatar color="light-primary" size="sm" icon={<User />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+              </a>
+              <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
                 <Avatar color="light-primary" size="sm" icon={<Users />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+              </a>
+              <a className="mr-1" href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              </a>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-              </CardLink>
-            </div>
-          </small>
-        ) : row.status === 'paid' ? (
-          <small>
-            <div className="d-flex">
-              <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
-                <Avatar color="light-primary" size="sm" icon={<User />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
-                <Avatar color="light-primary" size="sm" icon={<Users />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
-                <Avatar color="secondary" size="sm" icon={<DollarSign />} />
-              </CardLink>
-              <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-              </CardLink>
+              </a>
             </div>
           </small>
         ) : (
-          row.status !== 'canceled' && (
+          row.status === 'paid' && (
             <small>
               <div className="d-flex">
-                <CardLink href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                <a
+                  className="mr-1"
+                  href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                  target={'_blank'}
+                  title={'Select date and time link'}
+                >
+                  <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+                </a>
+                <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
                   <Avatar color="light-primary" size="sm" icon={<User />} />
-                </CardLink>
-                <CardLink href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                </a>
+                <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
                   <Avatar color="light-primary" size="sm" icon={<Users />} />
-                </CardLink>
-                <CardLink href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
-                  <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-                </CardLink>
-                <CardLink href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+                </a>
+                <a className="mr-1" href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
                   <Avatar color="secondary" size="sm" icon={<DollarSign />} />
-                </CardLink>
-                <CardLink onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                </a>
+                <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                </CardLink>
+                </a>
               </div>
             </small>
           )

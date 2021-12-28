@@ -1,8 +1,14 @@
-import { Archive, BookOpen, Book, HelpCircle, Tag } from 'react-feather';
+import { Archive, BookOpen, Book, Calendar, HelpCircle, Tag } from 'react-feather';
 
 export default [
   {
-    id: 'checkout',
+    id: 'checkout0',
+    title: 'Events calendar',
+    icon: <Calendar size={20} />,
+    navLink: '/calendar'
+  },
+  {
+    id: 'checkout1',
     title: 'In progress',
     icon: <BookOpen size={20} />,
     navLink: '/bookings'
@@ -21,13 +27,13 @@ export default [
   },
   {
     id: 'checkout4',
-    title: 'General Inquiries',
+    title: 'General inquiries',
     icon: <HelpCircle size={20} />,
     navLink: '/generalInquiries'
   },
   {
     id: 'checkout5',
-    title: 'Discount Codes',
+    title: 'Discount codes',
     icon: <Tag size={20} />,
     navLink: '/discountCodes'
   }

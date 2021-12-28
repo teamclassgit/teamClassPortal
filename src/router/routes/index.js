@@ -8,6 +8,10 @@ const DefaultRoute = '/bookings';
 // @routes
 const Routes = [
   {
+    path: '/calendar',
+    component: lazy(() => import('../../views/calendar/bookingCalendarList'))
+  },
+  {
     path: '/bookings',
     component: lazy(() => import('../../views/booking/bookingList'))
   },

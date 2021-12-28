@@ -9,7 +9,25 @@ export default gql`
     $salesTaxState: String
     $updatedAt: DateTime!
     $taxExempt: Boolean!
+    $rushFee: Boolean!
+    $classMinimum: Int!
+    $classVariant: BookingClassVariantUpdateInput!
+    $rushFeeValue: Float!
   ) {
+    updateOneCalendarEvent(query: { bookingId: $bookingId }, set: { rushFee: $rushFee }) {
+      _id
+      classId
+      fromHour
+      bookingId
+      toHour
+      month
+      fromMinutes
+      status
+      year
+      day
+      toMinutes
+      rushFee
+    }
     updateOneBooking(
       query: { _id: $bookingId }
       set: {
@@ -19,6 +37,9 @@ export default gql`
         taxExempt: $taxExempt
         salesTax: $salesTax
         salesTaxState: $salesTaxState
+        classMinimum: $classMinimum
+        classVariant: $classVariant
+        rushFee: $rushFeeValue
       }
     ) {
       _id
@@ -83,6 +104,7 @@ export default gql`
       classMinimum
       pricePerson
       serviceFee
+      rushFee
       salesTax
       salesTaxState
       discount

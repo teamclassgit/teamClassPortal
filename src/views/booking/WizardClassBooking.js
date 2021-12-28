@@ -41,7 +41,7 @@ const WizardClassBooking = () => {
   const [totalAddons, setTotalAddons] = useState(0);
   const [totalCardFee, setTotalCardFee] = useState(0);
   const [totalDiscount, setTotalDiscount] = useState(0);
-  const [totalRushFee, setTotalTotalRushFee] = useState(0);
+  const [totalRushFee, setTotalRushFee] = useState(0);
   const [totalServiceFee, setTotalServiceFee] = useState(0);
   const [totalTax, setTotalTax] = useState(0);
   const [totalUnderGroupFee, setTotalUnderGroupFee] = useState(0);
@@ -109,12 +109,12 @@ const WizardClassBooking = () => {
   const getTotals = () => {
     if (!bookingInfo) return;
 
-    const bookingTotals = getBookingTotals(bookingInfo, false, tax, true);
+    const bookingTotals = getBookingTotals(bookingInfo, calendarEvent && calendarEvent.rushFee ? true : false, tax, true);
 
     setTotalTax(bookingTotals.tax.toFixed(2));
     setTotalWithoutFee(bookingTotals.withoutFee.toFixed(2));
     setTotalServiceFee(bookingTotals.fee.toFixed(2));
-    setTotalTotalRushFee(bookingTotals.rushFee.toFixed(2));
+    setTotalRushFee(bookingTotals.rushFee.toFixed(2));
     setTotalUnderGroupFee(bookingTotals.underGroupFee.toFixed(2));
     setTotal(bookingTotals.finalValue.toFixed(2));
     setTotalAddons(bookingTotals.addons.toFixed(2));
@@ -128,12 +128,15 @@ const WizardClassBooking = () => {
       bookingInfo.payments &&
       bookingInfo.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
 
-    const initialDepositPaid = !isNaN(bookingTotals.customDeposit)
+    const initialDepositPaid = bookingTotals.customDeposit
       ? bookingTotals.customDeposit
       : depositsPaid && depositsPaid.length > 0
-        ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100
-        : 0;
-
+        ? depositsPaid.reduce(
+          (previous, current) => previous + current.amount,
+          0
+        ) / 100
+        : 0; //amount is in cents
+        
     const finalPayment = bookingTotals.finalValue - initialDepositPaid;
     setInitialDeposit(initialDepositPaid.toFixed(2));
     setPayment(finalPayment.toFixed(2));
@@ -165,7 +168,6 @@ const WizardClassBooking = () => {
         }
       });
 
-      getTotals();
     }
   }, [bookingInfo]);
 
@@ -184,6 +186,7 @@ const WizardClassBooking = () => {
           calendarEvent={calendarEvent}
           setCalendarEvent={setCalendarEvent}
           booking={bookingInfo}
+          setBooking={setBookingInfo}
           teamClass={teamClass}
         />
       )
@@ -244,10 +247,19 @@ const WizardClassBooking = () => {
           setBooking={setBookingInfo}
           teamClass={teamClass}
           realCountAttendees={realCountAttendees}
+          calendarEvent={calendarEvent}
         ></InvoiceBuilder>
       )
     }
   ];
+
+  const isRushDate = () => {
+    return calendarEvent && calendarEvent.rushFee;
+  };
+
+  React.useEffect(() => {
+    if (bookingInfo) getTotals();
+  }, [bookingInfo, calendarEvent, tax]);
 
   return bookingInfo && customer && teamClass ? (
     <Row>
@@ -289,6 +301,8 @@ const WizardClassBooking = () => {
               deposit={initialDeposit}
               showFinalPaymentLine={true}
               finalPayment={payment}
+              isRushDate={() => isRushDate()}
+              totalRushFee={totalRushFee}
               attendeesToInvoice={attendeesToInvoice || bookingInfo.attendees}
             />
           )}

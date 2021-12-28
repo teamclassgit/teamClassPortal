@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react';
 import NumberInput from '@components/number-input';
 import { DollarSign, MinusCircle, PlusCircle } from 'react-feather';
-import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
-import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText } from 'reactstrap';
+import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, RUSH_FEE, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
+import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText, InputGroup } from 'reactstrap';
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
 import Avatar from '@components/avatar';
 
-const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking }) => {
+const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking, calendarEvent }) => {
   const defaultInvoiceItems = [
     {
       item: 'Initial Deposit',
@@ -31,6 +31,8 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
 
   const [processing, setProcessing] = React.useState(false);
   const [taxExempt, setTaxExempt] = React.useState(false);
+  const [rushFee, setRushFee] = React.useState(false);
+  const [classMinimum, setClassMinimum] = React.useState(1);
   const [formValid, setFormValid] = React.useState(true);
   const [invoiceItems, setInvoiceItems] = React.useState([]);
   const [discount, setDiscount] = React.useState(0);
@@ -60,7 +62,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       const minimum = booking.classVariant ? booking.classVariant.minimum : booking.classMinimum;
       //pricePerson is currently in use for group based pricing too
       const price = booking.classVariant ? booking.classVariant.pricePerson : booking.pricePerson;
-      const attendees = realCountAttendees > booking.attendees ? realCountAttendees : booking.attendees;
+      const attendees = realCountAttendees > 0 ? realCountAttendees : booking.attendees;
 
       defaultInvoiceItems[1].unitPrice = price;
       defaultInvoiceItems[1].units = attendees > minimum ? attendees : minimum;
@@ -73,7 +75,9 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
 
     setHasFinalPayment(finalPaymentPaid ? true : false);
     setTaxExempt(booking && booking.taxExempt ? true : false);
-  }, [booking]);
+    setRushFee(calendarEvent && calendarEvent.rushFee ? true : false);
+    setClassMinimum(booking && booking.classVariant ? booking.classVariant.minimum : 1);
+  }, [booking, calendarEvent]);
 
   React.useEffect(() => {
     if (invoiceItems) {
@@ -112,12 +116,19 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
     setProcessing(true);
 
     try {
+      const classVariantChanges = { ...booking.classVariant };
+      classVariantChanges.minimum = classMinimum;
+
       const result = await updateBooking({
         variables: {
           bookingId: booking._id,
           invoiceDetails: invoiceItems,
           discount: discount / 100,
           taxExempt,
+          rushFee,
+          classMinimum,
+          rushFeeValue : RUSH_FEE,
+          classVariant: classVariantChanges,
           salesTax: taxExempt ? 0 : booking.salesTax > 0 ? booking.salesTax : SALES_TAX,
           salesTaxState: taxExempt ? '' : booking.salesTax > 0 && booking.salesTaxState ? booking.salesTaxState : SALES_TAX_STATE,
           updatedAt: new Date()
@@ -142,6 +153,18 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       <Row>
         <Col lg={12}>
           <div align="right" className="pb-2">
+            <CustomInput
+              type="switch"
+              id="rushFee"
+              onClick={(e) => {
+                setRushFee(e.target.checked);
+              }}
+              checked={rushFee}
+              className="custom-control-secondary"
+              label="Rush Fee?"
+              name="rushFee"
+              inline
+            />
             <CustomInput
               type="switch"
               id="taxExempt"
@@ -287,8 +310,23 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
             <Table>
               <thead>
                 <tr>
-                  <th width="70%"></th>
-                  <th width="30%">
+                  <th width="60%"></th>
+                  <th width="20%">
+                    <div align="right">
+                      <CardText className="mb-0">Class Minimum (#)</CardText>
+                      <NumberInput
+                        min={1}
+                        max={100}
+                        value={(booking && booking.classVariant.minimum) || 1}
+                        size="sm"
+                        required={true}
+                        onChange={(newValue) => {
+                          setClassMinimum(newValue);
+                        }}
+                      />
+                    </div>
+                  </th>
+                  <th width="20%">
                     <div align="center">
                       <CardText className="mb-0">Discount (%)</CardText>
                       <NumberInput
@@ -296,7 +334,6 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                         max={100}
                         value={booking.discount > 0 ? booking.discount * 100 : 0}
                         size="sm"
-                        className="w-50"
                         required={true}
                         onChange={(newValue) => {
                           setDiscount(newValue);

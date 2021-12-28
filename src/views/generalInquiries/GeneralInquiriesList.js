@@ -22,7 +22,8 @@ const GeneralInquiresList = () => {
   const { ...allQuestions } = useQuery(queryAllQuestions, {
     fetchPolicy: 'no-cache',
     variables: {
-      filter: generalInquiriesFilter
+      filter: generalInquiriesFilter,
+      limit
     },
     pollInterval: 300000
   });
