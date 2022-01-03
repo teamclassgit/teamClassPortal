@@ -1,13 +1,11 @@
 // @packages
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from '@apollo/client';
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 // @scripts 
 import ConversationView from "./ConversationsView";
-import { unexpectedErrorNotification} from './helpers';
 import {
-  addNotifications,
   informationId,
   setLastReadIndex,
   updateCurrentConversation,
@@ -17,19 +15,19 @@ import {
 import queryConversationsDetail from '../../graphql/QueryConversationsDetail';
 
 const ConversationsList = ({ 
-  userData,
   client,
-  value,
   info,
-  setInfo
+  setInfo,
+  userData,
+  value
 }) => {
   const conversations = useSelector((state) => state.reducer.convo.convo);
+  const infoId = useSelector((state) => state.reducer.information.info);
   const messages = useSelector((state) => state.reducer.messages);
   const participants = useSelector((state) => state.reducer.participants);
   const sid = useSelector((state) => state.reducer.sid.sid);
   const typingData = useSelector((state) => state.reducer.typingData.typingData);
   const unreadMessages = useSelector((state) => state.reducer.unreadMessages.unreadMessages);
-  const infoId = useSelector((state) => state.reducer.information.info);
 
   const dispatch = useDispatch();
 
@@ -37,7 +35,12 @@ const ConversationsList = ({
     return <div className="empty" />;
   }
 
-  const updateCurrentConvo = async (updateCurrentConvo, convo, updateParticipants, convoId) => {
+  const updateCurrentConvo = async (
+    updateCurrentConvo,
+    convo, 
+    updateParticipants, 
+    convoId
+  ) => {
     dispatch(updateCurrentConvo(convo?.sid));
     dispatch(informationId(convoId ?? null));
   
@@ -134,22 +137,22 @@ const ConversationsList = ({
       {info?.map((convo) => {
         return (
           <ConversationView
+            client={client}
+            convoId={convo?.sid || convo?._id}
+            currentConvoSid={sid}
+            info={info}
+            infoId={infoId}
             key={convo?.sid || convo?._id}
             longInfo={convo?._id}
-            info={info}
-            client={client}
-            userData={userData}
-            infoId={infoId}
-            convoId={convo?.sid || convo?._id}
             setSid={updateCurrentConversation}
-            currentConvoSid={sid}
+            userData={userData}
             lastMessage={getLastMessage(
               messages[convo?.sid] ?? [],
               typingData[convo?.sid] ?? []
             )}
             messages={messages[convo.sid]}
-            typingInfo={typingData[convo.sid] ?? []}
             myMessage={isMyMessage(messages[convo.sid])}
+            typingInfo={typingData[convo.sid] ?? []}
             unreadMessagesCount={setUnreadMessagesCount(
               sid,
               convo.sid,
@@ -159,7 +162,7 @@ const ConversationsList = ({
             updateUnreadMessages={updateUnreadMessages}
             participants={participants[convo.sid] ?? []}
             convo={convo}
-            otherConvo={conversations}
+            otherConvo={conversations.find((item) => item?.sid === convo?.sid)}
             onClick={async () => {
               try {
                 dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));

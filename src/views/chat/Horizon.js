@@ -1,12 +1,11 @@
-import { Box, Text } from "@twilio-paste/core";
-import { useTheme } from "@twilio-paste/theme";
+// @packages
+import { Text } from "@twilio-paste/core";
 import React from "react";
 
 const Horizon = React.forwardRef(
   ({ amount }, ref) => {
-    const theme = useTheme();
     return (
-      <Box
+      <div
         ref={ref}
         style={{
           textAlign: "center",
@@ -20,7 +19,7 @@ const Horizon = React.forwardRef(
         <Text as="span" color="colorTextLink">
           {amount} new {amount > 1 ? "messages" : "message"}
         </Text>
-      </Box>
+      </div>
     );
   }
 );

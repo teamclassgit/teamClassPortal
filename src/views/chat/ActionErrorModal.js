@@ -1,21 +1,22 @@
+// @packages
+import React from "react";
+import { Button, ModalBody, Modal, ModalFooter, ModalHeader } from "reactstrap";
 import {
   ModalFooterActions,
   ModalHeading
 } from "@twilio-paste/modal";
-import { ModalBody, Button, Modal, ModalFooter, ModalHeader } from "reactstrap";
-import React from "react";
 
 const ActionErrorModal = ({
+  error,
   errorText,
   isOpened,
-  onClose,
-  error
+  onClose
 }) => (
   <Modal
     ariaLabelledby="name-change-error"
     isOpen={isOpened}
-    size="default"
     onDismiss={onClose}
+    size="default"
   >
     <ModalHeader>
       <ModalHeading as="h3">{errorText.title}</ModalHeading>

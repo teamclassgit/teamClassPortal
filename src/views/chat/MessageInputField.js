@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import MessageInput from "./MessageInput";
 import SendMessageButton from "./SendMessageButton";
 import { MAX_FILE_SIZE } from "./Constants";
-import { unexpectedErrorNotification } from "./helpers";
 import {
   addMessages
 } from '../../redux/actions/chat';

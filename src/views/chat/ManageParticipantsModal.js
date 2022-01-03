@@ -1,17 +1,18 @@
+// @packages
 import {
-  div,
   TBody,
   Td,
   Th,
   THead,
   Tr
 } from "@twilio-paste/core";
-import { ModalBody, Table } from "reactstrap";
-import { MenuButton, Menu, MenuItem, useMenuState } from "@twilio-paste/menu";
-import { Text } from "@twilio-paste/text";
 import Avatar from '@components/avatar';
-import { User, Anchor, ChevronDown, Trash } from 'react-feather';
+import { MenuButton, Menu, MenuItem, useMenuState } from "@twilio-paste/menu";
+import { ModalBody, Table } from "reactstrap";
+import { Text } from "@twilio-paste/text";
+import { User, ChevronDown, Trash } from 'react-feather';
 
+// @scripts
 import ConvoModal from "./ConvoModal";
 
 const ManageParticipantsModal = (

@@ -1,8 +1,11 @@
+// @packages
+import { CheckSquare, Send, Frown, BookOpen } from 'react-feather';
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
+
+// @scripts
 import MessageActions from "./MessageActions";
-import { CheckSquare, Send, Frown, BookOpen } from 'react-feather';
+import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
 
 const statusStyle = {
   display: "inline-block",
@@ -14,12 +17,18 @@ const statusIconStyle = {
   marginLeft: "10px"
 };
 
-const MessageView = (
-  props
-) => {
-  const { message, getStatus, onDeleteMessage } = props;
-
+const MessageView = ({
+  message,
+  getStatus,
+  onDeleteMessage,
+  author,
+  messageTime,
+  topPadding,
+  lastMessageBottomPadding,
+  sameAuthorAsPrev
+}) => {
   const [status, setStatus] = useState({});
+  
   const sid = useSelector((state) => state.reducer.sid.sid);
   const participants = useSelector((state) => state.reducer.participants)[sid] ?? [];
 
@@ -33,50 +42,50 @@ const MessageView = (
 
   return (
     <>
-      {props.author === localStorage.getItem("username") && (
+      {author === localStorage.getItem("username") && (
         <>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               alignItems: "flex-end",
-              paddingTop: props.topPadding,
-              paddingBottom: props.lastMessageBottomPadding
+              paddingTop: topPadding,
+              paddingRight: '8%',
+              paddingBottom: lastMessageBottomPadding,
+              marginBottom: "10px"
             }}
           >
             <div
               style={{
                 backgroundColor: 'rgb(2, 99, 224)',
-                color: 'white',
-                fontFamily: 'monospace',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                lineHeight: '1.2',
-                paddingTop: '5px',
-                marginBottom: '10px',
-                paddingBottom: '10px',
-                paddingLeft: '10px',
-                paddingRight: '10px',
-                borderRadius: '5px'
+                color: 'rgb(255, 255, 255)',
+                fontSize: '0.875rem',
+                fontWeight: '400',
+                lineHeight: '1.25rem',
+                paddingTop: '0.75rem',
+                paddingBottom: '0.75rem',
+                paddingLeft: '0.5rem',
+                paddingRight: '0.5rem',
+                borderRadius: '0.5rem'
               }}
             >
-              {props.message}
+              {message}
               <div
                 style={{
                   display: "flex",
                   flexGrow: 10,
-                  paddingTop: "5px",
+                  paddingTop: "0.5rem",
                   justifyContent: "space-between"
                 }}
               >
                 <div style={{
-                  fontSize: "12px"
+                  fontSize: "0.75rem"
                 }}>
-                  {props.messageTime}
+                  {messageTime}
                 </div>
                 <div
                   style={{
-                    paddingLeft: "10px",
+                    paddingLeft: "0.5rem",
                     display: "flex"
                   }}
                 >
@@ -149,57 +158,58 @@ const MessageView = (
           </div>
         </>
       )}
-      {props.author !== localStorage.getItem("username") && (
+      {author !== localStorage.getItem("username") && (
         <div
           style={{
+            alignItems: "flex-start",
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
-            paddingTop: props.topPadding,
-            paddingBottom: props.lastMessageBottomPadding
+            paddingBottom: lastMessageBottomPadding,
+            paddingLeft: 16,
+            paddingRight: 16,
+            paddingTop: topPadding
           }}
         >
           <div
             style={{
-              color: 'blue',
-              fontFamily: 'monospace',
-              fontSize: '14px',
-              fontWeight: 'bold',
-              lineHeight: '1.5'
+              color: 'rgb(96, 107, 133)',
+              fontSize: '0.875rem',
+              fontWeight: '400',
+              lineHeight: '1.25rem'
             }}
           >
-            {props.sameAuthorAsPrev && props.author}
+            {sameAuthorAsPrev && author}
           </div>
           <div
             style={{
               display: "flex",
-              flexDirection: "row"
+              flexDirection: "row",
+              marginBottom: "10px"
             }}
           >
             <div
               style={{
-                backgroundColor: 'white',
-                color: 'blue',
-                fontFamily: 'monospace',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                lineHeight: '1.5',
-                paddingTop: '5px',
-                paddingBottom: '5px',
-                paddingLeft: '10px',
-                paddingRight: '10px',
-                borderRadius: '5px'
+                backgroundColor: 'rgb(244, 244, 246)',
+                color: 'rgb(18, 28, 45)',
+                fontSize: '0.875rem',
+                fontWeight: '400',
+                lineHeight: '1.25rem',
+                paddingTop: '0.75rem',
+                paddingBottom: '0.75rem',
+                paddingLeft: '0.5rem',
+                paddingRight: '0.5rem',
+                borderRadius: '0.5rem'
               }}
             >
-              {props.message}
+              {message}
               <div
                 style={{
-                  paddingTop: "5px",
-                  fontSize: "12px",
-                  color: 'blue'
+                  paddingTop: "0.5rem",
+                  fontSize: "0.75rem",
+                  color: 'rgb(96, 107, 133)'
                 }}
               >
-                {props.messageTime}
+                {messageTime}
               </div>
             </div>
           </div>

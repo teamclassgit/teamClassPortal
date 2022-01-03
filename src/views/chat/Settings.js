@@ -11,17 +11,12 @@ import ManageParticipantsModal from "./ManageParticipantsModal";
 import SettingsMenu from "./SettingsMenu";
 import { addParticipant, removeParticipant } from "./Apis";
 import {
-  successNotification,
-  unexpectedErrorNotification
-} from "./helpers";
-import {
   updateCurrentConversation,
   updateConversation, 
   addNotifications,
   informationId
 } from "../../redux/actions/chat";
 import {
-  CONVERSATION_MESSAGES,
   SMS_PREFIX,
   WHATSAPP_PREFIX
 } from "./Constants";
@@ -42,13 +37,13 @@ const Settings = ({
 
   const dispatch = useDispatch();
 
-  const handleChatOpen = () => setIsAddChatOpen(true);
   const handleChatClose = () => setIsAddChatOpen(false);
+  const handleChatOpen = () => setIsAddChatOpen(true);
   const handleParticipantClose = () => setIsManageParticipantOpen(false);
-  const handleSMSOpen = () => setIsAddSMSOpen(true);
   const handleSMSClose = () => setIsAddSMSOpen(false);
-  const handleWhatsAppOpen = () => setIsAddWhatsAppOpen(true);
+  const handleSMSOpen = () => setIsAddSMSOpen(true);
   const handleWhatsAppClose = () => setIsAddWhatsAppOpen(false);
+  const handleWhatsAppOpen = () => setIsAddWhatsAppOpen(true);
 
   const nameInputRef = createRef();
 
@@ -249,7 +244,7 @@ const Settings = ({
           height="100%"
           width="100%"
         >
-          <Spinner size='20' decorative={false} title="Loading" />
+          <Spinner size='20' title="Loading" />
         </div>
       ) : null}
     </>

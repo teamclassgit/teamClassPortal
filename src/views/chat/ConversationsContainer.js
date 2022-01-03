@@ -35,7 +35,6 @@ const ConversationContainer = ({
       {sid && conversation && client ? (
         <>
           <ConversationsDetails
-            convoSid={sid}
             convo={conversation}
             conversation={openedConversationInfo}
             participants={participants}
@@ -47,7 +46,7 @@ const ConversationContainer = ({
             convo={conversation}
             addMessage={pushMessages}
             client={client}
-            messages={messages[sid] ?? []}
+            messages={messages[sid]}
             loadingState={loadingStatus}
             participants={participants}
             lastReadIndex={lastReadIndex}

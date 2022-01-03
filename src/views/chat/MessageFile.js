@@ -1,9 +1,8 @@
 // @packages
 import { Text, Truncate } from "@twilio-paste/core";
 import { Button, Spinner } from 'reactstrap';
-import { CloseIcon } from "@twilio-paste/icons/cjs/CloseIcon";
+import { X, File } from "react-feather";
 import { DownloadIcon } from "@twilio-paste/icons/cjs/DownloadIcon";
-import { ProductAssetsIcon } from "@twilio-paste/icons/cjs/ProductAssetsIcon";
 import { useEffect, useState } from "react";
 
 // @scripts
@@ -131,11 +130,10 @@ const MessageFile = ({
               />
             )
           ) : (
-            <ProductAssetsIcon
-              decorative={false}
+            <File
               title="Open File"
-              size="sizeIcon60"
-              color="colorTextLink"
+              size={25}
+              color="black"
               style={{
                 fontWeight: "bold"
               }}
@@ -164,20 +162,29 @@ const MessageFile = ({
         </div>
 
         {onRemove ? (
-          <Button variant="link" onClick={onRemove}>
-            <div
+          <Button 
+            variant="link" 
+            onClick={onRemove} 
+            color="primary" 
+            size="sm"
+            style={{
+              borderRadius:'300px',
+              width: 10,
+              height: 30,
+              position: 'relative',
+              top: '-40px'
+            }}
+          >
+            <div 
               style={{
-                backgroundColor: "#06033A",
-                borderRadius: "10px",
-                top: "-45px",
-                position: "absolute",
-                left: "2%"
+                marginLeft: '-9.2px',
+                marginTop: '-2px'
               }}
             >
-              <CloseIcon
-                decorative={false}
+              <X
                 title="Remove file"
-                color="colorTextBrandInverse"
+                color="white"
+                size={20}
               />
             </div>
           </Button>

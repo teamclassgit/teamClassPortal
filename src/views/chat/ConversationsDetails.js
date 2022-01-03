@@ -1,12 +1,12 @@
 // @packages
 import { Badge } from "reactstrap";
+import React from "react";
 
 // @scripts
 import Settings from "./Settings";
 
 const ConversationDetails = ({
   convo,
-  convoSid,
   participants,
   conversation
 }) => {

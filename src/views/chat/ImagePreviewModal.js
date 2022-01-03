@@ -1,14 +1,14 @@
-import { Box, ModalBody, Text } from "@twilio-paste/core";
+// @packages
+import Avatar from '@components/avatar';
+import { DownloadIcon } from "@twilio-paste/icons/cjs/DownloadIcon";
+import { ModalBody, Button, Modal, ModalHeader } from "reactstrap";
+import { Text } from "@twilio-paste/core";
+import { UserIcon } from "@twilio-paste/icons/cjs/UserIcon";
 import {
   MediaBody,
   MediaFigure,
   MediaObject
 } from "@twilio-paste/media-object";
-import { UserIcon } from "@twilio-paste/icons/cjs/UserIcon";
-import Avatar from '@components/avatar';
-import { DownloadIcon } from "@twilio-paste/icons/cjs/DownloadIcon";
-
-import { Button, Modal, ModalHeader }  from 'reactstrap';
 
 const ImagePreviewModal = ({
   image,
@@ -25,7 +25,7 @@ const ImagePreviewModal = ({
     size="default"
   >
     <ModalHeader>
-      <Box
+      <div
         style={{
           display: "flex",
           width: "100%",
@@ -60,7 +60,7 @@ const ImagePreviewModal = ({
           />
           Download
         </Button>
-      </Box>
+      </div>
     </ModalHeader>
     <ModalBody
       style={{

@@ -1,7 +1,10 @@
+// @packages
 import { ModalBody, Box } from "@twilio-paste/core";
-import ModalInputField from "./ModalInputField";
+
+// @scripts
 import AddParticipantFooter from "./AddParticipantFooter";
 import ConvoModal from "./ConvoModal";
+import ModalInputField from "./ModalInputField";
 
 const AddWhatsAppParticipantModal =
   (props) => {
@@ -16,22 +19,22 @@ const AddWhatsAppParticipantModal =
               <h3>Add WhatsApp participant</h3>
               <Box as="form">
                 <ModalInputField
-                  isFocused={true}
-                  label="WhatsApp number"
-                  input={props.name}
-                  placeholder="123456789012"
-                  onChange={props.setName}
                   error={props.error}
                   help_text="The WhatsApp phone number of the participant."
+                  input={props.name}
+                  isFocused={true}
+                  label="WhatsApp number"
+                  onChange={props.setName}
+                  placeholder="123456789012"
                   prefixType="WhatsApp"
                 />
                 <ModalInputField
-                  label="Proxy phone number"
-                  input={props.proxyName}
-                  placeholder="123456789012"
-                  onChange={props.setProxyName}
                   error={props.errorProxy}
                   help_text="The Twilio phone number used by the participant in Conversations."
+                  input={props.proxyName}
+                  label="Proxy phone number"
+                  onChange={props.setProxyName}
+                  placeholder="123456789012"
                   prefixType="WhatsApp"
                 />
               </Box>

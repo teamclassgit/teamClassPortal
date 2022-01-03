@@ -3,8 +3,6 @@ import { HideIcon } from "@twilio-paste/icons/esm/HideIcon";
 import { ShowIcon } from "@twilio-paste/icons/esm/ShowIcon";
 import { Label, Input, Button } from "reactstrap";
 
-import styles from './chatStyles/chatStyles.module.scss';
-
 const PrefixType = {
   SMS: "SMS",
   WhatsApp: "WhatsApp"
@@ -27,7 +25,7 @@ const ModalInputField = (props) => {
   return (
     <>
       <Label htmlFor="modal-input">
-        <div className={styles.modalInputLabel}>{props.label}</div>
+        <div>{props.label}</div>
       </Label>
       <Input
         autoFocus={props.isFocused ?? false}

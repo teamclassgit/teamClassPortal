@@ -1,7 +1,10 @@
+// @packages
 import { useState, useLayoutEffect } from "react";
+
+// @scripts
 import MessageFile from "./MessageFile";
 
-function useWindowSize () {
+const useWindowSize = () => {
   const [size, setSize] = useState(0);
   useLayoutEffect(() => {
     function updateSize () {
@@ -12,9 +15,9 @@ function useWindowSize () {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
   return size;
-}
+};
 
-function getTextWidth (text) {
+const getTextWidth = (text) => {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
   if (context !== null && context !== undefined) {
@@ -22,7 +25,7 @@ function getTextWidth (text) {
     return context.measureText(text).width;
   }
   return 0;
-}
+};
 
 const MessageInput = (
   props

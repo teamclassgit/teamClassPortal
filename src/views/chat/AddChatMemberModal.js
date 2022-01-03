@@ -7,15 +7,14 @@ import ConvoModal from "./ConvoModal";
 import ModalInputField from "./ModalInputField";
 
 const AddChatParticipantModal = ({
-  isModalOpen,
+  action,
+  error,
   handleClose,
-  title,
-  nameInputRef,
+  isModalOpen,
   name,
   onBack,
   setName,
-  error,
-  action
+  title
 }) => {
   return (
     <>
@@ -28,13 +27,13 @@ const AddChatParticipantModal = ({
             <h3>Add Chat participant</h3>
             <div as="form">
               <ModalInputField
-                label="User identity"
-                isFocused={true}
-                input={name}
-                placeholder="exampleusername"
-                onChange={setName}
                 error={error}
                 help_text="The identity used by the participant in Conversations."
+                input={name}
+                isFocused={true}
+                label="User identity"
+                onChange={setName}
+                placeholder="exampleusername"
               />
             </div>
           </ModalBody>

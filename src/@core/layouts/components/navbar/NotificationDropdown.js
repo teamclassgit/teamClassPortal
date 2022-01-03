@@ -18,8 +18,6 @@ import { useHistory } from 'react-router';
 const NotificationDropdown = ({
   filterData
 }) => {
-  /*eslint-disable */
-
   const history = useHistory();
 
   const renderNotificationItems = () => {
@@ -32,7 +30,7 @@ const NotificationDropdown = ({
           wheelPropagation: false
         }}
       >
-        {filterData.map((item, index) => {
+        {filterData?.map((item, index) => {
           return (
             <a key={index} className='d-flex' href='/' onClick={e => e.preventDefault()}>
               <Media
@@ -47,16 +45,16 @@ const NotificationDropdown = ({
                       {...(item.img
                         ? { img: item.img, imgHeight: 32, imgWidth: 32 }
                         : item.avatarContent
-                        ? {
+                          ? {
                             content: item.avatarContent,
                             color: item.color
                           }
-                        : item.avatarIcon
-                        ? {
-                            icon: item.avatarIcon,
-                            color: item.color
-                          }
-                        : null)}
+                          : item.avatarIcon
+                            ? {
+                              icon: item.avatarIcon,
+                              color: item.color
+                            }
+                            : null)}
                     />
                   </Media>
                   <Media body>
@@ -68,23 +66,23 @@ const NotificationDropdown = ({
                 </>
               </Media>
             </a>
-          )
+          );
         })}
       </PerfectScrollbar>
-    )
-  }
+    );
+  };
 
   const handleChatClick = () => { 
     history.push('/chat');
-  }
+  };
 
   return (
     <UncontrolledDropdown tag='li' className='dropdown-notification nav-item mr-25'>
       <DropdownToggle tag='a' className='nav-link' href='/' onClick={e => e.preventDefault()}>
         <Bell size={21} />
-        {filterData.length > 0 && (
+        {filterData?.length > 0 && (
           <Badge pill color='danger' className='badge-up'>
-            {filterData.length}
+            {filterData?.length}
           </Badge>
         )}
       </DropdownToggle>
@@ -92,9 +90,9 @@ const NotificationDropdown = ({
         <li className='dropdown-menu-header'>
           <DropdownItem className='d-flex' tag='div' header>
             <h4 className='notification-title mb-0 mr-auto'>Notifications</h4>
-            {filterData.length > 0 && (
+            {filterData?.length > 0 && (
               <Badge tag='div' color='light-primary' pill>
-                {`${filterData.length} New`}
+                {`${filterData?.length} New`}
               </Badge>
             )}
           </DropdownItem>

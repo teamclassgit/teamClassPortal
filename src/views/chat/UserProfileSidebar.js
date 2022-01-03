@@ -30,7 +30,10 @@ const UserProfileSidebar = ({
           <span className='user-post'>{user.role}</span>
         </div>
       </header>
-      <PerfectScrollbar className='user-profile-sidebar-area' options={{ wheelPropagation: false }}>
+      <PerfectScrollbar 
+        className='user-profile-sidebar-area' 
+        options={{ wheelPropagation: false }}
+      >
         <h6 className='section-label mb-1'>About</h6>
         <p>{user.about}</p>
         <div className='personal-info'>

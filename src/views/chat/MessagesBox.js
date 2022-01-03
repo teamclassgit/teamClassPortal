@@ -14,19 +14,16 @@ import MessageList from "./MessageList";
 import { CONVERSATION_PAGE_SIZE } from "./Constants";
 import { getMessages } from "./Apis";
 
-// @styles
-import styles from "./chatStyles/chatStyles.module.scss";
-
 export async function loadMessages (
   conversation,
-  currentMessages = [],
-  addMessage
+  addMessage,
+  currentMessages = []
 ) {
   const convoSid = conversation.sid;
   if (!(convoSid in currentMessages)) {
     const paginator = await getMessages(conversation);
     const messages = paginator.items;
-    addMessage(convoSid, messages);
+    dispatch(addMessage(convoSid, messages));
   }
 }
 
@@ -91,7 +88,7 @@ const MessagesBox = (props) => {
     setLoading(true);
     setPaginator(result);
     setHasMore(result.hasPrevPage);
-    addMessage(convo.sid, moreMessages);
+    dispatch(addMessage(convo.sid, moreMessages));
   };
 
   return (
@@ -114,7 +111,7 @@ const MessagesBox = (props) => {
         next={fetchMore}
         hasMore={!loading && hasMore}
         loader={
-          <div className={styles.paginationSpinner}>
+          <div>
             <Spinner decorative={false} size={'12'} title="Loading" />
           </div>
         }
@@ -128,7 +125,14 @@ const MessagesBox = (props) => {
         inverse={true}
         scrollThreshold="20px"
       >
-        <div ref={listRef} style={{ overflow: "scroll", overflowY: "hidden", height: '110%' }}>
+        <div 
+          ref={listRef} 
+          style={{ 
+            overflow: "scroll", 
+            overflowY: "hidden", 
+            height: '110%' 
+          }}
+        >
           <MessageList
             messages={messages}
             conversation={convo}

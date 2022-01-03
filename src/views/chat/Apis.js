@@ -3,10 +3,7 @@ import axios from "axios";
 
 // @scripts
 import {
-  CONVERSATION_MESSAGES,
-  CONVERSATION_PAGE_SIZE,
-  PARTICIPANT_MESSAGES,
-  UNEXPECTED_ERROR_MESSAGE
+  CONVERSATION_PAGE_SIZE
 } from "./Constants";
 import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
 
@@ -132,6 +129,7 @@ export const getMessages = async (
   conversation
 ) => await conversation.getMessages(CONVERSATION_PAGE_SIZE);
 
+// @AddParticipant
 export async function addParticipant (
   name,
   proxyName,
@@ -157,26 +155,21 @@ export async function addParticipant (
       const result = await convo.addNonChatParticipant(proxyName, name, {
         friendlyName: name
       });
-      successNotification({
-        message: 'Participant added'
-      });
-
+      console.log('success');
       return result;
     } catch (e) {
       console.log(e);
-
       return Promise.reject(e);
     }
   }
   return Promise.reject('Error');
 }
 
+// @RemoveParticipant
 export const removeParticipant = async (
   conversation,
   participant
 ) => {
-  console.log(participant);
-  console.log(conversation);
   try {
     await conversation.removeParticipant(participant);
     console.log('success');

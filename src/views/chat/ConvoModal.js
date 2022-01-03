@@ -1,22 +1,29 @@
-import { createRef } from "react";
+// @packages
 import { Modal, ModalHeader } from "reactstrap";
+import { createRef } from "react";
 
-const ConvoModal = (props) => {
+const ConvoModal = ({
+  handleClose,
+  isModalOpen,
+  modalBody,
+  modalFooter,
+  title
+}) => {
   const nameInputRef = createRef();
 
   return (
     <Modal
       ariaLabelledby="add-convo-modal"
-      isOpen={props.isModalOpen}
-      onDismiss={() => props.handleClose()}
+      isOpen={isModalOpen}
+      onDismiss={() => handleClose()}
       initialFocusRef={nameInputRef}
       size="default"
     >
       <ModalHeader>
-        {props.title}
+        {title}
       </ModalHeader>
-      {props.modalBody}
-      {props.modalFooter}
+      {modalBody}
+      {modalFooter}
     </Modal>
   );
 };

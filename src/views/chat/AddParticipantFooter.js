@@ -4,22 +4,22 @@ import { ArrowLeft } from "react-feather";
 import { Button, ModalFooter } from 'reactstrap';
 import { ModalFooterActions } from "@twilio-paste/modal";
 
-const AddParticipantFooter = (
-  props
-) => {
+const AddParticipantFooter = ({
+  actionName,
+  isSaveDisabled,
+  onBack,
+  action
+}) => {
   return (
     <>
       <ModalFooter>
         <ModalFooterActions justify="start">
           <Button
             color="primary"
-            onClick={() => {
-              props.onBack();
-            }}
+            onClick={() => { onBack(); }}
           >
             <ArrowLeft
               size={16}
-              decorative={true}
               title="Back to manage participants"
             />
             Back
@@ -27,13 +27,11 @@ const AddParticipantFooter = (
         </ModalFooterActions>
         <ModalFooterActions>
           <Button
-            disabled={props.isSaveDisabled ?? false}
+            disabled={isSaveDisabled ?? false}
             color="primary"
-            onClick={() => {
-              props.action();
-            }}
+            onClick={() => { action(); }}
           >
-            {props.actionName}
+            {actionName}
           </Button>
         </ModalFooterActions>
       </ModalFooter>

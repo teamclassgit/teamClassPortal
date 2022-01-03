@@ -1,10 +1,14 @@
 // @packages
-import React from 'react';
+import React, { useState } from 'react';
+import { Tooltip } from 'reactstrap';
 
 const RenderList = ({
-  convo,
-  muted
+  convo
 }) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const toggle = () => setTooltipOpen(!tooltipOpen);
+
   return (
     <div style={{
       display: "grid"
@@ -12,7 +16,6 @@ const RenderList = ({
       <span 
         style={{ 
           verticalAlign: "top", 
-          paddingLeft: muted ? 4 : 0,
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis"
@@ -23,7 +26,6 @@ const RenderList = ({
       <span 
         style={{
           verticalAlign: "top",
-          paddingLeft: muted ? 4 : 0,
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis"
@@ -32,21 +34,28 @@ const RenderList = ({
         <span style={{ fontWeight: "bold"}}>Customer:</span> {convo && convo?.customer?.name}
       </span>
       <span 
+        id="TooltipExample"
         style={{ 
           verticalAlign: "top",
-          paddingLeft: muted ? 4 : 0,
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis"
         }}
       >
-        <span style={{ fontWeight: "bold"}}>Class:</span> {convo && convo?.classTitle}
+        <span style={{ fontWeight: "bold"}} >Class: <span style={{ fontWeight: "normal"}} >{convo && convo?.classTitle}</span></span>
+        <Tooltip 
+          placement="right" 
+          isOpen={tooltipOpen} 
+          target="TooltipExample" 
+          toggle={toggle}
+        >
+          {convo?.classTitle}
+        </Tooltip>
       </span>
       {convo?.calendarEvent?.year && convo?.calendarEvent?.month && convo?.calendarEvent?.day && (
         <span 
           style={{ 
             verticalAlign: "top",
-            paddingLeft: muted ? 4 : 0,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis"

@@ -4,18 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { NavItem, NavLink } from 'reactstrap';
 import { Sun, Moon, Menu } from 'react-feather';
 import { isUserLoggedIn } from '@utils';
-import { useQuery } from '@apollo/client';
 
 // @scripts
-import UserDropdown from './UserDropdown';
 import NotificationDropdown from './NotificationDropdown';
-import queryAllMessageInteraction from '../../../../graphql/QueryAllMessageInteraction';
-import { getUserData } from '../../../../utility/Utils';
+import UserDropdown from './UserDropdown';
 import tokenGenerator from '../../../../views/chat/token-generator'; 
+import { getUserData } from '../../../../utility/Utils';
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
-  const [messageInfo, setMessageInfo] = useState([]);
-  const [filter] = useState('');
   const [userData, setUserData] = useState(null);
   const {identity, token} = tokenGenerator();
 
@@ -42,20 +38,6 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
     }
   };
 
-  const { ...allMessageInteractionResults } = useQuery(queryAllMessageInteraction, {
-    fetchPolicy: 'no-cache',
-    variables: {
-      filter
-    },
-    pollInterval: 5000
-  });
-
-  useEffect(() => {
-    if (allMessageInteractionResults.data) {
-      setMessageInfo(allMessageInteractionResults.data.messageInteractions.filter((message) => message.toId === userData?.customData?._id));
-    }
-  }, [allMessageInteractionResults.data]);
-
   return (
     <>
       <ul className='navbar-nav d-xl-none d-flex align-items-center'>
@@ -73,7 +55,7 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
         </NavItem>
       </div>
       <ul className='nav navbar-nav align-items-center ml-auto'>
-        <NotificationDropdown filterData={messageInfo} />
+        <NotificationDropdown />
         <UserDropdown userData={userData} />
       </ul>
     </>

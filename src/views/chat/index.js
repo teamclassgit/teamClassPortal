@@ -35,15 +35,15 @@ import '@styles/base/pages/app-chat.scss';
 const AppChat = () => {
   const Conversations = require("@twilio/conversations");
   const [client, setClient] = useState(null);
+  const [infoDetails, setInfoDetails] = useState(null);
+  const [inputValue, setInputValue] = useState('');
   const [sidebar, setSidebar] = useState(false);
   const [userData, setUserData] = useState(null);
   const [userSidebarLeft, setUserSidebarLeft] = useState(false);
-  const [infoDetails, setInfoDetails] = useState(null);
-  const [inputValue, setInputValue] = useState('');
 
   const conversations = useSelector((state) => state.reducer.convo.convo);
-  const sid = useSelector((state) => state.reducer.sid.sid);
   const id = useSelector((state) => state.reducer.information.info);
+  const sid = useSelector((state) => state.reducer.sid.sid);
 
   const sidRef = useRef("");
   const IdRef = useRef("");
@@ -52,9 +52,9 @@ const AppChat = () => {
 
   const dispatch = useDispatch();
 
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTS2Q3OGNkYmU3MjExY2M5NGFiYzU0MTZjNGNlNTUxNjFhLTE2NDA2OTcyNzIiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJEaWVnbzEyMzQiLCJjaGF0Ijp7InNlcnZpY2Vfc2lkIjoiSVNkMWUzNTExMzA5OWU0ZmJhOTZiMzVhOTIxYjBjYzhjNCJ9fSwiaWF0IjoxNjQwNjk3MjcyLCJleHAiOjE2NDA3MDA4NzIsImlzcyI6IlNLZDc4Y2RiZTcyMTFjYzk0YWJjNTQxNmM0Y2U1NTE2MWEiLCJzdWIiOiJBQzU5Nzk2OGFlYWQyZTY1Y2UyZWYyMGM4M2Y4YjE4ZmJhIn0.13CroGFdJG9GYBRMUaTKIi53H0LOVC3FE4S0Q46wAwc";
-  const username = localStorage.getItem("username");
-  const password = localStorage.getItem("password");
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTS2Q3OGNkYmU3MjExY2M5NGFiYzU0MTZjNGNlNTUxNjFhLTE2NDEyMzMyMjEiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJEaWVnbzEyMyIsImNoYXQiOnsic2VydmljZV9zaWQiOiJJUzdkNzY4NDRmZTRhNTQzY2U5ZmJlYzEzZDNjNzdiYjQ2In19LCJpYXQiOjE2NDEyMzMyMjEsImV4cCI6MTY0MTIzNjgyMSwiaXNzIjoiU0tkNzhjZGJlNzIxMWNjOTRhYmM1NDE2YzRjZTU1MTYxYSIsInN1YiI6IkFDNTk3OTY4YWVhZDJlNjVjZTJlZjIwYzgzZjhiMThmYmEifQ.N_s0jPKEnBML6kw0CdeIP0FKlcE_iUw99TOgnMq-Pq4";
+  const username = localStorage.setItem("username", 'Diego123');
+  const password = localStorage.setItem("password", 'Diego123');
 
   const handleSidebar = () => setSidebar(!sidebar);
   const handleUserSidebarLeft = () => setUserSidebarLeft(!userSidebarLeft);
@@ -169,6 +169,7 @@ const AppChat = () => {
       });
 
       client.addListener("messageRemoved", (message) => {
+        debugger;
         handlePromiseRejection(() => dispatch(removeMessages(
           message.conversation.sid, [message]
         ), dispatch(addNotifications)));
@@ -188,15 +189,15 @@ const AppChat = () => {
     return () => {
       client?.removeAllListeners();
     };
-  }, [client]);
+  }, [client, removeMessages]);
 
   const addMessage = async (message, addMessages, updateUnreadMessages) => {
     handlePromiseRejection(() => {
-      if (sidRef.current === message.conversation.sid) {
-        message.conversation.updateLastReadMessageIndex(message.index);
+      if (sidRef.current === message?.conversation?.sid) {
+        message?.conversation?.updateLastReadMessageIndex(message?.index);
       }
-      dispatch(addMessages(message.conversation.sid, [message]));
-      loadUnreadMessagesCount(message.conversation, updateUnreadMessages);
+      dispatch(addMessages(message?.conversation?.sid, [message]));
+      loadUnreadMessagesCount(message?.conversation, updateUnreadMessages);
     }, dispatch(addNotifications));
   };
 
@@ -215,7 +216,7 @@ const AppChat = () => {
       limit: 10
     },
     onCompleted: (data) => {
-      setInfoDetails(data.getConversationsDetails);
+      setInfoDetails(data?.getConversationsDetails);
     },
     pollInterval: 20000
   });
@@ -234,7 +235,6 @@ const AppChat = () => {
     () => infoDetails?.find((convo) => convo?._id === id),
     [infoDetails, sid]
   );
-
 
   if (client === null || client === undefined) {
     return null;
@@ -260,10 +260,10 @@ const AppChat = () => {
             {client?.connectionState !== "denied" && (
               <ConversationContainer
                 client={client}
-                info={infoDetails}
                 conversation={openedConversation}
-                openedNotConversations={openedNotConversations}
+                info={infoDetails}
                 openedConversationInfo={openedConversationInfo}
+                openedNotConversations={openedNotConversations}
               />
             )}
           </div>
@@ -272,6 +272,7 @@ const AppChat = () => {
       {sid && openedConversation && client && (
         <SidebarRight 
           conversation={openedConversation}
+          client={client}
         />
       )}
     </>

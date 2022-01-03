@@ -178,7 +178,7 @@ const BookingCheckoutSummary = ({
                 <th className="font-weight-normal text-sm pt-1">Booking fee ({bookingInfo.serviceFee * 100}%)</th>
                 <td className="text-right pt-1 text-sm">${totalServiceFee}</td>
               </tr>
-              {isRushDate() && totalRushFee > 0 && (
+              {totalRushFee > 0 && (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">
                     {`Rush fee ($${(bookingInfo.rushFee || RUSH_FEE.toFixed(2))}`} x {` ${ 

@@ -1,21 +1,12 @@
 // @packages
+import { AlertTriangle, BookOpen, Check, Send } from "react-feather";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { AlertTriangle, BellOff, BookOpen, Check, Send } from "react-feather";
-import { Button } from "reactstrap";
 
 //  @scripts
-import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
-import { getMessageStatus, addConversation } from './Apis';
-import { NOTIFICATION_LEVEL } from "./Constants";
 import RenderList from "./RenderList";
-import ConversationTitleBookingModal from './ConversationTitleBookingModal';
-import {
-  updateCurrentConversation,
-  addNotifications,
-  updateParticipants,
-  informationId
-} from '../../redux/actions/chat';
+import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
+import { NOTIFICATION_LEVEL } from "./Constants";
+import { getMessageStatus } from './Apis';
 
 const calculateUnreadMessagesWidth = (count) => {
   if (count === 0 || !count) {
@@ -98,13 +89,8 @@ const getLastMessageTime = (messages) => {
 const ConversationView = (
   props
 ) => {
-  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount, client } = props;
+  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount } = props;
   const [backgroundColor, setBackgroundColor] = useState();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const dispatch = useDispatch();
-
-  const handleOpen = () => setIsModalOpen(true);
 
   const title = truncateMiddle(
     convo?.friendlyName ?? convo?.sid,
@@ -115,7 +101,7 @@ const ConversationView = (
     unreadMessagesCount > 0
       ? "white"
       : "black";
-  const muted = convo?.notificationLevel === NOTIFICATION_LEVEL.MUTED;
+  const muted = props?.otherConvo?.notificationLevel === NOTIFICATION_LEVEL.MUTED;
 
   const [lastMsgStatus, setLastMsgStatus] = useState("");
 
@@ -181,29 +167,25 @@ const ConversationView = (
                 : "black"
             }}
           >
-            {muted ? <BellOff size={20} /> : null}
             <RenderList
               convo={convo}
-              muted={muted}
-              title={title}
             />
           </div>
           {unreadMessagesCount > 0 && (
             <div style={{
-              paddingLeft: 8
+              paddingLeft: '0.5rem'
             }}>
               <div
                 style={{ 
                   borderRadius: 12, 
                   opacity: muted ? 0.2 : 1,
-                  backgroundColor: 'black',
-                  color: 'black',
-                  fontFamily: 'Inter',
+                  backgroundColor: 'rgb(6, 3, 58)',
+                  color: 'rgb(255, 255, 255)',
                   fontWeight: 'bold',
                   fontSize: 12,
                   lineHeight: '12px',
-                  paddingLeft: 4,
-                  paddingRight: 4
+                  paddingLeft: 5,
+                  width: '5%'
                 }}
               >
                 {unreadMessagesCount}

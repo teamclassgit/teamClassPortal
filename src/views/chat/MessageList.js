@@ -1,18 +1,14 @@
+// @packages
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { bindActionCreators } from "redux";
 import { saveAs } from "file-saver";
-
+import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@twilio-paste/theme";
 
-import { getBlobFile, getMessageStatus } from './Apis';
-import MessageView from "./MessageView";
-import MessageFile from "./MessageFile";
+// @scripts
 import Horizon from "./Horizon";
-import {
-  successNotification,
-  unexpectedErrorNotification
-} from "./helpers";
+import MessageFile from "./MessageFile";
+import MessageView from "./MessageView";
+import { getBlobFile, getMessageStatus } from './Apis';
 import {
   addAttachment
 } from '../../redux/actions/chat/index';
@@ -24,6 +20,7 @@ function getMessageTime (message) {
   const dayLength = 1000 * 60 * 60 * 24;
   const diffInDays = Math.floor(diffInDates / dayLength);
   const minutesLessThanTen = dateCreated.getMinutes() < 10 ? "0" : "";
+
   if (diffInDays === 0) {
     return (
       `${dateCreated.getHours().toString() 
@@ -32,6 +29,7 @@ function getMessageTime (message) {
       }${dateCreated.getMinutes().toString()}`
     );
   }
+
   return (
     `${dateCreated.getDate() 
     }/${ 
@@ -52,7 +50,6 @@ const MessageList = (props) => {
     return <div className="empty" />;
   }
 
-  const theme = useTheme();
   const myRef = useRef(null);
   const messagesLength = messages.length;
 
@@ -181,6 +178,7 @@ const MessageList = (props) => {
               onDeleteMessage={async () => {
                 try {
                   await message.remove();
+                  console.log("Message deleted");
                 } catch (error) {
                   console.log(error);
                 }

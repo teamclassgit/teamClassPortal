@@ -1,24 +1,23 @@
 // @packages
-import classnames from 'classnames';
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import { useLazyQuery, useQuery } from '@apollo/client';
 
 // @scripts
 import BookingCheckoutSummary from '../booking/steps/BookingCheckoutSummary';
-import moment from 'moment';
 import queryAttendeesByBookingId from '../../graphql/QueryAttendeesByBookingId';
+import queryBookingById from '../../graphql/QueryBookingById';
 import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByClassId';
 import queryClassById from '../../graphql/QueryClassById';
-import queryBookingById from '../../graphql/QueryBookingById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
 import { getBookingTotals } from '../../utility/Utils';
 
 const SidebarRight = ({
+  client,
   conversation
 }) => {
   const [attendees, setAttendees] = useState([]);
   const [attendeesToInvoice, setAttendeesToInvoice] = useState(null);
-  const [availableEvents, setAvailableEvents] = useState(null);
   const [bookingInfo, setBookingInfo] = useState(null);
   const [calendarEvent, setCalendarEvent] = useState(null);
   const [customer, setCustomer] = useState(null);
@@ -27,7 +26,6 @@ const SidebarRight = ({
   const [payment, setPayment] = useState(0);
   const [realCountAttendees, setRealCountAttendees] = useState(0);
   const [requestEventDate, setRequestEventDate] = useState(null);
-  const [stepper, setStepper] = useState(null);
   const [tax, setTax] = useState(0);
   const [teamClass, setTeamClass] = useState(null);
   const [total, setTotal] = useState(0);
@@ -46,6 +44,7 @@ const SidebarRight = ({
   const [getTeamClass, { ...classResult }] = useLazyQuery(queryClassById);
 
   const id = conversation?.channelState?.friendlyName;
+
   useQuery(queryBookingById, {
     variables: {
       bookingId: id
@@ -73,7 +72,6 @@ const SidebarRight = ({
 
   useEffect(() => {
     if (bookingInfo && calendarEventsByClassResult.data) {
-      setAvailableEvents(calendarEventsByClassResult.data.calendarEvents.map((element) => element));
       const bookingEvent = calendarEventsByClassResult.data.calendarEvents.filter((element) => element.bookingId === bookingInfo._id);
 
       if (bookingEvent && bookingEvent.length > 0) setCalendarEvent(bookingEvent[0]);
@@ -163,24 +161,27 @@ const SidebarRight = ({
     <div className='sidebar-left'>
       <div className='sidebar'>
         <div
-          className={classnames('chat-profile-sidebar')}
+          className='chat-profile-sidebar'
         >
-          <div style={{
-            display: 'flex',
-            padding: '10.5px',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            width: '111%',
-            backgroundColor: 'white',
-            borderLeft: '1px solid #ebe9f1',
-            borderBottom: '1px solid #ebe9f1'
-          }}>
+          <div 
+            className='prueba'
+            style={{
+              display: 'flex',
+              padding: '10.5px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              width: '111%',
+              backgroundColor: 'white',
+              borderLeft: '1px solid #ebe9f1',
+              borderBottom: '1px solid #ebe9f1'
+            }}
+          >
             <h4>
               Details
             </h4>
           </div>
-          {bookingInfo && (
+          {bookingInfo && client?.connectionState !== "denied" && (
             <BookingCheckoutSummary
               teamClass={teamClass}
               chat

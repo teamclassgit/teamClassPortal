@@ -1,7 +1,10 @@
+// @packages
 import { ModalBody, Box } from "@twilio-paste/core";
-import ModalInputField from "./ModalInputField";
+
+// @scripts
 import AddParticipantFooter from "./AddParticipantFooter";
 import ConvoModal from "./ConvoModal";
+import ModalInputField from "./ModalInputField";
 
 const AddSMSParticipantModal = (
   props
@@ -17,24 +20,22 @@ const AddSMSParticipantModal = (
             <h3>Add SMS participant</h3>
             <Box as="form">
               <ModalInputField
+                error={props.error}
+                help_text="The phone number of the participant."
+                input={props.name}
                 isFocused={true}
                 label="Phone number"
-                input={props.name}
-                placeholder="123456789012"
                 onChange={props.setName}
-                error={props.error}
-                // error_text="Enter a valid phone number."
-                help_text="The phone number of the participant."
+                placeholder="123456789012"
                 prefixType="SMS"
               />
               <ModalInputField
-                label="Proxy phone number"
-                input={props.proxyName}
-                placeholder="123456789012"
-                onChange={props.setProxyName}
                 error={props.errorProxy}
-                // error_text="Enter a valid Twilio phone number."
                 help_text="The Twilio phone number used by the participant in Conversations."
+                input={props.proxyName}
+                label="Proxy phone number"
+                onChange={props.setProxyName}
+                placeholder="123456789012"
                 prefixType="SMS"
               />
             </Box>
