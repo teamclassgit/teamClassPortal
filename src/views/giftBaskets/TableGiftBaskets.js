@@ -134,7 +134,7 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
       nextLabel=""
       forcePage={currentPage}
       onPageChange={(page) => handlePagination(page)}
-      pageCount={giftBasketPurchases.length / 7 || 1}
+      pageCount={giftBasketPurchases.length / 8 || 1}
       breakLabel="..."
       pageRangeDisplayed={2}
       marginPagesDisplayed={2}
