@@ -85,11 +85,18 @@ const GiftBasketsList = () => {
       <BookingsHeader
         noCoordinators
         defaultLimit={200}
+        coordinators={''}
         showLimit={true}
         showExport={true}
         showAdd={false}
         showFilter={false}
         showView={false}
+        showAddModal={false}
+        generalInquiries={''}
+        isGeneralInquiries={false}
+        isInProgressBookings={false}
+        isDiscountCodes={false}
+        isPrivateRequests={false}
         giftBasketPurchases={giftBasketPurchases}
         customers={customers}
         giftBaskets={giftBaskets}
