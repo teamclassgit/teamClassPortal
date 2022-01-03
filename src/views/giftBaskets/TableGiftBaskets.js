@@ -14,7 +14,7 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
   const columns = [
     {
       name: 'Date',
-      selector: 'date',
+      selector: 'timePurchased',
       sortable: true,
       maxWidth: '12%',
       cell: (row) => (
@@ -160,7 +160,7 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
         expandableRows={true}
         columns={columns}
         expandOnRowClicked
-        defaultSortField={'date'}
+        defaultSortField={'timePurchased'}
         defaultSortAsc={false}
         paginationPerPage={8}
         className="react-dataTable"

@@ -15,9 +15,10 @@ const GiftBasketsList = () => {
   const [giftBasketPurchases, setGiftBasketPurchases] = useState(null);
   const [giftBaskets, setGiftBaskets] = useState(null);
   const genericFilter = {};
+  const [limit, setLimit] = useState(200);
   const [customers, setCustomers] = useState([]);
   const [filtereGiftPurchasedBaskets, setFilteredGiftPurchasedBaskets] = useState(null);
-  const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
+  const { textFilterContext } = useContext(FiltersContext);
 
   const { ...allGiftBasketsPurchase } = useQuery(queryAllGiftBasketPurchases, {
     fetchPolicy: 'no-cache',
@@ -87,6 +88,10 @@ const GiftBasketsList = () => {
         defaultLimit={200}
         coordinators={''}
         showLimit={true}
+        onChangeLimit={(newLimit) => {
+          setLimit(newLimit);
+        }}
+        defaultLimit={limit}
         showExport={true}
         showAdd={false}
         showFilter={false}
