@@ -1,7 +1,6 @@
 // ** React Imports
 import {forwardRef} from 'react';
 
-// ** Third Party Components
 import Proptypes from 'prop-types';
 import {Badge} from 'reactstrap';
 import classnames from 'classnames';
