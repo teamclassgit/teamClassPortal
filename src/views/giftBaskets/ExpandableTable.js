@@ -6,8 +6,8 @@ const ExpandableTable = ({ data }) => {
       <div className="expandable-content p-2">
         <p>
           <span className="font-weight-bold">Shipping Address: </span>
-          {data.shippingAddress.address1} {data.shippingAddress.address2} {', '}
-          {data.shippingAddress.city} {', '} {data.shippingAddress.state} {data.shippingAddress.country}
+          {data.shippingAddress.address1} {data.shippingAddress.address2} {data.shippingAddress.address1 || data.shippingAddress.address2 ? ', ' : ''}
+          {data.shippingAddress.city} {data.shippingAddress.city ? ', ' : ''} {data.shippingAddress.state} {data.shippingAddress.country}
         </p>
         <p className="mb-0 pb-0">
           <span className="font-weight-bold">Personalizations: </span>
