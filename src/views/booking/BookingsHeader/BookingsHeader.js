@@ -212,7 +212,9 @@ const BookingsHeader = ({
           filteredBasketGift && filteredBasketGift.map((item2) => item2.title).join(' | '),
           giftBasketPurchases[i].basketsPurchased.map((item) => item.variantName).join(' | '),
           giftBasketPurchases[i].payments.map((item) => item.amount / 100),
-          `${giftBasketPurchases[i].shippingAddress.address1}, ${giftBasketPurchases[i].shippingAddress.city}, ${giftBasketPurchases[i].shippingAddress.country}`,
+          `${giftBasketPurchases[i].shippingAddress.address1}${giftBasketPurchases[i].shippingAddress.address1 ? ', ' : ''}${
+            giftBasketPurchases[i].shippingAddress.city
+          }${giftBasketPurchases[i].shippingAddress.city ? ', ' : ''}${giftBasketPurchases[i].shippingAddress.country}`,
           giftBasketPurchases[i].personalizations.map((item) => item.value).join(' | ')
         ];
 
