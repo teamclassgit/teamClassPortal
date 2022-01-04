@@ -74,6 +74,7 @@ export default gql`
         order
         active
         groupEvent
+        kitHasAlcohol
       }
       registrationFields {
         label

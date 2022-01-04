@@ -20,6 +20,7 @@ export default gql`
         order
         active
         groupEvent
+        kitHasAlcohol
       }
       notes {
         note

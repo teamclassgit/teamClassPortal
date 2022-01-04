@@ -13,6 +13,8 @@ export default gql`
     $state: String
     $zip: String
     $country: String
+    $canDeliverKit: Boolean
+    $canDeliverKitReason: String
     $additionalFields: [AttendeeAdditionalFieldInsertInput!]
   ) {
     upsertOneAttendee(
@@ -29,6 +31,8 @@ export default gql`
         state: $state
         zip: $zip
         country: $country
+        canDeliverKit: $canDeliverKit
+        canDeliverKitReason: $canDeliverKitReason
         additionalFields: $additionalFields
       }
     ) {
@@ -43,6 +47,8 @@ export default gql`
       country
       email
       phone
+      canDeliverKit
+      canDeliverKitReason
       additionalFields {
         name
         value
