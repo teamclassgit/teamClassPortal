@@ -80,7 +80,8 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
                   currentEventDurationHours: row.eventDurationHours,
                   currentClosedReason: row.closedReason,
                   currentNotes: row.notes,
-                  currentPayments: row.payments
+                  currentPayments: row.payments,
+                  currentCapRegistration: row.capRegistration
                 });
               }}
               title={`Edit booking info ${row._id}`}
