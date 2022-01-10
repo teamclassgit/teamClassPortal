@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 export default gql`
   query GetAllGiftBasketPurchases($filter: GiftBasketPurchaseQueryInput!) {
     giftBasketPurchases(query: $filter) {
+      orderNumber
       customerName
       customerId
       shippingAddress {
