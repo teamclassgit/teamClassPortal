@@ -369,7 +369,6 @@ const EditBookingModal = ({
     })
   };
 
-  console.log('isCapRegistration', isCapRegistration);
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
