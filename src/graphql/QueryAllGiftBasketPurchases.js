@@ -6,9 +6,12 @@ export default gql`
       customerName
       customerId
       shippingAddress {
+        name
         address1
         address2
+        state
         city
+        zip
         country
       }
       basketsPurchased {
