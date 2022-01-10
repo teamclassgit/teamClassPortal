@@ -16,7 +16,7 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
       name: 'Date',
       selector: 'timePurchased',
       sortable: true,
-      maxWidth: '12%',
+      maxWidth: '10%',
       cell: (row) => (
         <>
           <small>
@@ -29,6 +29,12 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
           </small>
         </>
       )
+    },
+    {
+      name: 'Order #',
+      selector: 'orderNumber',
+      sortable: true,
+      maxWidth: '10%'
     },
     {
       name: 'Customer',
@@ -59,7 +65,7 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
       name: 'Gif tBasket',
       selector: 'basketName',
       sortable: true,
-      maxWidth: '23%',
+      maxWidth: '20%',
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
