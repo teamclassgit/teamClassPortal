@@ -586,6 +586,20 @@ const EditBookingModal = ({
               </InputGroup>
             </FormGroup>
             <FormGroup>
+              <CustomInput
+                type="switch"
+                id="exampleCustomSwitch"
+                name="customSwitch"
+                label="Cap Registration?"
+                inline
+                value={isCapRegistration}
+                checked={isCapRegistration}
+                onChange={(e) => {
+                  setIsCapRegistration(!isCapRegistration);
+                }}
+              />
+            </FormGroup>
+            <FormGroup>
               <Label for="date-time-picker">Sign Up Deadline (Custom)</Label>
               <InputGroup size="sm">
                 <Flatpickr
@@ -610,21 +624,6 @@ const EditBookingModal = ({
                   </small>
                 </dt>
               )}
-            </FormGroup>
-            <FormGroup>
-              <CustomInput
-                type="switch"
-                id="exampleCustomSwitch"
-                name="customSwitch"
-                className=""
-                label="Cap Registration?"
-                inline
-                value={isCapRegistration}
-                checked={isCapRegistration}
-                onChange={(e) => {
-                  setIsCapRegistration(!isCapRegistration);
-                }}
-              />
             </FormGroup>
             <FormGroup>
               {currentStatus === BOOKING_CLOSED_STATUS ? (
@@ -656,6 +655,7 @@ const EditBookingModal = ({
                 </>
               )}
             </FormGroup>
+
             {editMode && (
               <div align="center">
                 <Button
