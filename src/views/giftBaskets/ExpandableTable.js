@@ -4,11 +4,13 @@ const ExpandableTable = ({ data }) => {
   return (
     <>
       <div className="expandable-content p-2">
-        <p>
-          <span className="font-weight-bold">Shipping Address: </span>
-          {data.shippingAddress.address1} {data.shippingAddress.address2} {data.shippingAddress.address1 || data.shippingAddress.address2 ? ', ' : ''}
-          {data.shippingAddress.city} {data.shippingAddress.city ? ', ' : ''} {data.shippingAddress.state} {data.shippingAddress.country}
-        </p>
+        {data.shippingAddress && <p>
+          <span className="font-weight-bold">Shipping Address: </span><br></br><br></br>
+          {data.shippingAddress.name}<br></br>
+          {data.shippingAddress.address1} {data.shippingAddress.address2}<br></br>
+          {data.shippingAddress.city}, {data.shippingAddress.state} {data.shippingAddress.zip}<br></br>
+          {data.shippingAddress.country}
+        </p>}
         <p className="mb-0 pb-0">
           <span className="font-weight-bold">Personalizations: </span>
         </p>
