@@ -590,7 +590,7 @@ const EditBookingModal = ({
                 type="switch"
                 id="exampleCustomSwitch"
                 name="customSwitch"
-                label="Cap Registration?"
+                label="Registration's cap based on group size?"
                 inline
                 value={isCapRegistration}
                 checked={isCapRegistration}
