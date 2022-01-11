@@ -590,7 +590,8 @@ const EditBookingModal = ({
                 type="switch"
                 id="exampleCustomSwitch"
                 name="customSwitch"
-                label="Registration's cap based on group size?"
+                label="Turn on/off registration's cap based on group size"
+                disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                 inline
                 value={isCapRegistration}
                 checked={isCapRegistration}
