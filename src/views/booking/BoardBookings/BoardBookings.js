@@ -95,7 +95,8 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
         signUpDeadline,
         closedReason,
         notes,
-        hasInternationalAttendees
+        hasInternationalAttendees,
+        capRegistration
       }) => {
         return {
           customerName,
@@ -137,7 +138,8 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
             },
             calendarEvents.find((element) => element.bookingId === _id)
           ),
-          hasInternationalAttendees
+          hasInternationalAttendees,
+          capRegistration
         };
       }
     );
