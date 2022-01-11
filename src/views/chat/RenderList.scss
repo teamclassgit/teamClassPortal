@@ -1,0 +1,14 @@
+.render-list-container {
+  display: grid;
+}
+
+.render-list {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top; 
+  white-space: nowrap;
+}
+
+.render-list-span {
+  font-weight: bold;
+}

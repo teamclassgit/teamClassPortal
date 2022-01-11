@@ -1,4 +1,6 @@
 // @packages
+import React from 'react';
+import Proptypes from 'prop-types';
 import Avatar from '@components/avatar';
 import { Link } from 'react-router-dom';
 import { Power } from 'react-feather';
@@ -7,9 +9,7 @@ import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from
 // @scripts
 import { logoutUser } from '../../../../utility/RealmApolloClient';
 
-const UserDropdown = ({
-  userData
-}) => {
+const UserDropdown = ({ userData }) => {
   return (
     <UncontrolledDropdown tag="li" className="dropdown-user nav-item">
       <DropdownToggle href="/" tag="a" className="nav-link dropdown-user-link" onClick={(e) => e.preventDefault()}>
@@ -27,6 +27,10 @@ const UserDropdown = ({
       </DropdownMenu>
     </UncontrolledDropdown>
   );
+};
+
+UserDropdown.Proptypes = {
+  userData: Proptypes.object
 };
 
 export default UserDropdown;

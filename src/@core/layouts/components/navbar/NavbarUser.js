@@ -1,6 +1,7 @@
 // @packages
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { NavItem, NavLink } from 'reactstrap';
 import { Sun, Moon, Menu } from 'react-feather';
 import { isUserLoggedIn } from '@utils';
@@ -8,26 +9,16 @@ import { isUserLoggedIn } from '@utils';
 // @scripts
 import NotificationDropdown from './NotificationDropdown';
 import UserDropdown from './UserDropdown';
-import tokenGenerator from '../../../../views/chat/token-generator'; 
 import { getUserData } from '../../../../utility/Utils';
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
   const [userData, setUserData] = useState(null);
-  const {identity, token} = tokenGenerator();
+  const totalUnread = useSelector((state) => state.reducer.totalUnreadCount);
 
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
       setUserData(getUserData());
     }
-  }, []);
-
-  useEffect(() => {
-    if (isUserLoggedIn() !== null) {
-      localStorage.setItem('userData', identity);
-      localStorage.setItem('password', identity);
-      localStorage.setItem('token', token);
-    }
-    tokenGenerator();
   }, []);
 
   const ThemeToggler = () => {
@@ -55,7 +46,7 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
         </NavItem>
       </div>
       <ul className='nav navbar-nav align-items-center ml-auto'>
-        <NotificationDropdown />
+        <NotificationDropdown totalUnread={totalUnread} />
         <UserDropdown userData={userData} />
       </ul>
     </>

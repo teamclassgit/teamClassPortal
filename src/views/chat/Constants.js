@@ -11,7 +11,7 @@ export const ERROR_MODAL_MESSAGES = {
   ADD_PARTICIPANT: {
     title: "Unable to add participant",
     description:
-      "You don’t have permission to add participants to the conversation"
+      "You don't have permission to add participants to the conversation"
   },
   CHANGE_CONVERSATION_NAME: {
     title: "Unable to save Conversation name",

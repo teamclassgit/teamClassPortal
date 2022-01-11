@@ -1,8 +1,12 @@
 // @packages
-import { useState, useLayoutEffect } from "react";
+import Proptypes from "prop-types";
+import React, { useState, useLayoutEffect } from "react";
 
 // @scripts
 import MessageFile from "./MessageFile";
+
+// @styles
+import './MessageInput.scss';
 
 const useWindowSize = () => {
   const [size, setSize] = useState(0);
@@ -27,77 +31,78 @@ const getTextWidth = (text) => {
   return 0;
 };
 
-const MessageInput = (
-  props
-) => {
+const MessageInput = ({
+  assets,
+  message,
+  onChange,
+  onFileRemove,
+  onKeyPress
+}) => {
   const [cursorPosition, setCursorPostions] = useState(0);
   const width = useWindowSize();
 
+  const onChangeHandler = (e) => {
+    setCursorPostions(e.currentTarget.selectionStart);
+    onChange(e.currentTarget.value);
+  };
+
   return (
-    <div>
-      {getTextWidth(props.message) < width - 500 && (
+    <div className="message-input-container">
+      {getTextWidth(message) < width - 500 && (
         <input
-          type="text"
-          onChange={(e) => {
-            setCursorPostions(e.currentTarget.selectionStart);
-            props.onChange(e.currentTarget.value);
-          }}
           aria-describedby="message_help_text"
+          autoFocus
+          className="message-input"
           id="message-input-shorter"
           name="message-input-shorter"
-          value={props.message}
-          autoFocus
-          autoComplete="false"
-          autoSave="false"
+          onChange={(e) => onChangeHandler(e)}
           placeholder="Add your message"
+          type="text"
+          value={message}
           style={{
-            border: props.assets.length ? "none" : "1px solid #8891AA",
-            padding: "8px 12px",
-            height: "36px",
+            border: assets.length ? "none" : "1px solid #8891AA",
             margin: `${
-              `0 6px ${  props.assets.length ? "12" : "4"  }px 6px`
-            }`,
-            borderRadius: "4px",
-            width: 'calc(100% - 100px)'
+              `0 6px ${  assets.length ? "12" : "4"  }px 6px`
+            }`
           }}
           onFocus={(e) => e.currentTarget.setSelectionRange(cursorPosition, cursorPosition)}
-          onKeyPress={props.onKeyPress}
+          onKeyPress={onKeyPress}
         />
       )}
 
-      {getTextWidth(props.message) >= width - 500 && (
+      {getTextWidth(message) >= width - 500 && (
         <textarea
-          onChange={(e) => {
-            setCursorPostions(e.currentTarget.selectionStart);
-            props.onChange(e.currentTarget.value);
-          }}
+          onChange={(e) => onChangeHandler(e)}
           aria-describedby="message_help_text"
           id="message-input"
           name="message-input"
-          value={props.message}
+          value={message}
           autoFocus
           onFocus={(e) => e.currentTarget.setSelectionRange(cursorPosition, cursorPosition)
           }
         />
       )}
-      {props.assets.length ? (
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap"
-          }}
-        >
-          {props.assets.map(({ name, size }) => (
+      {assets.length ? (
+        <div className="message-input-assets" >
+          {assets.map(({ name, size }) => (
             <MessageFile
               key={`${`${name  }_${  size}`}`}
               media={{ filename: name, size }}
-              onRemove={() => props.onFileRemove(`${name  }_${  size}`)}
+              onRemove={() => onFileRemove(`${name  }_${  size}`)}
             />
           ))}
         </div>
       ) : null}
     </div>
   );
+};
+
+MessageInput.propTypes = {
+  assets: Proptypes.array.isRequired,
+  message: Proptypes.string.isRequired,
+  onChange: Proptypes.func.isRequired,
+  onFileRemove: Proptypes.func.isRequired,
+  onKeyPress: Proptypes.func.isRequired
 };
 
 export default MessageInput;

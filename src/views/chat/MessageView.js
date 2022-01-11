@@ -1,16 +1,22 @@
 // @packages
-import { CheckSquare, Send, Frown, BookOpen } from 'react-feather';
-import { useEffect, useState } from "react";
+import Avatar from '@components/avatar';
+import Proptypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import { Check, Send, Frown, Eye } from 'react-feather';
 import { useSelector } from "react-redux";
 
 // @scripts
 import MessageActions from "./MessageActions";
 import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
 
+// @styles
+import "./MessageView.scss";
+
 const statusStyle = {
   display: "inline-block",
   verticalAlign: "middle",
-  marginLeft: "4px"
+  marginLeft: "4px",
+  marginTop: "4px"
 };
 
 const statusIconStyle = {
@@ -20,8 +26,10 @@ const statusIconStyle = {
 const MessageView = ({
   message,
   getStatus,
+  userData,
   onDeleteMessage,
   author,
+  statusAvatar,
   messageTime,
   topPadding,
   lastMessageBottomPadding,
@@ -34,123 +42,118 @@ const MessageView = ({
 
   useEffect(() => {
     getStatus.then((value) => setStatus(value));
+    return () => {
+      setStatus({});
+    };
   }, [getStatus, message]);
-
-  if (message === undefined) {
-    return <></>;
-  }
 
   return (
     <>
       {author === localStorage.getItem("username") && (
         <>
           <div
+            className='message-author-container'
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
               paddingTop: topPadding,
-              paddingRight: '8%',
-              paddingBottom: lastMessageBottomPadding,
-              marginBottom: "10px"
+              paddingBottom: lastMessageBottomPadding
             }}
           >
-            <div
-              style={{
-                backgroundColor: 'rgb(2, 99, 224)',
-                color: 'rgb(255, 255, 255)',
-                fontSize: '0.875rem',
-                fontWeight: '400',
-                lineHeight: '1.25rem',
-                paddingTop: '0.75rem',
-                paddingBottom: '0.75rem',
-                paddingLeft: '0.5rem',
-                paddingRight: '0.5rem',
-                borderRadius: '0.5rem'
-              }}
-            >
-              {message}
-              <div
-                style={{
-                  display: "flex",
-                  flexGrow: 10,
-                  paddingTop: "0.5rem",
-                  justifyContent: "space-between"
-                }}
-              >
-                <div style={{
-                  fontSize: "0.75rem"
-                }}>
-                  {messageTime}
-                </div>
-                <div
-                  style={{
-                    paddingLeft: "0.5rem",
-                    display: "flex"
-                  }}
-                >
-                  {status[MessageStatus.Delivered] ? (
-                    <>
-                      <CheckSquare
-                        color="black"
-                        style={{ ...statusStyle, ...statusIconStyle }}
-                      />
-                      {participants.length > 2 && (
-                        <span style={statusStyle}>
-                          {status[MessageStatus.Delivered]}
-                        </span>
-                      )}
-                    </>
-                  ) : null}
+            <div className='message-author-sub'>
+              <div className='message-view-avatar'>
+                <Avatar
+                  className='avatar-border'
+                  content={userData && userData['name'] || 'Uknown'}
+                  initials
+                  status={statusAvatar}
+                />
+              </div>
+              <div className='message-author'>
+                {message}
+                <div className='message-time-container'>
+                  <div className='message-time'>
+                    {messageTime}
+                  </div>
+                  <div className='message-status-container'>
+                    {status[MessageStatus.Delivered] ? (
+                      <>
+                        <Check
+                          size={20}
+                          color="black"
+                          style={{ ...statusStyle, ...statusIconStyle }}
+                        />
+                        {participants.length > 2 && (
+                          <span style={statusStyle}>
+                            {status[MessageStatus.Delivered]}
+                          </span>
+                        )}
+                      </>
+                    ) : null}
 
-                  {status[MessageStatus.Sending] ? (
-                    <>
-                      <Send
-                        color="#fff"
-                        style={{ ...statusStyle, ...statusIconStyle }}
-                      />
-                    </>
-                  ) : null}
+                    {status[MessageStatus.Sending] ? (
+                      <>
+                        <Send
+                          size={20}
+                          color="black"
+                          style={{ ...statusStyle, ...statusIconStyle }}
+                        />
+                      </>
+                    ) : null}
 
-                  {status[MessageStatus.Failed] ? (
-                    <>
-                      <Frown
-                        color="#fff"
-                        style={{ ...statusStyle, ...statusIconStyle }}
-                      />
-                      {participants.length > 2 && (
-                        <span style={statusStyle}>
-                          {status[MessageStatus.Failed]}
-                        </span>
-                      )}
-                    </>
-                  ) : null}
+                    {status[MessageStatus.Failed] ? (
+                      <>
+                        <Frown
+                          size={20}
+                          color="black"
+                          style={{ ...statusStyle, ...statusIconStyle }}
+                        />
+                        {participants.length > 2 && (
+                          <span style={statusStyle}>
+                            {status[MessageStatus.Failed]}
+                          </span>
+                        )}
+                      </>
+                    ) : null}
 
-                  {status[MessageStatus.Read] ? (
-                    <>
-                      <BookOpen
-                        color="#fff"
-                        style={{ ...statusStyle, ...statusIconStyle }}
-                      />
-                      {participants.length > 2 && (
-                        <span style={statusStyle}>
-                          {status[MessageStatus.Read]}
-                        </span>
-                      )}
-                    </>
-                  ) : null}
+                    {status[MessageStatus.Read] ? (
+                      <>
+                        <div 
+                          style={{
+                            marginLeft: "-15px",
+                            left: '15px',
+                            position: "relative"
+                          }}
+                        >
+                          <Check
+                            size={20}
+                            color="black"
+                            style={{ ...statusStyle, ...statusIconStyle }}
+                          />
+                        </div>
+                        <Check
+                          size={20}
+                          color="black"
+                          style={{ ...statusStyle, ...statusIconStyle }}
+                        />
+                        {participants.length > 2 && (
+                          <span style={statusStyle}>
+                            {status[MessageStatus.Read]}
+                          </span>
+                        )}
+                      </>
+                    ) : null}
 
-                  <MessageActions
-                    messageText={typeof message === "string" ? message : ""}
-                    onMessageDelete={onDeleteMessage}
-                  />
+                    <MessageActions
+                      messageText={typeof message === "string" ? message : ""}
+                      onMessageDelete={onDeleteMessage}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
             {status[MessageStatus.Failed] ? (
-              <div style={{ textAlign: "right", paddingTop: "4px" }}>
-                <span style={{ color: "#D61F1F" }}>
+              <div className='message-status-failed'>
+                <span >
                   An error has occurred.
                 </span>
               </div>
@@ -160,55 +163,27 @@ const MessageView = ({
       )}
       {author !== localStorage.getItem("username") && (
         <div
+          className='message-not-author-container'
           style={{
-            alignItems: "flex-start",
-            display: "flex",
-            flexDirection: "column",
             paddingBottom: lastMessageBottomPadding,
-            paddingLeft: 16,
-            paddingRight: 16,
             paddingTop: topPadding
           }}
         >
-          <div
-            style={{
-              color: 'rgb(96, 107, 133)',
-              fontSize: '0.875rem',
-              fontWeight: '400',
-              lineHeight: '1.25rem'
-            }}
-          >
+          <div className='message-not-author-sub'>
             {sameAuthorAsPrev && author}
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: "10px"
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: 'rgb(244, 244, 246)',
-                color: 'rgb(18, 28, 45)',
-                fontSize: '0.875rem',
-                fontWeight: '400',
-                lineHeight: '1.25rem',
-                paddingTop: '0.75rem',
-                paddingBottom: '0.75rem',
-                paddingLeft: '0.5rem',
-                paddingRight: '0.5rem',
-                borderRadius: '0.5rem'
-              }}
-            >
+          <div className='message-not-author'>
+            <div className='message-view-avatar-not-author'>
+              <Avatar
+                className='avatar-border'
+                content={author || 'Uknown'}
+                initials
+                status={'online'}
+              />
+            </div>
+            <div className='message-not-author-message'>
               {message}
-              <div
-                style={{
-                  paddingTop: "0.5rem",
-                  fontSize: "0.75rem",
-                  color: 'rgb(96, 107, 133)'
-                }}
-              >
+              <div className='message-time-not-author'>
                 {messageTime}
               </div>
             </div>
@@ -217,6 +192,16 @@ const MessageView = ({
       )}
     </>
   );
+};
+
+MessageView.propTypes = {
+  author: Proptypes.string,
+  messageTime: Proptypes.string,
+  onDeleteMessage: Proptypes.func,
+  sameAuthorAsPrev: Proptypes.bool,
+  statusAvatar: Proptypes.string,
+  topPadding: Proptypes.string,
+  userData: Proptypes.object
 };
 
 export default MessageView;

@@ -21,6 +21,9 @@ import {
   WHATSAPP_PREFIX
 } from "./Constants";
 
+// @styles
+import "./Settings.scss";
+
 const Settings = ({
   convo,
   participants
@@ -91,7 +94,7 @@ const Settings = ({
           handleClose={handleParticipantClose}
           isModalOpen={isManageParticipantOpen}
           title="Manage Participants"
-          participantsCount={participants.length}
+          participantsCount={participants?.length}
           participantsList={participants}
           onClick={(content) => {
             handleParticipantClose();
@@ -235,18 +238,11 @@ const Settings = ({
           }}
         />
       )}
-      {isLoading ? (
-        <div
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          position="absolute"
-          height="100%"
-          width="100%"
-        >
+      {isLoading && (
+        <div className="settings-loading">
           <Spinner size='20' title="Loading" />
         </div>
-      ) : null}
+      )}
     </>
   );
 };

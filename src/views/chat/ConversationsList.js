@@ -1,7 +1,7 @@
 // @packages
+import Proptypes from "prop-types";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useQuery } from '@apollo/client';
-import { useEffect } from "react";
 
 // @scripts 
 import ConversationView from "./ConversationsView";
@@ -10,30 +10,27 @@ import {
   setLastReadIndex,
   updateCurrentConversation,
   updateParticipants,
-  updateUnreadMessages
+  updateUnreadMessages,
+  setTotalUnreadMessagesCount as setTotalUnreadMessagesCountAction
 } from '../../redux/actions/chat';
-import queryConversationsDetail from '../../graphql/QueryConversationsDetail';
 
 const ConversationsList = ({ 
   client,
   info,
-  setInfo,
   userData,
-  value
+  notifications
 }) => {
-  const conversations = useSelector((state) => state.reducer.convo.convo);
+  const [conversationUnread, setConversationUnread] = useState(null);
+
+  const conversations = useSelector((state) => state.reducer.convo);
   const infoId = useSelector((state) => state.reducer.information.info);
   const messages = useSelector((state) => state.reducer.messages);
   const participants = useSelector((state) => state.reducer.participants);
   const sid = useSelector((state) => state.reducer.sid.sid);
-  const typingData = useSelector((state) => state.reducer.typingData.typingData);
+  const typingData = useSelector((state) => state.reducer.typingData);
   const unreadMessages = useSelector((state) => state.reducer.unreadMessages.unreadMessages);
 
   const dispatch = useDispatch();
-
-  if (conversations === undefined || conversations === null) {
-    return <div className="empty" />;
-  }
 
   const updateCurrentConvo = async (
     updateCurrentConvo,
@@ -43,8 +40,8 @@ const ConversationsList = ({
   ) => {
     dispatch(updateCurrentConvo(convo?.sid));
     dispatch(informationId(convoId ?? null));
-  
-    if (sid !== undefined && sid !== null) {
+    
+    if (convo) {
       try {
         const participants = await convo.getParticipants();
         dispatch(updateParticipants(participants, convo?.sid));
@@ -68,6 +65,29 @@ const ConversationsList = ({
       return 0;
     }
     return unreadMessages[convoSid];
+  };
+
+  const setFilterConversationUnreadMessages = () => {
+    info?.map((convo) => {
+      if (unreadMessages[convo?.sid] > 0) {
+        setConversationUnread(convo);
+      }
+    });
+  };
+
+  useEffect(() => {
+    setFilterConversationUnreadMessages();
+  }, [unreadMessages]);
+
+  const setTotalUnreadMessagesCount = (
+    unreadMessages,
+    setTotalUnreadMessagesCount
+  ) => {
+    let totalUnreadMessages = 0;
+    Object.keys(unreadMessages).forEach((key) => {
+      totalUnreadMessages += unreadMessages[key];
+    });
+    dispatch(setTotalUnreadMessagesCount(totalUnreadMessages));
   };
 
   const isMyMessage = (messages) => {
@@ -100,38 +120,6 @@ const ConversationsList = ({
     return <div className="empty" />;
   }
 
-  useQuery(queryConversationsDetail, {
-    fetchPolicy: 'no-cache',
-    variables: {
-      bookingIds: conversations.map((convo) => convo?.friendlyName),
-      userId: userData?._id,
-      searchText: value,
-      limit: 10
-    },
-    onCompleted: (data) => {
-      setInfo(data.getConversationsDetails);
-    },
-    pollInterval: 2000
-  });
-
-  const newConversation = (item) => conversations.find((convo) => (item?._id === convo?.channelState?.friendlyName));
-
-  useEffect(() => {
-    if (conversations.length > 0) {
-      const dataWithConversations = info?.map((item) => {
-        if (newConversation(item)) {
-          return {
-            ...newConversation(item),
-            ...item
-          };
-        } else {
-          return item;
-        }
-      });
-      setInfo(dataWithConversations);
-    }
-  }, [conversations]);
-
   return (
     <div id="conversation-list">
       {info?.map((convo) => {
@@ -139,8 +127,11 @@ const ConversationsList = ({
           <ConversationView
             client={client}
             convoId={convo?.sid || convo?._id}
+            convoClass={convo?.classTitle}
             currentConvoSid={sid}
             info={info}
+            conversationUnread={conversationUnread}
+            notifications={notifications}
             infoId={infoId}
             key={convo?.sid || convo?._id}
             longInfo={convo?._id}
@@ -155,11 +146,15 @@ const ConversationsList = ({
             typingInfo={typingData[convo.sid] ?? []}
             unreadMessagesCount={setUnreadMessagesCount(
               sid,
-              convo.sid,
+              convo?.sid,
               unreadMessages,
               updateUnreadMessages
             )}
             updateUnreadMessages={updateUnreadMessages}
+            updateTotalUnreadCount={setTotalUnreadMessagesCount(
+              unreadMessages,
+              setTotalUnreadMessagesCountAction
+            )}
             participants={participants[convo.sid] ?? []}
             convo={convo}
             otherConvo={conversations.find((item) => item?.sid === convo?.sid)}
@@ -182,6 +177,17 @@ const ConversationsList = ({
       })}
     </div>
   );
+};
+
+ConversationsList.defaultProps = {
+  notifications: false
+};
+
+ConversationsList.propTypes = {
+  client: Proptypes.object,
+  info: Proptypes.array,
+  userData: Proptypes.object,
+  notifications: Proptypes.bool
 };
 
 export default ConversationsList;

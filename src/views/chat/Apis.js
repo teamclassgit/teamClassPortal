@@ -1,31 +1,10 @@
-// @packages
-import axios from "axios";
-
 // @scripts
-import {
-  CONVERSATION_PAGE_SIZE
-} from "./Constants";
+import { CONVERSATION_PAGE_SIZE } from "./Constants";
 import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
-
-export const getToken = async (username, password) => {
-  const requestAddress = process.env.REACT_APP_ACCESS_TOKEN_SERVICE_URL;
-
-  try {
-    const response = await axios.get(requestAddress, {
-      params: { identity: username, password }
-    });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error?.response?.status === 401) {
-      return Promise.reject(error);
-    }
-
-    return Promise.reject(`ERROR received from ${requestAddress}: ${error}\n`);
-  }
-};
 
 export const getConversationParticipants = async (conversation) => await conversation.getParticipants();
 
+// @GetAddConversation
 export async function addConversation (name, updateParticipants, client, dispatch) {
   if (name.length > 0 && client !== undefined) {
     try {
@@ -33,7 +12,7 @@ export async function addConversation (name, updateParticipants, client, dispatc
         friendlyName: name
       });
       await conversation.join();
-
+      addParticipant(conversation, client, dispatch);
       const participants = await getConversationParticipants(conversation);
       dispatch(updateParticipants(participants, conversation.sid));
 
@@ -50,6 +29,7 @@ export const getFileUrl = async (media) => {
   return await media.getContentTemporaryUrl().then();
 };
 
+// @GetBlobFile
 export const getBlobFile = async (
   media,
   addNotifications
@@ -64,6 +44,7 @@ export const getBlobFile = async (
   }
 };
 
+// @GetMessageStatus
 export async function getMessageStatus (
   conversation,
   message,
@@ -125,6 +106,7 @@ export async function getMessageStatus (
   return statuses;
 }
 
+// @GetMessages
 export const getMessages = async (
   conversation
 ) => await conversation.getMessages(CONVERSATION_PAGE_SIZE);

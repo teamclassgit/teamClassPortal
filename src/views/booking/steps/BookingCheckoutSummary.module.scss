@@ -10,14 +10,13 @@
 .subContainer {
   height: 100%;
   box-shadow: none !important;
+  border-radius: 0px !important;
 }
 
 .changeSpaceCard {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  height: 20%;
-  margin-top: 35px;
-  padding: 0px 20px;
-  width: 100%;
+  position: relative;
+  height: 80%;
 }

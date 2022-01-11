@@ -1,4 +1,5 @@
 // @packages
+import PropTypes from "prop-types";
 import { ModalBody } from "reactstrap";
 
 // @scripts
@@ -24,8 +25,7 @@ const AddChatParticipantModal = ({
         title={title}
         modalBody={
           <ModalBody>
-            <h3>Add Chat participant</h3>
-            <div as="form">
+            <div>
               <ModalInputField
                 error={error}
                 help_text="The identity used by the participant in Conversations."
@@ -40,17 +40,27 @@ const AddChatParticipantModal = ({
         }
         modalFooter={
           <AddParticipantFooter
-            isSaveDisabled={!name.trim() || !!error}
-            actionName={'save'}
-            onBack={() => {
-              onBack();
-            }}
             action={action}
+            actionName='Save'
+            isSaveDisabled={!name.trim() || !!error}
+            onBack={onBack}
           />
         }
       />
     </>
   );
+};
+
+AddChatParticipantModal.propTypes = {
+  action: PropTypes.func.isRequired,
+  error: PropTypes.string.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  isModalOpen: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired,
+  nameInputRef: PropTypes.object,
+  onBack: PropTypes.func.isRequired,
+  setName: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired
 };
 
 export default AddChatParticipantModal;

@@ -1,17 +1,15 @@
-const initialState = {
-  convo: []
-};
+const initialState = [];
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
   case 'LIST_CONVERSATIONS':
-    return {...state,
-      convo: action.payload.sort((a, b) => {
-        return (
-          (b.lastMessage?.dateCreated || b.dateUpdated) -
-          (a.lastMessage?.dateCreated || a.dateUpdated)
-        );
-      })};
+    return action.payload.sort((a, b) => {
+      return (
+        (b.lastMessage?.dateCreated || b.dateUpdated) -
+        (a.lastMessage?.dateCreated || a.dateUpdated)
+      );
+    });
+      
   case 'UPDATE_CONVERSATION': {
     const stateCopy = [...state];
     let target = stateCopy.find(
@@ -25,15 +23,14 @@ const reducer = (state = initialState, action) => {
         ...action.payload.parameters
       });
 
-    return {...state, convo: stateCopy};
+    return stateCopy;
   }
   case 'REMOVE_CONVERSATION': {
     const stateCopy = [...state];
 
-    return {
-      ...state,
-      convo: stateCopy.filter((convo) => convo.sid !== action.payload)
-    };
+    return stateCopy.filter(
+      (convo) => convo?.sid !== action?.payload
+    );
   }
   default:
     return state;

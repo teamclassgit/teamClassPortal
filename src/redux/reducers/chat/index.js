@@ -1,7 +1,7 @@
 // @packages
 import attachmentsReducer from "./attachmentsReducer";
-import chatReducer from "./chatReducer";
 import convoReducer from "./convoReducer";
+import infoReducer from "./infoReducer";
 import lastReadIndexReducer from "./lastReadIndexReducer";
 import loadingReducer from "./loadingReducer";
 import messageReducer from "./messageListReducer";
@@ -9,10 +9,9 @@ import notificationsReducer from "./notificationsReducer";
 import participantReducer from "./participantsReducer";
 import sidReducer from "./currentConvoReducer";
 import tokenReducer from "./tokenReducer";
+import totalUnreadCountReducer from "./totalUnreadCountReducer";
 import typingDataReducer from "./typingDataReducer";
 import unreadMessagesReducer from "./unreadMessagesReducer";
-import infoReducer from "./infoReducer";
-
 import { combineReducers } from "redux";
 
 const reducers = (state, action) => {
@@ -27,21 +26,18 @@ const reducers = (state, action) => {
 
 const appReducer = combineReducers({
   attachments: attachmentsReducer,
-  chats: chatReducer,
-  contacts: chatReducer,
   information: infoReducer,
   convo: convoReducer,
+  totalUnreadCount: totalUnreadCountReducer,
   lastReadIndex: lastReadIndexReducer,
   loadingStatus: loadingReducer,
   messages: messageReducer,
   notifications: notificationsReducer,
   participants: participantReducer,
-  selectedUser: chatReducer,
   sid: sidReducer,
   token: tokenReducer,
   typingData: typingDataReducer,
-  unreadMessages: unreadMessagesReducer,
-  userProfile: chatReducer
+  unreadMessages: unreadMessagesReducer
 });
 
 export default reducers;

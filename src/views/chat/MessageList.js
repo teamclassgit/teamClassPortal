@@ -2,18 +2,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 import { useDispatch, useSelector } from "react-redux";
-import { useTheme } from "@twilio-paste/theme";
 
 // @scripts
 import Horizon from "./Horizon";
 import MessageFile from "./MessageFile";
 import MessageView from "./MessageView";
+import { addAttachment } from '../../redux/actions/chat/index';
 import { getBlobFile, getMessageStatus } from './Apis';
-import {
-  addAttachment
-} from '../../redux/actions/chat/index';
 
-function getMessageTime (message) {
+const getMessageTime = (message) => {
   const dateCreated = message.dateCreated;
   const today = new Date();
   const diffInDates = Math.floor(today.getTime() - dateCreated.getTime());
@@ -42,7 +39,7 @@ function getMessageTime (message) {
       minutesLessThanTen 
     }${dateCreated.getMinutes().toString()}`
   );
-}
+};
 
 const MessageList = (props) => {
   const { messages, conversation, lastReadIndex } = props;
@@ -97,7 +94,7 @@ const MessageList = (props) => {
     setShowHorizonIndex(showIndex);
   }, [messages, lastReadIndex]);
 
-  function setTopPadding (index) {
+  const setTopPadding = (index) => {
     if (
       props.messages[index] !== undefined &&
       props.messages[index - 1] !== undefined &&
@@ -106,7 +103,7 @@ const MessageList = (props) => {
       return "0px";
     }
     return "10px";
-  }
+  };
 
   const onDownloadAttachment = async (message) => {
     setFileLoading(Object.assign({}, fileLoading, { [message.sid]: true }));
@@ -170,6 +167,7 @@ const MessageList = (props) => {
                 ))
               }
               author={message.author}
+              userData={props.userData}
               getStatus={getMessageStatus(
                 props.conversation,
                 message,
@@ -184,6 +182,7 @@ const MessageList = (props) => {
                 }
               }}
               topPadding={setTopPadding(index)}
+              statusAvatar={props.status}
               lastMessageBottomPadding={index === messagesLength - 1 ? 16 : 0}
               sameAuthorAsPrev={setTopPadding(index) !== "0px"}
               messageTime={getMessageTime(message)}

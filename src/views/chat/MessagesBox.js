@@ -6,24 +6,28 @@ import React, {
   useRef,
   useState
 } from "react";
-import { Spinner } from "reactstrap";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Spinner } from "reactstrap";
 
 // @scripts
 import MessageList from "./MessageList";
 import { CONVERSATION_PAGE_SIZE } from "./Constants";
 import { getMessages } from "./Apis";
+import { useDispatch } from "react-redux";
+
+// @styles
+import "./MessagesBox.scss";
 
 export async function loadMessages (
   conversation,
-  addMessage,
-  currentMessages = []
+  currentMessages = [],
+  addMessage
 ) {
-  const convoSid = conversation.sid;
+  const convoSid = conversation?.sid;
   if (!(convoSid in currentMessages)) {
     const paginator = await getMessages(conversation);
-    const messages = paginator.items;
-    dispatch(addMessage(convoSid, messages));
+    const messages = paginator?.items;
+    addMessage(convoSid, messages);
   }
 }
 
@@ -36,12 +40,13 @@ const MessagesBox = (props) => {
   const [height, setHeight] = useState(0);
   const [paginator, setPaginator] = useState(null);
   const listRef = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!messages && convo && !loadingState) {
       loadMessages(convo, messages, addMessage);
     }
-  }, []);
+  }, [convo, messages, loadingState, addMessage]);
 
   useLayoutEffect(() => {
     const currentHeight = listRef.current?.clientHeight;
@@ -55,14 +60,14 @@ const MessagesBox = (props) => {
 
   useEffect(() => {
     getMessages(convo).then((paginator) => {
-      setHasMore(paginator.hasPrevPage);
+      setHasMore(paginator?.hasPrevPage);
       setPaginator(paginator);
     });
   }, [convo]);
 
   useEffect(() => {
     if (messages?.length && messages[messages.length - 1].index !== -1) {
-      convo.updateLastReadMessageIndex(messages[messages.length - 1].index);
+      convo?.updateLastReadMessageIndex(messages[messages.length - 1].index);
     }
   }, [messages, convo]);
 
@@ -93,48 +98,28 @@ const MessagesBox = (props) => {
 
   return (
     <div
-      key={convo.sid}
+      className="messages-box"
       id="scrollable"
-      style={{
-        display: "flex",
-        flexDirection: "column-reverse",
-        width: "100%",
-        position: 'relative',
-        overflow: "scroll",
-        overflowX: "hidden",
-        marginTop: 50,
-        height: "100%"
-      }}
+      key={convo.sid}
     >
       <InfiniteScroll
+        className="scroll-container"
         dataLength={messages?.length ?? 0}
-        next={fetchMore}
         hasMore={!loading && hasMore}
-        loader={
-          <div>
-            <Spinner decorative={false} size={'12'} title="Loading" />
-          </div>
-        }
-        scrollableTarget="scrollable"
-        style={{
-          display: "flex",
-          overflow: "hidden",
-          flexDirection: "column-reverse",
-          height: "200%"
-        }}
         inverse={true}
+        loader={<Spinner size='12' title="Loading" />}
+        next={fetchMore}
         scrollThreshold="20px"
+        scrollableTarget="scrollable"
       >
         <div 
+          className="scroll-list"
           ref={listRef} 
-          style={{ 
-            overflow: "scroll", 
-            overflowY: "hidden", 
-            height: '110%' 
-          }}
         >
           <MessageList
+            userData={props.userData}
             messages={messages}
+            status={props.status}
             conversation={convo}
             participants={props.participants}
             lastReadIndex={lastConversationReadIndex}

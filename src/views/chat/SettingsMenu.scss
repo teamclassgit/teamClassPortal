@@ -1,0 +1,22 @@
+.settings-menu-container {
+  z-index: 10;
+  background-color: white;
+}
+
+.dark-layout {
+  .settings-menu-container {
+    background-color: #283046;
+  }
+}
+
+.settings-item {
+  margin-right: 0.5rem;
+}
+
+.settings-icon {
+  width: 100% !important; 
+}
+
+.delete-message {
+  color: red;
+}

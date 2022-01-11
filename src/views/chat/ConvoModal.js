@@ -1,6 +1,7 @@
 // @packages
+import Proptypes from "prop-types";
+import React, { createRef } from "react";
 import { Modal, ModalHeader } from "reactstrap";
-import { createRef } from "react";
 
 const ConvoModal = ({
   handleClose,
@@ -14,10 +15,11 @@ const ConvoModal = ({
   return (
     <Modal
       ariaLabelledby="add-convo-modal"
-      isOpen={isModalOpen}
-      onDismiss={() => handleClose()}
       initialFocusRef={nameInputRef}
+      isOpen={isModalOpen}
+      onDismiss={handleClose}
       size="default"
+      toggle={handleClose}
     >
       <ModalHeader>
         {title}
@@ -26,6 +28,14 @@ const ConvoModal = ({
       {modalFooter}
     </Modal>
   );
+};
+
+ConvoModal.propTypes = {
+  handleClose: Proptypes.func.isRequired,
+  isModalOpen: Proptypes.bool.isRequired,
+  modalBody: Proptypes.node.isRequired,
+  modalFooter: Proptypes.node,
+  title: Proptypes.string.isRequired
 };
 
 export default ConvoModal;

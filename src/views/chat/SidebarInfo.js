@@ -4,7 +4,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import classnames from 'classnames';
 import { X } from 'react-feather';
 import { useMutation } from '@apollo/client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Button,
   CustomInput,
@@ -41,6 +41,10 @@ const SidebarInfo = ({
     }
   };
 
+  useEffect(() => {
+    setStatus(userData?.status);
+  }, [userData?.status]);
+
   return (
     <>
       <header className='chat-profile-header'>
@@ -60,7 +64,7 @@ const SidebarInfo = ({
           <span className='user-post'>{userData?.role}</span>
         </div>
       </header>
-      <PerfectScrollbar className='profile-sidebar-area' options={{ wheelPropagation: false }}>
+      <PerfectScrollbar className='profile-sidebar-area' options={{ wheelPropagation: true }}>
         <h6 className='section-label mb-1'>About</h6>
         <div className='about-user'>
           <Input
@@ -81,7 +85,7 @@ const SidebarInfo = ({
           <li className='pb-1'>
             <CustomInput
               checked={status === 'online'}
-              className='custom-control-primary'
+              className='custom-control-success'
               id='online'
               label='Online'
               onChange={() => setStatus('online')}

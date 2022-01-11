@@ -1,6 +1,6 @@
+// @packages
 import React from "react";
-import { HideIcon } from "@twilio-paste/icons/esm/HideIcon";
-import { ShowIcon } from "@twilio-paste/icons/esm/ShowIcon";
+import { Eye, EyeOff } from 'react-feather';
 import { Label, Input, Button } from "reactstrap";
 
 const PrefixType = {
@@ -8,7 +8,7 @@ const PrefixType = {
   WhatsApp: "WhatsApp"
 };
 
-function getPrefixType (prefixType) {
+const getPrefixType = (prefixType) => {
   switch (prefixType) {
   case PrefixType.SMS:
     return "+";
@@ -17,37 +17,49 @@ function getPrefixType (prefixType) {
   default:
     return undefined;
   }
-}
+};
 
-const ModalInputField = (props) => {
-  const prefixType = getPrefixType(props.prefixType);
+const ModalInputField = ({
+  error,
+  input,
+  inputType,
+  isFocused,
+  label,
+  onBlur,
+  onChange,
+  placeholder,
+  prefixType,
+  setShowPassword,
+  showPassword
+}) => {
+  const prefixTypes = getPrefixType(prefixType);
 
   return (
     <>
       <Label htmlFor="modal-input">
-        <div>{props.label}</div>
+        <div>{label}</div>
       </Label>
       <Input
-        autoFocus={props.isFocused ?? false}
-        type={props.inputType}
-        value={props.input}
-        placeholder={props.placeholder}
-        onChange={(e) => props.onChange(e.currentTarget.value)}
-        hasError={!!props.error}
-        onBlur={props.onBlur}
-        insertBefore={prefixType}
+        autoFocus={isFocused ?? false}
+        hasError={!!error}
+        insertBefore={prefixTypes}
+        onBlur={onBlur}
+        onChange={(e) => onChange(e.currentTarget.value)}
+        placeholder={placeholder}
+        type={inputType}
+        value={input}
         insertAfter={
-          props.showPassword !== undefined && (
+          showPassword !== undefined && (
             <>
               <Button
                 variant="link"
                 onClick={() => {
-                  if (props.setShowPassword !== undefined) {
-                    props.setShowPassword(!props.showPassword);
+                  if (setShowPassword !== undefined) {
+                    setShowPassword(!showPassword);
                   }
                 }}
               >
-                {props.showPassword ? <HideIcon /> : <ShowIcon />}
+                {showPassword ? <EyeOff size={12} color="black" /> : <Eye size={12} color="black" />}
               </Button>
             </>
           )

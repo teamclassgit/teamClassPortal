@@ -1,24 +1,19 @@
 // @packages
-import { Text } from "@twilio-paste/core";
-import React from "react";
+import React, { forwardRef } from "react";
 
-const Horizon = React.forwardRef(
+// @styles
+import "./Horizon.scss";
+
+const Horizon = forwardRef(
   ({ amount }, ref) => {
     return (
       <div
+        className="horizon"
         ref={ref}
-        style={{
-          textAlign: "center",
-          backgroundColor: 'blue',
-          padding: 2,
-          fontSize: "14px",
-          lineHeight: "20px",
-          margin: "16px 0"
-        }}
       >
-        <Text as="span" color="colorTextLink">
+        <span>
           {amount} new {amount > 1 ? "messages" : "message"}
-        </Text>
+        </span>
       </div>
     );
   }

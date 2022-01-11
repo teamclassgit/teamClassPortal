@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { useLazyQuery, useQuery } from '@apollo/client';
+import Proptypes from 'prop-types';
 
 // @scripts
 import BookingCheckoutSummary from '../booking/steps/BookingCheckoutSummary';
@@ -11,6 +12,9 @@ import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByCla
 import queryClassById from '../../graphql/QueryClassById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
 import { getBookingTotals } from '../../utility/Utils';
+
+// @styles
+import './SidebarRight.scss';
 
 const SidebarRight = ({
   client,
@@ -49,7 +53,7 @@ const SidebarRight = ({
     variables: {
       bookingId: id
     },
-    pollInterval: 300000,
+    pollInterval: 20000,
     onCompleted: (data) => {
       setBookingInfo(data.booking);
     }
@@ -158,56 +162,54 @@ const SidebarRight = ({
   }, [bookingInfo]);
 
   return (
-    <div className='sidebar-left'>
-      <div className='sidebar'>
+    <div>
+      <div className='sidebar-sub'>
         <div
           className='chat-profile-sidebar'
+          style={{
+            transform: 'translateX(-99%)',
+            borderLeft: !client && '1px solid #e6e6e6'
+          }}
         >
-          <div 
-            className='prueba'
-            style={{
-              display: 'flex',
-              padding: '10.5px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              width: '111%',
-              backgroundColor: 'white',
-              borderLeft: '1px solid #ebe9f1',
-              borderBottom: '1px solid #ebe9f1'
-            }}
-          >
+          <div className='sidebar-right-container'>
             <h4>
               Details
             </h4>
           </div>
           {bookingInfo && client?.connectionState !== "denied" && (
-            <BookingCheckoutSummary
-              teamClass={teamClass}
-              chat
-              changeSpace
-              bookingInfo={bookingInfo}
-              requestEventDate={requestEventDate}
-              calendarEvent={calendarEvent}
-              totalWithoutFee={totalWithoutFee}
-              totalAddons={totalAddons}
-              totalServiceFee={totalServiceFee}
-              totalCardFee={totalCardFee}
-              tax={tax}
-              totalTax={totalTax}
-              total={total}
-              discount={discount}
-              totalDiscount={totalDiscount}
-              deposit={initialDeposit}
-              showFinalPaymentLine={true}
-              finalPayment={payment}
-              attendeesToInvoice={attendeesToInvoice || bookingInfo.attendees}
-            />
+            <div className='booking-container'>
+              <BookingCheckoutSummary
+                teamClass={teamClass}
+                chat
+                changeSpace
+                bookingInfo={bookingInfo}
+                requestEventDate={requestEventDate}
+                calendarEvent={calendarEvent}
+                totalWithoutFee={totalWithoutFee}
+                totalAddons={totalAddons}
+                totalServiceFee={totalServiceFee}
+                totalCardFee={totalCardFee}
+                tax={tax}
+                totalTax={totalTax}
+                total={total}
+                discount={discount}
+                totalDiscount={totalDiscount}
+                deposit={initialDeposit}
+                showFinalPaymentLine={true}
+                finalPayment={payment}
+                attendeesToInvoice={attendeesToInvoice || bookingInfo.attendees}
+              />
+            </div>
           )}
         </div>
       </div>
     </div>
   );
+};
+
+SidebarRight.propTypes = {
+  client: Proptypes.object,
+  id: Proptypes.string
 };
 
 export default SidebarRight;

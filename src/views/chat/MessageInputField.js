@@ -1,17 +1,18 @@
 // @packages
+import React, { useEffect, useState } from "react";
 import { Button, Input } from "reactstrap";
 import { Paperclip } from 'react-feather';
 import { debounce } from "lodash";
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
 
 // @scripts
 import MessageInput from "./MessageInput";
 import SendMessageButton from "./SendMessageButton";
 import { MAX_FILE_SIZE } from "./Constants";
-import {
-  addMessages
-} from '../../redux/actions/chat';
+import { addMessages } from '../../redux/actions/chat';
+
+// @styles
+import "./MessageInputField.scss";
 
 const MessageInputField = (props) => {
   const [files, setFiles] = useState([]);
@@ -41,10 +42,6 @@ const MessageInputField = (props) => {
     const validFiles = Array.from(assets).filter(
       ({ size }) => size < MAX_FILE_SIZE + 1
     );
-
-    if (validFiles.length < assets.length) {
-      // TODO: show error
-    }
 
     setFiles([...files, ...validFiles]);
   };
@@ -121,33 +118,9 @@ const MessageInputField = (props) => {
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: 'white',
-        display:"flex",
-        flexBasis: "30px",
-        flexDirection:"column",
-        flexGrow: 10
-      }}
-    >
-      <div
-        style={{
-          display:"flex",
-          flexDirection:"row",
-          height:"100%",
-          paddingBottom: "10px",
-          paddingTop: "10px"
-        }}
-      >
-        <div
-          style={{
-            display:"flex",
-            flexDirection:"column",
-            justifyContent:"flex-start",
-            alignItems:"start",
-            cursor: 'pointer'
-          }}
-        >
+    <div className="input-field-container">
+      <div className="input-field-sub">
+        <div className="input-field">
           <Button size='xs' color='transparent'>
             <label htmlFor="file-input">
               <Paperclip
@@ -165,10 +138,7 @@ const MessageInputField = (props) => {
             />
           </Button>
         </div>
-        <div style={{
-          paddingRight: "10px",
-          flexGrow: 10
-        }}>
+        <div className="message-input-field">
           <MessageInput
             assets={files}
             message={message}
@@ -186,15 +156,7 @@ const MessageInputField = (props) => {
             onFileRemove={onFileRemove}
           />
         </div>
-        <div
-          style={{
-            display:"flex",
-            flexDirection:"column",
-            justifyContent:"flex-start",
-            alignItems:"start",
-            backgroundColor:"white"
-          }}
-        >
+        <div className="message-button-input-field">
           {message || files.length ? (
             <SendMessageButton message={message} onClick={onMessageSend} />
           ) : null}

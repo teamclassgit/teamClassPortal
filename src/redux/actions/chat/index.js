@@ -42,6 +42,15 @@ export const setLastReadIndex = (index) => {
   };
 };
 
+export const setTotalUnreadMessagesCount = (count) => {
+  return dispatch => {
+    dispatch({
+      type: 'CONVERSATION_TOTAL_UNREAD_MESSAGES_COUNT',
+      payload: count
+    });
+  };
+};
+
 export const removeConversation = (sid) => {
   return dispatch => {
     dispatch({

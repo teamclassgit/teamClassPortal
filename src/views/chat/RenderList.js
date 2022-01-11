@@ -1,70 +1,50 @@
 // @packages
+import Proptypes from 'prop-types';
 import React, { useState } from 'react';
 import { Tooltip } from 'reactstrap';
 
+// @styles
+import './RenderList.scss';
+
 const RenderList = ({
-  convo
+  convo,
+  convoId
 }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
-
   const toggle = () => setTooltipOpen(!tooltipOpen);
 
   return (
-    <div style={{
-      display: "grid"
-    }}>
-      <span 
-        style={{ 
-          verticalAlign: "top", 
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis"
-        }}
-      >
-        <span style={{ fontWeight: "bold"}}>Booking:</span> {convo && convo?._id ? convo?._id : convo?.friendlyName }
+    <div className='render-list-container'>
+      <span className='render-list'>
+        <span className='render-list-span'>Booking:</span> {convo && convo?._id ? convo?._id : convo?.friendlyName}
       </span>
-      <span 
-        style={{
-          verticalAlign: "top",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis"
-        }}
-      >
-        <span style={{ fontWeight: "bold"}}>Customer:</span> {convo && convo?.customer?.name}
+      <span className='render-list'>
+        <span className='render-list-span'>Customer:</span> {convo && convo?.customer?.name}
       </span>
-      <span 
-        id="TooltipExample"
-        style={{ 
-          verticalAlign: "top",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis"
-        }}
-      >
-        <span style={{ fontWeight: "bold"}} >Class: <span style={{ fontWeight: "normal"}} >{convo && convo?.classTitle}</span></span>
+      <span className='render-list' id={`Tooltip-${convoId}`}>
         <Tooltip 
-          placement="right" 
           isOpen={tooltipOpen} 
-          target="TooltipExample" 
+          placement="right" 
+          target={`Tooltip-${convoId}`}
           toggle={toggle}
+          delay={{ show: 50, hide: 50 }}
         >
-          {convo?.classTitle}
+          {convo && convo?.classTitle}
         </Tooltip>
+        <span className='render-list-span' >Class: <span style={{ fontWeight: "normal"}} >{convo && convo?.classTitle}</span></span>
       </span>
       {convo?.calendarEvent?.year && convo?.calendarEvent?.month && convo?.calendarEvent?.day && (
-        <span 
-          style={{ 
-            verticalAlign: "top",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis"
-          }}>
-          <span style={{ fontWeight: "bold"}}>Event Date:</span> {`${convo && convo?.calendarEvent?.year} / ${convo && convo?.calendarEvent?.month} / ${convo && convo?.calendarEvent?.day}`}
+        <span>
+          <span className='render-list-span'>Event Date:</span> {`${convo && convo?.calendarEvent?.year} / ${convo && convo?.calendarEvent?.month} / ${convo && convo?.calendarEvent?.day}`}
         </span>
       )}
     </div>
   );
 };  
+
+RenderList.propTypes = {
+  convo: Proptypes.object.isRequired,
+  convoId: Proptypes.string.isRequired
+};
 
 export default RenderList;

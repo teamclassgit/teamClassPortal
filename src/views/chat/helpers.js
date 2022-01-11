@@ -1,7 +1,4 @@
 export const handlePromiseRejection = async (func, addNotifications) => {
-  if (!addNotifications) {
-    return;
-  }
   try {
     await func();
   } catch (e) {

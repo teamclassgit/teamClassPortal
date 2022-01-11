@@ -1,22 +1,25 @@
 // @packages
-import { Text, Truncate } from "@twilio-paste/core";
+import Proptypes from "prop-types";
 import { Button, Spinner } from 'reactstrap';
-import { X, File } from "react-feather";
-import { DownloadIcon } from "@twilio-paste/icons/cjs/DownloadIcon";
+import { Truncate } from "@twilio-paste/core";
+import { X, File, Download } from "react-feather";
 import { useEffect, useState } from "react";
 
 // @scripts
 import { getFileUrl } from "./Apis";
 
+// @styles
+import "./MessageFile.scss";
+
 const MessageFile = ({
-  media,
-  onRemove,
-  onDownload,
-  onOpen,
-  type,
   file,
   isImage,
+  media,
+  onDownload,
+  onOpen,
+  onRemove,
   sending,
+  type,
   loading = false
 }) => {
   const { filename: name, size } = media;
@@ -28,56 +31,34 @@ const MessageFile = ({
       getFileUrl(media).then((url) => setImageUrl(url));
     }
   }, []);
+
   if (isImage && type === "view") {
     return (
       <div
-        style={{
-          minHeight: "200px",
-          minWidth: "200px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          borderRadius: "4px"
-        }}
+        className="message-file-container"
         onClick={file ? onOpen : onDownload}
       >
         <div
-          style={{
-            display: file ? "none" : "block",
-            zIndex: 7,
-            position: "absolute",
-            cursor: "pointer"
-          }}
+          className="message-file-sub"
+          style={{ display: file ? "none" : "block" }}
         >
           {sending || loading ? (
             <Spinner
+              color="primary"
               size='sm'
-              decorative={false}
-              color="colorTextInverse"
               title="Loading"
             />
           ) : (
-            <DownloadIcon
-              decorative={false}
+            <Download
+              color="primary"
+              size={24}
               title="Download File"
-              size='12px'
-              color="colorTextInverse"
-              style={{
-                fontWeight: "bold"
-              }}
             />
           )}
         </div>
         <img
-          style={{
-            maxHeight: "300px",
-            zIndex: 6,
-            maxWidth: "400px",
-            filter: !file ? "blur(4px)" : "none",
-            width: "100%",
-            borderRadius: "4px"
-          }}
+          className="message-image-url"
+          style={{ filter: !file ? "blur(4px)" : "none" }}
           src={
             !file
               ? imageUrl
@@ -89,27 +70,16 @@ const MessageFile = ({
   } else {
     return (
       <div
+        className="message-download-url"
         style={{
-          display: "flex",
-          alignItems: "center",
-          padding: "12px 16px",
-          margin: "6px 6px 0 6px",
-          border: "1px solid #CACDD8",
-          boxSizing: "border-box",
-          borderRadius: "4px",
           width: type === "view" ? "calc(100% - 12px)" : "calc(25% - 20px)",
           maxWidth: type === "view" ? "300px" : "200px",
-          minWidth: "150px",
-          backgroundColor: "#fff",
           cursor: type === "view" ? "pointer" : "default"
         }}
         onClick={type === "view" ? (file ? onOpen : onDownload) : undefined}
       >
         <div
-          style={{
-            marginRight: "16px",
-            alignItems: "start"
-          }}
+          className="message-file"
         >
           {!file && type === "view" ? (
             loading || sending ? (
@@ -119,72 +89,52 @@ const MessageFile = ({
                 title="Loading"
               />
             ) : (
-              <DownloadIcon
-                decorative={false}
+              <Download
+                className="message-text"
+                color="black"
+                size={24}
                 title="Download File"
-                size="sizeIcon60"
-                color="colorTextLink"
-                style={{
-                  fontWeight: "bold"
-                }}
               />
             )
           ) : (
             <File
-              title="Open File"
-              size={25}
+              className="message-text"
               color="black"
-              style={{
-                fontWeight: "bold"
-              }}
+              size={24}
+              title="Open File"
             />
           )}
         </div>
 
-        <div
-          style={{
-            maxWidth: "calc(100% - 42px)"
-          }}
-        >
-          <Text as="p" fontWeight="fontWeightMedium">
+        <div className="message-text-container" >
+          <p fontWeight="fontWeightMedium">
             <Truncate title={name}>{name}</Truncate>
-          </Text>
+          </p>
           {loading || sending ? (
-            <Text as="p" color="colorTextInverseWeaker">
+            <p color="colorTextInverseWeaker">
               {loading ? "Downloading..." : "Uploading..."}
-            </Text>
+            </p>
           ) : (
-            <Text as="p" color="colorTextInverseWeaker">
+            <p color="colorTextInverseWeaker">
               {Math.round((size / Math.pow(2, 20)) * 100) / 100} MB
               {!file && type === "view" ? " - Click to download" : ""}
-            </Text>
+            </p>
           )}
         </div>
 
         {onRemove ? (
           <Button 
-            variant="link" 
-            onClick={onRemove} 
+            className="message-remove"
             color="primary" 
+            onClick={onRemove} 
             size="sm"
-            style={{
-              borderRadius:'300px',
-              width: 10,
-              height: 30,
-              position: 'relative',
-              top: '-40px'
-            }}
+            variant="link" 
           >
-            <div 
-              style={{
-                marginLeft: '-9.2px',
-                marginTop: '-2px'
-              }}
-            >
+            <div className="message-remove-icon">
               <X
-                title="Remove file"
                 color="white"
                 size={20}
+                title="Remove file"
               />
             </div>
           </Button>
@@ -192,6 +142,18 @@ const MessageFile = ({
       </div>
     );
   }
+};
+
+MessageFile.propTypes = {
+  file: Proptypes.object,
+  isImage: Proptypes.bool,
+  media: Proptypes.object.isRequired,
+  onDownload: Proptypes.func,
+  onOpen: Proptypes.func,
+  onRemove: Proptypes.func,
+  sending: Proptypes.bool,
+  type: Proptypes.string,
+  loading: Proptypes.bool
 };
 
 export default MessageFile;

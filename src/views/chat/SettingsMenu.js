@@ -1,27 +1,32 @@
 // @packages
 import React, { useState } from "react";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { MoreVertical, ArrowLeft as ArrowBackIcon, User, Bell } from "react-feather";
 import {
   MediaObject,
   MediaFigure,
   MediaBody
 } from "@twilio-paste/media-object";
-import { MoreVertical, ArrowLeft as ArrowBackIcon, User, Bell } from "react-feather";
-import { Text } from "@twilio-paste/text";
+import Proptypes from "prop-types";
 
 // @scripts
 import { NOTIFICATION_LEVEL } from "./Constants";
 
-const SettingsMenu = (
-  props
-) => {
-  const { notificationLevel } = props.conversation;
+// @styles
+import './SettingsMenu.scss';
+
+const SettingsMenu = ({
+  conversation,
+  onParticipantListOpen,
+  leaveConvo
+}) => {
+  const { notificationLevel } = conversation;
   const muted = notificationLevel === NOTIFICATION_LEVEL.MUTED;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleMuteConversation = () => {
-    props.conversation.setUserNotificationLevel(
+    conversation.setUserNotificationLevel(
       muted
         ? (NOTIFICATION_LEVEL.DEFAULT)
         : (NOTIFICATION_LEVEL.MUTED)
@@ -31,10 +36,7 @@ const SettingsMenu = (
   const toogleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   return (
-    <div style={{
-      zIndex: 1,
-      backgroundColor: "white"
-    }}>
+    <div className="settings-menu-container">
       <Dropdown 
         isOpen={dropdownOpen} 
         toggle={toogleDropdown} 
@@ -45,15 +47,11 @@ const SettingsMenu = (
         <DropdownMenu right>
           <DropdownItem 
             onClick={toggleMuteConversation} 
-            style={{
-              width: '100%'
-            }}
+            className="settings-icon"
           >
             <MediaObject verticalAlign="center">
               <Bell 
-                style={{
-                  marginRight: "0.5rem"
-                }}
+                className="settings-item"
                 color={muted ? "gray" : "black"}
                 size={16}
               >
@@ -63,17 +61,13 @@ const SettingsMenu = (
             </MediaObject>
           </DropdownItem>
           <DropdownItem 
-            onClick={props.onParticipantListOpen}
-            style={{
-              width: '100%'
-            }}
+            className="settings-icon"
+            onClick={onParticipantListOpen}
           >
             <MediaObject verticalAlign="center">
-              <MediaFigure spacing="space20">
+              <MediaFigure >
                 <User
-                  style={{
-                    marginRight: "0.5rem"
-                  }}
+                  className="settings-item"
                   size={16}
                   title="information"
                   color='black'
@@ -84,26 +78,22 @@ const SettingsMenu = (
           </DropdownItem>
           <DropdownItem divider />
           <DropdownItem 
-            onClick={props.leaveConvo} 
-            style={{
-              width: '100%'
-            }}
+            onClick={leaveConvo} 
+            className="settings-icon"
           >
             <MediaObject verticalAlign="center">
-              <MediaFigure spacing="space20">
+              <MediaFigure >
                 <ArrowBackIcon
-                  style={{
-                    marginRight: "0.5rem"
-                  }}
+                  className="settings-item"
                   size={16}
                   title="information"
-                  color='black'
+                  color='red'
                 />
               </MediaFigure>
               <MediaBody>
-                <Text as="span" color="colorTextError">
+                <span className="delete-message">
                   Leave Conversation
-                </Text>
+                </span>
               </MediaBody>
             </MediaObject>
           </DropdownItem>
@@ -111,6 +101,12 @@ const SettingsMenu = (
       </Dropdown>
     </div>
   );
+};
+
+SettingsMenu.propTypes = {
+  conversation: Proptypes.object.isRequired,
+  onParticipantListOpen: Proptypes.func.isRequired,
+  leaveConvo: Proptypes.func.isRequired
 };
 
 export default SettingsMenu;

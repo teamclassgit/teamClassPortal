@@ -1,85 +1,66 @@
 // @packages
-import {
-  TBody,
-  Td,
-  Th,
-  THead,
-  Tr
-} from "@twilio-paste/core";
 import Avatar from '@components/avatar';
-import { MenuButton, Menu, MenuItem, useMenuState } from "@twilio-paste/menu";
-import { ModalBody, Table } from "reactstrap";
-import { Text } from "@twilio-paste/text";
+import Proptypes from 'prop-types';
+import React, { useState } from "react";
+import { ModalBody, Table, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
+import { TBody, Td, Tr } from "@twilio-paste/core";
 import { User, ChevronDown, Trash } from 'react-feather';
 
 // @scripts
 import ConvoModal from "./ConvoModal";
 
-const ManageParticipantsModal = (
-  props
-) => {
-  const menu = useMenuState({ placement: "bottom-start" });
+// @styles
+import './ManageParticipantsModal.scss';
+
+const ManageParticipantsModal = ({
+  handleClose,
+  isModalOpen,
+  onClick,
+  onParticipantRemove,
+  participantsCount,
+  participantsList,
+  title
+}) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggle = () => setDropdownOpen(!dropdownOpen);
 
   return (
     <>
       <ConvoModal
-        handleClose={() => props.handleClose()}
-        isModalOpen={props.isModalOpen}
-        title={props.title}
+        handleClose={handleClose}
+        isModalOpen={isModalOpen}
+        title={title}
         modalBody={
           <ModalBody>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingTop: "6px"
-              }}
-            >
-              <div
-                fontFamily="fontFamilyText"
-                fontWeight="fontWeightBold"
-                fontSize="fontSize30"
-                lineHeight="lineHeight60"
-              >
-                Participants ({props.participantsCount})
+            <div className="modal-body-manage-participants">
+              <div className='modal-participants-count'>
+                Participants ({participantsCount})
               </div>
-              <MenuButton {...menu} variant="secondary">
-                Add Participant <ChevronDown decorative size="20" />
-              </MenuButton>
-              <Menu {...menu} aria-label="Preferences">
-                <MenuItem
-                  {...menu}
-                  onClick={() => {
-                    props.onClick("Add chat participant");
-                  }}
-                >
-                  Chat Participant
-                </MenuItem>
-              </Menu>
+              <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+                <DropdownToggle caret nav>
+                  <div className='modal-toggle'>
+                    Add Participant <ChevronDown size="20" />
+                  </div>
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem
+                    onClick={() => {
+                      onClick("Add chat participant");
+                    }}
+                  >
+                    Chat Participant
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
-            <div
-              style={{
-                marginTop: "12px",
-                overflow: "hidden",
-                overflowY: "auto",
-                maxHeight: "500px"
-              }}
-            >
+            <div className='modal-table-container'>
               <Table>
-                <THead hidden={true}>
-                  <Tr>
-                    <Th width="size10" style={{ width: "50px" }} />
-                    <Th width="size40" textAlign="left" />
-                    <Th textAlign="right" />
-                  </Tr>
-                </THead>
                 <TBody>
-                  {props.participantsList.length ? (
-                    props.participantsList.map((user) => (
+                  {participantsList.length ? (
+                    participantsList.map((user) => (
                       <Tr key={user.sid}>
-                        <Td width="size20">
+                        <Td>
                           <Avatar
                             color={`light-dark`} 
                             content={(user && user?.identity) || 'Unknown'} 
@@ -87,20 +68,20 @@ const ManageParticipantsModal = (
                           />
                         </Td>
                         <Td textAlign="left">
-                          <Text as="span" textAlign="left">
+                          <span as="span" textAlign="left">
                             {user.type === "chat"
                               ? user.identity
                               :
                               (user.attributes["friendlyName"]) ??
                                 "unknown"}
-                          </Text>
+                          </span>
                         </Td>
                         <Td textAlign="right">
                           {user.identity !==
                           localStorage.getItem("username") ? (
                               <Trash
                                 href="#"
-                                onClick={() => props.onParticipantRemove(user)}
+                                onClick={() => onParticipantRemove(user)}
                               >
                               Remove
                               </Trash>
@@ -109,45 +90,18 @@ const ManageParticipantsModal = (
                       </Tr>
                     ))
                   ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        width: "100%",
-                        height: "400px"
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: "#606B85"
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            paddingBottom: "12px"
-                          }}
-                        >
+                    <div className="modal-not-participants-container">
+                      <div className="modal-not-participants-color">
+                        <div className="modal-not-participants-user">
                           <User
-                            decorative={false}
+                            className="modal-not-participants-color"
+                            size={40}
                             title="No participants"
-                            size="sizeIcon40"
-                            style={{
-                              color: "#606B85"
-                            }}
                           />
                         </div>
-                        <Text
-                          as="p"
-                          fontSize="fontSize40"
-                          style={{
-                            color: "#606B85"
-                          }}
-                        >
+                        <p className='modal-not-participants-p'>
                           No participants
-                        </Text>
+                        </p>
                       </div>
                     </div>
                   )}
@@ -159,6 +113,16 @@ const ManageParticipantsModal = (
       />
     </>
   );
+};
+
+ManageParticipantsModal.propTypes = {
+  handleClose: Proptypes.func.isRequired,
+  isModalOpen: Proptypes.bool.isRequired,
+  onClick: Proptypes.func.isRequired,
+  onParticipantRemove: Proptypes.func.isRequired,
+  participantsCount: Proptypes.number.isRequired,
+  participantsList: Proptypes.array.isRequired,
+  title: Proptypes.string.isRequired
 };
 
 export default ManageParticipantsModal;

@@ -1,8 +1,5 @@
 // @packages
-import Avatar from '@components/avatar';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import React from 'react';
-import classnames from 'classnames';
 import { Bell } from 'react-feather';
 import {
   Badge,
@@ -10,67 +7,20 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Media,
   UncontrolledDropdown
 } from 'reactstrap';
 import { useHistory } from 'react-router';
 
+// @scripts
+import useTwilioClient from '../../../hooks/useTwilioClient';
+import ConversationsList from '@src/views/chat/ConversationsList';
+
 const NotificationDropdown = ({
-  filterData
+  filterData,
+  totalUnread
 }) => {
   const history = useHistory();
-
-  const renderNotificationItems = () => {
-    return (
-      <PerfectScrollbar
-        component='li'
-        onClick={handleChatClick}
-        className='media-list scrollable-container'
-        options={{
-          wheelPropagation: false
-        }}
-      >
-        {filterData?.map((item, index) => {
-          return (
-            <a key={index} className='d-flex' href='/' onClick={e => e.preventDefault()}>
-              <Media
-                className={classnames('d-flex', {
-                  'align-items-start': !item.switch,
-                  'align-items-center': item.switch
-                })}
-              >
-                <>
-                  <Media left>
-                    <Avatar
-                      {...(item.img
-                        ? { img: item.img, imgHeight: 32, imgWidth: 32 }
-                        : item.avatarContent
-                          ? {
-                            content: item.avatarContent,
-                            color: item.color
-                          }
-                          : item.avatarIcon
-                            ? {
-                              icon: item.avatarIcon,
-                              color: item.color
-                            }
-                            : null)}
-                    />
-                  </Media>
-                  <Media body>
-                    <span>{item.fromName}</span>
-                    <Media tag='p' heading>
-                      <span className='font-weight-bolder'>{item.message}</span>&nbsp;
-                    </Media>
-                  </Media>
-                </>
-              </Media>
-            </a>
-          );
-        })}
-      </PerfectScrollbar>
-    );
-  };
+  const { client, infoDetails, userData } = useTwilioClient();
 
   const handleChatClick = () => { 
     history.push('/chat');
@@ -80,9 +30,9 @@ const NotificationDropdown = ({
     <UncontrolledDropdown tag='li' className='dropdown-notification nav-item mr-25'>
       <DropdownToggle tag='a' className='nav-link' href='/' onClick={e => e.preventDefault()}>
         <Bell size={21} />
-        {filterData?.length > 0 && (
+        {totalUnread > 0 && (
           <Badge pill color='danger' className='badge-up'>
-            {filterData?.length}
+            {totalUnread}
           </Badge>
         )}
       </DropdownToggle>
@@ -96,8 +46,15 @@ const NotificationDropdown = ({
               </Badge>
             )}
           </DropdownItem>
+          <DropdownItem >
+            <ConversationsList 
+              client={client}
+              info={infoDetails}
+              userData={userData}
+              notifications={true}
+            />
+          </DropdownItem>
         </li>
-        {renderNotificationItems()}
         <li className='dropdown-menu-footer'>
           <Button.Ripple color='primary' block onClick={handleChatClick}>
             Read all notifications

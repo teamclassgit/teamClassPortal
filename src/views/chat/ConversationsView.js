@@ -1,12 +1,16 @@
 // @packages
-import { AlertTriangle, BookOpen, Check, Send } from "react-feather";
-import { useEffect, useState } from "react";
+import { AlertTriangle, Check, Send } from "react-feather";
+import { Badge } from "reactstrap";
+import React, { useEffect, useState } from "react";
 
 //  @scripts
 import RenderList from "./RenderList";
 import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
 import { NOTIFICATION_LEVEL } from "./Constants";
 import { getMessageStatus } from './Apis';
+
+// @styles
+import './ConversationView.scss';
 
 const calculateUnreadMessagesWidth = (count) => {
   if (count === 0 || !count) {
@@ -89,10 +93,11 @@ const getLastMessageTime = (messages) => {
 const ConversationView = (
   props
 ) => {
-  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount } = props;
+  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount, notifications } = props;
   const [backgroundColor, setBackgroundColor] = useState();
+  const [lastMsgStatus, setLastMsgStatus] = useState("");
 
-  const title = truncateMiddle(
+  truncateMiddle(
     convo?.friendlyName ?? convo?.sid,
     calculateUnreadMessagesWidth(unreadMessagesCount)
   );
@@ -102,14 +107,11 @@ const ConversationView = (
       ? "white"
       : "black";
   const muted = props?.otherConvo?.notificationLevel === NOTIFICATION_LEVEL.MUTED;
-
-  const [lastMsgStatus, setLastMsgStatus] = useState("");
-
   const time = getLastMessageTime(props?.messages);
 
   useEffect(() => {
     if ((props?.infoId === convo?._id)) {
-      setBackgroundColor('#f5f5f5');
+      setBackgroundColor("aliceblue");
       return;
     }
     setBackgroundColor('transparent');
@@ -138,118 +140,86 @@ const ConversationView = (
         }
       );
     }
+    return () => {
+      setLastMsgStatus("");
+    };
   }, [convo, myMessage, lastMessage, props.participants, props.typingInfo]);
 
   return (
-    <div
-      style={{
-        backgroundColor,
-        cursor: "pointer",
-        paddingBottom: 14,
-        paddingLeft: 16,
-        paddingRight: 16,
-        paddingTop: 16,
-        width: 360
-      }}
-      id={convoId}
-      className="name"
-      onClick={props.onClick}
-    >
-      <div>
-        <div display="flex">
-          <div
-            style={{
-              width: 300,
-              fontFamily: "Inter",
-              fontSize: 14,
-              color: muted
-                ? "gray"
-                : "black"
-            }}
-          >
-            <RenderList
-              convo={convo}
-            />
-          </div>
-          {unreadMessagesCount > 0 && (
-            <div style={{
-              paddingLeft: '0.5rem'
-            }}>
-              <div
-                style={{ 
-                  borderRadius: 12, 
-                  opacity: muted ? 0.2 : 1,
-                  backgroundColor: 'rgb(6, 3, 58)',
-                  color: 'rgb(255, 255, 255)',
-                  fontWeight: 'bold',
-                  fontSize: 12,
-                  lineHeight: '12px',
-                  paddingLeft: 5,
-                  width: '5%'
-                }}
-              >
-                {unreadMessagesCount}
-              </div>
-            </div>
-          )}
-        </div>
+    <>
+      {!notifications && (
         <div
-          style={{
-            paddingTop: 4,
-            color: textColor,
-            fontWeight: "300",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between"
-          }}
+          className="conversation-view-container"
+          onClick={props.onClick}
+          style={{ backgroundColor }}
         >
           <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis"
-            }}
+            className="conversation-view-sub-container"
+            style={{ color: muted ? "gray" : "black" }}
           >
-            {!props?.typingInfo?.length ? (
-              <div>
-                {lastMsgStatus === MessageStatus.Sending && props.myMessage && (
-                  <div style={{ paddingRight: 6 }}>
-                    <Send size={20}/>
-                  </div>
-                )}
-                {lastMsgStatus === MessageStatus.Delivered && props.myMessage && (
-                  <div style={{ paddingRight: 6 }}>
-                    <Check size={20} />
-                  </div>
-                )}
-                {lastMsgStatus === MessageStatus.Failed && props.myMessage && (
-                  <div style={{ paddingRight: 6 }}>
-                    <AlertTriangle size={20}/>
-                  </div>
-                )}
-                {lastMsgStatus === MessageStatus.Read && props.myMessage && (
-                  <div style={{ paddingRight: 6 }}>
-                    <BookOpen size={20}/>
-                  </div>
-                )}
+            <RenderList convo={convo} convoId={convoId ?? ''} />
+            {unreadMessagesCount > 0 && (
+              <div className="unread-message-count">
+                <Badge pill color='danger'>
+                  {unreadMessagesCount}
+                </Badge>
               </div>
-            ) : null}
-            <div
-              style={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis"
-              }}
-            >
-              {lastMessage}
-            </div>
+            )}
           </div>
-          <div style={{ whiteSpace: "nowrap", paddingLeft: 4 }}>{time}</div>
+          <div
+            className={!unreadMessagesCount ? "typing-info-container" : "typing-info-container-hidden"}
+            style={{ color: textColor }}
+          >
+            <div className="typing-info">
+              {!props?.typingInfo?.length && (
+                <div>
+                  {lastMsgStatus === MessageStatus.Sending && props.myMessage && (
+                    <div className="message-status">
+                      <Send size={20}/>
+                    </div>
+                  )}
+                  {lastMsgStatus === MessageStatus.Delivered && props.myMessage && (
+                    <div className="message-status">
+                      <Check size={20} />
+                    </div>
+                  )}
+                  {lastMsgStatus === MessageStatus.Failed && props.myMessage && (
+                    <div className="message-status">
+                      <AlertTriangle size={20}/>
+                    </div>
+                  )}
+                  {lastMsgStatus === MessageStatus.Read && props.myMessage && (
+                    <div className="message-status">
+                      <div 
+                        style={{
+                          marginLeft: "-5px",
+                          left: '5px',
+                          top: '-1px',
+                          position: "relative"
+                        }}
+                      >
+                        <Check
+                          size={20}
+                          color="black"
+                        />
+                      </div>
+                      <Check
+                        size={20}
+                        color="black"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+              <div className="last-message">
+                {lastMessage}
+              </div>
+            </div>
+            <div className="time">{time}</div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 export default ConversationView;

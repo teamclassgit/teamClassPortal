@@ -1,54 +1,62 @@
 // @packages
-import { ModalBody, Box } from "@twilio-paste/core";
+import { ModalBody } from "reactstrap";
 
 // @scripts
 import AddParticipantFooter from "./AddParticipantFooter";
 import ConvoModal from "./ConvoModal";
 import ModalInputField from "./ModalInputField";
 
-const AddSMSParticipantModal = (
-  props
-) => {
+const AddSMSParticipantModal = ({
+  action,
+  error,
+  errorProxy,
+  handleClose,
+  isModalOpen,
+  name,
+  onBack,
+  proxyName,
+  setName,
+  setProxyName,
+  title
+}) => {
   return (
     <>
       <ConvoModal
-        handleClose={() => props.handleClose()}
-        isModalOpen={props.isModalOpen}
-        title={props.title}
+        handleClose={handleClose}
+        isModalOpen={isModalOpen}
+        title={title}
         modalBody={
           <ModalBody>
             <h3>Add SMS participant</h3>
-            <Box as="form">
+            <div>
               <ModalInputField
-                error={props.error}
+                error={error}
                 help_text="The phone number of the participant."
-                input={props.name}
+                input={name}
                 isFocused={true}
                 label="Phone number"
-                onChange={props.setName}
+                onChange={setName}
                 placeholder="123456789012"
                 prefixType="SMS"
               />
               <ModalInputField
-                error={props.errorProxy}
+                error={errorProxy}
                 help_text="The Twilio phone number used by the participant in Conversations."
-                input={props.proxyName}
+                input={proxyName}
                 label="Proxy phone number"
-                onChange={props.setProxyName}
+                onChange={setProxyName}
                 placeholder="123456789012"
                 prefixType="SMS"
               />
-            </Box>
+            </div>
           </ModalBody>
         }
         modalFooter={
           <AddParticipantFooter
-            isSaveDisabled={!props.name || !props.proxyName || !!props.error}
+            action={action}
             actionName={ActionName.Save}
-            onBack={() => {
-              props.onBack();
-            }}
-            action={props.action}
+            isSaveDisabled={!name || !proxyName || !!error}
+            onBack={onBack}
           />
         }
       />

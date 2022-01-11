@@ -1,91 +1,73 @@
 // @packages
+import Proptypes from "prop-types";
 import React, { useState } from "react";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { MediaBody, MediaFigure, MediaObject } from "@twilio-paste/media-object";
 import { MoreVertical, Copy, Delete } from 'react-feather';
-import { Text } from "@twilio-paste/text";
-import { Toaster, useToaster } from "@twilio-paste/core";
-import {
-  MediaBody,
-  MediaFigure,
-  MediaObject
-} from "@twilio-paste/media-object";
 
-// @scripts
-import { COPY_SUCCESS_MESSAGE } from "./Constants";
+// @styles
+import './MessageActions.scss';
 
 const MessageActions = ({
   messageText,
   onMessageDelete
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const toaster = useToaster();
-
   const toggle = () => setDropdownOpen(!dropdownOpen);
 
   return (
-    <div
-      style={{
-        paddingLeft: 6,
-        zIndex: 6
-      }}
-    >
+    <div className="message-actions-container">
       <Dropdown 
+        direction="left"
         isOpen={dropdownOpen} 
         toggle={toggle} 
-        direction="left"
       >
-        <Toaster {...toaster} />
         <DropdownToggle nav>
           <MoreVertical
             title="Settings"
-            color='white'
+            color='black'
+            size={20}
           />
         </DropdownToggle>
         <DropdownMenu>
           {messageText ? (
             <>
               <DropdownItem
+                className="message-text-item"
                 onClick={() => {
                   navigator.clipboard.writeText(messageText);
-                  toaster.push({
-                    message: COPY_SUCCESS_MESSAGE,
-                    variant: "success"
-                  });
                   setDropdownOpen(false);
                 }}
-                style={{
-                  width: "100%"
-                }}
               >
-                <MediaObject verticalAlign="center">
-                  <MediaFigure spacing="0.25rem">
+                <MediaObject >
+                  <MediaFigure>
                     <Copy
                       title="Copy"
                       color='black'
                     />
                   </MediaFigure>
                   <MediaBody>
-                    <Text as="span">
+                    <span>
                       Copy
-                    </Text>
+                    </span>
                   </MediaBody>
                 </MediaObject>
               </DropdownItem>
               <DropdownItem divider />
             </>
           ) : null}
-          <DropdownItem onClick={onMessageDelete}>
-            <MediaObject verticalAlign="center">
-              <MediaFigure spacing="0.25rem">
+          <DropdownItem onClick={() => onMessageDelete()}>
+            <MediaObject >
+              <MediaFigure>
                 <Delete
+                  color="red"
                   title="Delete"
-                  color='red'
                 />
               </MediaFigure>
               <MediaBody>
-                <Text as="span" color="red">
+                <span className="delete-message">
                   Delete Message
-                </Text>
+                </span>
               </MediaBody>
             </MediaObject>
           </DropdownItem>
@@ -93,6 +75,11 @@ const MessageActions = ({
       </Dropdown>
     </div>
   );
+};
+
+MessageActions.propTypes = {
+  messageText: Proptypes.string.isRequired,
+  onMessageDelete: Proptypes.func.isRequired
 };
 
 export default MessageActions;

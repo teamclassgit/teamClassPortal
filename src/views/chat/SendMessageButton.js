@@ -1,21 +1,19 @@
-import { Button } from "@twilio-paste/button";
-import { Box } from "@twilio-paste/core";
+// @packages
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Button } from "reactstrap";
 
-const SendMessageButton = (
-  props
-) => {
-  return (
-    <Box>
-      <Button
-        variant="primary"
-        onClick={() => {
-          props.onClick();
-        }}
-      >
-        Send
-      </Button>
-    </Box>
-  );
+const SendMessageButton = ({ onClick }) => (
+  <Button
+    color="primary"
+    onClick={onClick}
+  >
+    Send
+  </Button>
+);
+
+SendMessageButton.propTypes = {
+  onClick: PropTypes.func.isRequired
 };
 
 export default SendMessageButton;
