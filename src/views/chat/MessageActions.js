@@ -47,7 +47,7 @@ const MessageActions = ({
                     />
                   </MediaFigure>
                   <MediaBody>
-                    <span>
+                    <span className="message-text">
                       Copy
                     </span>
                   </MediaBody>

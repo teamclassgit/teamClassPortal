@@ -1,6 +1,7 @@
 // @packages
 import Proptypes from "prop-types";
 import React, { useState, useLayoutEffect } from "react";
+import { Input } from 'reactstrap';
 
 // @scripts
 import MessageFile from "./MessageFile";
@@ -49,7 +50,7 @@ const MessageInput = ({
   return (
     <div className="message-input-container">
       {getTextWidth(message) < width - 500 && (
-        <input
+        <Input
           aria-describedby="message_help_text"
           autoFocus
           className="message-input"

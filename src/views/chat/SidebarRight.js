@@ -167,8 +167,7 @@ const SidebarRight = ({
         <div
           className='chat-profile-sidebar'
           style={{
-            transform: 'translateX(-99%)',
-            borderLeft: !client && '1px solid #e6e6e6'
+            transform: 'translateX(-99%)'
           }}
         >
           <div className='sidebar-right-container'>

@@ -11,7 +11,7 @@
     height: 100%;
     font-weight: bold;
     padding-top: 12px;
-    border-left: 1px solid #e6e6e6;
+    border-left: 1px solid #ebe9f1;
   }
 }
 
@@ -27,6 +27,7 @@
   height: calc(100% - 50px);
   justify-content: space-between;
   width: 100%;
+  border-left: 1px solid #ebe9f1;
 }
 
 .dark-layout {
@@ -38,5 +39,10 @@
       color: #b4b7bd;
       border-left: 1px solid #283046;
     }
+  }
+
+  .booking-container {
+    background-color: #283046;
+    border-left: 1px solid #3b4253;
   }
 }

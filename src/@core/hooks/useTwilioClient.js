@@ -106,7 +106,7 @@ const useTwilioClient = () => {
       setData(dataSorted);
       setTimeout(() => {
         setIsInfoReady(true);
-      }, 5500);
+      }, 6000);
     }
   }, [conversations, infoDetails]);
 
