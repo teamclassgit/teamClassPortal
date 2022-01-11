@@ -50,6 +50,7 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      capRegistration
     }
   }
 `;

@@ -50,7 +50,8 @@ const BoardCard = ({
     closedReason,
     notes,
     bookingTotal,
-    hasInternationalAttendees
+    hasInternationalAttendees,
+    capRegistration
   }
 }) => {
   const [date, setDate] = useState(null);
@@ -158,7 +159,8 @@ const BoardCard = ({
                 currentEventDurationHours: eventDurationHours,
                 currentClosedReason: closedReason,
                 currentNotes: notes,
-                currentPayments: payments
+                currentPayments: payments,
+                currentCapRegistration: capRegistration
               })
               }
               title={'Edit booking info'}
@@ -253,7 +255,8 @@ const BoardCard = ({
           currentEventDurationHours: eventDurationHours,
           currentClosedReason: closedReason,
           currentNotes: notes,
-          currentPayments: payments
+          currentPayments: payments,
+          currentCapRegistration: capRegistration
         })
         }
         title={'Edit booking info'}

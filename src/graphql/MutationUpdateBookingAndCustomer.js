@@ -28,6 +28,7 @@ export default gql`
     $email: String!
     $company: String
     $closedReason: String
+    $capRegistration: Boolean
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -90,6 +91,7 @@ export default gql`
         updatedAt: $updatedAt
         signUpDeadline: $signUpDeadline
         closedReason: $closedReason
+        capRegistration: $capRegistration
       }
     ) {
       _id
@@ -107,6 +109,7 @@ export default gql`
       discount
       status
       closedReason
+      capRegistration
       eventLink
       signUpStatusLink
       checkoutLink

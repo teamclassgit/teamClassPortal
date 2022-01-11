@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardBody,
+  CustomInput,
   FormGroup,
   Input,
   InputGroup,
@@ -72,7 +73,8 @@ const EditBookingModal = ({
     currentSignUpDeadline,
     currentStatus,
     currentTeamclassId,
-    currentTeamclassName
+    currentTeamclassName,
+    currentCapRegistration
   },
   allBookings,
   allCalendarEvents,
@@ -106,6 +108,7 @@ const EditBookingModal = ({
   const [groupSize, setGroupSize] = useState(null);
   const [inputNote, setInputNote] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [isCapRegistration, setIsCapRegistration] = useState(false);
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -127,6 +130,7 @@ const EditBookingModal = ({
     setCustomerName(currentName);
     setCustomerPhone(currentPhone);
     setGroupSize(currentGroupSize);
+    setIsCapRegistration(currentCapRegistration);
 
     const filteredCalendarEvent = allCalendarEvents.find((element) => element.bookingId === bookingId);
     if (filteredCalendarEvent) setCalendarEvent(filteredCalendarEvent);
@@ -224,7 +228,8 @@ const EditBookingModal = ({
           company: customerCompany,
           signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
           closedReason: closedBookingReason,
-          notes: bookingNotes
+          notes: bookingNotes,
+          capRegistration: isCapRegistration
         }
       });
 
@@ -245,7 +250,6 @@ const EditBookingModal = ({
         console.log('Remove campaign before redirecting:', resultEmail);
         setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
       } else {
-
         setBookings([
           resultUpdateBooking.data.updateOneBooking,
           ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
@@ -365,15 +369,8 @@ const EditBookingModal = ({
     })
   };
 
-
   return (
-    <Modal
-      isOpen={open}
-      className="sidebar-sm"
-      modalClassName="modal-slide-in"
-      contentClassName="pt-0"
-      onClosed={() => handleClose()}
-    >
+    <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">Edit Booking</h5>
       </ModalHeader>
@@ -589,6 +586,21 @@ const EditBookingModal = ({
               </InputGroup>
             </FormGroup>
             <FormGroup>
+              <CustomInput
+                type="switch"
+                id="exampleCustomSwitch"
+                name="customSwitch"
+                label="Turn on/off registration's cap based on group size"
+                disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                inline
+                value={isCapRegistration}
+                checked={isCapRegistration}
+                onChange={(e) => {
+                  setIsCapRegistration(!isCapRegistration);
+                }}
+              />
+            </FormGroup>
+            <FormGroup>
               <Label for="date-time-picker">Sign Up Deadline (Custom)</Label>
               <InputGroup size="sm">
                 <Flatpickr
@@ -644,6 +656,7 @@ const EditBookingModal = ({
                 </>
               )}
             </FormGroup>
+
             {editMode && (
               <div align="center">
                 <Button

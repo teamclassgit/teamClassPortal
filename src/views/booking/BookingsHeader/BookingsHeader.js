@@ -43,12 +43,15 @@ const BookingsHeader = ({
   defaultLimit,
   discountCodes,
   generalInquiries,
+  giftBasketPurchases,
+  giftBaskets,
   isBooking,
   isClosedBookings,
   isDiscountCodes,
   isGeneralInquiries,
   isInProgressBookings,
   isPrivateRequest,
+  isGiftBasketsPurchase,
   noCoordinators,
   onChangeLimit,
   privateRequests,
@@ -67,6 +70,7 @@ const BookingsHeader = ({
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
   const [discountCodesExcelTable, setDiscountCodesExcelTable] = useState([]);
   const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([]);
+  const [giftBasketsPurchaseExcelTable, setGiftBasketsPurchaseExcelTable] = useState([]);
   const [limit, setLimit] = useState(defaultLimit);
   const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([]);
   const [searchValue, setSearchValue] = useState(null);
@@ -186,6 +190,39 @@ const BookingsHeader = ({
   const handleChange = (e) => {
     setSearchValue(e.target.value);
   };
+
+  useEffect(() => {
+    if (giftBasketPurchases) {
+      const giftBasketsPurchaseArray = [];
+
+      const headers = ['Date', 'Customer', 'Email', 'Gift Basket', 'Variant', 'Paid', 'Shipping Address', 'Personalizations'];
+
+      giftBasketsPurchaseArray.push(headers);
+
+      for (const i in giftBasketPurchases) {
+        let filteredBasketGift;
+        giftBasketPurchases[i].basketsPurchased.map(
+          (item) => (filteredBasketGift = giftBaskets && giftBaskets.filter((element) => element._id === item.basketId))
+        );
+
+        const row = [
+          giftBasketPurchases[i].timePurchased,
+          giftBasketPurchases[i].customerName,
+          getCustomerEmail(giftBasketPurchases[i].customerId, customers),
+          filteredBasketGift && filteredBasketGift.map((item2) => item2.title).join(' | '),
+          giftBasketPurchases[i].basketsPurchased.map((item) => item.variantName).join(' | '),
+          giftBasketPurchases[i].payments.map((item) => item.amount / 100),
+          `${giftBasketPurchases[i].shippingAddress.address1}${giftBasketPurchases[i].shippingAddress.address1 ? ', ' : ''}${
+            giftBasketPurchases[i].shippingAddress.city
+          }${giftBasketPurchases[i].shippingAddress.city ? ', ' : ''}${giftBasketPurchases[i].shippingAddress.country}`,
+          giftBasketPurchases[i].personalizations.map((item) => item.value).join(' | ')
+        ];
+
+        giftBasketsPurchaseArray.push(row);
+      }
+      setGiftBasketsPurchaseExcelTable(giftBasketsPurchaseArray);
+    }
+  }, [giftBasketPurchases, customers]);
 
   useEffect(() => {
     if (discountCodes) {
@@ -359,6 +396,18 @@ const BookingsHeader = ({
                           </h6>
                         }
                         smallText={<h6 className="small m-0 p-0">Download file with Discount Codes</h6>}
+                      />
+                    ) : isGiftBasketsPurchase ? (
+                      <ExportToExcel
+                        apiData={giftBasketsPurchaseExcelTable}
+                        fileName={'GiftBasketsPurchase'}
+                        title={
+                          <h6>
+                            <FileText size={13} />
+                            {' Excel File'}
+                          </h6>
+                        }
+                        smallText={<h6 className="small m-0 p-0">Download file with Gift Basket Purchases</h6>}
                       />
                     ) : (
                       <ExportToExcel
