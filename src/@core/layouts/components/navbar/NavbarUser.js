@@ -1,19 +1,16 @@
 // @packages
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { NavItem, NavLink } from 'reactstrap';
 import { Sun, Moon, Menu } from 'react-feather';
 import { isUserLoggedIn } from '@utils';
 
 // @scripts
-import NotificationDropdown from './NotificationDropdown';
 import UserDropdown from './UserDropdown';
 import { getUserData } from '../../../../utility/Utils';
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
   const [userData, setUserData] = useState(null);
-  const totalUnread = useSelector((state) => state.reducer.totalUnreadCount);
 
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
@@ -46,7 +43,6 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
         </NavItem>
       </div>
       <ul className='nav navbar-nav align-items-center ml-auto'>
-        <NotificationDropdown totalUnread={totalUnread} />
         <UserDropdown userData={userData} />
       </ul>
     </>

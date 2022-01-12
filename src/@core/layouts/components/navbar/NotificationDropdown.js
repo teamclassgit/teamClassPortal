@@ -11,16 +11,11 @@ import {
 } from 'reactstrap';
 import { useHistory } from 'react-router';
 
-// @scripts
-import useTwilioClient from '../../../hooks/useTwilioClient';
-import ConversationsList from '@src/views/chat/ConversationsList';
-
 const NotificationDropdown = ({
   filterData,
   totalUnread
 }) => {
   const history = useHistory();
-  const { client, infoDetails, userData } = useTwilioClient();
 
   const handleChatClick = () => { 
     history.push('/chat');
@@ -45,14 +40,6 @@ const NotificationDropdown = ({
                 {`${filterData?.length} New`}
               </Badge>
             )}
-          </DropdownItem>
-          <DropdownItem >
-            <ConversationsList 
-              client={client}
-              info={infoDetails}
-              userData={userData}
-              notifications={true}
-            />
           </DropdownItem>
         </li>
         <li className='dropdown-menu-footer'>

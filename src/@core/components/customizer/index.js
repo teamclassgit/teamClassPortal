@@ -1,17 +1,19 @@
-// ** React Imports
-import { useState } from 'react';
-
-// ** Third Party Components
+// @packages
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import Select from 'react-select';
 import classnames from 'classnames';
-import { MessageSquare, X } from 'react-feather';
 import { CustomInput, FormGroup } from 'reactstrap';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import { X } from 'react-feather';
 import { selectThemeColors } from '@utils';
-
-// ** Styles
-import '@styles/react/libs/react-select/_react-select.scss';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
+
+// @scripts
+import MessageNotifications from './messageNotification';
+
+// @styles
+import '@styles/react/libs/react-select/_react-select.scss';
 
 const Customizer = props => {
   // ** Props
@@ -41,6 +43,8 @@ const Customizer = props => {
 
   // ** State
   const [openCustomizer, setOpenCustomizer] = useState(false);
+
+  const totalUnread = useSelector((state) => state.reducer.totalUnreadCount);
 
   // ** Toggles Customizer
   const handleToggle = e => {
@@ -206,7 +210,8 @@ const Customizer = props => {
 
   const history = useHistory();
 
-  const handleChat = () => {
+  const handleChat = (e) => {
+    e.preventDefault();
     history.push('/chat');
   };
 
@@ -216,8 +221,8 @@ const Customizer = props => {
         open: openCustomizer
       })}
     >
-      <a href='/chat' className='customizer-toggle d-flex align-items-center justify-content-center' onClick={onlyChat ? handleChat : handleToggle}>
-        <MessageSquare size={14}/>
+      <a href='/chat' className='customizer-toggle d-flex align-items-center justify-content-center' onClick={onlyChat ? () => handleChat(e) : handleToggle}>
+        <MessageNotifications totalUnread={totalUnread}/>
       </a>
 
       {!onlyChat && (
