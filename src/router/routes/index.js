@@ -16,6 +16,10 @@ const Routes = [
     component: lazy(() => import('../../views/booking/bookingList'))
   },
   {
+    path: '/new-view-bookings',
+    component: lazy(() => import('../../views/booking/BookingsTable'))
+  },
+  {
     path: '/closedBookings',
     component: lazy(() => import('../../views/booking/BookingClosedList'))
   },
