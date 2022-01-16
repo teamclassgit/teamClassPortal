@@ -143,7 +143,7 @@ const DataGrid = () => {
   const [filteredRows, setFilteredRows] = useState(null);
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
-  // const [cellSelection, setCellSelection] = useState({});
+  const [cellSelection, setCellSelection] = useState({});
 
   console.log('filteredRows', filteredRows);
   const onExpandedRowsChange = useCallback(({ expandedRows, collapsedRows }) => {
@@ -151,13 +151,13 @@ const DataGrid = () => {
     setCollapsedRows(collapsedRows);
   }, []);
 
-  // const onCopySelectedCellsChange = useCallback((cells) => {
-  //   console.log(cells);
-  // }, []);
+  const onCopySelectedCellsChange = useCallback((cells) => {
+    console.log(cells);
+  }, []);
 
-  // const onPasteSelectedCellsChange = useCallback((cells) => {
-  //   console.log(cells);
-  // }, []);
+  const onPasteSelectedCellsChange = useCallback((cells) => {
+    console.log(cells);
+  }, []);
 
   // console.log('ReactDataGrid', ReactDataGrid.defaultProps.i18n);
   console.log('ReactDataGrid', ReactDataGrid.rowProps);
@@ -438,11 +438,11 @@ const DataGrid = () => {
           onFilterValueChange={setFilterValue}
           showZebraRows={true}
           theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
-          // cellSelection={cellSelection}
-          // onCellSelectionChange={setCellSelection}
-          // enableClipboard={true}
-          // onCopySelectedCellsChange={onCopySelectedCellsChange}
-          // onPasteSelectedCellsChange={onPasteSelectedCellsChange}
+          cellSelection={cellSelection}
+          onCellSelectionChange={setCellSelection}
+          enableClipboard={true}
+          onCopySelectedCellsChange={onCopySelectedCellsChange}
+          onPasteSelectedCellsChange={onPasteSelectedCellsChange}
           expandedRows={expandedRows}
           collapsedRows={collapsedRows}
           onExpandedRowsChange={onExpandedRowsChange}
