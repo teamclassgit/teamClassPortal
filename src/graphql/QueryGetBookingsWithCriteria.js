@@ -9,6 +9,7 @@ export default gql`
         _id
         status
         customerName
+        customerPhone
         customerEmail
         customerCompany
         className
