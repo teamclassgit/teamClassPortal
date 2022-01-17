@@ -14,6 +14,7 @@ import {
   getFinalPaymentPaid,
   getLastPaymentDate
 } from './common';
+import { capitalizeString, getBookingTotals, getEventFullDate, getSignUpDeadlineFromEventDate, toAmPm } from '../../utility/Utils';
 
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
 import NumberFilter from '@inovua/reactdatagrid-community/NumberFilter';
@@ -26,8 +27,8 @@ import './BookingsTable.scss';
 
 import Avatar from '@components/avatar';
 import moment from 'moment';
-import { DollarSign, TrendingUp } from 'react-feather';
-import { Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
+import { Briefcase, Calendar, DollarSign, Mail, Phone, TrendingUp } from 'react-feather';
+import { Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Media, Row } from 'reactstrap';
 
 const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataSource, rowId }) => {
   console.log('data', data);
@@ -37,29 +38,71 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
   console.log('dataSource', dataSource);
   return (
     <div style={{ padding: 20 }}>
-      <h6 className="mb-1">Booking Id: {data._id}</h6>
+      <h6 className="mb-1">{capitalizeString(data.customerName)}</h6>
       <table>
         <tbody>
           <tr>
-            <td>Phone:</td>
+            <td>
+              <Phone size={18} />
+            </td>
             <td>{data.customerPhone}</td>
           </tr>
           <tr>
-            <td>Email:</td>
+            <td>
+              <Mail size={18} />
+            </td>
             <td>{data.customerEmail}</td>
           </tr>
           <tr>
-            <td>Company:</td>
+            <td>
+              <Briefcase size={18} />
+            </td>
             <td>{data.customerCompany}</td>
+          </tr>
+          <tr>
+            <td>
+              <Calendar size={18} />
+            </td>
+            <td>{moment(data.eventDateTime).format('LLL')}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Booking ID:</strong>
+            </td>
+            <td>{data._id}</td>
           </tr>
           <tr>
             <td>Class:</td>
             <td>{data.className}</td>
           </tr>
+
           <tr>
             <td>Attendees:</td>
             <td>{data.attendees}</td>
           </tr>
+          <tr>
+            {data.classVariant && (
+              <>
+                <td>Option:</td>
+                <td>
+                  {data.classVariant.title} {`$${data.classVariant.pricePerson}`} {data.classVariant.groupEvent ? '/group' : '/person'}
+                </td>
+              </>
+            )}
+          </tr>
+          <tr>
+            <td>International attendees:</td>
+            <td>{data.hasInternationalAttendees ? 'Yes' : 'No'}</td>
+          </tr>
+          <tr>
+            <td>Created:</td>
+            <td>{moment(data.createdAt).format('LL')}</td>
+          </tr>
+          <tr>
+            <td>Updated:</td>
+            <td>{moment(data.updatedAt).format('LL')}</td>
+          </tr>
+
           <tr>
             <td>Actions:</td>
             <td></td>
@@ -87,11 +130,11 @@ const columns = [
   },
   { name: '_id', header: 'Id', type: 'string' },
   { name: 'status', header: 'Status', type: 'string' },
-  { name: 'customerName', header: 'Customer ', type: 'string', defaultVisible: false },
-  { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false },
-  { name: 'customerEmail', header: 'Email ', type: 'string', defaultVisible: false },
-  { name: 'customerCompany', header: 'Company ', type: 'string', defaultVisible: false },
-  { name: 'className', header: 'Class ', type: 'string', defaultVisible: false },
+  { name: 'customerName', header: 'Customer ', type: 'string' },
+  { name: 'customerPhone', header: 'Phone ', type: 'number' },
+  { name: 'customerEmail', header: 'Email ', type: 'string' },
+  { name: 'customerCompany', header: 'Company ', type: 'string' },
+  { name: 'className', header: 'Class ', type: 'string' },
   { name: 'attendees', header: '# ', type: 'number', filterEditor: NumberFilter, defaultWidth: 112 },
   {
     name: 'eventDateTime',
@@ -133,23 +176,6 @@ const columns = [
         return `$ ${paidAmount.toFixed(2)}`;
       }
     }
-  },
-  {
-    name: 'payments',
-    id: 'finalPaymentsDate',
-    header: 'Last payment date ',
-    type: 'date',
-    filterEditor: DateFilter,
-    render: ({ value, cellProps }) => {
-      console.log('value', value);
-      if (value) {
-        const dates = value.filter((element) => element.status === 'succeeded').map((payment) => payment.createdAt);
-        if (!dates || dates.length === 0) return;
-        dates.sort();
-        dates.reverse();
-        return moment(dates[0]).format('MM-DD-YYYY');
-      }
-    }
   }
 ];
 
@@ -171,8 +197,7 @@ const DataGrid = () => {
     { name: 'attendees', type: 'number', operator: 'gte', value: 10 },
     { name: 'eventDateTime', type: 'date', operator: 'before', value: undefined },
     { name: 'depositPayments', id: 'depositPayments', type: 'number', operator: 'gte', value: undefined },
-    { name: 'finalPayments', id: 'finalPayments', type: 'number', operator: 'gte', value: undefined },
-    { name: 'finalPaymentsDate', id: 'finalPaymentsDate', type: 'date', operator: 'before', value: undefined }
+    { name: 'finalPayments', id: 'finalPayments', type: 'number', operator: 'gte', value: undefined }
   ];
 
   const loadData = ({ skip, limit, sortInfo, groupBy, filterValue }) => {
@@ -238,7 +263,7 @@ const DataGrid = () => {
       <Row className="d-flex justify-content-between mt-1">
         <Col md="6" xl="2">
           <Card className="">
-            <CardBody className="pt-1">
+            <CardBody className="pt-1 pb-1">
               <CardTitle className="text-center mb-0 ">
                 <h6>Quote</h6>
               </CardTitle>
@@ -267,14 +292,14 @@ const DataGrid = () => {
                 </div>
               </CardText>
             </CardBody>
-            <CardFooter className="d-flex justify-content-center">
+            <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
               <Button
                 color="primary"
                 outline
-                className=" m-0 btn-sm"
+                className="  btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('quote');
+                  setStatus('Quote');
                 }}
               >
                 Details
@@ -284,7 +309,7 @@ const DataGrid = () => {
         </Col>
         <Col md="6" xl="2">
           <Card>
-            <CardBody className="pt-1">
+            <CardBody className="pt-1 pb-1">
               <CardTitle className="text-center mb-0">
                 <h6>Requested </h6>
               </CardTitle>
@@ -313,14 +338,14 @@ const DataGrid = () => {
                 </div>
               </CardText>
             </CardBody>
-            <CardFooter className="d-flex justify-content-center">
+            <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
               <Button
                 color="primary"
                 outline
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('date-requested');
+                  setStatus('Requested');
                 }}
               >
                 Details
@@ -330,7 +355,7 @@ const DataGrid = () => {
         </Col>
         <Col md="6" xl="2">
           <Card>
-            <CardBody className="pt-1">
+            <CardBody className="pt-1 pb-1">
               <CardTitle className="text-center mb-0">
                 <h6>Rejected</h6>
               </CardTitle>
@@ -359,14 +384,14 @@ const DataGrid = () => {
                 </div>
               </CardText>
             </CardBody>
-            <CardFooter className="d-flex justify-content-center">
+            <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
               <Button
                 color="primary"
                 outline
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('canceled');
+                  setStatus('Rejected');
                 }}
               >
                 Details
@@ -376,7 +401,7 @@ const DataGrid = () => {
         </Col>
         <Col md="6" xl="2">
           <Card>
-            <CardBody className="pt-1">
+            <CardBody className="pt-1 pb-1">
               <CardTitle className="text-center mb-0">
                 <h6>Accepted</h6>
               </CardTitle>
@@ -405,14 +430,14 @@ const DataGrid = () => {
                 </div>
               </CardText>
             </CardBody>
-            <CardFooter className="d-flex justify-content-center">
+            <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
               <Button
                 color="primary"
                 outline
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('confirmed');
+                  setStatus('Accepted');
                 }}
               >
                 Details
@@ -422,7 +447,7 @@ const DataGrid = () => {
         </Col>
         <Col md="6" xl="2">
           <Card>
-            <CardBody className="pt-1">
+            <CardBody className="pt-1 pb-1">
               <CardTitle className="text-center mb-0">
                 <h6>Deposit paid</h6>
               </CardTitle>
@@ -451,14 +476,14 @@ const DataGrid = () => {
                 </div>
               </CardText>
             </CardBody>
-            <CardFooter className="d-flex justify-content-center">
+            <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
               <Button
                 color="primary"
                 outline
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('paid');
+                  setStatus('Deposit paid');
                 }}
               >
                 Details
@@ -468,9 +493,9 @@ const DataGrid = () => {
         </Col>
         <Col md="6" xl="2">
           <Card>
-            <CardBody className="pt-1">
+            <CardBody className="pt-1 pb-1">
               <CardTitle className="text-center mb-0">
-                <h6>Paid (Full)</h6>
+                <h6>Paid</h6>
               </CardTitle>
               <CardText>
                 <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
@@ -497,14 +522,14 @@ const DataGrid = () => {
                 </div>
               </CardText>
             </CardBody>
-            <CardFooter className="d-flex justify-content-center">
+            <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
               <Button
                 color="primary"
                 outline
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('paid');
+                  setStatus('Paid');
                 }}
               >
                 Details
@@ -514,17 +539,10 @@ const DataGrid = () => {
         </Col>
       </Row>
       <div className="datatable">
-        <h4 className="mt-1 mb-3">
+        <h4 className="mb-2">
           Bookings <Badge color="light-primary">{status}</Badge>
         </h4>
-        <div>
-          <Button color="primary" className=" m-0 btn-sm" onClick={() => setExpandedRows(true)} style={{ marginRight: 10 }}>
-            Expand all
-          </Button>
-          <Button color="primary" className="ml-1 m-0 btn-sm" onClick={() => setExpandedRows({})}>
-            Collapse all
-          </Button>
-        </div>
+
         <ReactDataGrid
           idProperty="_id"
           className="bookings-table text-small"
@@ -547,7 +565,7 @@ const DataGrid = () => {
           expandedRows={expandedRows}
           collapsedRows={collapsedRows}
           onExpandedRowsChange={onExpandedRowsChange}
-          rowExpandHeight={230}
+          rowExpandHeight={380}
           renderRowDetails={renderRowDetails}
         />
       </div>

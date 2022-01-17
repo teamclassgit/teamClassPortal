@@ -6,6 +6,7 @@ export default gql`
       count
       rows {
         updatedAt
+        createdAt
         _id
         status
         customerName
@@ -15,12 +16,27 @@ export default gql`
         className
         attendees
         eventDateTime
+        hasInternationalAttendees
         payments {
           amount
           createdAt
           paymentId
           paymentName
           status
+        }
+        classVariant {
+          active
+          duration
+          groupEvent
+          hasKit
+          instructorFlatFee
+          kitHasAlcohol
+          maximum
+          minimum
+          notes
+          order
+          pricePerson
+          title
         }
       }
     }
