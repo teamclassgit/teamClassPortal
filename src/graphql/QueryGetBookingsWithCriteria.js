@@ -15,6 +15,13 @@ export default gql`
         className
         attendees
         eventDateTime
+        payments {
+          amount
+          createdAt
+          paymentId
+          paymentName
+          status
+        }
       }
     }
   }

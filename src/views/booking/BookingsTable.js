@@ -3,6 +3,17 @@ import { useSelector } from 'react-redux';
 import { apolloClient } from '../../utility/RealmApolloClient';
 
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
+import {
+  getCustomerEmail,
+  getClassTitle,
+  getFormattedEventDate,
+  getCustomerPhone,
+  getCustomerCompany,
+  getCoordinatorName,
+  getDepositPaid,
+  getFinalPaymentPaid,
+  getLastPaymentDate
+} from './common';
 
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
 import NumberFilter from '@inovua/reactdatagrid-community/NumberFilter';
@@ -26,22 +37,33 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
   console.log('dataSource', dataSource);
   return (
     <div style={{ padding: 20 }}>
-      <h3>
-        <Button onClick={toggleRowExpand}>Collapse row</Button>
-      </h3>
-      <h3>Row details:</h3>
+      <h6 className="mb-1">Booking Id: {data._id}</h6>
       <table>
         <tbody>
-          {Object.keys(data).map((name, i) => {
-            // console.log('i', i);
-            // console.log('name', name);
-            return (
-              <tr key={i}>
-                <td>{name}</td>
-                <td>{data[name]}</td>
-              </tr>
-            );
-          })}
+          <tr>
+            <td>Phone:</td>
+            <td>{data.customerPhone}</td>
+          </tr>
+          <tr>
+            <td>Email:</td>
+            <td>{data.customerEmail}</td>
+          </tr>
+          <tr>
+            <td>Company:</td>
+            <td>{data.customerCompany}</td>
+          </tr>
+          <tr>
+            <td>Class:</td>
+            <td>{data.className}</td>
+          </tr>
+          <tr>
+            <td>Attendees:</td>
+            <td>{data.attendees}</td>
+          </tr>
+          <tr>
+            <td>Actions:</td>
+            <td></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -65,20 +87,67 @@ const columns = [
   },
   { name: '_id', header: 'Id', type: 'string' },
   { name: 'status', header: 'Status', type: 'string' },
-  { name: 'customerName', header: 'Customer ', type: 'string' },
-  { name: 'customerPhone', header: 'Phone ', type: 'number' },
-  { name: 'customerEmail', header: 'Email ', type: 'string' },
-  { name: 'customerCompany', header: 'Company ', type: 'string' },
-  { name: 'className', header: 'Class ', type: 'string' },
-  { name: 'attendees', header: '# ', type: 'number', filterEditor: NumberFilter },
+  { name: 'customerName', header: 'Customer ', type: 'string', defaultVisible: false },
+  { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false },
+  { name: 'customerEmail', header: 'Email ', type: 'string', defaultVisible: false },
+  { name: 'customerCompany', header: 'Company ', type: 'string', defaultVisible: false },
+  { name: 'className', header: 'Class ', type: 'string', defaultVisible: false },
+  { name: 'attendees', header: '# ', type: 'number', filterEditor: NumberFilter, defaultWidth: 112 },
   {
     name: 'eventDateTime',
-    header: 'Event date ',
+    header: 'Event date',
     type: 'date',
     filterEditor: DateFilter,
     render: ({ value, cellProps }) => {
       if (value) {
         return moment(value).format('LLL');
+      }
+    }
+  },
+  {
+    name: 'payments',
+    id: 'depositPayments',
+    header: 'Deposit paid',
+    type: 'number',
+    filterEditor: NumberFilter,
+    render: ({ value, cellProps }) => {
+      if (value) {
+        const depositsPaid = value.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+        const initialDepositPaid =
+          depositsPaid && depositsPaid.length > 0 ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100 : 0; //amount is in cents
+        return `$ ${initialDepositPaid.toFixed(2)}`;
+      }
+    }
+  },
+  {
+    name: 'payments',
+    id: 'finalPayments',
+    header: 'Final payment paid ',
+    type: 'number',
+    filterEditor: NumberFilter,
+    render: ({ value, cellProps }) => {
+      console.log('value', value);
+      if (value) {
+        const finalPaymentPaid = value.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+        const paidAmount = finalPaymentPaid ? finalPaymentPaid.amount / 100 : 0;
+        return `$ ${paidAmount.toFixed(2)}`;
+      }
+    }
+  },
+  {
+    name: 'payments',
+    id: 'finalPaymentsDate',
+    header: 'Last payment date ',
+    type: 'date',
+    filterEditor: DateFilter,
+    render: ({ value, cellProps }) => {
+      console.log('value', value);
+      if (value) {
+        const dates = value.filter((element) => element.status === 'succeeded').map((payment) => payment.createdAt);
+        if (!dates || dates.length === 0) return;
+        dates.sort();
+        dates.reverse();
+        return moment(dates[0]).format('MM-DD-YYYY');
       }
     }
   }
@@ -90,8 +159,6 @@ const DataGrid = () => {
 
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
-  const defaultExpandedRows = { 1: true };
-
   const defaultFilterValue = [
     { name: 'updatedAt', type: 'date', operator: 'before', value: undefined },
     { name: '_id', type: 'string', operator: 'contains', value: '' },
@@ -99,9 +166,13 @@ const DataGrid = () => {
     { name: 'customerName', type: 'string', operator: 'contains', value: '' },
     { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
     { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
+    { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
     { name: 'className', type: 'string', operator: 'contains', value: '' },
     { name: 'attendees', type: 'number', operator: 'gte', value: 10 },
-    { name: 'eventDateTime', type: 'date', operator: 'before', value: undefined }
+    { name: 'eventDateTime', type: 'date', operator: 'before', value: undefined },
+    { name: 'depositPayments', id: 'depositPayments', type: 'number', operator: 'gte', value: undefined },
+    { name: 'finalPayments', id: 'finalPayments', type: 'number', operator: 'gte', value: undefined },
+    { name: 'finalPaymentsDate', id: 'finalPaymentsDate', type: 'date', operator: 'before', value: undefined }
   ];
 
   const loadData = ({ skip, limit, sortInfo, groupBy, filterValue }) => {
@@ -289,7 +360,15 @@ const DataGrid = () => {
               </CardText>
             </CardBody>
             <CardFooter className="d-flex justify-content-center">
-              <Button color="primary" outline className=" m-0 btn-sm">
+              <Button
+                color="primary"
+                outline
+                className=" m-0 btn-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setStatus('canceled');
+                }}
+              >
                 Details
               </Button>
             </CardFooter>
@@ -327,7 +406,15 @@ const DataGrid = () => {
               </CardText>
             </CardBody>
             <CardFooter className="d-flex justify-content-center">
-              <Button color="primary" outline className=" m-0 btn-sm">
+              <Button
+                color="primary"
+                outline
+                className=" m-0 btn-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setStatus('confirmed');
+                }}
+              >
                 Details
               </Button>
             </CardFooter>
@@ -365,7 +452,15 @@ const DataGrid = () => {
               </CardText>
             </CardBody>
             <CardFooter className="d-flex justify-content-center">
-              <Button color="primary" outline className=" m-0 btn-sm">
+              <Button
+                color="primary"
+                outline
+                className=" m-0 btn-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setStatus('paid');
+                }}
+              >
                 Details
               </Button>
             </CardFooter>
@@ -403,26 +498,32 @@ const DataGrid = () => {
               </CardText>
             </CardBody>
             <CardFooter className="d-flex justify-content-center">
-              <Button color="primary" outline className=" m-0 btn-sm">
+              <Button
+                color="primary"
+                outline
+                className=" m-0 btn-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setStatus('paid');
+                }}
+              >
                 Details
               </Button>
             </CardFooter>
           </Card>
         </Col>
       </Row>
-
-      {/* <div style={{ height: 80 }}>Current filterValue: {filterValue ? <code>{JSON.stringify(filterValue, null, 2)}</code> : 'none'}.</div> */}
-      <p>Expanded rows: {expandedRows === null ? 'none' : JSON.stringify(expandedRows, null, 2)}.</p>
-      {expandedRows === true ? <p>Collapsed rows: {collapsedRows === null ? 'none' : JSON.stringify(collapsedRows, null, 2)}.</p> : null}
       <div className="datatable">
         <h4 className="mt-1 mb-3">
           Bookings <Badge color="light-primary">{status}</Badge>
         </h4>
         <div>
-          <Button onClick={() => setExpandedRows(true)} style={{ marginRight: 10 }}>
+          <Button color="primary" className=" m-0 btn-sm" onClick={() => setExpandedRows(true)} style={{ marginRight: 10 }}>
             Expand all
           </Button>
-          <Button onClick={() => setExpandedRows({})}>Collapse all</Button>
+          <Button color="primary" className="ml-1 m-0 btn-sm" onClick={() => setExpandedRows({})}>
+            Collapse all
+          </Button>
         </div>
         <ReactDataGrid
           idProperty="_id"
@@ -446,7 +547,7 @@ const DataGrid = () => {
           expandedRows={expandedRows}
           collapsedRows={collapsedRows}
           onExpandedRowsChange={onExpandedRowsChange}
-          rowExpandHeight={400}
+          rowExpandHeight={230}
           renderRowDetails={renderRowDetails}
         />
       </div>
