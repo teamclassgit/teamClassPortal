@@ -38,7 +38,7 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
   console.log('dataSource', dataSource);
   return (
     <div style={{ padding: 20 }}>
-      <h6 className="mb-1">{capitalizeString(data.customerName)}</h6>
+      <h4 className="mb-1">{capitalizeString(data.customerName)}</h4>
       <table>
         <tbody>
           <tr>
@@ -63,7 +63,7 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
             <td>
               <Calendar size={18} />
             </td>
-            <td>{moment(data.eventDateTime).format('LLL')}</td>
+            <td>{data.eventDateTime && moment(data.eventDateTime).format('LLL')}</td>
           </tr>
           <tr>
             <td>
@@ -181,14 +181,14 @@ const columns = [
 
 const DataGrid = () => {
   const skin = useSelector((state) => state.bookingsBackground);
-  const [status, setStatus] = useState('quote');
+  const [status, setStatus] = useState('Quote');
 
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
   const defaultFilterValue = [
     { name: 'updatedAt', type: 'date', operator: 'before', value: undefined },
     { name: '_id', type: 'string', operator: 'contains', value: '' },
-    { name: 'status', type: 'string', operator: 'contains', value: status },
+    { name: 'status', type: 'string', operator: 'contains', value: 'quote' },
     { name: 'customerName', type: 'string', operator: 'contains', value: '' },
     { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
     { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
