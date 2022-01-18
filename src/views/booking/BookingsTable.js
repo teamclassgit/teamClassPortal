@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { apolloClient } from '../../utility/RealmApolloClient';
 
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
 import CopyClipboard from '../../components/CopyClipboard';
-import { capitalizeString, getBookingTotals, getEventFullDate, getSignUpDeadlineFromEventDate, toAmPm } from '../../utility/Utils';
+import { capitalizeString } from '../../utility/Utils';
 
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
 import NumberFilter from '@inovua/reactdatagrid-community/NumberFilter';
 import DateFilter from '@inovua/reactdatagrid-community/DateFilter';
-// import Button from '@inovua/reactdatagrid-community/packages/Button';
+
 import '@inovua/reactdatagrid-enterprise/index.css';
 import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
 import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
@@ -18,7 +18,7 @@ import './BookingsTable.scss';
 import Avatar from '@components/avatar';
 import moment from 'moment';
 import { Briefcase, Calendar, DollarSign, Mail, Phone, TrendingUp } from 'react-feather';
-import { Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Media, Row } from 'reactstrap';
+import { Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
 
 const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataSource, rowId }) => {
   console.log('data', data);
@@ -106,6 +106,20 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
 
 const columns = [
   {
+    name: 'createdAt',
+    header: 'Created',
+    type: 'date',
+    filterEditor: DateFilter,
+    render: ({ value, cellProps }) => {
+      return moment(value).calendar(null, {
+        lastDay: '[Yesterday]',
+        sameDay: 'LT',
+        lastWeek: 'dddd',
+        sameElse: 'MMMM Do, YYYY'
+      });
+    }
+  },
+  {
     name: 'updatedAt',
     header: 'Updated',
     type: 'date',
@@ -117,7 +131,8 @@ const columns = [
         lastWeek: 'dddd',
         sameElse: 'MMMM Do, YYYY'
       });
-    }
+    },
+    defaultVisible: false
   },
   { name: 'status', header: 'Status', type: 'string', defaultVisible: false },
   { name: '_id', header: 'Id', type: 'string' },
@@ -179,6 +194,7 @@ const DataGrid = () => {
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
   const defaultFilterValue = [
+    { name: 'createdAt', type: 'date', operator: 'before', value: undefined },
     { name: 'updatedAt', type: 'date', operator: 'before', value: undefined },
     { name: 'status', type: 'string', operator: 'contains', value: 'quote' },
     { name: '_id', type: 'string', operator: 'contains', value: '' },
