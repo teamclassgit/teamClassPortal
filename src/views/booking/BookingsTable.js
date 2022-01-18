@@ -43,13 +43,14 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
               <Mail size={18} /> {data.customerEmail} <CopyClipboard className="z-index-2" text={data.customerEmail} />
             </td>
           </tr>
-          <tr>
-            <td>Company</td>
-            <td>
-              <Briefcase size={18} /> {data.customerCompany}
-            </td>
-          </tr>
-
+          {data.customerCompany && (
+            <tr>
+              <td>Company</td>
+              <td>
+                <Briefcase size={18} /> {data.customerCompany}
+              </td>
+            </tr>
+          )}
           <tr>
             <td>
               <strong>Booking ID</strong>
