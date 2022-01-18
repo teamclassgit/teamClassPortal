@@ -3,17 +3,7 @@ import { useSelector } from 'react-redux';
 import { apolloClient } from '../../utility/RealmApolloClient';
 
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
-import {
-  getCustomerEmail,
-  getClassTitle,
-  getFormattedEventDate,
-  getCustomerPhone,
-  getCustomerCompany,
-  getCoordinatorName,
-  getDepositPaid,
-  getFinalPaymentPaid,
-  getLastPaymentDate
-} from './common';
+import CopyClipboard from '../../components/CopyClipboard';
 import { capitalizeString, getBookingTotals, getEventFullDate, getSignUpDeadlineFromEventDate, toAmPm } from '../../utility/Utils';
 
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
@@ -42,48 +32,38 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
       <table>
         <tbody>
           <tr>
+            <td>Phone</td>
             <td>
-              <Phone size={18} />
+              <Phone size={18} /> {data.customerPhone} <CopyClipboard text={data.customerPhone} />
             </td>
-            <td>{data.customerPhone}</td>
           </tr>
           <tr>
+            <td>Email</td>
             <td>
-              <Mail size={18} />
+              <Mail size={18} /> {data.customerEmail} <CopyClipboard className="z-index-2" text={data.customerEmail} />
             </td>
-            <td>{data.customerEmail}</td>
           </tr>
           <tr>
+            <td>Company</td>
             <td>
-              <Briefcase size={18} />
+              <Briefcase size={18} /> {data.customerCompany}
             </td>
-            <td>{data.customerCompany}</td>
           </tr>
+
           <tr>
             <td>
-              <Calendar size={18} />
+              <strong>Booking ID</strong>
             </td>
-            <td>{data.eventDateTime && moment(data.eventDateTime).format('LLL')}</td>
-          </tr>
-          <tr>
-            <td>
-              <strong>Booking ID:</strong>
-            </td>
-            <td>{data._id}</td>
+            <td>{data._id}</td> <CopyClipboard className="z-index-2" text={data._id} />
           </tr>
           <tr>
             <td>Class:</td>
             <td>{data.className}</td>
           </tr>
-
-          <tr>
-            <td>Attendees:</td>
-            <td>{data.attendees}</td>
-          </tr>
           <tr>
             {data.classVariant && (
               <>
-                <td>Option:</td>
+                <td>Option</td>
                 <td>
                   {data.classVariant.title} {`$${data.classVariant.pricePerson}`} {data.classVariant.groupEvent ? '/group' : '/person'}
                 </td>
@@ -91,20 +71,30 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
             )}
           </tr>
           <tr>
-            <td>International attendees:</td>
+            <td>Event Date</td>
+            <td>
+              <Calendar size={18} /> {data.eventDateTime ? moment(data.eventDateTime).format('LLL') : 'TBD'}
+            </td>
+          </tr>
+          <tr>
+            <td>Attendees</td>
+            <td>{data.attendees}</td>
+          </tr>
+          <tr>
+            <td>International attendees</td>
             <td>{data.hasInternationalAttendees ? 'Yes' : 'No'}</td>
           </tr>
           <tr>
-            <td>Created:</td>
+            <td>Created</td>
             <td>{moment(data.createdAt).format('LL')}</td>
           </tr>
           <tr>
-            <td>Updated:</td>
+            <td>Updated</td>
             <td>{moment(data.updatedAt).format('LL')}</td>
           </tr>
 
           <tr>
-            <td>Actions:</td>
+            <td>Actions</td>
             <td></td>
           </tr>
         </tbody>
@@ -128,14 +118,26 @@ const columns = [
       });
     }
   },
+  { name: 'status', header: 'Status', type: 'string', defaultVisible: false },
   { name: '_id', header: 'Id', type: 'string' },
-  { name: 'status', header: 'Status', type: 'string' },
   { name: 'customerName', header: 'Customer ', type: 'string' },
-  { name: 'customerPhone', header: 'Phone ', type: 'number' },
   { name: 'customerEmail', header: 'Email ', type: 'string' },
+  { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false },
   { name: 'customerCompany', header: 'Company ', type: 'string' },
   { name: 'className', header: 'Class ', type: 'string' },
-  { name: 'attendees', header: '# ', type: 'number', filterEditor: NumberFilter, defaultWidth: 112 },
+  {
+    name: 'attendees',
+    header: '# ',
+    type: 'number',
+    filterEditor: NumberFilter,
+    defaultWidth: 112,
+    render: ({ value, cellProps }) => {
+      console.log('cellProps', cellProps);
+      if (value) {
+        return <span className="float-right">{value}</span>;
+      }
+    }
+  },
   {
     name: 'eventDateTime',
     header: 'Event date',
@@ -146,37 +148,27 @@ const columns = [
         return moment(value).format('LLL');
       }
     }
-  },
-  {
-    name: 'payments',
-    id: 'depositPayments',
-    header: 'Deposit paid',
-    type: 'number',
-    filterEditor: NumberFilter,
-    render: ({ value, cellProps }) => {
-      if (value) {
-        const depositsPaid = value.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
-        const initialDepositPaid =
-          depositsPaid && depositsPaid.length > 0 ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100 : 0; //amount is in cents
-        return `$ ${initialDepositPaid.toFixed(2)}`;
-      }
-    }
-  },
-  {
-    name: 'payments',
-    id: 'finalPayments',
-    header: 'Final payment paid ',
-    type: 'number',
-    filterEditor: NumberFilter,
-    render: ({ value, cellProps }) => {
-      console.log('value', value);
-      if (value) {
-        const finalPaymentPaid = value.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
-        const paidAmount = finalPaymentPaid ? finalPaymentPaid.amount / 100 : 0;
-        return `$ ${paidAmount.toFixed(2)}`;
-      }
-    }
   }
+  // {
+  //   header: 'Total',
+  //   type: 'number',
+  //   filterEditor: NumberFilter
+  // },
+  // {
+  //   header: 'Deposit Paid',
+  //   type: 'number',
+  //   filterEditor: NumberFilter
+  // },
+  // {
+  //   header: 'Final Paid',
+  //   type: 'number',
+  //   filterEditor: NumberFilter
+  // },
+  // {
+  //   header: 'Balance',
+  //   type: 'number',
+  //   filterEditor: NumberFilter
+  // }
 ];
 
 const DataGrid = () => {
@@ -187,17 +179,15 @@ const DataGrid = () => {
 
   const defaultFilterValue = [
     { name: 'updatedAt', type: 'date', operator: 'before', value: undefined },
-    { name: '_id', type: 'string', operator: 'contains', value: '' },
     { name: 'status', type: 'string', operator: 'contains', value: 'quote' },
+    { name: '_id', type: 'string', operator: 'contains', value: '' },
     { name: 'customerName', type: 'string', operator: 'contains', value: '' },
     { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
-    { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
     { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
+    { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
     { name: 'className', type: 'string', operator: 'contains', value: '' },
     { name: 'attendees', type: 'number', operator: 'gte', value: 10 },
-    { name: 'eventDateTime', type: 'date', operator: 'before', value: undefined },
-    { name: 'depositPayments', id: 'depositPayments', type: 'number', operator: 'gte', value: undefined },
-    { name: 'finalPayments', id: 'finalPayments', type: 'number', operator: 'gte', value: undefined }
+    { name: 'eventDateTime', type: 'date', operator: 'before', value: undefined }
   ];
 
   const loadData = ({ skip, limit, sortInfo, groupBy, filterValue }) => {
