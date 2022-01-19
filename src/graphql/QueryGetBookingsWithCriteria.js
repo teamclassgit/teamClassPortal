@@ -17,6 +17,7 @@ export default gql`
         attendees
         eventDateTime
         hasInternationalAttendees
+        eventDateTimeStatus
         payments {
           amount
           createdAt

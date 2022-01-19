@@ -1,6 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
+import { Briefcase, Calendar, Check, DollarSign, Edit2, Mail, Phone, TrendingUp, User, Users } from 'react-feather';
+import { Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
+import Avatar from '@components/avatar';
+import moment from 'moment';
 
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
 import CopyClipboard from '../../components/CopyClipboard';
@@ -15,17 +20,8 @@ import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
 import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
 import './BookingsTable.scss';
 
-import Avatar from '@components/avatar';
-import moment from 'moment';
-import { Briefcase, Calendar, DollarSign, Mail, Phone, TrendingUp } from 'react-feather';
-import { Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
-
-const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataSource, rowId }) => {
+const renderRowDetails = ({ data }) => {
   console.log('data', data);
-  console.log('rowSelected', rowSelected);
-  console.log('rowActive', rowActive);
-  console.log('rowId', rowId);
-  console.log('dataSource', dataSource);
   return (
     <div style={{ padding: 20 }}>
       <h4 className="mb-1">{capitalizeString(data.customerName)}</h4>
@@ -104,99 +100,267 @@ const renderRowDetails = ({ data, toggleRowExpand, rowSelected, rowActive, dataS
   );
 };
 
-const columns = [
-  {
-    name: 'createdAt',
-    header: 'Created',
-    type: 'date',
-    filterEditor: DateFilter,
-    render: ({ value, cellProps }) => {
-      return moment(value).calendar(null, {
-        lastDay: '[Yesterday]',
-        sameDay: 'LT',
-        lastWeek: 'dddd',
-        sameElse: 'MMMM Do, YYYY'
-      });
-    }
-  },
-  {
-    name: 'updatedAt',
-    header: 'Updated',
-    type: 'date',
-    filterEditor: DateFilter,
-    render: ({ value, cellProps }) => {
-      return moment(value).calendar(null, {
-        lastDay: '[Yesterday]',
-        sameDay: 'LT',
-        lastWeek: 'dddd',
-        sameElse: 'MMMM Do, YYYY'
-      });
-    },
-    defaultVisible: false
-  },
-  { name: 'status', header: 'Status', type: 'string', defaultVisible: false },
-  { name: '_id', header: 'Id', type: 'string' },
-  { name: 'customerName', header: 'Customer ', type: 'string' },
-  { name: 'customerEmail', header: 'Email ', type: 'string' },
-  { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false },
-  { name: 'customerCompany', header: 'Company ', type: 'string' },
-  { name: 'className', header: 'Class ', type: 'string' },
-  {
-    name: 'attendees',
-    header: '# ',
-    type: 'number',
-    filterEditor: NumberFilter,
-    defaultWidth: 112,
-    render: ({ value, cellProps }) => {
-      console.log('cellProps', cellProps);
-      if (value) {
-        return <span className="float-right">{value}</span>;
-      }
-    }
-  },
-  {
-    name: 'eventDateTime',
-    header: 'Event date',
-    type: 'date',
-    filterEditor: DateFilter,
-    render: ({ value, cellProps }) => {
-      if (value) {
-        return moment(value).format('LLL');
-      }
-    }
-  }
-  // {
-  //   header: 'Total',
-  //   type: 'number',
-  //   filterEditor: NumberFilter
-  // },
-  // {
-  //   header: 'Deposit Paid',
-  //   type: 'number',
-  //   filterEditor: NumberFilter
-  // },
-  // {
-  //   header: 'Final Paid',
-  //   type: 'number',
-  //   filterEditor: NumberFilter
-  // },
-  // {
-  //   header: 'Balance',
-  //   type: 'number',
-  //   filterEditor: NumberFilter
-  // }
-];
-
 const DataGrid = () => {
   const skin = useSelector((state) => state.bookingsBackground);
-  const [status, setStatus] = useState('Quote');
+  const [status, setStatus] = useState({ value: 'quote', label: 'Quote' });
+  const history = useHistory();
+
+  const handleEdit = (rowId) => {
+    history.push(`/booking/${rowId}`);
+  };
 
   const gridStyle = { minHeight: 600, marginTop: 10 };
+
+  const columns = [
+    {
+      name: 'createdAt',
+      header: 'Created',
+      type: 'date',
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        return moment(value).calendar(null, {
+          lastDay: '[Yesterday]',
+          sameDay: 'LT',
+          lastWeek: 'dddd',
+          sameElse: 'MMMM Do, YYYY'
+        });
+      }
+    },
+    {
+      name: 'updatedAt',
+      header: 'Updated',
+      type: 'date',
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        return moment(value).calendar(null, {
+          lastDay: '[Yesterday]',
+          sameDay: 'LT',
+          lastWeek: 'dddd',
+          sameElse: 'MMMM Do, YYYY'
+        });
+      },
+      defaultVisible: false
+    },
+    { name: 'status', header: 'Status', type: 'string', defaultVisible: false },
+    { name: '_id', header: 'Id', type: 'string' },
+    { name: 'customerName', header: 'Customer ', type: 'string' },
+    { name: 'customerEmail', header: 'Email ', type: 'string' },
+    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false },
+    { name: 'customerCompany', header: 'Company ', type: 'string' },
+    { name: 'className', header: 'Class ', type: 'string' },
+    {
+      name: 'attendees',
+      header: '# ',
+      type: 'number',
+      filterEditor: NumberFilter,
+      defaultWidth: 112,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-right">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'eventDateTime',
+      header: 'Event date',
+      type: 'date',
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        console.log('cellProps', cellProps.data);
+        if (value) {
+          return moment(value).format('LLL');
+        }
+      }
+    },
+    {
+      name: 'actions',
+      header: 'Actions',
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (cellProps.data) {
+          return cellProps.data.status === 'quote' ? (
+            <small>
+              <div className="d-flex">
+                <a
+                  className="mr-1"
+                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  target={'_blank'}
+                  title={'Select date and time link'}
+                >
+                  <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+                </a>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                </a>
+              </div>
+            </small>
+          ) : cellProps.data.status === 'date-requested' &&
+            cellProps.data.eventDateTimeStatus &&
+            cellProps.data.eventDateTimeStatus === 'reserved' ? (
+              <small>
+                <div className="d-flex">
+                  <a
+                    className="mr-1"
+                    href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                    target={'_blank'}
+                    title={'Select date and time link'}
+                  >
+                    <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+                  </a>
+                  <a
+                    className="mr-1"
+                    href={`https://www.teamclass.com/booking/date-time-confirmation/${cellProps.data._id}`}
+                    target={'_blank'}
+                    title={'Approve/Reject link'}
+                  >
+                    <Avatar color="light-primary" size="sm" icon={<Check />} />
+                  </a>
+                  <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                    <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                  </a>
+                </div>
+              </small>
+            ) : cellProps.data.status === 'date-requested' &&
+            cellProps.data.eventDateTimeStatus &&
+            cellProps.data.eventDateTimeStatus === 'confirmed' ? (
+                <small>
+                  <div className="d-flex">
+                    <a
+                      className="mr-1"
+                      href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                      target={'_blank'}
+                      title={'Select date and time link'}
+                    >
+                      <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+                    </a>
+                    <a
+                      className="mr-1"
+                      href={`https://www.teamclass.com/booking/event-confirmation/${cellProps.data._id}`}
+                      target={'_blank'}
+                      title={'Deposit link'}
+                    >
+                      <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
+                    </a>
+                    <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                      <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                    </a>
+                  </div>
+                </small>
+              ) : cellProps.data.status === 'date-requested' &&
+            cellProps.data.eventDateTimeStatus &&
+            cellProps.data.eventDateTimeStatus === 'rejected' ? (
+                  <small>
+                    <div className="d-flex">
+                      <a
+                        className="mr-1"
+                        href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                        target={'_blank'}
+                        title={'Select date and time link'}
+                      >
+                        <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+                      </a>
+                      <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} title={'Time / Attendees / Invoice Builder'}>
+                        <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                      </a>
+                    </div>
+                  </small>
+                ) : cellProps.data.status === 'confirmed' ? (
+                  <small>
+                    <div className="d-flex">
+                      <a
+                        className="mr-1"
+                        href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                        target={'_blank'}
+                        title={'Select date and time link'}
+                      >
+                        <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+                      </a>
+                      <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={'_blank'} title={'Sign-up link'}>
+                        <Avatar color="light-primary" size="sm" icon={<User />} />
+                      </a>
+                      <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${cellProps.data._id}`} target={'_blank'} title={'Sign-up status'}>
+                        <Avatar color="light-primary" size="sm" icon={<Users />} />
+                      </a>
+                      <a
+                        className="mr-1"
+                        href={`https://www.teamclass.com/booking/payment/${cellProps.data._id}`}
+                        target={'_blank'}
+                        title={'Final payment link'}
+                      >
+                        <Avatar color="secondary" size="sm" icon={<DollarSign />} />
+                      </a>
+                      <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                        <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                      </a>
+                    </div>
+                  </small>
+                ) : (
+                  cellProps.data.status === 'paid' && (
+                    <small>
+                      <div className="d-flex">
+                        <a
+                          className="mr-1"
+                          href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                          target={'_blank'}
+                          title={'Select date and time link'}
+                        >
+                          <Avatar color="light-primary" size="sm" icon={<Calendar />} />
+                        </a>
+                        <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={'_blank'} title={'Sign-up link'}>
+                          <Avatar color="light-primary" size="sm" icon={<User />} />
+                        </a>
+                        <a
+                          className="mr-1"
+                          href={`https://www.teamclass.com/signUpStatus/${cellProps.data._id}`}
+                          target={'_blank'}
+                          title={'Sign-up status'}
+                        >
+                          <Avatar color="light-primary" size="sm" icon={<Users />} />
+                        </a>
+                        <a
+                          className="mr-1"
+                          href={`https://www.teamclass.com/booking/payment/${cellProps.data._id}`}
+                          target={'_blank'}
+                          title={'Final payment link'}
+                        >
+                          <Avatar color="secondary" size="sm" icon={<DollarSign />} />
+                        </a>
+                        <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                          <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                        </a>
+                      </div>
+                    </small>
+                  )
+                );
+        }
+      }
+    }
+    // {
+    //   header: 'Total',
+    //   type: 'number',
+    //   filterEditor: NumberFilter
+    // },
+    // {
+    //   header: 'Deposit Paid',
+    //   type: 'number',
+    //   filterEditor: NumberFilter
+    // },
+    // {
+    //   header: 'Final Paid',
+    //   type: 'number',
+    //   filterEditor: NumberFilter
+    // },
+    // {
+    //   header: 'Balance',
+    //   type: 'number',
+    //   filterEditor: NumberFilter
+    // }
+  ];
 
   const defaultFilterValue = [
     { name: 'createdAt', type: 'date', operator: 'before', value: undefined },
     { name: 'updatedAt', type: 'date', operator: 'before', value: undefined },
-    { name: 'status', type: 'string', operator: 'contains', value: 'quote' },
+    { name: 'status', type: 'string', operator: 'contains', value: status.value },
     { name: '_id', type: 'string', operator: 'contains', value: '' },
     { name: 'customerName', type: 'string', operator: 'contains', value: '' },
     { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
@@ -248,7 +412,6 @@ const DataGrid = () => {
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
 
-  console.log('filteredRows', filteredRows);
   const onExpandedRowsChange = useCallback(({ expandedRows, collapsedRows }) => {
     setExpandedRows(expandedRows);
     setCollapsedRows(collapsedRows);
@@ -306,7 +469,7 @@ const DataGrid = () => {
                 className="  btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('Quote');
+                  setStatus({ value: 'quote', label: 'Quote' });
                 }}
               >
                 Details
@@ -352,7 +515,7 @@ const DataGrid = () => {
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('Requested');
+                  setStatus({ value: 'date-requested', label: 'Requested' });
                 }}
               >
                 Details
@@ -398,7 +561,7 @@ const DataGrid = () => {
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('Rejected');
+                  setStatus({ value: 'canceled', label: 'Rejected' });
                 }}
               >
                 Details
@@ -444,7 +607,7 @@ const DataGrid = () => {
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('Accepted');
+                  setStatus({ value: 'confirmed', label: 'Accepted' });
                 }}
               >
                 Details
@@ -490,7 +653,7 @@ const DataGrid = () => {
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('Deposit paid');
+                  setStatus({ value: 'paid', label: 'Deposit paid' });
                 }}
               >
                 Details
@@ -536,7 +699,7 @@ const DataGrid = () => {
                 className=" m-0 btn-sm"
                 onClick={(e) => {
                   e.preventDefault();
-                  setStatus('Paid');
+                  setStatus({ value: 'paid', label: 'Paid' });
                 }}
               >
                 Details
@@ -547,7 +710,7 @@ const DataGrid = () => {
       </Row>
       <div className="datatable">
         <h4 className="mb-2">
-          Bookings <Badge color="light-primary">{status}</Badge>
+          Bookings <Badge color="light-primary">{status.label}</Badge>
         </h4>
 
         <ReactDataGrid
