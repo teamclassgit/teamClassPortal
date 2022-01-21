@@ -13,11 +13,14 @@ export default gql`
         customerPhone
         customerEmail
         customerCompany
+        eventCoordinatorId
+        eventCoordinatorName
         className
         attendees
         eventDateTime
         hasInternationalAttendees
         eventDateTimeStatus
+        signUpDeadline
         payments {
           amount
           createdAt

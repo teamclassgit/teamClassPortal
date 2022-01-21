@@ -151,7 +151,7 @@ const EditBookingModal = ({
 
   const cancel = () => {
     setClosedBookingReason(null);
-    handleModal();
+    handleModal({});
   };
 
   const groupSizeValidation = (size) => {

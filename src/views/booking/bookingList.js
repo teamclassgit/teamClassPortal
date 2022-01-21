@@ -160,14 +160,12 @@ const BookingList = () => {
   }, [textFilterContext]);
 
   useEffect(() => {
-
     if (calendarEvents && customers && classes) getBookings({
       variables: {
         filter: bookingsFilter,
         limit
       }
     });
-
   }, [bookingsFilter, limit]);
 
   // ** Function to handle Modal toggle
