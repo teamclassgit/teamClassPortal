@@ -8,7 +8,9 @@ export default gql`
         updatedAt
         createdAt
         _id
+        classId
         status
+        customerId
         customerName
         customerPhone
         customerEmail

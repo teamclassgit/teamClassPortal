@@ -175,7 +175,7 @@ const EditBookingModal = ({
         setProcessing(false);
         return;
       }
-      setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
+      // setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
 
       const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
       if (reOpenBookingStatus !== BOOKING_QUOTE_STATUS && calendarEventObject && calendarEventObject.status === DATE_AND_TIME_CANCELED_STATUS) {
@@ -198,6 +198,7 @@ const EditBookingModal = ({
 
   const saveChangesBooking = async () => {
     setProcessing(true);
+    console.log('entró');
 
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
@@ -248,12 +249,12 @@ const EditBookingModal = ({
           variables: { customerEmail: customerEmail.toLowerCase() }
         });
         console.log('Remove campaign before redirecting:', resultEmail);
-        setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
-      } else {
-        setBookings([
-          resultUpdateBooking.data.updateOneBooking,
-          ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
-        ]);
+        //   setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
+        // } else {
+        //   setBookings([
+        //     resultUpdateBooking.data.updateOneBooking,
+        //     ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
+        //   ]);
       }
 
       if (
@@ -325,10 +326,10 @@ const EditBookingModal = ({
         }
       });
       setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)));
-      setBookings([
-        resultNotesUpdated.data.updateOneBooking,
-        ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
-      ]);
+      // setBookings([
+      //   resultNotesUpdated.data.updateOneBooking,
+      //   ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
+      // ]);
     } catch (ex) {
       console.log(ex);
     }
@@ -664,6 +665,7 @@ const EditBookingModal = ({
                   size="sm"
                   color={closedBookingReason ? 'danger' : 'primary'}
                   onClick={() => {
+                    console.log('llamando la función');
                     saveChangesBooking();
                   }}
                   disabled={
