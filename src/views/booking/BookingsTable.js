@@ -244,6 +244,8 @@ const DataGrid = () => {
           } days.`
         );
         setAlertColor('warning');
+      } else {
+        setAlertMessage(null);
       }
     }
   }, [rowBookingId]);
