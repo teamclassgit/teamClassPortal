@@ -21,6 +21,14 @@ export default gql`
         hasInternationalAttendees
         eventDateTimeStatus
         signUpDeadline
+        depositsPaid
+        finalPaid
+        isRush
+        taxAmount
+        serviceFeeAmount
+        cardFeeAmount
+        totalInvoice
+        balance
         payments {
           amount
           createdAt

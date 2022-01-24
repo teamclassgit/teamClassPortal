@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
 import { Briefcase, Calendar, Check, DollarSign, Edit2, Mail, Phone, TrendingUp, User, Users } from 'react-feather';
-import { Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
+import { Alert, Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
 import Avatar from '@components/avatar';
 import moment from 'moment';
 
@@ -27,8 +27,8 @@ import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from './AddNewBooking';
-import renderRowDetails from './BookingsTableRowDetails';
 import BookingTableCards from './BookingsTableStatusCards';
+import columns from './BookingsTableColumns';
 import { capitalizeString } from '../../utility/Utils';
 
 const DataGrid = () => {
@@ -50,6 +50,12 @@ const DataGrid = () => {
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertColor, setAlertColor] = useState(null);
+  const [rowBookingId, setRowBookingId] = useState(null);
+  const [rowDepositPayment, setRowDepositPayment] = useState(null);
+  const [rowFinalPayment, setRowFinalPayment] = useState(null);
+  const [rowEventDate, setRowEventDate] = useState(null);
 
   const handleModal = () => setShowAddModal(!showAddModal);
 
@@ -65,6 +71,96 @@ const DataGrid = () => {
 
   const handleEdit = (rowId) => {
     history.push(`/booking/${rowId}`);
+  };
+
+  const renderRowDetails = ({ data }) => {
+    console.log('data', data);
+    setRowBookingId(data._id);
+    setRowDepositPayment(data.depositsPaid);
+    setRowFinalPayment(data.finalPaid);
+    setRowEventDate(data.eventDateTime);
+    return (
+      <div style={{ padding: 20 }}>
+        <h4 className="mb-1">{capitalizeString(data.customerName)}</h4>
+        <table>
+          <tbody>
+            {alertMessage && (
+              <tr>
+                <td>
+                  <Alert color={alertColor}>{alertMessage}</Alert>
+                </td>
+              </tr>
+            )}
+            <tr>
+              <td>Phone</td>
+              <td>
+                <Phone size={16} /> {data.customerPhone} <CopyClipboard text={data.customerPhone} />
+              </td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td>
+                <Mail size={16} /> {data.customerEmail} <CopyClipboard className="z-index-2" text={data.customerEmail} />
+              </td>
+            </tr>
+            {data.customerCompany && (
+              <tr>
+                <td>Company</td>
+                <td>
+                  <Briefcase size={16} /> {data.customerCompany}
+                </td>
+              </tr>
+            )}
+            <tr>
+              <td>
+                <strong>Booking ID</strong>
+              </td>
+              <td>{data._id}</td> <CopyClipboard className="z-index-2" text={data._id} />
+            </tr>
+            <tr>
+              <td>Class:</td>
+              <td>{data.className}</td>
+            </tr>
+            <tr>
+              {data.classVariant && (
+                <>
+                  <td>Option</td>
+                  <td>
+                    {data.classVariant.title} {`$${data.classVariant.pricePerson}`} {data.classVariant.groupEvent ? '/group' : '/person'}
+                  </td>
+                </>
+              )}
+            </tr>
+            <tr>
+              <td>Event Date</td>
+              <td>
+                <Calendar size={16} /> {data.eventDateTime ? moment(data.eventDateTime).format('LLL') : 'TBD'}
+              </td>
+            </tr>
+            <tr>
+              <td>Attendees</td>
+              <td>{data.attendees}</td>
+            </tr>
+            <tr>
+              <td>International attendees</td>
+              <td>{data.hasInternationalAttendees ? 'Yes' : 'No'}</td>
+            </tr>
+            <tr>
+              <td>Created</td>
+              <td>{moment(data.createdAt).format('LL')}</td>
+            </tr>
+            <tr>
+              <td>Updated</td>
+              <td>{moment(data.updatedAt).format('LL')}</td>
+            </tr>
+            <tr>
+              <td>Sign Up Date</td>
+              <td>{data.signUpDeadline && moment(data.signUpDeadline).format('LL')}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   const [getCalendarEvents, { ...allCalendarEventsResults }] = useLazyQuery(queryAllCalendarEvents, {
@@ -116,306 +212,47 @@ const DataGrid = () => {
 
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
-  const columns = [
-    {
-      name: 'createdAt',
-      header: 'Created',
-      type: 'date',
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
-        });
-      }
-    },
-    {
-      name: 'updatedAt',
-      header: 'Updated',
-      type: 'date',
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
-        });
-      },
-      defaultVisible: false
-    },
-    {
-      name: '_id',
-      header: 'Id',
-      type: 'string',
-      render: ({ value, cellProps }) => {
-        return (
-          <>
-            <small>
-              <a
-                href="#"
-                onClick={() => {
-                  console.log('entró handle modal fila', value);
-                  handleEditModal({
-                    bookingId: value,
-                    currentCustomerId: cellProps.data.customerId,
-                    currentName: cellProps.data.customerName,
-                    currentEmail: cellProps.data.customerEmail,
-                    currentPhone: cellProps.data.customerPhone,
-                    currentCompany: cellProps.data.customerCompany,
-                    currentCoordinatorId: cellProps.data.eventCoordinatorId,
-                    currentCoordinatorName: cellProps.data.eventCoordinatorName,
-                    currentTeamclassId: cellProps.data.classId,
-                    currentTeamclassName: cellProps.data.className,
-                    currentGroupSize: cellProps.data.attendees,
-                    currentSignUpDeadline: cellProps.data.signUpDeadline,
-                    currentClassVariant: cellProps.data.classVariant,
-                    currentServiceFee: cellProps.data.serviceFee,
-                    currentSalesTax: cellProps.data.salesTax,
-                    createdAt: cellProps.data.createdAt,
-                    updatedAt: cellProps.data.updatedAt,
-                    currentStatus: cellProps.data.status,
-                    currentEventDurationHours: cellProps.data.eventDurationHours,
-                    currentClosedReason: cellProps.data.closedReason,
-                    currentNotes: cellProps.data.notes,
-                    currentPayments: cellProps.data.payments,
-                    currentCapRegistration: cellProps.data.capRegistration
-                  });
-                }}
-                title={`Edit booking info ${cellProps.data._id}`}
-              >
-                {cellProps.data._id}
-              </a>
-            </small>
-          </>
-        );
-      }
-    },
-    { name: 'customerName', header: 'Customer ', type: 'string' },
-    { name: 'customerEmail', header: 'Email ', type: 'string' },
-    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false },
-    { name: 'customerCompany', header: 'Company ', type: 'string' },
-    { name: 'className', header: 'Class ', type: 'string' },
-    {
-      name: 'attendees',
-      header: 'Attendees ',
-      type: 'number',
-      filterEditor: NumberFilter,
-      defaultWidth: 112,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return <span className="float-right">{value}</span>;
-        }
-      }
-    },
-    {
-      name: 'eventDateTime',
-      header: 'Event date',
-      type: 'date',
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
-        }
-      }
-    },
-    {
-      name: 'signUpDeadline',
-      header: 'Sign Up Date',
-      type: 'date',
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
-        }
-      }
-    },
-    {
-      name: 'actions',
-      header: 'Actions',
-      defaultWidth: 200,
-      render: ({ value, cellProps }) => {
-        if (cellProps.data) {
-          return cellProps.data.status === 'quote' ? (
-            <small>
-              <div className="d-flex">
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
-                  target={'_blank'}
-                  title={'Select date and time link'}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                </a>
-              </div>
-            </small>
-          ) : cellProps.data.status === 'date-requested' &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === 'reserved' ? (
-              <small>
-                <div className="d-flex">
-                  <a
-                    className="mr-1"
-                    href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
-                    target={'_blank'}
-                    title={'Select date and time link'}
-                  >
-                    <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                  </a>
-                  <a
-                    className="mr-1"
-                    href={`https://www.teamclass.com/booking/date-time-confirmation/${cellProps.data._id}`}
-                    target={'_blank'}
-                    title={'Approve/Reject link'}
-                  >
-                    <Avatar color="light-primary" size="sm" icon={<Check />} />
-                  </a>
-                  <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                    <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                  </a>
-                </div>
-              </small>
-            ) : cellProps.data.status === 'date-requested' &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === 'confirmed' ? (
-                <small>
-                  <div className="d-flex">
-                    <a
-                      className="mr-1"
-                      href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
-                      target={'_blank'}
-                      title={'Select date and time link'}
-                    >
-                      <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                    </a>
-                    <a
-                      className="mr-1"
-                      href={`https://www.teamclass.com/booking/event-confirmation/${cellProps.data._id}`}
-                      target={'_blank'}
-                      title={'Deposit link'}
-                    >
-                      <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-                    </a>
-                    <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                      <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                    </a>
-                  </div>
-                </small>
-              ) : cellProps.data.status === 'date-requested' &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === 'rejected' ? (
-                  <small>
-                    <div className="d-flex">
-                      <a
-                        className="mr-1"
-                        href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
-                        target={'_blank'}
-                        title={'Select date and time link'}
-                      >
-                        <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                      </a>
-                      <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} title={'Time / Attendees / Invoice Builder'}>
-                        <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                      </a>
-                    </div>
-                  </small>
-                ) : cellProps.data.status === 'confirmed' ? (
-                  <small>
-                    <div className="d-flex">
-                      <a
-                        className="mr-1"
-                        href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
-                        target={'_blank'}
-                        title={'Select date and time link'}
-                      >
-                        <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                      </a>
-                      <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={'_blank'} title={'Sign-up link'}>
-                        <Avatar color="light-primary" size="sm" icon={<User />} />
-                      </a>
-                      <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${cellProps.data._id}`} target={'_blank'} title={'Sign-up status'}>
-                        <Avatar color="light-primary" size="sm" icon={<Users />} />
-                      </a>
-                      <a
-                        className="mr-1"
-                        href={`https://www.teamclass.com/booking/payment/${cellProps.data._id}`}
-                        target={'_blank'}
-                        title={'Final payment link'}
-                      >
-                        <Avatar color="secondary" size="sm" icon={<DollarSign />} />
-                      </a>
-                      <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                        <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                      </a>
-                    </div>
-                  </small>
-                ) : (
-                  cellProps.data.status === 'paid' && (
-                    <small>
-                      <div className="d-flex">
-                        <a
-                          className="mr-1"
-                          href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
-                          target={'_blank'}
-                          title={'Select date and time link'}
-                        >
-                          <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                        </a>
-                        <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={'_blank'} title={'Sign-up link'}>
-                          <Avatar color="light-primary" size="sm" icon={<User />} />
-                        </a>
-                        <a
-                          className="mr-1"
-                          href={`https://www.teamclass.com/signUpStatus/${cellProps.data._id}`}
-                          target={'_blank'}
-                          title={'Sign-up status'}
-                        >
-                          <Avatar color="light-primary" size="sm" icon={<Users />} />
-                        </a>
-                        <a
-                          className="mr-1"
-                          href={`https://www.teamclass.com/booking/payment/${cellProps.data._id}`}
-                          target={'_blank'}
-                          title={'Final payment link'}
-                        >
-                          <Avatar color="secondary" size="sm" icon={<DollarSign />} />
-                        </a>
-                        <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
-                          <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                        </a>
-                      </div>
-                    </small>
-                  )
-                );
-        }
+  const onRenderRow = (rowProps) => {
+    // console.log('rowProps', rowProps);
+
+    const depositPayment = rowProps.data.depositsPaid;
+    const finalPayment = rowProps.data.finalPaid;
+    const previousEventDays = moment(rowProps.data.eventDateTime).diff(moment(), 'days');
+
+    if (depositPayment && rowProps.data.eventDateTime && !finalPayment) {
+      if (previousEventDays < 0) {
+        rowProps.style.color = '#ea5455';
+      } else if (previousEventDays < 7 && previousEventDays >= 0) {
+        rowProps.style.color = '#ff9f43';
       }
     }
-    // {
-    //   header: 'Total',
-    //   type: 'number',
-    //   filterEditor: NumberFilter
-    // },
-    // {
-    //   header: 'Deposit Paid',
-    //   type: 'number',
-    //   filterEditor: NumberFilter
-    // },
-    // {
-    //   header: 'Final Paid',
-    //   type: 'number',
-    //   filterEditor: NumberFilter
-    // },
-    // {
-    //   header: 'Balance',
-    //   type: 'number',
-    //   filterEditor: NumberFilter
-    // }
-  ];
+  };
+
+  useEffect(() => {
+    const previousEventDays = moment(rowEventDate).diff(moment(), 'days');
+    console.log('previousEventDays', previousEventDays);
+
+    if (rowDepositPayment && rowEventDate && !rowFinalPayment) {
+      if (previousEventDays < 0) {
+        console.log('condición roja');
+        setAlertMessage(`Booking has not been paid and event was ${previousEventDays * -1} days ago.`);
+        setAlertColor('danger');
+      } else if (previousEventDays < 7 && previousEventDays >= 0) {
+        setAlertMessage(
+          `Booking has not been paid and event is in ${
+            moment(rowEventDate).format('MM/DD/YYYY') === moment().format('MM/DD/YYYY') ? 0 : previousEventDays + 1
+          } days.`
+        );
+        setAlertColor('warning');
+      }
+    }
+  }, [rowBookingId]);
+
+  console.log('alertMessage', alertMessage);
+  console.log('rowBookingId', rowBookingId);
+  console.log('rowDepositPayment', rowDepositPayment);
+  console.log('rowFinalPayment', rowFinalPayment);
+  console.log('rowEventDate', rowEventDate);
 
   useEffect(() => {
     if (gridRef) gridRef.current.clearAllFilters();
@@ -553,7 +390,8 @@ const DataGrid = () => {
           expandedRows={expandedRows}
           collapsedRows={collapsedRows}
           onExpandedRowsChange={onExpandedRowsChange}
-          rowExpandHeight={365}
+          onRenderRow={onRenderRow}
+          rowExpandHeight={370}
           renderRowDetails={renderRowDetails}
         />
         <AddNewBooking
