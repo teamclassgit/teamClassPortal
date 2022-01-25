@@ -5,7 +5,7 @@ export default gql`
     $id: String!
     $bookingId: String!
     $name: String
-    $email: String!
+    $email: String
     $phone: String
     $addressLine1: String
     $addressLine2: String

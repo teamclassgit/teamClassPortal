@@ -88,7 +88,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
     Email: {
       prop: 'email',
       type: Email,
-      required: true
+      required: false
     },
 
     Phone: {

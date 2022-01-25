@@ -202,9 +202,7 @@ const AddNewAttendee = ({
 
   useEffect(() => {
     let validationFields = true;
-    if (newName && newEmail) {
-      validationFields = !newName || !newEmail;
-    }
+
     if (booking.classVariant.hasKit) {
       validationFields = !newAddress1 || !newCity || !newState || !newZip || !newCountry;
     }
@@ -215,7 +213,7 @@ const AddNewAttendee = ({
       });
     }
     setDynamicValuesValidation(validationFields);
-  }, [dynamicValues, newName, newEmail, newAddress1, newCity, newState, newZip, newCountry]);
+  }, [dynamicValues, newAddress1, newCity, newState, newZip, newCountry]);
 
   const onChangeDynamic = (value, additionalField, field) => {
     if (field.type === 'multiSelectionList') {
@@ -264,7 +262,7 @@ const AddNewAttendee = ({
             <Input
               type="email"
               id="email"
-              placeholder="Email*"
+              placeholder="Email"
               required={true}
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
@@ -455,7 +453,12 @@ const AddNewAttendee = ({
                 </FormGroup>
               );
             })}
-        <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || dynamicValuesValidation}>
+        <Button
+          className="mr-1 mt-1"
+          color="primary"
+          onClick={saveNewAttendee}
+          disabled={processing || dynamicValuesValidation || !newName || !emailValid}
+        >
           {processing ? 'Saving...' : 'Save'}
         </Button>
         <Button className="mt-1" color="secondary" onClick={cancel} outline>
