@@ -12,11 +12,9 @@ const RowDetails = ({ data }) => {
   const previousEventDays = moment(data.eventDateTime).diff(moment(), 'days');
   let alertMessage = '';
   let alertColor = '';
-  console.log('previousEventDays', previousEventDays);
 
   if (data.depositsPaid && data.eventDateTime && !data.finalPaid) {
     if (previousEventDays < 0) {
-      console.log('condición roja');
       alertMessage = `Booking has not been paid and event was ${previousEventDays * -1} days ago.`;
       alertColor = 'danger';
     } else if (previousEventDays < 7 && previousEventDays >= 0) {

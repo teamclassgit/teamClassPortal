@@ -4,8 +4,8 @@ import { useQuery, useLazyQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
-import { Briefcase, Calendar, Check, DollarSign, Edit2, Mail, Phone, TrendingUp, User, Users } from 'react-feather';
-import { Alert, Badge, Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
+import { Calendar, Check, DollarSign, Edit2, User, Users } from 'react-feather';
+import { Badge, Button } from 'reactstrap';
 import Avatar from '@components/avatar';
 import moment from 'moment';
 
@@ -22,7 +22,6 @@ import './BookingsTable.scss';
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryAllClasses from '../../graphql/QueryAllClasses';
-import CopyClipboard from '../../components/CopyClipboard';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from './AddNewBooking';
@@ -75,12 +74,11 @@ const DataGrid = () => {
 
   const history = useHistory();
 
-  console.log('status', status);
-  console.log('currentElement', currentElement);
-
   const handleEdit = (rowId) => {
     history.push(`/booking/${rowId}`);
   };
+
+  console.log('currentElement', currentElement);
 
   const columns = [
     {
@@ -123,8 +121,6 @@ const DataGrid = () => {
               <a
                 href="#"
                 onClick={() => {
-                  console.log('entró handle modal fila', value);
-                  const payments = [];
                   setCurrentElement({
                     bookingId: value,
                     currentCustomerId: cellProps.data.customerId,
@@ -505,6 +501,16 @@ const DataGrid = () => {
     setFilterValue(defaultFilterValue);
   }, [status]);
 
+  const onEditCompleted = () => {
+    const sortEditedData = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+    setSortInfo(sortEditedData);
+  };
+
+  const onAddCompleted = () => {
+    const sortAddedData = { dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' };
+    setSortInfo(sortAddedData);
+  };
+
   const loadData = ({ skip, limit, sortInfo, filterValue }) => {
     if (!filterValue) filterValue = [];
 
@@ -528,8 +534,6 @@ const DataGrid = () => {
         return { name, type, operator, value };
       });
 
-    //filters.push();
-
     console.log('filters', filters);
     return apolloClient
       .query({
@@ -546,7 +550,6 @@ const DataGrid = () => {
         const totalCount = response.data.getBookingsWithCriteria.count;
         return { data: response.data.getBookingsWithCriteria.rows, count: totalCount };
       });
-    // return { data: [], count: 0 };
   };
 
   const dataSource = useCallback(loadData, []);
@@ -615,7 +618,7 @@ const DataGrid = () => {
           collapsedRows={collapsedRows}
           onExpandedRowsChange={onExpandedRowsChange}
           onRenderRow={onRenderRow}
-          rowExpandHeight={370}
+          rowExpandHeight={400}
           renderRowDetails={renderRowDetails}
         />
         <AddNewBooking
@@ -628,6 +631,7 @@ const DataGrid = () => {
           baseElement={elementToAdd}
           // setBookings={setBookings}
           coordinators={coordinators}
+          onAddCompleted={onAddCompleted}
         />
         <EditBookingModal
           open={editModal}
@@ -640,6 +644,7 @@ const DataGrid = () => {
           setCustomers={setCustomers}
           handleClose={() => setCurrentElement({})}
           editMode={true}
+          onEditCompleted={onEditCompleted}
         />
       </div>
     </div>

@@ -86,7 +86,8 @@ const EditBookingModal = ({
   handleModal,
   open,
   setBookings,
-  setCustomers
+  setCustomers,
+  onEditCompleted
 }) => {
   const [active, setActive] = useState('1');
   const [attendeesValid, setAttendeesValid] = useState(true);
@@ -280,6 +281,7 @@ const EditBookingModal = ({
 
     setProcessing(false);
     handleModal();
+    onEditCompleted();
   };
 
   const getStatusToReOpenBooking = () => {
