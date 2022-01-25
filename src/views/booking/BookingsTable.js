@@ -24,10 +24,9 @@ import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import CopyClipboard from '../../components/CopyClipboard';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
-import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from './AddNewBooking';
-import BookingTableCards from './BookingsTableStatusCards';
+import BookingsTableStatusCards from './BookingsTableStatusCards';
 import RowDetails from '../../components/RowDetails';
 import { capitalizeString } from '../../utility/Utils';
 
@@ -61,7 +60,6 @@ const DataGrid = () => {
   const [customers, setCustomers] = useState([]);
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
-  const [calendarEvents, setCalendarEvents] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
   const [sortInfo, setSortInfo] = useState([]);
   const [filteredRows, setFilteredRows] = useState(null);
@@ -193,7 +191,7 @@ const DataGrid = () => {
     },
     {
       name: 'signUpDeadline',
-      header: 'Sign Up Date',
+      header: 'Registration',
       type: 'date',
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
@@ -208,6 +206,7 @@ const DataGrid = () => {
       type: 'number',
       defaultWidth: 100,
       filterEditor: NumberFilter,
+      defaultVisible: false,
       render: ({ value, cellProps }) => {
         return value.toFixed(2);
       }
@@ -217,6 +216,7 @@ const DataGrid = () => {
       header: 'Service Fee',
       type: 'number',
       defaultWidth: 100,
+      defaultVisible: false,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
         return value.toFixed(2);
@@ -227,6 +227,7 @@ const DataGrid = () => {
       header: 'Card Fee',
       type: 'number',
       defaultWidth: 100,
+      defaultVisible: false,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
         return value.toFixed(2);
@@ -234,7 +235,7 @@ const DataGrid = () => {
     },
     {
       name: 'totalInvoice',
-      header: 'Total Invoice',
+      header: 'Total',
       type: 'number',
       defaultWidth: 100,
       filterEditor: NumberFilter,
@@ -244,11 +245,10 @@ const DataGrid = () => {
     },
     {
       name: 'depositsPaid',
-      header: 'Deposit Paid',
+      header: 'Deposits',
       type: 'number',
       defaultWidth: 100,
       filterEditor: NumberFilter,
-      defaultVisible: false,
       render: ({ value, cellProps }) => {
         return value.toFixed(2);
       }
@@ -259,7 +259,6 @@ const DataGrid = () => {
       type: 'number',
       defaultWidth: 100,
       filterEditor: NumberFilter,
-      defaultVisible: false,
       render: ({ value, cellProps }) => {
         return value.toFixed(2);
       }
@@ -270,7 +269,6 @@ const DataGrid = () => {
       type: 'number',
       defaultWidth: 100,
       filterEditor: NumberFilter,
-      defaultVisible: false,
       render: ({ value, cellProps }) => {
         return value.toFixed(2);
       }
@@ -440,15 +438,6 @@ const DataGrid = () => {
     }
   ];
 
-  const [getCalendarEvents, { ...allCalendarEventsResults }] = useLazyQuery(queryAllCalendarEvents, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
-      if (data) {
-        setCalendarEvents(data.calendarEvents);
-      }
-    }
-  });
-
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
     fetchPolicy: 'no-cache',
     variables: {
@@ -468,11 +457,6 @@ const DataGrid = () => {
     onCompleted: (data) => {
       if (data && data.teamClasses) {
         setClasses(data.teamClasses);
-        getCalendarEvents({
-          variables: {
-            filter: genericFilter
-          }
-        });
       }
     }
   });
@@ -502,7 +486,15 @@ const DataGrid = () => {
       { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
       { name: 'className', type: 'string', operator: 'contains', value: '' },
       { name: 'attendees', type: 'number', operator: 'gte', value: undefined },
+      { name: 'taxAmount', type: 'number', operator: 'gte', value: undefined },
+      { name: 'serviceFeeAmount', type: 'number', operator: 'gte', value: undefined },
+      { name: 'cardFeeAmount', type: 'number', operator: 'gte', value: undefined },
+      { name: 'totalInvoice', type: 'number', operator: 'gte', value: undefined },
+      { name: 'depositsPaid', type: 'number', operator: 'gte', value: undefined },
+      { name: 'finalPaid', type: 'number', operator: 'gte', value: undefined },
+      { name: 'balance', type: 'number', operator: 'gte', value: undefined },
       { name: 'eventDateTime', type: 'date', operator: 'before', value: undefined },
+      { name: 'signUpDeadline', type: 'date', operator: 'before', value: undefined },
       { name: 'status', type: 'string', operator: 'contains', value: status?.value }
     ];
 
@@ -574,7 +566,7 @@ const DataGrid = () => {
 
   return (
     <div>
-      <BookingTableCards setStatus={setStatus} />
+      <BookingsTableStatusCards setStatus={setStatus} />
       <div className="datatable">
         <div className="d-flex justify-content-between ">
           <h4 className="mb-2">
@@ -592,14 +584,13 @@ const DataGrid = () => {
               setElementToAdd(newElement);
               handleModal();
             }}
+            className="m-0 btn-sm"
             color="primary"
             outline
-            size="sm"
           >
             Add booking
           </Button>
         </div>
-
         <ReactDataGrid
           idProperty="_id"
           onReady={setGridRef}
@@ -646,8 +637,6 @@ const DataGrid = () => {
           allClasses={classes}
           allBookings={[]}
           allCustomers={customers}
-          allCalendarEvents={calendarEvents}
-          // setBookings={setBookings}
           setCustomers={setCustomers}
           handleClose={() => setCurrentElement({})}
           editMode={true}

@@ -132,7 +132,7 @@ const EditBookingModal = ({
     setGroupSize(currentGroupSize);
     setIsCapRegistration(currentCapRegistration);
 
-    const filteredCalendarEvent = allCalendarEvents.find((element) => element.bookingId === bookingId);
+    const filteredCalendarEvent = allCalendarEvents && allCalendarEvents.find((element) => element.bookingId === bookingId);
     if (filteredCalendarEvent) setCalendarEvent(filteredCalendarEvent);
   }, [bookingId]);
 
@@ -177,7 +177,7 @@ const EditBookingModal = ({
       }
       // setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
 
-      const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
+      const calendarEventObject = allCalendarEvents && allCalendarEvents.find((item) => item.bookingId === bookingId);
       if (reOpenBookingStatus !== BOOKING_QUOTE_STATUS && calendarEventObject && calendarEventObject.status === DATE_AND_TIME_CANCELED_STATUS) {
         const calendarEventStatus = getStatusToReOpenCalendarEvent(reOpenBookingStatus);
         const resultStatusUpdated = await updateCalendarEventStatus({
@@ -263,7 +263,7 @@ const EditBookingModal = ({
         closedBookingReason === 'Mistake' ||
         closedBookingReason === 'Test'
       ) {
-        const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
+        const calendarEventObject = allCalendarEvents && allCalendarEvents.find((item) => item.bookingId === bookingId);
         if (calendarEventObject) {
           const resultStatusUpdated = await updateCalendarEventStatus({
             variables: {

@@ -13,10 +13,6 @@ const Routes = [
   },
   {
     path: '/bookings',
-    component: lazy(() => import('../../views/booking/bookingList'))
-  },
-  {
-    path: '/new-view-bookings',
     component: lazy(() => import('../../views/booking/BookingsTable'))
   },
   {

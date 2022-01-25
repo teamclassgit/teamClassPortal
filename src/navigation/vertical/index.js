@@ -14,12 +14,6 @@ export default [
     navLink: '/bookings'
   },
   {
-    id: 'checkout7',
-    title: 'In progress new view',
-    icon: <BookOpen size={20} />,
-    navLink: '/new-view-bookings'
-  },
-  {
     id: 'checkout2',
     title: 'Closed',
     icon: <Archive size={20} />,
