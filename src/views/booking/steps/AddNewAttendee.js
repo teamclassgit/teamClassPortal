@@ -281,7 +281,7 @@ const AddNewAttendee = ({
               <InputGroup>
                 <Input
                   id="addressLine1"
-                  placeholder="Address Line 1*"
+                  placeholder="Address Line 1"
                   required={booking.classVariant.hasKit ? true : false}
                   value={newAddress1}
                   onChange={(e) => setNewAddress1(e.target.value)}
@@ -293,7 +293,7 @@ const AddNewAttendee = ({
                 <Input id="addressLine2" placeholder="Address Line 2" value={newAddress2} onChange={(e) => setNewAddress2(e.target.value)} />
                 <Input
                   id="city"
-                  placeholder="City*"
+                  placeholder="City"
                   required={booking.classVariant.hasKit ? true : false}
                   value={newCity}
                   onChange={(e) => setNewCity(e.target.value)}
@@ -304,7 +304,7 @@ const AddNewAttendee = ({
               <InputGroup>
                 <Input
                   id="state"
-                  placeholder="State*"
+                  placeholder="State"
                   required={booking.classVariant.hasKit ? true : false}
                   value={newState}
                   onChange={(e) => setNewState(e.target.value)}
@@ -312,7 +312,7 @@ const AddNewAttendee = ({
                 <Input
                   id="zip"
                   type="number"
-                  placeholder="Zip Code*"
+                  placeholder="Zip Code"
                   required={booking.classVariant.hasKit ? true : false}
                   value={newZip}
                   onChange={(e) => {
@@ -322,7 +322,7 @@ const AddNewAttendee = ({
               </InputGroup>
             </FormGroup>
             <FormGroup className="">
-              <Label for="country">Country*</Label>
+              <Label for="country">Country</Label>
               <Select
                 className="selectpicker"
                 classNamePrefix="select"
@@ -358,7 +358,7 @@ const AddNewAttendee = ({
 
               return (
                 <FormGroup className="ml-0 pl-0">
-                  <Label for={field.label}>{field.label + (field.required ? '*' : '')}</Label>
+                  <Label for={field.label}>{field.label}</Label>
                   {field.type === 'textarea' && (
                     <Input
                       type={field.type}
