@@ -72,7 +72,6 @@ const AddNewAttendee = ({
   booking
 }) => {
   const [dynamicValues, setDynamicValues] = useState([]);
-  const [dynamicValuesValidation, setDynamicValuesValidation] = useState(true);
   const [emailValid, setEmailValid] = useState(true);
   const [newAddress1, setNewAddress1] = useState('');
   const [newAddress2, setNewAddress2] = useState('');
@@ -199,21 +198,6 @@ const AddNewAttendee = ({
       setNewZip(currentElement.zip);
     }
   }, [currentElement]);
-
-  useEffect(() => {
-    let validationFields = true;
-
-    if (booking.classVariant.hasKit) {
-      validationFields = !newAddress1 || !newCity || !newState || !newZip || !newCountry;
-    }
-    if (teamClassInfo.registrationFields) {
-      teamClassInfo.registrationFields.map((field) => {
-        const filteredFields = dynamicValues ? dynamicValues.find((item) => item.name === field.label) : [];
-        validationFields = validationFields || (field.required && filteredFields && !filteredFields.value);
-      });
-    }
-    setDynamicValuesValidation(validationFields);
-  }, [dynamicValues, newAddress1, newCity, newState, newZip, newCountry]);
 
   const onChangeDynamic = (value, additionalField, field) => {
     if (field.type === 'multiSelectionList') {
@@ -453,12 +437,7 @@ const AddNewAttendee = ({
                 </FormGroup>
               );
             })}
-        <Button
-          className="mr-1 mt-1"
-          color="primary"
-          onClick={saveNewAttendee}
-          disabled={processing || dynamicValuesValidation || !newName || !emailValid}
-        >
+        <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || !newName || !emailValid}>
           {processing ? 'Saving...' : 'Save'}
         </Button>
         <Button className="mt-1" color="secondary" onClick={cancel} outline>

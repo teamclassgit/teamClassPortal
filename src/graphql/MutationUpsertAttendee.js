@@ -4,7 +4,7 @@ export default gql`
   mutation createAttendee(
     $id: String!
     $bookingId: String!
-    $name: String
+    $name: String!
     $email: String
     $phone: String
     $addressLine1: String
@@ -15,7 +15,7 @@ export default gql`
     $country: String
     $canDeliverKit: Boolean
     $canDeliverKitReason: String
-    $additionalFields: [AttendeeAdditionalFieldInsertInput!]
+    $additionalFields: [AttendeeAdditionalFieldInsertInput]
   ) {
     upsertOneAttendee(
       query: { _id: $id }
