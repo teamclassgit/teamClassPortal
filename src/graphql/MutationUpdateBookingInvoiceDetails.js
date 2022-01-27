@@ -9,6 +9,7 @@ export default gql`
     $salesTaxState: String
     $updatedAt: DateTime!
     $taxExempt: Boolean!
+    $ccFeeExempt: Boolean!
     $rushFee: Boolean!
     $classMinimum: Int!
     $classVariant: BookingClassVariantUpdateInput!
@@ -35,6 +36,7 @@ export default gql`
         invoiceDetails: $invoiceDetails
         updatedAt: $updatedAt
         taxExempt: $taxExempt
+        ccFeeExempt: $ccFeeExempt
         salesTax: $salesTax
         salesTaxState: $salesTaxState
         classMinimum: $classMinimum
@@ -113,6 +115,7 @@ export default gql`
       signUpStatusLink
       checkoutLink
       taxExempt
+      ccFeeExempt
       invoiceDetails {
         item
         unitPrice

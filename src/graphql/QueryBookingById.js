@@ -82,6 +82,7 @@ export default gql`
       signUpStatusLink
       checkoutLink
       taxExempt
+      ccFeeExempt
       invoiceDetails {
         item
         unitPrice

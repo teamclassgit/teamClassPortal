@@ -1,6 +1,12 @@
-import { Archive, BookOpen, Book, Calendar, Gift, HelpCircle, Tag } from 'react-feather';
+import { Archive, BookOpen, Book, Calendar, Gift, HelpCircle, Tag, Database } from 'react-feather';
 
 export default [
+  {
+    id: 'listBookings',
+    title: 'All Bookings (Beta)',
+    icon: <Database size={20} />,
+    navLink: '/allbookings'
+  },
   {
     id: 'checkout0',
     title: 'Events calendar',

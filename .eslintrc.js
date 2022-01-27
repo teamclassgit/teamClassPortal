@@ -56,7 +56,7 @@ module.exports = {
     'space-unary-ops': 'error',
     camelcase: ['error', { properties: 'never', ignoreDestructuring: true, ignoreImports: true }],
     eqeqeq: 'error',
-    indent: ['error', 2],
+    indent: 'off',
     semi: 'error'
   }
 };

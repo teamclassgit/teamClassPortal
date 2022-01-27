@@ -5,11 +5,13 @@ import { combineReducers } from 'redux';
 import auth from './auth';
 import navbar from './navbar';
 import layout from './layout';
+import bookingsBackground from './bookingsBackground';
 
 const rootReducer = combineReducers({
   auth,
   navbar,
-  layout
+  layout,
+  bookingsBackground
 });
 
 export default rootReducer;
