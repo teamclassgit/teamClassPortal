@@ -145,8 +145,8 @@ export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, 
 
   const addons = bookingInfo.addons
     ? bookingInfo.addons.reduce((previous, current) => {
-      return previous + (current.unit === 'Attendee' ? current.unitPrice * attendees : current.unitPrice);
-    }, 0)
+        return previous + (current.unit === 'Attendee' ? current.unitPrice * attendees : current.unitPrice);
+      }, 0)
     : 0;
 
   const withoutFee =
@@ -162,11 +162,11 @@ export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, 
   const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
   const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
   let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + tax - totalDiscount;
-  
-  if (isCardFeeIncluded) {
+
+  if (isCardFeeIncluded && !bookingInfo.ccFeeExempt) {
     cardFee = finalValue * CREDIT_CARD_FEE;
     finalValue = finalValue + cardFee;
-  }
+}
 
   const initialDeposit = finalValue * DEPOSIT;
 
@@ -213,4 +213,26 @@ export const getEventFullDate = (calendarEvent) => {
   const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}`;
 
   return moment(`${moment(eventDate).format('DD/MM/YYYY')} ${eventTime}`, 'DD/MM/YYYY HH:mm');
+};
+
+export const getQueryFiltersFromFilterArray = (filterValue) => {
+  if (!filterValue) filterValue = [];
+
+  const filters = filterValue
+    .filter(
+      (item) => (item.operator !== 'inrange' && item.operator !== 'notinrange' && item.value && item.value !== '') ||
+        ((item.operator === 'inrange' || item.operator === 'notinrange') &&
+          item.value?.start &&
+          item.value?.start !== '' &&
+          item.value?.end &&
+          item.value?.end !== '')
+    )
+    .map(({ name, type, operator, value }) => {
+      if (type === 'number' && (operator === 'inrange' || operator === 'notinrange')) return { name, type, operator, valueRangeNum: value };
+      if (type === 'date' && (operator === 'inrange' || operator === 'notinrange')) return { name, type, operator, valueRange: value };
+      if (type === 'number') return { name, type, operator, valueNum: value };
+      return { name, type, operator, value };
+    });
+
+  return filters;
 };

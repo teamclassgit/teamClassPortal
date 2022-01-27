@@ -3,13 +3,21 @@ import { lazy } from 'react';
 
 // @constants
 const TemplateTitle = '%s - TeamClass Ops Dashboard';
-const DefaultRoute = '/bookings';
+const DefaultRoute = '/allbookings';
 
 // @routes
 const Routes = [
   {
     path: '/calendar',
     component: lazy(() => import('../../views/calendar/bookingCalendarList'))
+  },
+  {
+    path: '/bookings',
+    component: lazy(() => import('../../views/booking/BookingList'))
+  },
+  {
+    path: '/allbookings',
+    component: lazy(() => import('../../views/booking/BookingsTable'))
   },
   {
     path: '/bookings',

@@ -31,6 +31,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
 
   const [processing, setProcessing] = React.useState(false);
   const [taxExempt, setTaxExempt] = React.useState(false);
+  const [ccFeeExempt, setCcFeeExempt] = React.useState(false);
   const [rushFee, setRushFee] = React.useState(false);
   const [classMinimum, setClassMinimum] = React.useState(1);
   const [formValid, setFormValid] = React.useState(true);
@@ -75,6 +76,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
 
     setHasFinalPayment(finalPaymentPaid ? true : false);
     setTaxExempt(booking && booking.taxExempt ? true : false);
+    setCcFeeExempt(booking && booking.ccFeeExempt ? true : false);
     setRushFee(calendarEvent && calendarEvent.rushFee ? true : false);
     setClassMinimum(booking && booking.classVariant ? booking.classVariant.minimum : 1);
   }, [booking, calendarEvent]);
@@ -125,6 +127,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           invoiceDetails: invoiceItems,
           discount: discount / 100,
           taxExempt,
+          ccFeeExempt,
           rushFee,
           classMinimum,
           rushFeeValue : RUSH_FEE,
@@ -175,6 +178,18 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
               className="custom-control-secondary"
               label="Tax Exempt?"
               name="taxExempt"
+              inline
+            />
+             <CustomInput
+              type="switch"
+              id="ccFeeExempt"
+              onClick={(e) => {
+                setCcFeeExempt(e.target.checked);
+              }}
+              checked={ccFeeExempt}
+              className="custom-control-secondary"
+              label="CC Fee Exempt?"
+              name="ccFeeExempt"
               inline
             />
           </div>

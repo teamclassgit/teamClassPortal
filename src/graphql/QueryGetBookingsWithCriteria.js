@@ -17,6 +17,7 @@ export default gql`
         customerCompany
         eventCoordinatorId
         eventCoordinatorName
+        eventCoordinatorEmail
         className
         attendees
         eventDateTime

@@ -1,10 +1,57 @@
 // @packages
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
 import { DollarSign, TrendingUp } from 'react-feather';
 import Avatar from '@components/avatar';
+import PropTypes from 'prop-types';
+import { getTotalsUsingFilter } from '../../services/BookingService';
 
-const BookingsTableStatusCards = ({ setStatus }) => {
+const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
+  const [quoteTotals, setQuoteTotals] = useState({ count: 0, total: 0 });
+  const [requestedTotals, setRequestedTotals] = useState({ count: 0, total: 0 });
+  const [rejectedTotals, setRejectedTotals] = useState({ count: 0, total: 0 });
+  const [acceptedTotals, setAcceptedTotals] = useState({ count: 0, total: 0 });
+  const [depositTotals, setDepositTotals] = useState({ count: 0, total: 0 });
+  const [finalTotals, setFinalTotals] = useState({ count: 0, total: 0 });
+
+  useEffect(() => {
+    if (!filters || filters.length === 0) return;
+
+    const getTotals = async (filterBy, setFunction) => {
+      const selected = await getTotalsUsingFilter(filterBy);
+      setFunction(selected);
+    };
+
+    const currentFilters = filters.filter((filter) => filter.name !== 'status' && filter.name !== 'eventDateTimeStatus');
+
+    const quoteFilters = [...currentFilters];
+    quoteFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'quote' });
+    getTotals(quoteFilters, setQuoteTotals);
+
+    const requestedFilters = [...currentFilters];
+    requestedFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'date-requested' });
+    requestedFilters.push({ name: 'eventDateTimeStatus', type: 'string', operator: 'contains', value: 'reserved' });
+    getTotals(requestedFilters, setRequestedTotals);
+
+    const rejectedFilters = [...currentFilters];
+    rejectedFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'date-requested' });
+    rejectedFilters.push({ name: 'eventDateTimeStatus', type: 'string', operator: 'contains', value: 'rejected' });
+    getTotals(rejectedFilters, setRejectedTotals);
+
+    const acceptedFilters = [...currentFilters];
+    acceptedFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'date-requested' });
+    acceptedFilters.push({ name: 'eventDateTimeStatus', type: 'string', operator: 'contains', value: 'confirmed' });
+    getTotals(acceptedFilters, setAcceptedTotals);
+
+    const depositFilters = [...currentFilters];
+    depositFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'confirmed' });
+    getTotals(depositFilters, setDepositTotals);
+
+    const paidFilters = [...currentFilters];
+    paidFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'paid' });
+    getTotals(paidFilters, setFinalTotals);
+  }, [filters]);
+
   return (
     <Row className="d-flex justify-content-between mt-1">
       <Col md="6" xl="2">
@@ -20,7 +67,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>459</strong>
+                    <strong>{quoteTotals.count}</strong>
                   </div>
                   <div className="font-small-1">Events</div>
                 </div>
@@ -31,7 +78,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>$153,596.36</strong>
+                    <strong>${quoteTotals.total.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -41,8 +88,8 @@ const BookingsTableStatusCards = ({ setStatus }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline
-              className="  btn-sm"
+              outline={!status || (status && status.value === 'quote') ? false : true}
+              className="btn-sm"
               onClick={(e) => {
                 setStatus({ value: 'quote', label: 'Quote' });
               }}
@@ -65,7 +112,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>459</strong>
+                    <strong>{requestedTotals.count}</strong>
                   </div>
                   <div className="font-small-1">Events</div>
                 </div>
@@ -76,7 +123,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>$153,596.36</strong>
+                    <strong>${requestedTotals.total.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -86,7 +133,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline
+              outline={!status || (status && status.value === 'date-requested' && status.calendarEventStatus === 'reserved') ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 setStatus({ value: 'date-requested', label: 'Requested', calendarEventStatus: 'reserved' });
@@ -110,7 +157,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>459</strong>
+                    <strong>{rejectedTotals.count}</strong>
                   </div>
                   <div className="font-small-1">Events</div>
                 </div>
@@ -121,7 +168,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>$153,596.36</strong>
+                    <strong>${rejectedTotals.total.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -131,7 +178,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline
+              outline={!status || (status && status.value === 'date-requested' && status.calendarEventStatus === 'rejected') ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 e.preventDefault();
@@ -156,7 +203,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>459</strong>
+                    <strong>{acceptedTotals.count}</strong>
                   </div>
                   <div className="font-small-1">Events</div>
                 </div>
@@ -167,7 +214,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>$153,596.36</strong>
+                    <strong>${acceptedTotals.total.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -177,7 +224,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline
+              outline={!status || (status && status.value === 'date-requested' && status.calendarEventStatus === 'confirmed') ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 e.preventDefault();
@@ -202,7 +249,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>459</strong>
+                    <strong>{depositTotals.count}</strong>
                   </div>
                   <div className="font-small-1">Events</div>
                 </div>
@@ -213,7 +260,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>$153,596.36</strong>
+                    <strong>${depositTotals.total.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -223,7 +270,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline
+              outline={!status || (status && status.value === 'confirmed') ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 e.preventDefault();
@@ -248,7 +295,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>459</strong>
+                    <strong>{finalTotals.count}</strong>
                   </div>
                   <div className="font-small-1">Events</div>
                 </div>
@@ -259,7 +306,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>$153,596.36</strong>
+                    <strong>${finalTotals.total.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -269,7 +316,7 @@ const BookingsTableStatusCards = ({ setStatus }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline
+              outline={!status || (status && status.value === 'paid') ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 e.preventDefault();
@@ -286,3 +333,9 @@ const BookingsTableStatusCards = ({ setStatus }) => {
 };
 
 export default BookingsTableStatusCards;
+
+BookingsTableStatusCards.propTypes = {
+  filters: PropTypes.object.isRequired,
+  status: PropTypes.object.isRequired,
+  setStatus: PropTypes.func.isRequired
+};
