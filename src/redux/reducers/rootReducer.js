@@ -1,16 +1,18 @@
-// ** Redux Imports
+// @packages
 import { combineReducers } from 'redux';
 
-// ** Reducers Imports
+// @scripts
 import auth from './auth';
 import navbar from './navbar';
 import layout from './layout';
 import reducer from './chat';
+import bookingsBackground from './bookingsBackground';
 
 const rootReducer = combineReducers({
   auth,
-  navbar,
+  bookingsBackground,
   layout,
+  navbar,
   reducer
 });
 

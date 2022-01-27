@@ -24,7 +24,7 @@ const BookingList = () => {
   const genericFilter = {};
   const [bookingsFilter, setBookingsFilter] = useState({ status_nin: excludedBookings });
   const [bookings, setBookings] = useState([]);
-  const [limit, setLimit] = useState(20000);
+  const [limit, setLimit] = useState(2000);
   const [customers, setCustomers] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -41,7 +41,7 @@ const BookingList = () => {
   const handleEditModal = () => setEditModal(!editModal);
 
   const [getBookings, { ...allBookingsResult }] = useLazyQuery(queryAllBookings, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'cache-and-network',
     pollInterval: 200000,
     onCompleted: (data) => {
       if (data) setBookings(data.bookings.map((element) => element));
@@ -49,7 +49,7 @@ const BookingList = () => {
   });
 
   const [getCalendarEvents, { ...allCalendarEventsResults }] = useLazyQuery(queryAllCalendarEvents, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       if (data) {
         setCalendarEvents(data.calendarEvents);
@@ -64,7 +64,7 @@ const BookingList = () => {
   });
 
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'cache-and-network',
     variables: {
       filter: genericFilter
     },
@@ -160,14 +160,12 @@ const BookingList = () => {
   }, [textFilterContext]);
 
   useEffect(() => {
-
     if (calendarEvents && customers && classes) getBookings({
       variables: {
         filter: bookingsFilter,
         limit
       }
     });
-
   }, [bookingsFilter, limit]);
 
   // ** Function to handle Modal toggle

@@ -86,7 +86,8 @@ const EditBookingModal = ({
   handleModal,
   open,
   setBookings,
-  setCustomers
+  setCustomers,
+  onEditCompleted
 }) => {
   const [active, setActive] = useState('1');
   const [attendeesValid, setAttendeesValid] = useState(true);
@@ -132,7 +133,7 @@ const EditBookingModal = ({
     setGroupSize(currentGroupSize);
     setIsCapRegistration(currentCapRegistration);
 
-    const filteredCalendarEvent = allCalendarEvents.find((element) => element.bookingId === bookingId);
+    const filteredCalendarEvent = allCalendarEvents && allCalendarEvents.find((element) => element.bookingId === bookingId);
     if (filteredCalendarEvent) setCalendarEvent(filteredCalendarEvent);
   }, [bookingId]);
 
@@ -151,7 +152,7 @@ const EditBookingModal = ({
 
   const cancel = () => {
     setClosedBookingReason(null);
-    handleModal();
+    handleModal({});
   };
 
   const groupSizeValidation = (size) => {
@@ -175,9 +176,9 @@ const EditBookingModal = ({
         setProcessing(false);
         return;
       }
-      setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
+      // setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
 
-      const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
+      const calendarEventObject = allCalendarEvents && allCalendarEvents.find((item) => item.bookingId === bookingId);
       if (reOpenBookingStatus !== BOOKING_QUOTE_STATUS && calendarEventObject && calendarEventObject.status === DATE_AND_TIME_CANCELED_STATUS) {
         const calendarEventStatus = getStatusToReOpenCalendarEvent(reOpenBookingStatus);
         const resultStatusUpdated = await updateCalendarEventStatus({
@@ -198,6 +199,7 @@ const EditBookingModal = ({
 
   const saveChangesBooking = async () => {
     setProcessing(true);
+    console.log('entró');
 
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
@@ -248,12 +250,12 @@ const EditBookingModal = ({
           variables: { customerEmail: customerEmail.toLowerCase() }
         });
         console.log('Remove campaign before redirecting:', resultEmail);
-        setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
-      } else {
-        setBookings([
-          resultUpdateBooking.data.updateOneBooking,
-          ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
-        ]);
+        //   setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
+        // } else {
+        //   setBookings([
+        //     resultUpdateBooking.data.updateOneBooking,
+        //     ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
+        //   ]);
       }
 
       if (
@@ -262,7 +264,7 @@ const EditBookingModal = ({
         closedBookingReason === 'Mistake' ||
         closedBookingReason === 'Test'
       ) {
-        const calendarEventObject = allCalendarEvents.find((item) => item.bookingId === bookingId);
+        const calendarEventObject = allCalendarEvents && allCalendarEvents.find((item) => item.bookingId === bookingId);
         if (calendarEventObject) {
           const resultStatusUpdated = await updateCalendarEventStatus({
             variables: {
@@ -279,6 +281,7 @@ const EditBookingModal = ({
 
     setProcessing(false);
     handleModal();
+    onEditCompleted();
   };
 
   const getStatusToReOpenBooking = () => {
@@ -325,10 +328,10 @@ const EditBookingModal = ({
         }
       });
       setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)));
-      setBookings([
-        resultNotesUpdated.data.updateOneBooking,
-        ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
-      ]);
+      // setBookings([
+      //   resultNotesUpdated.data.updateOneBooking,
+      //   ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
+      // ]);
     } catch (ex) {
       console.log(ex);
     }
@@ -664,6 +667,7 @@ const EditBookingModal = ({
                   size="sm"
                   color={closedBookingReason ? 'danger' : 'primary'}
                   onClick={() => {
+                    console.log('llamando la función');
                     saveChangesBooking();
                   }}
                   disabled={

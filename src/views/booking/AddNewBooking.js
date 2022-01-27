@@ -6,19 +6,7 @@ import { Mail, Phone, User, X, Briefcase } from 'react-feather';
 import { selectThemeColors } from '@utils';
 import { useMutation } from '@apollo/client';
 import { v4 as uuid } from 'uuid';
-import {
-  Alert,
-  Button,
-  FormGroup,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Label,
-  Modal,
-  ModalBody,
-  ModalHeader
-} from 'reactstrap';
+import { Alert, Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
 
 // @styles
 import '@styles/react/libs/flatpickr/flatpickr.scss';
@@ -29,17 +17,7 @@ import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer';
 import { BOOKING_QUOTE_STATUS } from '../../utility/Constants';
 import { isValidEmail, getUserData } from '../../utility/Utils';
 
-const AddNewBooking = ({ 
-  baseElement,
-  bookings,
-  classes,
-  coordinators,
-  customers,
-  handleModal,
-  open,
-  setBookings,
-  setCustomers
-}) => {
+const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers, handleModal, open, setBookings, setCustomers, onAddCompleted }) => {
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [classVariant, setClassVariant] = useState(null);
   const [classVariantsOptions, setClassVariantsOptions] = useState([]);
@@ -150,10 +128,10 @@ const AddNewBooking = ({
         ...customers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
       ]);
 
-      setBookings([
-        resultCreateBooking.data.insertOneBooking,
-        ...bookings.filter((element) => element._id !== resultCreateBooking.data.insertOneBooking._id)
-      ]);
+      // setBookings([
+      //   resultCreateBooking.data.insertOneBooking,
+      //   ...bookings.filter((element) => element._id !== resultCreateBooking.data.insertOneBooking._id)
+      // ]);
       setProcessing(false);
       setClassVariant(null);
       setOneCoordinator(null);
@@ -161,6 +139,7 @@ const AddNewBooking = ({
       console.log(ex);
       setProcessing(false);
     }
+    onAddCompleted();
     handleModal();
   };
 
@@ -212,12 +191,7 @@ const AddNewBooking = ({
   };
 
   return (
-    <Modal 
-      className="sidebar-sm" 
-      contentClassName="pt-0"
-      isOpen={open} 
-      modalClassName="modal-slide-in" 
-    >
+    <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={open} modalClassName="modal-slide-in">
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">{'New Booking'}</h5>
       </ModalHeader>
@@ -403,7 +377,7 @@ const AddNewBooking = ({
                 classVariantsOptions.map((element) => {
                   return {
                     value: element,
-                    label: `${element.title  } $${  element.pricePerson  }${element.groupEvent ? '/group' : '/person'}`
+                    label: `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                   };
                 })
               }

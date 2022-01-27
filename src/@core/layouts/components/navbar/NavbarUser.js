@@ -4,13 +4,17 @@ import React, { useState, useEffect } from 'react';
 import { NavItem, NavLink } from 'reactstrap';
 import { Sun, Moon, Menu } from 'react-feather';
 import { isUserLoggedIn } from '@utils';
+import { useDispatch } from 'react-redux';
 
 // @scripts
 import UserDropdown from './UserDropdown';
 import { getUserData } from '../../../../utility/Utils';
+import { themeDark } from '../../../../redux/actions/bookingsBackground';
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
   const [userData, setUserData] = useState(null);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
@@ -20,24 +24,32 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
 
   const ThemeToggler = () => {
     if (skin === 'dark') {
-      return <Sun className='ficon' onClick={() => setSkin('light')} />;
+      return <Sun className="ficon" onClick={() => setSkin('light')} />;
     } else {
-      return <Moon className='ficon' onClick={() => setSkin('dark')} />;
+      return <Moon className="ficon" onClick={() => setSkin('dark')} />;
     }
   };
 
+  const dispatchFuntion = () => {
+    dispatch(themeDark(skin));
+  };
+
+  useEffect(() => {
+    dispatchFuntion();
+  }, [skin]);
+
   return (
     <>
-      <ul className='navbar-nav d-xl-none d-flex align-items-center'>
-        <NavItem className='mobile-menu mr-auto'>
-          <NavLink className='nav-menu-main menu-toggle hidden-xs is-active' onClick={() => setMenuVisibility(true)}>
-            <Menu className='ficon' />
+      <ul className="navbar-nav d-xl-none d-flex align-items-center">
+        <NavItem className="mobile-menu mr-auto">
+          <NavLink className="nav-menu-main menu-toggle hidden-xs is-active" onClick={() => setMenuVisibility(true)}>
+            <Menu className="ficon" />
           </NavLink>
         </NavItem>
       </ul>
-      <div className='bookmark-wrapper d-flex align-items-center'>
-        <NavItem className='d-none d-lg-block'>
-          <NavLink className='nav-link-style'>
+      <div className="bookmark-wrapper d-flex align-items-center">
+        <NavItem className="d-none d-lg-block">
+          <NavLink className="nav-link-style">
             <ThemeToggler />
           </NavLink>
         </NavItem>

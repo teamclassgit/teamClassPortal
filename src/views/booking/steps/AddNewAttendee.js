@@ -72,7 +72,6 @@ const AddNewAttendee = ({
   booking
 }) => {
   const [dynamicValues, setDynamicValues] = useState([]);
-  const [dynamicValuesValidation, setDynamicValuesValidation] = useState(true);
   const [emailValid, setEmailValid] = useState(true);
   const [newAddress1, setNewAddress1] = useState('');
   const [newAddress2, setNewAddress2] = useState('');
@@ -200,23 +199,6 @@ const AddNewAttendee = ({
     }
   }, [currentElement]);
 
-  useEffect(() => {
-    let validationFields = true;
-    if (newName && newEmail) {
-      validationFields = !newName || !newEmail;
-    }
-    if (booking.classVariant.hasKit) {
-      validationFields = !newAddress1 || !newCity || !newState || !newZip || !newCountry;
-    }
-    if (teamClassInfo.registrationFields) {
-      teamClassInfo.registrationFields.map((field) => {
-        const filteredFields = dynamicValues ? dynamicValues.find((item) => item.name === field.label) : [];
-        validationFields = validationFields || (field.required && filteredFields && !filteredFields.value);
-      });
-    }
-    setDynamicValuesValidation(validationFields);
-  }, [dynamicValues, newName, newEmail, newAddress1, newCity, newState, newZip, newCountry]);
-
   const onChangeDynamic = (value, additionalField, field) => {
     if (field.type === 'multiSelectionList') {
       const newArr = value.map((element) => element.label);
@@ -264,7 +246,7 @@ const AddNewAttendee = ({
             <Input
               type="email"
               id="email"
-              placeholder="Email*"
+              placeholder="Email"
               required={true}
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
@@ -299,7 +281,7 @@ const AddNewAttendee = ({
               <InputGroup>
                 <Input
                   id="addressLine1"
-                  placeholder="Address Line 1*"
+                  placeholder="Address Line 1"
                   required={booking.classVariant.hasKit ? true : false}
                   value={newAddress1}
                   onChange={(e) => setNewAddress1(e.target.value)}
@@ -311,7 +293,7 @@ const AddNewAttendee = ({
                 <Input id="addressLine2" placeholder="Address Line 2" value={newAddress2} onChange={(e) => setNewAddress2(e.target.value)} />
                 <Input
                   id="city"
-                  placeholder="City*"
+                  placeholder="City"
                   required={booking.classVariant.hasKit ? true : false}
                   value={newCity}
                   onChange={(e) => setNewCity(e.target.value)}
@@ -322,7 +304,7 @@ const AddNewAttendee = ({
               <InputGroup>
                 <Input
                   id="state"
-                  placeholder="State*"
+                  placeholder="State"
                   required={booking.classVariant.hasKit ? true : false}
                   value={newState}
                   onChange={(e) => setNewState(e.target.value)}
@@ -330,7 +312,7 @@ const AddNewAttendee = ({
                 <Input
                   id="zip"
                   type="number"
-                  placeholder="Zip Code*"
+                  placeholder="Zip Code"
                   required={booking.classVariant.hasKit ? true : false}
                   value={newZip}
                   onChange={(e) => {
@@ -340,7 +322,7 @@ const AddNewAttendee = ({
               </InputGroup>
             </FormGroup>
             <FormGroup className="">
-              <Label for="country">Country*</Label>
+              <Label for="country">Country</Label>
               <Select
                 className="selectpicker"
                 classNamePrefix="select"
@@ -376,7 +358,7 @@ const AddNewAttendee = ({
 
               return (
                 <FormGroup className="ml-0 pl-0">
-                  <Label for={field.label}>{field.label + (field.required ? '*' : '')}</Label>
+                  <Label for={field.label}>{field.label}</Label>
                   {field.type === 'textarea' && (
                     <Input
                       type={field.type}
@@ -455,7 +437,7 @@ const AddNewAttendee = ({
                 </FormGroup>
               );
             })}
-        <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || dynamicValuesValidation}>
+        <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || !newName || !emailValid}>
           {processing ? 'Saving...' : 'Save'}
         </Button>
         <Button className="mt-1" color="secondary" onClick={cancel} outline>
