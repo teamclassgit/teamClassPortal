@@ -1,8 +1,14 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query GetBookings($offset: Int!, $limit: Int!, $sortBy: QueryWithCriteriumSortBy, $filterBy: [QueryWithCriteriumFilterBy]) {
-    getBookingsWithCriteria(input: { offset: $offset, limit: $limit, sortBy: $sortBy, filterBy: $filterBy }) {
+  query GetBookings(
+    $offset: Int!
+    $limit: Int!
+    $sortBy: QueryWithCriteriumSortBy
+    $filterBy: [QueryWithCriteriumFilterBy]
+    $filterByOr: [QueryWithCriteriumFilterByOr]
+  ) {
+    getBookingsWithCriteria(input: { offset: $offset, limit: $limit, sortBy: $sortBy, filterBy: $filterBy, filterByOr: $filterByOr }) {
       count
       rows {
         updatedAt
@@ -32,6 +38,8 @@ export default gql`
         cardFeeAmount
         totalInvoice
         balance
+        bookingStage
+        closedReason
         payments {
           amount
           createdAt

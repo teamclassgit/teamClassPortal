@@ -13,9 +13,9 @@ import '@styles/react/libs/flatpickr/flatpickr.scss';
 
 // @scripts
 import 'cleave.js/dist/addons/cleave-phone.us';
-import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer';
-import { BOOKING_QUOTE_STATUS } from '../../utility/Constants';
-import { isValidEmail, getUserData } from '../../utility/Utils';
+import mutationNewBooking from '../graphql/MutationInsertBookingAndCustomer';
+import { BOOKING_QUOTE_STATUS } from '../utility/Constants';
+import { isValidEmail, getUserData } from '../utility/Utils';
 
 const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers, handleModal, open, setBookings, setCustomers, onAddCompleted }) => {
   const [attendeesValid, setAttendeesValid] = useState(true);

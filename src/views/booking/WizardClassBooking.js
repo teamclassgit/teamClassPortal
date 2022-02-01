@@ -20,7 +20,7 @@ import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByCla
 import queryClassById from '../../graphql/QueryClassById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
 import { RUSH_FEE } from '../../utility/Constants';
-import { getBookingTotals } from '../../utility/Utils';
+import { getBookingTotals } from '../../services/BookingService';
 
 const WizardClassBooking = () => {
   const [attendees, setAttendees] = useState([]);

@@ -22,12 +22,10 @@ import './BookingsTable.scss';
 
 // @scripts
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import EditBookingModal from '../../components/EditBookingModal';
-import AddNewBooking from './AddNewBooking';
-import BookingsTableStatusCards from './BookingsTableStatusCards';
+import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
 
@@ -49,11 +47,11 @@ const onRenderRow = (rowProps) => {
   }
 };
 
-const DataGrid = () => {
+const AllBookingsTable = () => {
   const skin = useSelector((state) => state.bookingsBackground);
   const genericFilter = {};
   const [gridRef, setGridRef] = useState(null);
-  const [status, setStatus] = useState({ value: 'quote', label: 'Quote', calendarEventStatus: '' });
+  const [totalRows, setTotalRows] = useState(0);
   const [editModal, setEditModal] = useState(false);
   const [currentElement, setCurrentElement] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
@@ -82,41 +80,10 @@ const DataGrid = () => {
 
   const columns = [
     {
-      name: 'createdAt',
-      header: 'Created',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
-        });
-      }
-    },
-    {
-      name: 'updatedAt',
-      header: 'Updated',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
-        });
-      },
-      defaultVisible: false
-    },
-    {
       name: '_id',
       header: 'Id',
       type: 'string',
-      filterEditor: StringFilter, 
+      filterEditor: StringFilter,
       filterDelay: 1500,
       width: 200,
       render: ({ value, cellProps }) => {
@@ -162,24 +129,19 @@ const DataGrid = () => {
         );
       }
     },
-    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'className', header: 'Class ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'eventCoordinatorName', header: 'Coordinator Name', type: 'string', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'eventCoordinatorEmail', header: 'Coordinator', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
     {
-      name: 'attendees',
-      header: 'Attendees ',
-      type: 'number',
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      defaultWidth: 112,
+      name: 'createdAt',
+      header: 'Created',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
-        if (value) {
-          return <span className="float-right">{value}</span>;
-        }
+        return moment(value).calendar(null, {
+          lastDay: '[Yesterday]',
+          sameDay: 'LT',
+          lastWeek: 'dddd',
+          sameElse: 'MMMM Do, YYYY'
+        });
       }
     },
     {
@@ -191,6 +153,64 @@ const DataGrid = () => {
       render: ({ value, cellProps }) => {
         if (value) {
           return moment(value).format('LLL');
+        }
+      }
+    },
+
+    {
+      name: 'bookingStage',
+      header: 'Stage ',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'updatedAt',
+      header: 'Updated',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        return moment(value).calendar(null, {
+          lastDay: '[Yesterday]',
+          sameDay: 'LT',
+          lastWeek: 'dddd',
+          sameElse: 'MMMM Do, YYYY'
+        });
+      },
+      defaultVisible: false
+    },
+
+    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'className', header: 'Class ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    {
+      name: 'eventCoordinatorName',
+      header: 'Coordinator Name',
+      type: 'string',
+      defaultVisible: false,
+      filterEditor: StringFilter,
+      filterDelay: 1500
+    },
+    { name: 'eventCoordinatorEmail', header: 'Coordinator', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    {
+      name: 'attendees',
+      header: 'Attendees ',
+      type: 'number',
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultWidth: 112,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-right">{value}</span>;
         }
       }
     },
@@ -286,6 +306,19 @@ const DataGrid = () => {
       }
     },
     {
+      name: 'closedReason',
+      header: 'Closed Reason ',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
       name: 'actions',
       header: 'Links',
       defaultWidth: 220,
@@ -302,6 +335,14 @@ const DataGrid = () => {
                 >
                   <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                 </a>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                </a>
+              </div>
+            </small>
+          ) : cellProps.data.status === 'closed' ? (
+            <small>
+              <div className="d-flex">
                 <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
@@ -450,17 +491,6 @@ const DataGrid = () => {
     }
   ];
 
-   /*const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'no-cache',
-    variables: {
-      filter: genericFilter
-    },
-    onCompleted: (data) => {
-      if (data) setCustomers(data.customers);
-    },
-    pollInterval: 200000
-  });*/
-
   const { ...allClasses } = useQuery(queryAllClasses, {
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -481,13 +511,11 @@ const DataGrid = () => {
       if (data) setCoordinators(data.eventCoordinators);
     },
     fetchPolicy: 'cache-and-network'
-  }); 
+  });
 
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
   useEffect(() => {
-    if (!status) return;
-
     let currentFilters = [...filterValue];
 
     if (currentFilters && currentFilters.length === 0) {
@@ -503,6 +531,8 @@ const DataGrid = () => {
         { name: 'updatedAt', type: 'date', operator: 'inrange', value: undefined },
         { name: '_id', type: 'string', operator: 'contains', value: '' },
         { name: 'customerName', type: 'string', operator: 'contains', value: '' },
+        { name: 'bookingStage', type: 'string', operator: 'contains', value: '' },
+        { name: 'closedReason', type: 'string', operator: 'contains', value: '' },
         { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
         { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
         { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
@@ -522,14 +552,8 @@ const DataGrid = () => {
       ];
     }
 
-    currentFilters = currentFilters.filter((filter) => filter.name !== 'status' && filter.name !== 'eventDateTimeStatus');
-    currentFilters.push({ name: 'status', type: 'string', operator: 'contains', value: status.value });
-    if (status && status.calendarEventStatus) {
-      currentFilters.push({ name: 'eventDateTimeStatus', type: 'string', operator: 'contains', value: status.calendarEventStatus });
-    }
-
     setFilterValue(currentFilters);
-  }, [status]);
+  }, []);
 
   const onEditCompleted = () => {
     const sortEditedData = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
@@ -545,17 +569,17 @@ const DataGrid = () => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
     console.log('filters', filters);
 
-    const response = await apolloClient
-      .query({
-        query: queryGetBookingsWithCriteria,
-        variables: {
-          limit,
-          offset: skip,
-          sortBy: sortInfo,
-          filterBy: filters
-        }
-      });
+    const response = await apolloClient.query({
+      query: queryGetBookingsWithCriteria,
+      variables: {
+        limit,
+        offset: skip,
+        sortBy: sortInfo,
+        filterBy: filters
+      }
+    });
     const totalCount = response.data.getBookingsWithCriteria.count;
+    setTotalRows(totalCount);
     return { data: response.data.getBookingsWithCriteria.rows, count: totalCount };
   };
 
@@ -576,11 +600,10 @@ const DataGrid = () => {
 
   return (
     <div>
-      <BookingsTableStatusCards status={status} setStatus={setStatus} filters={filterValue} />
       <TasksBar
         setElementToAdd={setElementToAdd}
-        titleView={'Bookings (Beta)'}
-        titleBadge={status && status.label}
+        titleView={'ALL Time Bookings (Beta)'}
+        titleBadge={` ${totalRows} records found`}
         showAddModal={() => handleModal()}
       ></TasksBar>
       <ReactDataGrid
@@ -611,6 +634,7 @@ const DataGrid = () => {
         onRenderRow={onRenderRow}
         rowExpandHeight={400}
         renderRowDetails={renderRowDetails}
+        licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
       />
       <AddNewBooking
         open={showAddModal}
@@ -633,14 +657,14 @@ const DataGrid = () => {
         allCustomers={customers}
         setCustomers={setCustomers}
         handleClose={() => setCurrentElement({})}
-        editMode={true}
+        editMode={currentElement && currentElement.currentStatus !== 'closed' ? true : false}
         onEditCompleted={onEditCompleted}
       />
     </div>
   );
 };
 
-export default DataGrid;
+export default AllBookingsTable;
 
 ReactDataGrid.defaultProps.filterTypes.string = {
   type: 'string',

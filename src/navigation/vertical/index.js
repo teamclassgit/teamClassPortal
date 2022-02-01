@@ -1,8 +1,14 @@
-import { Archive, BookOpen, Book, Calendar, Gift, HelpCircle, Tag, Database } from 'react-feather';
+import { Archive, BookOpen, Book, Calendar, Gift, HelpCircle, Tag, Database, Activity, Filter } from 'react-feather';
 
 export default [
   {
     id: 'listBookings',
+    title: 'Funnel (Beta)',
+    icon: <Filter size={20} />,
+    navLink: '/pipeline'
+  },
+  {
+    id: 'listBookingsAll',
     title: 'All Bookings (Beta)',
     icon: <Database size={20} />,
     navLink: '/allbookings'
@@ -18,12 +24,6 @@ export default [
     title: 'In progress',
     icon: <BookOpen size={20} />,
     navLink: '/bookings'
-  },
-  {
-    id: 'checkout2',
-    title: 'Closed',
-    icon: <Archive size={20} />,
-    navLink: '/closedBookings'
   },
   {
     id: 'checkout3',
