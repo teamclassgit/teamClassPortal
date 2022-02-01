@@ -159,6 +159,9 @@ const EditBookingModal = ({
     setAttendeesValid(size > 0);
   };
 
+  console.log('classVariant', classVariant);
+  console.log('classVariantsOptions', classVariantsOptions);
+
   const openBooking = async () => {
     setProcessing(true);
 
@@ -199,7 +202,6 @@ const EditBookingModal = ({
 
   const saveChangesBooking = async () => {
     setProcessing(true);
-    console.log('entró');
 
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
@@ -564,7 +566,9 @@ const EditBookingModal = ({
                   classVariantsOptions.map((element) => {
                     return {
                       value: element,
-                      label: `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                      label: element.groupEvent
+                        ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
+                        : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                     };
                   })
                 }
@@ -684,10 +688,10 @@ const EditBookingModal = ({
                   {!processing && !closedBookingReason
                     ? 'Save'
                     : closedBookingReason && processing
-                      ? 'Saving...'
-                      : processing
-                        ? 'Saving...'
-                        : 'Close booking?'}
+                    ? 'Saving...'
+                    : processing
+                    ? 'Saving...'
+                    : 'Close booking?'}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel

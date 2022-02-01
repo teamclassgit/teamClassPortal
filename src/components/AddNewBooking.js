@@ -36,6 +36,9 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [warning, setWarning] = useState({ open: false, message: '' });
+  const [isGroupVariant, setIsGroupVariant] = useState(false);
+  const [groupVariantPriceTiers, setGroupVariantPriceTiers] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null);
 
   const serviceFeeValue = 0.1;
   const salesTaxValue = 0.0825;
@@ -61,7 +64,13 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
   useEffect(() => {
     if (selectedClass) {
       const filteredClass = classes.find((element) => element._id === selectedClass);
-      if (filteredClass) setClassVariantsOptions(filteredClass.variants);
+      if (filteredClass) {
+        const priceTiers = filteredClass.variants.filter((item) => item.groupEvent).map((item2) => item2.priceTiers);
+        // console.log('groupVariantPriceTiers', priceTiers);
+        setGroupVariantPriceTiers(priceTiers.map((item) => item.map((item2) => item2)));
+        setClassVariantsOptions(filteredClass.variants);
+      }
+      console.log('filteredClass.variants', filteredClass.variants);
     }
   }, [selectedClass]);
 
@@ -189,6 +198,21 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
       fontSize: 12
     })
   };
+
+  console.log('selectedClass', selectedClass);
+  console.log('IsGroupVariant', isGroupVariant);
+  console.log(
+    'FILTER',
+    classVariantsOptions &&
+      classVariantsOptions
+        .filter((variant) => variant.groupEvent)
+        .map((item) => item.priceTiers)
+        .map((item2) => item2)
+  );
+  console.log('MAP', classVariantsOptions && classVariantsOptions.map((item) => item.priceTiers));
+  console.log('varianstttt', classVariantsOptions && classVariantsOptions.map((element) => element.groupEvent));
+  console.log('groupVariantPriceTiers', groupVariantPriceTiers);
+  console.log('selectedVariant', selectedVariant);
 
   return (
     <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={open} modalClassName="modal-slide-in">
@@ -318,7 +342,6 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
         )}
         <FormGroup>
           <Label for="full-name">Event Coordinator*</Label>
-
           <Select
             theme={selectThemeColors}
             className="react-select"
@@ -375,33 +398,92 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
               options={
                 classVariantsOptions &&
                 classVariantsOptions.map((element) => {
+                  console.log('element', element);
+                  const variant = {
+                    title: element.title,
+                    notes: element.notes,
+                    minimum: element.minimum,
+                    duration: element.duration,
+                    pricePerson: element.pricePerson,
+                    hasKit: element.hasKit,
+                    order: element.order,
+                    active: element.active,
+                    groupEvent: element.groupEvent
+                  };
                   return {
-                    value: element,
-                    label: `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                    value: variant,
+                    label: element.groupEvent
+                      ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
+                      : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                   };
                 })
               }
-              onChange={(option) => setClassVariant(option.value)}
+              onChange={(option) => {
+                if (!option.value.groupEvent) {
+                  setClassVariant(option.value);
+                  setIsGroupVariant(false);
+                } else {
+                  setIsGroupVariant(true);
+                }
+                setSelectedVariant(option.value.order);
+              }}
               isClearable={false}
               styles={selectStyles}
             />
           </FormGroup>
         )}
-        <FormGroup>
-          <Label for="full-name">Group Size*</Label>
-          <InputGroup size="sm">
-            <Input
-              id="attendees"
-              placeholder="Group Size *"
-              value={newAttendees}
-              onChange={(e) => setNewAttendees(e.target.value)}
-              type="number"
-              onBlur={(e) => {
-                groupSizeValidation(e.target.value);
+        {isGroupVariant ? (
+          <FormGroup>
+            <Label for="full-name">Class Variants*</Label>
+            <Select
+              theme={selectThemeColors}
+              className="react-select"
+              classNamePrefix="select"
+              placeholder="Select..."
+              options={classVariantsOptions[selectedVariant].priceTiers.map((item) => {
+                console.log('OPTIONS', item.price);
+                const variant = {
+                  title: classVariantsOptions[selectedVariant].title,
+                  notes: classVariantsOptions[selectedVariant].notes,
+                  minimum: item.minimum,
+                  maximum: item.maximum,
+                  duration: classVariantsOptions[selectedVariant].duration,
+                  pricePerson: item.price,
+                  hasKit: classVariantsOptions[selectedVariant].hasKit,
+                  order: classVariantsOptions[selectedVariant].order,
+                  active: classVariantsOptions[selectedVariant].active,
+                  groupEvent: classVariantsOptions[selectedVariant].groupEvent
+                };
+                return {
+                  value: variant,
+                  label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
+                };
+              })}
+              onChange={(option) => {
+                setClassVariant(option.value);
+                setNewAttendees(option.value.maximum);
               }}
+              isClearable={false}
+              styles={selectStyles}
             />
-          </InputGroup>
-        </FormGroup>
+          </FormGroup>
+        ) : (
+          <FormGroup>
+            <Label for="full-name">Group Size*</Label>
+            <InputGroup size="sm">
+              <Input
+                id="attendees"
+                placeholder="Group Size *"
+                value={newAttendees}
+                onChange={(e) => setNewAttendees(e.target.value)}
+                type="number"
+                onBlur={(e) => {
+                  groupSizeValidation(e.target.value);
+                }}
+              />
+            </InputGroup>
+          </FormGroup>
+        )}
         <div align="center">
           <Button
             className="mr-1"
