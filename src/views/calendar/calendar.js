@@ -12,11 +12,9 @@ import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Alert } from 'react
 import moment from 'moment';
 import './calendar.scss';
 import { BOOKING_DATE_REQUESTED_STATUS } from '../../utility/Constants';
-import { getClassTitle, getFormattedEventDate, getCustomerName, getCustomerCompany, getCustomerPhone, getCustomerEmail } from '../booking/common';
 
-const Calendar = ({ bookings, calendarEvents, classes, customers }) => {
+const Calendar = ({ bookings, classes }) => {
   const [events, setEvents] = useState([]);
-  const [filteredCalendarEvents, setFilteredCalendarEvents] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalClassTitle, setModalClassTitle] = useState(null);
   const [modalBookingInfo, setModalBookingInfo] = useState(null);
@@ -24,39 +22,29 @@ const Calendar = ({ bookings, calendarEvents, classes, customers }) => {
   const handleClose = () => setShowModal(false);
 
   useEffect(() => {
-    if (calendarEvents) {
-      const confirmedCalendarEvents = calendarEvents.filter((item) => item.status === 'confirmed');
-      setFilteredCalendarEvents(confirmedCalendarEvents);
-    }
-  }, [calendarEvents]);
-
-  useEffect(() => {
-    if (bookings && filteredCalendarEvents && classes) {
-      const eventsArray = [];
-      bookings.map((item, index) => {
-        eventsArray.push({
-          title: `${
-            getCustomerCompany(item.customerId, customers) ? getCustomerCompany(item.customerId, customers).concat(' / ') : ''
-          }${getCustomerName(item.customerId, customers)}`,
-          classTitle: getClassTitle(item.teamClassId, classes),
+    if (bookings && classes) {
+      const eventsArray = bookings.map((item, index) => {
+        return {
+          title: `${item.customerCompany ? item.customerCompany.concat(' / ') : ''}${item.customerName}`,
+          classTitle: item.className,
           bookingId: item._id,
           attendees: item.attendees,
-          customerName: getCustomerName(item.customerId, customers),
-          customerCompany: getCustomerCompany(item.customerId, customers),
-          customerPhone: getCustomerPhone(item.customerId, customers),
-          customerEmail: getCustomerEmail(item.customerId, customers),
+          customerName: item.customerName,
+          customerCompany: item.customerCompany,
+          customerPhone: item.customerPhone,
+          customerEmail: item.customerEmail,
           classVariant:
             item.classVariant && `${item.classVariant.title} $${item.classVariant.pricePerson}${item.classVariant.groupEvent ? '/group' : '/person'}`,
           signUpDeadline: item.signUpDeadline,
-          eventDate: getFormattedEventDate(item._id, filteredCalendarEvents),
-          date: moment(getFormattedEventDate(item._id, filteredCalendarEvents), 'LLL').format('YYYY-MM-DD HH:mm'),
+          eventDate: moment(item.eventDateTime).format('LLL'),
+          date: moment(item.eventDateTime).format('YYYY-MM-DD HH:mm'),
           backgroundColor: item.status === BOOKING_DATE_REQUESTED_STATUS ? '#FF6563' : '#557FE7',
           status: item.status
-        });
-        setEvents(eventsArray);
+        };
       });
+      setEvents(eventsArray);
     }
-  }, [bookings, filteredCalendarEvents, classes]);
+  }, [bookings, classes]);
 
   return (
     <>

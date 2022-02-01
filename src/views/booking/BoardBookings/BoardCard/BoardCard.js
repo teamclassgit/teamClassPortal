@@ -9,16 +9,11 @@ import { useHistory } from 'react-router';
 
 // @scripts
 import CopyClipboard from '../../../../components/CopyClipboard';
-import { capitalizeString, getBookingTotals, getEventFullDate, getSignUpDeadlineFromEventDate, toAmPm } from '../../../../utility/Utils';
+import { capitalizeString } from '../../../../utility/Utils';
 
 // @styles
 import './BoardCard.scss';
-import {
-  DATE_AND_TIME_CONFIRMATION_STATUS,
-  DATE_AND_TIME_REJECTED_STATUS,
-  DAYS_BEFORE_EVENT_REGISTRATION,
-  DEFAULT_TIME_ZONE_LABEL
-} from '../../../../utility/Constants';
+import { DATE_AND_TIME_CONFIRMATION_STATUS, DATE_AND_TIME_REJECTED_STATUS } from '../../../../utility/Constants';
 import { getEventDates } from '../../common';
 
 const BoardCard = ({
@@ -138,30 +133,30 @@ const BoardCard = ({
               href="#"
               className="cursor-pointer"
               onClick={() => handleEditModal({
-                bookingId: _id,
-                currentCustomerId: customerId,
-                currentName: customerName,
-                currentEmail: email,
-                currentPhone: phone,
-                currentCompany: company,
-                currentCoordinatorId: eventCoordinatorId,
-                currentCoordinatorName: coordinatorName,
-                currentTeamclassId: teamClassId,
-                currentTeamclassName: classTitle,
-                currentGroupSize: attendees,
-                currentSignUpDeadline: signUpDeadline,
-                currentClassVariant: classVariant,
-                currentServiceFee: serviceFee,
-                currentSalesTax: salesTax,
-                createdAt,
-                updatedAt,
-                currentStatus: status,
-                currentEventDurationHours: eventDurationHours,
-                currentClosedReason: closedReason,
-                currentNotes: notes,
-                currentPayments: payments,
-                currentCapRegistration: capRegistration
-              })
+                  bookingId: _id,
+                  currentCustomerId: customerId,
+                  currentName: customerName,
+                  currentEmail: email,
+                  currentPhone: phone,
+                  currentCompany: company,
+                  currentCoordinatorId: eventCoordinatorId,
+                  currentCoordinatorName: coordinatorName,
+                  currentTeamclassId: teamClassId,
+                  currentTeamclassName: classTitle,
+                  currentGroupSize: attendees,
+                  currentSignUpDeadline: signUpDeadline,
+                  currentClassVariant: classVariant,
+                  currentServiceFee: serviceFee,
+                  currentSalesTax: salesTax,
+                  createdAt,
+                  updatedAt,
+                  currentStatus: status,
+                  currentEventDurationHours: eventDurationHours,
+                  currentClosedReason: closedReason,
+                  currentNotes: notes,
+                  currentPayments: payments,
+                  currentCapRegistration: capRegistration
+                })
               }
               title={'Edit booking info'}
             >
@@ -234,30 +229,30 @@ const BoardCard = ({
       <div
         className="cursor-pointer"
         onClick={() => handleEditModal({
-          bookingId: _id,
-          currentCustomerId: customerId,
-          currentName: customerName,
-          currentEmail: email,
-          currentPhone: phone,
-          currentCompany: company,
-          currentCoordinatorId: eventCoordinatorId,
-          currentCoordinatorName: coordinatorName,
-          currentTeamclassId: teamClassId,
-          currentTeamclassName: classTitle,
-          currentGroupSize: attendees,
-          currentSignUpDeadline: signUpDeadline,
-          currentClassVariant: classVariant,
-          currentServiceFee: serviceFee,
-          currentSalesTax: salesTax,
-          createdAt,
-          updatedAt,
-          currentStatus: status,
-          currentEventDurationHours: eventDurationHours,
-          currentClosedReason: closedReason,
-          currentNotes: notes,
-          currentPayments: payments,
-          currentCapRegistration: capRegistration
-        })
+            bookingId: _id,
+            currentCustomerId: customerId,
+            currentName: customerName,
+            currentEmail: email,
+            currentPhone: phone,
+            currentCompany: company,
+            currentCoordinatorId: eventCoordinatorId,
+            currentCoordinatorName: coordinatorName,
+            currentTeamclassId: teamClassId,
+            currentTeamclassName: classTitle,
+            currentGroupSize: attendees,
+            currentSignUpDeadline: signUpDeadline,
+            currentClassVariant: classVariant,
+            currentServiceFee: serviceFee,
+            currentSalesTax: salesTax,
+            createdAt,
+            updatedAt,
+            currentStatus: status,
+            currentEventDurationHours: eventDurationHours,
+            currentClosedReason: closedReason,
+            currentNotes: notes,
+            currentPayments: payments,
+            currentCapRegistration: capRegistration
+          })
         }
         title={'Edit booking info'}
       >

@@ -21,17 +21,7 @@ import PropTypes from 'prop-types';
 // @scripts
 import ExportToExcel from '../../../components/ExportToExcel';
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
-import {
-  getCustomerPhone,
-  getCustomerCompany,
-  getCustomerEmail,
-  getClassTitle,
-  getCoordinatorName,
-  getFormattedEventDate,
-  getDepositPaid,
-  getFinalPaymentPaid,
-  getLastPaymentDate
-} from '../common';
+import { getCustomerEmail, getCoordinatorName } from '../common';
 
 const BookingsHeader = ({
   bookings,
@@ -84,25 +74,25 @@ const BookingsHeader = ({
     if (bookings) {
       const bookingsArray = [];
       const headers = [
-        'Updated',
+        'createdAt',
+        'UpdatedAt',
         'BookingId',
+        'Event Date',
+        'Sign Up Deadline',
         'Status',
         'Name',
         'Email',
         'Phone',
         'Company',
         'Coordinator Name',
-        'ClassId',
         'Class Title',
-        'Class Variants',
+        'Class Variant',
         'Price',
         'Group Size',
         'Deposit paid',
         'Final Payment Paid',
-        'Last Payment Date',
-        'Sign Up Deadline',
-        'Close Booking Reason',
-        'Event Date'
+        'Balance',
+        'Close Booking Reason'
       ];
 
       bookingsArray.push(headers);
@@ -111,25 +101,25 @@ const BookingsHeader = ({
         const bookingInfo = bookings[i];
 
         const row = [
+          bookingInfo.createdAt,
           bookingInfo.updatedAt,
           bookingInfo._id,
-          bookingInfo.status,
+          bookingInfo.eventDateTime,
+          bookingInfo.signUpDeadline,
+          bookingInfo.bookingStage,
           bookingInfo.customerName,
-          getCustomerEmail(bookingInfo.customerId, customers),
-          getCustomerPhone(bookingInfo.customerId, customers),
-          getCustomerCompany(bookingInfo.customerId, customers),
-          getCoordinatorName(bookingInfo.eventCoordinatorId, coordinators),
-          bookingInfo.teamClassId,
-          getClassTitle(bookingInfo.teamClassId, classes),
+          bookingInfo.customerEmail,
+          bookingInfo.customerPhone,
+          bookingInfo.customerCompany,
+          bookingInfo.eventCoordinatorName,
+          bookingInfo.className,
           bookingInfo.classVariant && bookingInfo.classVariant.title,
           bookingInfo.classVariant && bookingInfo.classVariant.pricePerson + (bookingInfo.classVariant.groupEvent ? ' /Group' : ' /Person'),
           bookingInfo.attendees,
-          getDepositPaid(bookingInfo),
-          getFinalPaymentPaid(bookingInfo),
-          getLastPaymentDate(bookingInfo),
-          bookingInfo.signUpDeadline,
-          bookingInfo.closedReason,
-          getFormattedEventDate(bookingInfo._id, calendarEvents)
+          bookingInfo.depositsPaid,
+          bookingInfo.finalPaid,
+          bookingInfo.balance,
+          bookingInfo.closedReason
         ];
         bookingsArray.push(row);
       }

@@ -2,175 +2,164 @@
 import React, { useState, useEffect, useContext } from 'react';
 import moment from 'moment';
 import { Spinner } from 'reactstrap';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 // @scripts
 import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
 import Calendar from './calendar';
-import queryAllBookings from '../../graphql/QueryAllBookings';
-import queryAllCalendarEvents from '../../graphql/QueryAllCalendarEvents';
+import queryAllBookings from '../../graphql/QueryGetBookingsWithCriteria';
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
-import { getCustomerEmail, getClassTitle, getCustomerCompany } from '../booking/common';
 import FiltersModal from '../booking/BoardBookings/FiltersModal';
 
 const BookingCalendarList = () => {
-  const excludedBookings = ['closed', 'canceled', 'quote'];
-  const genericFilter = {};
-  const [bookingsFilter, setBookingsFilter] = useState({ status_nin: excludedBookings });
-  const [bookings, setBookings] = useState([]);
-  const [limit, setLimit] = useState(2000);
-  const [customers, setCustomers] = useState([]);
-  const [coordinators, setCoordinators] = useState([]);
+  const defaultFilter = [
+    {
+      name: 'eventDateTime',
+      type: 'date',
+      operator: 'after',
+      value: moment().subtract(30, 'days').format()
+    },
+    {
+      name: 'bookingStage',
+      type: 'string',
+      operator: 'neq',
+      value: 'rejected'
+    },
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Lost'
+    },
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Duplicated'
+    },
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Mistake'
+    },
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Test'
+    }
+  ];
+  const defaultOrFilter = [];
+  const [bookingsFilter, setBookingsFilter] = useState([...defaultOrFilter]);
+  const [mainFilter, setMainFilter] = useState([...defaultFilter]);
   const [classes, setClasses] = useState([]);
-  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [coordinators, setCoordinators] = useState([]);
+  const [limit, setLimit] = useState(1000);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
-  const [elementToAdd, setElementToAdd] = useState({});
   const { classFilterContext, coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
   const [filteredBookings, setFilteredBookings] = useState([]);
 
-  const [getBookings, { ...allBookingsResult }] = useLazyQuery(queryAllBookings, {
+  const { ...allBookingsResult } = useQuery(queryAllBookings, {
     fetchPolicy: 'cache-and-network',
     pollInterval: 200000,
-    onCompleted: (data) => {
-      if (data) setBookings(data.bookings.map((element) => element));
-    }
-  });
-
-  const [getCalendarEvents, { ...allCalendarEventsResults }] = useLazyQuery(queryAllCalendarEvents, {
-    fetchPolicy: 'cache-and-network',
-    onCompleted: (data) => {
-      if (data) {
-        setCalendarEvents(data.calendarEvents);
-        getBookings({
-          variables: {
-            filter: bookingsFilter,
-            limit
-          }
-        });
-      }
-    }
-  });
-
-  const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'cache-and-network',
     variables: {
-      filter: genericFilter
+      filterBy: mainFilter,
+      filterByOr: bookingsFilter,
+      limit,
+      offset: 0
     },
     onCompleted: (data) => {
-      if (data) setCustomers(data.customers);
-    },
-    pollInterval: 200000
-  });
-
-  const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
-    variables: {
-      filter: genericFilter
-    },
-    onCompleted: (data) => {
-      if (data) setCoordinators(data.eventCoordinators);
-    },
-    pollInterval: 200000
+      console.log(data);
+      if (data) setFilteredBookings(data.getBookingsWithCriteria.rows.map((element) => element));
+    }
   });
 
   const { ...allClasses } = useQuery(queryAllClasses, {
-    pollInterval: 200000,
+    fetchPolicy: 'cache-and-network',
     variables: {
-      filter: genericFilter
+      filter: {}
     },
     onCompleted: (data) => {
       if (data && data.teamClasses) {
         setClasses(data.teamClasses);
-        getCalendarEvents({
-          variables: {
-            filter: genericFilter
-          }
-        });
       }
     }
   });
 
-  const handleSearch = (value) => {
-    if (value.length) {
-      const updatedData = bookings.filter((item) => {
-        const startsWith =
-          (item.customerName && item.customerName.toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.customerId && getCustomerEmail(item.customerId, customers).toLowerCase().startsWith(value.toLowerCase())) ||
-          (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().startsWith(value.toLowerCase())) ||
-          item._id.startsWith(value);
+  const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
+    variables: {
+      filter: {}
+    },
+    onCompleted: (data) => {
+      if (data) setCoordinators(data.eventCoordinators);
+    },
+    fetchPolicy: 'cache-and-network'
+  });
 
-        const includes =
-          (item.customerName && item.customerName.toLowerCase().includes(value.toLowerCase())) ||
-          (item.customerId && getCustomerEmail(item.customerId, customers).toLowerCase().includes(value.toLowerCase())) ||
-          (item.teamClassId && getClassTitle(item.teamClassId, classes).toLowerCase().includes(value.toLowerCase())) ||
-          item._id.includes(value);
+  useEffect(() => {
+    const query = [...defaultFilter];
+    const queryOr = [...defaultOrFilter];
 
-        return startsWith || includes;
-      });
-
-      setFilteredBookings(updatedData);
+    if (textFilterContext && textFilterContext.value) {
+      queryOr.push({ name: 'customerName', type: 'string', operator: 'contains', value: textFilterContext.value });
+      queryOr.push({ name: 'customerEmail', type: 'string', operator: 'contains', value: textFilterContext.value });
+      queryOr.push({ name: 'customerPhone', type: 'string', operator: 'contains', value: textFilterContext.value });
+      queryOr.push({ name: 'customerCompany', type: 'string', operator: 'contains', value: textFilterContext.value });
+      queryOr.push({ name: '_id', type: 'string', operator: 'contains', value: textFilterContext.value });
     } else {
-      setFilteredBookings(bookings);
+      if (classFilterContext) {
+        const filter = {
+          name: 'classId',
+          type: 'string',
+          operator: 'contains',
+          value: classFilterContext.value
+        };
+        query.push(filter);
+      }
+
+      if (dateFilterContext) {
+        const filter = {
+          name: 'createdAt',
+          type: 'date',
+          operator: 'inrange',
+          value: {
+            start: moment(dateFilterContext.value[0]).format(),
+            end: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
+          }
+        };
+        query.push(filter);
+      }
+
+      if (coordinatorFilterContext && coordinatorFilterContext.value) {
+        const coordinators = coordinatorFilterContext.value;
+        coordinators.forEach((coordinator) => {
+          const filter = {
+            name: 'eventCoordinatorId',
+            type: 'string',
+            operator: 'contains',
+            value: coordinator
+          };
+          queryOr.push(filter);
+        });
+      }
     }
-  };
 
-  useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
-  }, [bookings]);
-
-  useEffect(() => {
-    let query = {
-      status_nin: excludedBookings
-    };
-
-    if (classFilterContext) {
-      query = { ...query, teamClassId: classFilterContext.value };
-    }
-
-    if (coordinatorFilterContext) {
-      query = { ...query, eventCoordinatorId_in: coordinatorFilterContext.value };
-    }
-
-    if (dateFilterContext) {
-      query = {
-        ...query,
-        createdAt_gte: moment(dateFilterContext.value[0]).format(),
-        createdAt_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
-      };
-    }
-
-    setBookingsFilter(query);
-  }, [classFilterContext, coordinatorFilterContext, dateFilterContext]);
-
-  useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
-  }, [textFilterContext]);
-
-  useEffect(() => {
-    if (calendarEvents && customers && classes) getBookings({
-        variables: {
-          filter: bookingsFilter,
-          limit
-        }
-      });
-  }, [bookingsFilter, limit]);
+    setBookingsFilter(queryOr);
+    setMainFilter(query);
+  }, [classFilterContext, coordinatorFilterContext, dateFilterContext, textFilterContext]);
 
   return (
     <>
       <BookingsHeader
         setShowFiltersModal={(val) => setShowFiltersModal(val)}
         showAddModal={() => handleModal()}
-        setElementToAdd={(d) => setElementToAdd(d)}
         onChangeLimit={(newLimit) => {
           setLimit(newLimit);
         }}
         bookings={filteredBookings}
-        customers={customers}
-        coordinators={coordinators}
-        classes={classes}
-        calendarEvents={calendarEvents}
         defaultLimit={limit}
         showLimit={false}
         showExport={true}
@@ -185,18 +174,17 @@ const BookingCalendarList = () => {
         handleModal={() => setShowFiltersModal(!showFiltersModal)}
         classes={classes}
         coordinators={coordinators}
-        calendarEvents={calendarEvents}
         isFilterByClass={true}
         isFilterByCoordinator={true}
         isFilterByCreationDate={false}
       />
-      {allBookingsResult.loading || allCalendarEventsResults.loading || allClasses.loading || allCustomersResult.loading ? (
+      {allBookingsResult.loading ? (
         <div>
           <Spinner className="mr-25" />
           <Spinner type="grow" />
         </div>
       ) : (
-        <Calendar bookings={filteredBookings} calendarEvents={calendarEvents} classes={classes} customers={customers} />
+        <Calendar bookings={filteredBookings} classes={classes} />
       )}
     </>
   );

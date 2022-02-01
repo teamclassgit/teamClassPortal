@@ -8,9 +8,9 @@ import { BOOKING_STATUS } from '../../../utility/Constants';
 import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName } from '../common';
 import './BoardBookings.scss';
 import '@lourenci/react-kanban/dist/styles.css';
-import { getBookingTotals } from '../../../utility/Utils';
 import Avatar from '@components/avatar';
 import { DollarSign, TrendingUp } from 'react-feather';
+import { getBookingTotals } from '../../../services/BookingService';
 
 const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
   const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {});

@@ -5,7 +5,7 @@ import { Col, Spinner } from 'reactstrap';
 import { useQuery, useLazyQuery } from '@apollo/client';
 
 // @scripts
-import AddNewBooking from './AddNewBooking';
+import AddNewBooking from '../../components/AddNewBooking';
 import BoardBookings from './BoardBookings/BoardBookings';
 import BookingsHeader from './BookingsHeader/BookingsHeader';
 import DataTableBookings from './TableBookings/TableBookings';

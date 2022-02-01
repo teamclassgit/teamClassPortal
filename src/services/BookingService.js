@@ -3,17 +3,18 @@ import queryGetTotalsUsingFilter from '../graphql/QueryTotalsBookingsUsingFilter
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from '../utility/Constants';
 import { apolloClient } from '../utility/RealmApolloClient';
 import { getQueryFiltersFromFilterArray } from '../utility/Utils';
+
 //get totals associated to a booking
-const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false, includeDiscount = false) => {
+const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false) => {
   const minimum = bookingInfo.classVariant ? bookingInfo.classVariant.minimum : bookingInfo.classMinimum;
 
   //pricePerson is currently in use for group based pricing too
   const price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
 
-  const discount = includeDiscount ? bookingInfo.discount : 0;
+  const discount = bookingInfo.discount;
   let totalTaxableAdditionalItems = 0;
   let totalNoTaxableAdditionalItems = 0;
-  let customDeposit,
+  let customDeposit = 0,
     customAttendees = undefined;
 
   if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
@@ -53,14 +54,13 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   let cardFee = 0;
   const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
-
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
   const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * SERVICE_FEE;
   const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
   const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
-  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + fee + rushFee + addons + tax - totalDiscount;
+  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + tax - totalDiscount;
 
-  if (isCardFeeIncluded) {
+  if (isCardFeeIncluded && !bookingInfo.ccFeeExempt) {
     cardFee = finalValue * CREDIT_CARD_FEE;
     finalValue = finalValue + cardFee;
   }
