@@ -24,6 +24,7 @@ import './BookingsTable.scss';
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
+import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import BookingsTableStatusCards from './BookingsTableStatusCards';
@@ -167,8 +168,8 @@ const FunnelTable = () => {
                     currentGroupSize: cellProps.data.attendees,
                     currentSignUpDeadline: cellProps.data.signUpDeadline,
                     currentClassVariant: cellProps.data.classVariant,
-                    currentServiceFee: cellProps.data.serviceFeeAmount,
-                    currentSalesTax: cellProps.data.taxAmount,
+                    currentServiceFee: cellProps.data.serviceFee,
+                    currentSalesTax: cellProps.data.salesTax,
                     createdAt: cellProps.data.createdAt,
                     updatedAt: cellProps.data.updatedAt,
                     currentStatus: cellProps.data.status,
@@ -515,6 +516,17 @@ const FunnelTable = () => {
       if (data) setCoordinators(data.eventCoordinators);
     },
     fetchPolicy: 'cache-and-network'
+  });
+
+  const { ...allCustomersResult } = useQuery(queryAllCustomers, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      filter: genericFilter
+    },
+    onCompleted: (data) => {
+      if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
   });
 
   const gridStyle = { minHeight: 600, marginTop: 10 };
