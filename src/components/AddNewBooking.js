@@ -376,7 +376,6 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
               options={
                 classVariantsOptions &&
                 classVariantsOptions.map((element) => {
-                  console.log('element', element);
                   const variant = {
                     title: element.title,
                     notes: element.notes,
@@ -419,7 +418,6 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
               classNamePrefix="select"
               placeholder="Select..."
               options={classVariantsOptions[selectedVariant].priceTiers.map((item) => {
-                console.log('OPTIONS', item.price);
                 const variant = {
                   title: classVariantsOptions[selectedVariant].title,
                   notes: classVariantsOptions[selectedVariant].notes,

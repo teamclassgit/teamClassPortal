@@ -107,6 +107,8 @@ const EditBookingModal = ({
   const [customerPhone, setCustomerPhone] = useState(null);
   const [emailValid, setEmailValid] = useState(true);
   const [groupSize, setGroupSize] = useState(null);
+  const [salesTax, setSalesTax] = useState(null);
+  const [serviceFee, setServiceFee] = useState(null);
   const [inputNote, setInputNote] = useState('');
   const [processing, setProcessing] = useState(false);
   const [isCapRegistration, setIsCapRegistration] = useState(false);
@@ -122,8 +124,6 @@ const EditBookingModal = ({
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
 
-  console.log('currentClassVariant', currentClassVariant && currentClassVariant.order);
-
   useEffect(() => {
     setBookingNotes(currentNotes);
     setBookingSignUpDeadline([currentSignUpDeadline]);
@@ -138,8 +138,9 @@ const EditBookingModal = ({
     setCustomerName(currentName);
     setCustomerPhone(currentPhone);
     setGroupSize(currentGroupSize);
+    setSalesTax(currentSalesTax);
+    setServiceFee(currentServiceFee);
     setIsCapRegistration(currentCapRegistration);
-    setSelectedVariant(currentClassVariant && currentClassVariant.order);
     setSelectedPriceTier(currentClassVariant && currentClassVariant.pricePerson);
     setSelectedMinimumTier(currentClassVariant && currentClassVariant.minimum);
     setSelectedMaximumTier(currentClassVariant && currentClassVariant.maximum);
@@ -148,26 +149,24 @@ const EditBookingModal = ({
     if (filteredCalendarEvent) setCalendarEvent(filteredCalendarEvent);
   }, [bookingId]);
 
-  console.log('classVariant', classVariant);
-  console.log('electedMinimumTier', selectedMinimumTier);
-
   useEffect(() => {
     if (bookingTeamClassId) {
       const filteredClass = allClasses.find((element) => element._id === bookingTeamClassId);
-      console.log('filteredClass.variants', filteredClass && filteredClass.variants);
       if (filteredClass) setClassVariantsOptions(filteredClass && filteredClass.variants);
     }
   }, [bookingTeamClassId]);
 
   useEffect(() => {
-    if (classVariant && classVariant.groupEvent) {
-      setSelectedPriceTier(classVariant.pricePerson);
-      setSelectedMinimumTier(classVariant.minimum);
-      setSelectedMaximumTier(classVariant.maximum);
+    if (classVariant) {
+      setSelectedVariant(classVariant.order);
+      if (classVariant.groupEvent) {
+        setSelectedPriceTier(classVariant.pricePerson);
+        setSelectedMinimumTier(classVariant.minimum);
+        setSelectedMaximumTier(classVariant.maximum);
+      }
     }
   }, [classVariant]);
 
-  console.log('bookingTeamClassId', bookingTeamClassId);
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
   };
@@ -245,8 +244,8 @@ const EditBookingModal = ({
           attendees: groupSize,
           classMinimum: classVariant.minimum,
           pricePerson: classVariant.pricePerson,
-          serviceFee: currentServiceFee,
-          salesTax: currentSalesTax,
+          serviceFee,
+          salesTax,
           discount: 0,
           createdAt,
           updatedAt: new Date(),
@@ -400,6 +399,7 @@ const EditBookingModal = ({
 
   console.log('selectedVariant', selectedVariant);
   console.log('classVariantsOptions[selectedVariant] ', classVariantsOptions && classVariantsOptions[selectedVariant]);
+  console.log('currentSalesTax', currentSalesTax);
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
@@ -594,7 +594,6 @@ const EditBookingModal = ({
                 options={
                   classVariantsOptions &&
                   classVariantsOptions.map((element) => {
-                    console.log('element', element);
                     const variant = {
                       title: element.title,
                       notes: element.notes,
@@ -643,28 +642,24 @@ const EditBookingModal = ({
                       label: `${selectedMinimumTier} - ${selectedMaximumTier} attendees / $ ${selectedPriceTier}`,
                       value: classVariant
                     }}
-                    options={
-                      classVariantsOptions &&
-                      classVariantsOptions[selectedVariant].priceTiers.map((item) => {
-                        console.log('OPTIONS', item.price);
-                        const variant = {
-                          title: classVariantsOptions[selectedVariant].title,
-                          notes: classVariantsOptions[selectedVariant].notes,
-                          minimum: item.minimum,
-                          maximum: item.maximum,
-                          duration: classVariantsOptions[selectedVariant].duration,
-                          pricePerson: item.price,
-                          hasKit: classVariantsOptions[selectedVariant].hasKit,
-                          order: classVariantsOptions[selectedVariant].order,
-                          active: classVariantsOptions[selectedVariant].active,
-                          groupEvent: classVariantsOptions[selectedVariant].groupEvent
-                        };
-                        return {
-                          value: variant,
-                          label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
-                        };
-                      })
-                    }
+                    options={classVariantsOptions[selectedVariant].priceTiers.map((item) => {
+                      const variant = {
+                        title: classVariantsOptions[selectedVariant].title,
+                        notes: classVariantsOptions[selectedVariant].notes,
+                        minimum: item.minimum,
+                        maximum: item.maximum,
+                        duration: classVariantsOptions[selectedVariant].duration,
+                        pricePerson: item.price,
+                        hasKit: classVariantsOptions[selectedVariant].hasKit,
+                        order: classVariantsOptions[selectedVariant].order,
+                        active: classVariantsOptions[selectedVariant].active,
+                        groupEvent: classVariantsOptions[selectedVariant].groupEvent
+                      };
+                      return {
+                        value: variant,
+                        label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
+                      };
+                    })}
                     onChange={(option) => {
                       setClassVariant(option.value);
                       setGroupSize(option.value.maximum);
@@ -771,7 +766,6 @@ const EditBookingModal = ({
                   size="sm"
                   color={closedBookingReason ? 'danger' : 'primary'}
                   onClick={() => {
-                    console.log('llamando la función');
                     saveChangesBooking();
                   }}
                   disabled={
