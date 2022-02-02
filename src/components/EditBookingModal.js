@@ -306,7 +306,7 @@ const EditBookingModal = ({
 
     setProcessing(false);
     handleModal();
-    // onEditCompleted();
+    onEditCompleted();
   };
 
   const getStatusToReOpenBooking = () => {

@@ -141,7 +141,7 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
       console.log(ex);
       setProcessing(false);
     }
-    // onAddCompleted();
+    onAddCompleted();
     handleModal();
   };
 
