@@ -399,7 +399,7 @@ const EditBookingModal = ({
   };
 
   console.log('selectedVariant', selectedVariant);
-  console.log('classVariantsOptions ', classVariantsOptions && classVariantsOptions[selectedVariant]);
+  console.log('classVariantsOptions[selectedVariant] ', classVariantsOptions && classVariantsOptions[selectedVariant]);
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
@@ -581,6 +581,7 @@ const EditBookingModal = ({
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
+                isDisabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                 value={{
                   label:
                     classVariant && classVariant.groupEvent
@@ -629,7 +630,7 @@ const EditBookingModal = ({
                 isClearable={false}
                 styles={selectStyles}
               />
-              {isGroupVariant || (classVariant && classVariant.groupEvent) ? (
+              {isGroupVariant ? (
                 <FormGroup className="mt-1">
                   <Label for="full-name">Group Size*</Label>
                   <Select
@@ -637,36 +638,37 @@ const EditBookingModal = ({
                     className="react-select"
                     classNamePrefix="select"
                     placeholder="Select..."
+                    isDisabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
                     value={{
                       label: `${selectedMinimumTier} - ${selectedMaximumTier} attendees / $ ${selectedPriceTier}`,
                       value: classVariant
                     }}
-                    // options={
-                    //   classVariantsOptions &&
-                    //   classVariantsOptions[selectedVariant].priceTiers.map((item) => {
-                    //     console.log('OPTIONS', item.price);
-                    //     const variant = {
-                    //       title: classVariantsOptions[selectedVariant].title,
-                    //       notes: classVariantsOptions[selectedVariant].notes,
-                    //       minimum: item.minimum,
-                    //       maximum: item.maximum,
-                    //       duration: classVariantsOptions[selectedVariant].duration,
-                    //       pricePerson: item.price,
-                    //       hasKit: classVariantsOptions[selectedVariant].hasKit,
-                    //       order: classVariantsOptions[selectedVariant].order,
-                    //       active: classVariantsOptions[selectedVariant].active,
-                    //       groupEvent: classVariantsOptions[selectedVariant].groupEvent
-                    //     };
-                    //     return {
-                    //       value: variant,
-                    //       label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
-                    //     };
-                    //   })
-                    // }
-                    // onChange={(option) => {
-                    //   setClassVariant(option.value);
-                    //   setGroupSize(option.value.maximum);
-                    // }}
+                    options={
+                      classVariantsOptions &&
+                      classVariantsOptions[selectedVariant].priceTiers.map((item) => {
+                        console.log('OPTIONS', item.price);
+                        const variant = {
+                          title: classVariantsOptions[selectedVariant].title,
+                          notes: classVariantsOptions[selectedVariant].notes,
+                          minimum: item.minimum,
+                          maximum: item.maximum,
+                          duration: classVariantsOptions[selectedVariant].duration,
+                          pricePerson: item.price,
+                          hasKit: classVariantsOptions[selectedVariant].hasKit,
+                          order: classVariantsOptions[selectedVariant].order,
+                          active: classVariantsOptions[selectedVariant].active,
+                          groupEvent: classVariantsOptions[selectedVariant].groupEvent
+                        };
+                        return {
+                          value: variant,
+                          label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
+                        };
+                      })
+                    }
+                    onChange={(option) => {
+                      setClassVariant(option.value);
+                      setGroupSize(option.value.maximum);
+                    }}
                     isClearable={false}
                     styles={selectStyles}
                   />
