@@ -630,7 +630,7 @@ const EditBookingModal = ({
                 isClearable={false}
                 styles={selectStyles}
               />
-              {isGroupVariant ? (
+              {isGroupVariant || (classVariantsOptions[selectedVariant] && classVariantsOptions[selectedVariant].groupEvent) ? (
                 <FormGroup className="mt-1">
                   <Label for="full-name">Group Size*</Label>
                   <Select
