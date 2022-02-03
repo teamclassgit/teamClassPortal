@@ -51,16 +51,7 @@ import {
 // @styles
 import './EditBookingModal.scss';
 
-const EditBookingModal = ({
-  currentElement,
-  allClasses,
-  allCoordinators,
-  editMode,
-  handleClose,
-  handleModal,
-  open,
-  onEditCompleted
-}) => {
+const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted }) => {
   const [active, setActive] = useState('1');
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [bookingNotes, setBookingNotes] = useState([]);
@@ -82,6 +73,12 @@ const EditBookingModal = ({
   const [inputNote, setInputNote] = useState('');
   const [processing, setProcessing] = useState(false);
   const [isCapRegistration, setIsCapRegistration] = useState(false);
+  const [isGroupVariant, setIsGroupVariant] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [selectedPriceTier, setSelectedPriceTier] = React.useState(null);
+  const [selectedMinimumTier, setSelectedMinimumTier] = React.useState(null);
+  const [selectedMaximumTier, setSelectedMaximumTier] = React.useState(null);
+
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
@@ -110,6 +107,9 @@ const EditBookingModal = ({
     setGroupSize(currentElement.attendees);
     setIsCapRegistration(currentElement.capRegistration);
     setCalendarEvent(currentElement.calendarEvent);
+    setSelectedPriceTier(currentElement.classVariant && currentElement.classVariant.pricePerson);
+    setSelectedMinimumTier(currentElement.classVariant && currentElement.classVariant.minimum);
+    setSelectedMaximumTier(currentElement.classVariant && currentElement.classVariant.maximum);
   }, [currentElement]);
 
   useEffect(() => {
@@ -120,6 +120,17 @@ const EditBookingModal = ({
       }
     }
   }, [bookingTeamClassId]);
+
+  useEffect(() => {
+    if (classVariant) {
+      setSelectedVariant(classVariant.order);
+      if (classVariant.groupEvent) {
+        setSelectedPriceTier(classVariant.pricePerson);
+        setSelectedMinimumTier(classVariant.minimum);
+        setSelectedMaximumTier(classVariant.maximum);
+      }
+    }
+  }, [classVariant]);
 
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
@@ -333,6 +344,11 @@ const EditBookingModal = ({
     })
   };
 
+  console.log('classVariant', classVariant);
+  console.log('classVariantsOptions', classVariantsOptions);
+  console.log('selectedVariant', selectedVariant);
+  console.log('classVariantsOptions[selectedVariant] ', classVariantsOptions && classVariantsOptions[selectedVariant]);
+
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
@@ -517,38 +533,109 @@ const EditBookingModal = ({
                 classNamePrefix="select"
                 placeholder="Select..."
                 value={{
-                  label: classVariant && `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`,
+                  label:
+                    classVariant && classVariant.groupEvent
+                      ? `${classVariant && classVariant.title} ${classVariant && classVariant.groupEvent ? '/group' : '/person'}`
+                      : `${classVariant && classVariant.title} $${classVariant && classVariant.pricePerson}${
+                          classVariant && classVariant.groupEvent ? '/group' : '/person'
+                        }`,
                   value: classVariant
                 }}
                 options={
                   classVariantsOptions &&
                   classVariantsOptions.map((element) => {
+                    const variant = {
+                      title: element.title,
+                      notes: element.notes,
+                      minimum: element.minimum,
+                      duration: element.duration,
+                      pricePerson: element.pricePerson,
+                      hasKit: element.hasKit,
+                      order: element.order,
+                      active: element.active,
+                      groupEvent: element.groupEvent
+                    };
                     return {
-                      value: element,
-                      label: `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                      value: variant,
+                      label: element.groupEvent
+                        ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
+                        : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                     };
                   })
                 }
-                onChange={(option) => setClassVariant(option.value)}
+                onChange={(option) => {
+                  if (!option.value.groupEvent) {
+                    setClassVariant(option.value);
+                    setIsGroupVariant(false);
+                  } else {
+                    setIsGroupVariant(true);
+                  }
+                  setSelectedVariant(option.value.order);
+                  setGroupSize('');
+                  setSelectedPriceTier('');
+                  setSelectedMinimumTier('');
+                  setSelectedMaximumTier('');
+                }}
                 isClearable={false}
               />
             </FormGroup>
-            <FormGroup>
-              <Label for="full-name">Group Size*</Label>
-              <InputGroup size="sm">
-                <Input
-                  id="attendees"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                  placeholder="Group Size *"
-                  value={groupSize}
-                  onChange={(e) => setGroupSize(e.target.value)}
-                  type="number"
-                  onBlur={(e) => {
-                    groupSizeValidation(e.target.value);
+            {isGroupVariant || (classVariantsOptions[selectedVariant] && classVariantsOptions[selectedVariant].groupEvent) ? (
+              <FormGroup className="mt-1">
+                <Label for="full-name">Group Size*</Label>
+                <Select
+                  theme={selectThemeColors}
+                  className="react-select"
+                  classNamePrefix="select"
+                  placeholder="Select..."
+                  isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  value={{
+                    label: `${selectedMinimumTier} - ${selectedMaximumTier} attendees / $ ${selectedPriceTier}`,
+                    value: classVariant
                   }}
+                  options={classVariantsOptions[selectedVariant].priceTiers.map((item) => {
+                    const variant = {
+                      title: classVariantsOptions[selectedVariant].title,
+                      notes: classVariantsOptions[selectedVariant].notes,
+                      minimum: item.minimum,
+                      maximum: item.maximum,
+                      duration: classVariantsOptions[selectedVariant].duration,
+                      pricePerson: item.price,
+                      hasKit: classVariantsOptions[selectedVariant].hasKit,
+                      order: classVariantsOptions[selectedVariant].order,
+                      active: classVariantsOptions[selectedVariant].active,
+                      groupEvent: classVariantsOptions[selectedVariant].groupEvent
+                    };
+                    return {
+                      value: variant,
+                      label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
+                    };
+                  })}
+                  onChange={(option) => {
+                    setClassVariant(option.value);
+                    setGroupSize(option.value.maximum);
+                  }}
+                  isClearable={false}
+                  styles={selectStyles}
                 />
-              </InputGroup>
-            </FormGroup>
+              </FormGroup>
+            ) : (
+              <FormGroup className="mt-1">
+                <Label for="full-name">Group Size*</Label>
+                <InputGroup size="sm">
+                  <Input
+                    id="attendees"
+                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                    placeholder="Group Size *"
+                    value={groupSize}
+                    onChange={(e) => setGroupSize(e.target.value)}
+                    type="number"
+                    onBlur={(e) => {
+                      groupSizeValidation(e.target.value);
+                    }}
+                  />
+                </InputGroup>
+              </FormGroup>
+            )}
             <FormGroup>
               <CustomInput
                 type="switch"
