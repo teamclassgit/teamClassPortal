@@ -55,7 +55,6 @@ const EditBookingModal = ({
   currentElement,
   allClasses,
   allCoordinators,
-  allCustomers,
   editMode,
   handleClose,
   handleModal,
@@ -94,7 +93,7 @@ const EditBookingModal = ({
 
     const teamClass = allClasses.find((element) => element._id === currentElement.teamClassId);
     const coordinator = allCoordinators.find((element) => element._id === currentElement.eventCoordinatorId);
-    const customer = allCustomers.find((element) => element._id === currentElement.customerId);
+    const customer = currentElement.customer;
 
     setBookingNotes(currentElement.notes);
     setBookingSignUpDeadline([currentElement.signUpDeadline]);

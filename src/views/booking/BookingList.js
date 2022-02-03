@@ -329,7 +329,6 @@ const BookingList = () => {
             currentElement={currentElement}
             allCoordinators={coordinators}
             allClasses={classes}
-            allCustomers={customers}
             handleClose={() => setCurrentElement({})}
             editMode={currentElement && currentElement.status !== 'closed' ? true : false}
             onEditCompleted={onEditCompleted}

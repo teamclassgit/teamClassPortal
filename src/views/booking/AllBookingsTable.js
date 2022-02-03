@@ -563,7 +563,6 @@ const AllBookingsTable = () => {
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
-    console.log('filters', filters);
 
     const response = await apolloClient.query({
       query: queryGetBookingsWithCriteria,
@@ -649,7 +648,6 @@ const AllBookingsTable = () => {
         currentElement={currentElement}
         allCoordinators={coordinators}
         allClasses={classes}
-        allCustomers={customers}
         handleClose={() => setCurrentElement({})}
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}
         onEditCompleted={onEditCompleted}
