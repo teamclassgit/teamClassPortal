@@ -14,16 +14,16 @@ export default [
     navLink: '/allbookings'
   },
   {
-    id: 'checkout0',
-    title: 'Events calendar',
-    icon: <Calendar size={20} />,
-    navLink: '/calendar'
-  },
-  {
     id: 'checkout1',
     title: 'In progress',
     icon: <BookOpen size={20} />,
     navLink: '/bookings'
+  },
+  {
+    id: 'checkout0',
+    title: 'Events calendar',
+    icon: <Calendar size={20} />,
+    navLink: '/calendar'
   },
   {
     id: 'checkout3',

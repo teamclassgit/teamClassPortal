@@ -23,12 +23,14 @@ import './BookingsTable.scss';
 // @scripts
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
 import queryAllClasses from '../../graphql/QueryAllClasses';
+import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import BookingsTableStatusCards from './BookingsTableStatusCards';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
+import { getBookingAndCalendarEventById } from '../../services/BookingService';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -49,10 +51,11 @@ const onRenderRow = (rowProps) => {
 };
 
 const FunnelTable = () => {
+  const defaultStatus = { value: 'quote', label: 'Quote', calendarEventStatus: '' };
   const skin = useSelector((state) => state.bookingsBackground);
   const genericFilter = {};
   const [gridRef, setGridRef] = useState(null);
-  const [status, setStatus] = useState({ value: 'quote', label: 'Quote', calendarEventStatus: '' });
+  const [status, setStatus] = useState(defaultStatus);
   const [editModal, setEditModal] = useState(false);
   const [currentElement, setCurrentElement] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
@@ -152,32 +155,10 @@ const FunnelTable = () => {
             <small>
               <a
                 href="#"
-                onClick={() => {
-                  setCurrentElement({
-                    bookingId: value,
-                    currentCustomerId: cellProps.data.customerId,
-                    currentName: cellProps.data.customerName,
-                    currentEmail: cellProps.data.customerEmail,
-                    currentPhone: cellProps.data.customerPhone,
-                    currentCompany: cellProps.data.customerCompany,
-                    currentCoordinatorId: cellProps.data.eventCoordinatorId,
-                    currentCoordinatorName: cellProps.data.eventCoordinatorName,
-                    currentTeamclassId: cellProps.data.classId,
-                    currentTeamclassName: cellProps.data.className,
-                    currentGroupSize: cellProps.data.attendees,
-                    currentSignUpDeadline: cellProps.data.signUpDeadline,
-                    currentClassVariant: cellProps.data.classVariant,
-                    currentServiceFee: cellProps.data.serviceFeeAmount,
-                    currentSalesTax: cellProps.data.taxAmount,
-                    createdAt: cellProps.data.createdAt,
-                    updatedAt: cellProps.data.updatedAt,
-                    currentStatus: cellProps.data.status,
-                    currentEventDurationHours: cellProps.data.eventDurationHours,
-                    currentClosedReason: cellProps.data.closedReason,
-                    currentNotes: cellProps.data.notes,
-                    currentPayments: cellProps.data.payments,
-                    currentCapRegistration: cellProps.data.capRegistration
-                  });
+                onClick={async () => {
+                  const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
+                  if (!bookingAndCalendarEvent) return;
+                  setCurrentElement(bookingAndCalendarEvent);
                   handleEditModal();
                 }}
                 title={`Edit booking info ${cellProps.data._id}`}
@@ -484,17 +465,6 @@ const FunnelTable = () => {
     }
   ];
 
-  /*const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'no-cache',
-    variables: {
-      filter: genericFilter
-    },
-    onCompleted: (data) => {
-      if (data) setCustomers(data.customers);
-    },
-    pollInterval: 200000
-  });*/
-
   const { ...allClasses } = useQuery(queryAllClasses, {
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -515,6 +485,17 @@ const FunnelTable = () => {
       if (data) setCoordinators(data.eventCoordinators);
     },
     fetchPolicy: 'cache-and-network'
+  });
+
+  const { ...allCustomersResult } = useQuery(queryAllCustomers, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      filter: {}
+    },
+    onCompleted: (data) => {
+      if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
   });
 
   const gridStyle = { minHeight: 600, marginTop: 10 };
@@ -570,9 +551,11 @@ const FunnelTable = () => {
     setSortInfo(sortEditedData);
   };
 
-  const onAddCompleted = () => {
-    const sortAddedData = { dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' };
-    setSortInfo(sortAddedData);
+  const onAddCompleted = (bookingId) => {
+    const currentFilters = [...filterValue.filter((element) => element.name !== '_id')];
+    const idFilter = { name: '_id', type: 'string', operator: 'contains', value: bookingId };
+    currentFilters.push(idFilter);
+    setFilterValue(currentFilters);
   };
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
@@ -581,6 +564,7 @@ const FunnelTable = () => {
 
     const response = await apolloClient.query({
       query: queryGetBookingsWithCriteria,
+      fetchPolicy: 'network-only',
       variables: {
         limit,
         offset: skip,
@@ -611,7 +595,10 @@ const FunnelTable = () => {
     <div>
       <BookingsTableStatusCards status={status} setStatus={setStatus} filters={filterValue} />
       <TasksBar
-        setElementToAdd={setElementToAdd}
+        setElementToAdd={(element) => {
+          setStatus(defaultStatus);
+          setElementToAdd(element);
+        }}
         titleView={'Bookings Funnel (Beta)'}
         titleBadge={status && status.label}
         showAddModal={() => handleModal()}
@@ -649,9 +636,7 @@ const FunnelTable = () => {
       <AddNewBooking
         open={showAddModal}
         handleModal={handleModal}
-        bookings={[]}
         classes={classes}
-        setCustomers={setCustomers}
         customers={customers}
         baseElement={elementToAdd}
         coordinators={coordinators}
@@ -663,11 +648,9 @@ const FunnelTable = () => {
         currentElement={currentElement}
         allCoordinators={coordinators}
         allClasses={classes}
-        allBookings={[]}
         allCustomers={customers}
-        setCustomers={setCustomers}
         handleClose={() => setCurrentElement({})}
-        editMode={true}
+        editMode={currentElement && currentElement.status !== 'closed' ? true : false}
         onEditCompleted={onEditCompleted}
       />
     </div>

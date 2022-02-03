@@ -72,7 +72,6 @@ const BookingCalendarList = () => {
       offset: 0
     },
     onCompleted: (data) => {
-      console.log(data);
       if (data) setFilteredBookings(data.getBookingsWithCriteria.rows.map((element) => element));
     }
   });

@@ -25,7 +25,6 @@ import { getCustomerEmail, getCoordinatorName } from '../common';
 
 const BookingsHeader = ({
   bookings,
-  calendarEvents,
   classes,
   coordinators,
   userData,
@@ -64,7 +63,7 @@ const BookingsHeader = ({
   const [limit, setLimit] = useState(defaultLimit);
   const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([]);
   const [searchValue, setSearchValue] = useState(null);
-  const { setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext);
+  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext);
 
   useEffect(() => {
     setTextFilterContext('');
@@ -126,7 +125,7 @@ const BookingsHeader = ({
 
       setAttendeesExcelTable(bookingsArray);
     }
-  }, [bookings, customers, coordinators, classes, calendarEvents]);
+  }, [bookings, customers, coordinators, classes]);
 
   useEffect(() => {
     if (privateRequests) {
@@ -153,6 +152,10 @@ const BookingsHeader = ({
       setPrivateRequestsExcelTable(privateClassRequestsArray);
     }
   }, [privateRequests, coordinators]);
+
+  useEffect(() => {
+    setSearchValue(textFilterContext?.value);
+  }, [textFilterContext]);
 
   useEffect(() => {
     if (generalInquiries) {
@@ -246,7 +249,7 @@ const BookingsHeader = ({
   };
 
   return (
-    <Card className="w-100  shadow-none bg-transparent m-0">
+    <Card className="w-100 shadow-none bg-transparent m-0 p-0">
       <CardHeader>
         <Col md={4}>
           <CardTitle tag="h4" className="mr-4">
@@ -486,7 +489,6 @@ export default BookingsHeader;
 
 BookingsHeader.propTypes = {
   bookings: PropTypes.array.isRequired,
-  calendarEvents: PropTypes.array.isRequired,
   classes: PropTypes.array.isRequired,
   coordinators: PropTypes.array.isRequired,
   customers: PropTypes.array.isRequired,
