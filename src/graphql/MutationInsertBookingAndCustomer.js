@@ -11,13 +11,13 @@ export default gql`
     $instructorName: String
     $customerId: String!
     $customerName: String!
-    $eventDate: DateTime!
     $eventDurationHours: Float!
     $eventCoordinatorId: String!
     $attendees: Int!
     $classMinimum: Int!
     $pricePerson: Float!
     $salesTax: Float!
+    $salesTaxState: String!
     $serviceFee: Float!
     $discount: Float!
     $createdAt: DateTime!
@@ -72,7 +72,6 @@ export default gql`
         instructorName: $instructorName
         customerId: $customerId
         customerName: $customerName
-        eventDate: $eventDate
         eventDurationHours: $eventDurationHours
         eventCoordinatorId: $eventCoordinatorId
         attendees: $attendees
@@ -80,6 +79,7 @@ export default gql`
         pricePerson: $pricePerson
         serviceFee: $serviceFee
         salesTax: $salesTax
+        salesTaxState: $salesTaxState
         discount: $discount
         status: $status
         createdAt: $createdAt
@@ -99,6 +99,7 @@ export default gql`
       pricePerson
       serviceFee
       salesTax
+      salesTaxState
       rushFee
       discount
       status

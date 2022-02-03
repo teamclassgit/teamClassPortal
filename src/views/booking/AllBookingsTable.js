@@ -24,10 +24,12 @@ import './BookingsTable.scss';
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
+import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
+import { getBookingAndCalendarEventById } from '../../services/BookingService';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -92,32 +94,10 @@ const AllBookingsTable = () => {
             <small>
               <a
                 href="#"
-                onClick={() => {
-                  setCurrentElement({
-                    bookingId: value,
-                    currentCustomerId: cellProps.data.customerId,
-                    currentName: cellProps.data.customerName,
-                    currentEmail: cellProps.data.customerEmail,
-                    currentPhone: cellProps.data.customerPhone,
-                    currentCompany: cellProps.data.customerCompany,
-                    currentCoordinatorId: cellProps.data.eventCoordinatorId,
-                    currentCoordinatorName: cellProps.data.eventCoordinatorName,
-                    currentTeamclassId: cellProps.data.classId,
-                    currentTeamclassName: cellProps.data.className,
-                    currentGroupSize: cellProps.data.attendees,
-                    currentSignUpDeadline: cellProps.data.signUpDeadline,
-                    currentClassVariant: cellProps.data.classVariant,
-                    currentServiceFee: cellProps.data.serviceFeeAmount,
-                    currentSalesTax: cellProps.data.taxAmount,
-                    createdAt: cellProps.data.createdAt,
-                    updatedAt: cellProps.data.updatedAt,
-                    currentStatus: cellProps.data.status,
-                    currentEventDurationHours: cellProps.data.eventDurationHours,
-                    currentClosedReason: cellProps.data.closedReason,
-                    currentNotes: cellProps.data.notes,
-                    currentPayments: cellProps.data.payments,
-                    currentCapRegistration: cellProps.data.capRegistration
-                  });
+                onClick={async () => {
+                  const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
+                  if (!bookingAndCalendarEvent) return;
+                  setCurrentElement(bookingAndCalendarEvent);
                   handleEditModal();
                 }}
                 title={`Edit booking info ${cellProps.data._id}`}
@@ -513,9 +493,20 @@ const AllBookingsTable = () => {
     fetchPolicy: 'cache-and-network'
   });
 
+  const { ...allCustomersResult } = useQuery(queryAllCustomers, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      filter: {}
+    },
+    onCompleted: (data) => {
+      if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
+  });
+
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
-  useEffect(() => {
+  const applyFilters = () => {
     let currentFilters = [...filterValue];
 
     if (currentFilters && currentFilters.length === 0) {
@@ -553,6 +544,9 @@ const AllBookingsTable = () => {
     }
 
     setFilterValue(currentFilters);
+  };
+  useEffect(() => {
+    applyFilters();
   }, []);
 
   const onEditCompleted = () => {
@@ -560,17 +554,19 @@ const AllBookingsTable = () => {
     setSortInfo(sortEditedData);
   };
 
-  const onAddCompleted = () => {
-    const sortAddedData = { dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' };
-    setSortInfo(sortAddedData);
+  const onAddCompleted = (bookingId) => {
+    const currentFilters = [...filterValue.filter((element) => element.name !== '_id')];
+    const idFilter = { name: '_id', type: 'string', operator: 'contains', value: bookingId };
+    currentFilters.push(idFilter);
+    setFilterValue(currentFilters);
   };
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
-    console.log('filters', filters);
 
     const response = await apolloClient.query({
       query: queryGetBookingsWithCriteria,
+      fetchPolicy: 'network-only',
       variables: {
         limit,
         offset: skip,
@@ -639,7 +635,6 @@ const AllBookingsTable = () => {
       <AddNewBooking
         open={showAddModal}
         handleModal={handleModal}
-        bookings={[]}
         classes={classes}
         setCustomers={setCustomers}
         customers={customers}
@@ -653,11 +648,8 @@ const AllBookingsTable = () => {
         currentElement={currentElement}
         allCoordinators={coordinators}
         allClasses={classes}
-        allBookings={[]}
-        allCustomers={customers}
-        setCustomers={setCustomers}
         handleClose={() => setCurrentElement({})}
-        editMode={currentElement && currentElement.currentStatus !== 'closed' ? true : false}
+        editMode={currentElement && currentElement.status !== 'closed' ? true : false}
         onEditCompleted={onEditCompleted}
       />
     </div>

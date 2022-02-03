@@ -6,15 +6,18 @@ import moment from 'moment';
 import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone } from 'react-feather';
 import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
 import { useHistory } from 'react-router';
-
 // @scripts
 import CopyClipboard from '../../../../components/CopyClipboard';
 import { capitalizeString } from '../../../../utility/Utils';
-
 // @styles
 import './BoardCard.scss';
-import { DATE_AND_TIME_CONFIRMATION_STATUS, DATE_AND_TIME_REJECTED_STATUS } from '../../../../utility/Constants';
-import { getEventDates } from '../../common';
+import {
+  DATE_AND_TIME_CONFIRMATION_STATUS,
+  DATE_AND_TIME_REJECTED_STATUS,
+  DAYS_BEFORE_EVENT_REGISTRATION,
+  DEFAULT_TIME_ZONE_LABEL
+} from '../../../../utility/Constants';
+import { getBookingAndCalendarEventById } from '../../../../services/BookingService';
 
 const BoardCard = ({
   handleEditModal,
@@ -23,39 +26,33 @@ const BoardCard = ({
     _id,
     attendees,
     classVariant,
-    teamClassId,
+    classId,
     createdAt,
     updatedAt,
     status,
-    classTitle,
-    eventDurationHours,
-    email,
-    phone,
-    company,
-    serviceFee,
-    pricePerson,
-    minimum,
-    salesTax,
-    calendarEvent,
+    className,
+    customerEmail,
+    customerPhone,
+    customerCompany,
+    eventDateTime,
+    rescheduleDateTime,
     customerId,
-    coordinatorName,
+    eventCoordinatorName,
+    capRegistration,
+    eventDateTimeStatus,
+    hasInternationalAttendees,
     payments,
     eventCoordinatorId,
     signUpDeadline,
     closedReason,
-    notes,
-    bookingTotal,
-    hasInternationalAttendees,
-    capRegistration
+    totalInvoice
   }
 }) => {
   const [date, setDate] = useState(null);
   const [signUpDeadlineToShow, setSignUpDeadlineToShow] = useState(null);
-  const [rescheduleDateTime, setRescheduleDateTime] = useState(null);
   const [flippedCard, setFlippedCard] = useState(false);
   const [showFinalPaymentLabel, setShowFinalPaymentLabel] = useState(null);
   const [time, setTime] = useState(null);
-  const [total, setTotal] = useState(0);
   const [signUpRegistrationClass, setSignUpRegistrationClass] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [showAlertEventPayment, setShowAlertEventPayment] = useState(null);
@@ -90,19 +87,32 @@ const BoardCard = ({
   }, [payments, date]);
 
   useEffect(() => {
-    const dates = getEventDates(calendarEvent, signUpDeadline);
-    setDate(dates && dates.date);
-    setTime(dates && dates.time);
-    setRescheduleDateTime(dates && dates.rescheduleDateTime);
-    setSignUpDeadlineToShow(dates && dates.signUpDeadline);
-  }, [calendarEvent, signUpDeadline]);
+    if (!eventDateTime) return;
+
+    const timeObject = `${moment(eventDateTime).format('kk:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
+    setTime(timeObject);
+    setDate(eventDateTime);
+
+    let finalSignUpDeadline = null;
+    if (signUpDeadline) {
+      finalSignUpDeadline = `${moment(signUpDeadline).format('MM/DD/YYYY kk:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
+    } else {
+      finalSignUpDeadline = `${moment(eventDateTime)
+        .subtract(DAYS_BEFORE_EVENT_REGISTRATION, 'days')
+        .format('MM/DD/YYYY kk:mma')} ${DEFAULT_TIME_ZONE_LABEL}`;
+    }
+
+    setSignUpDeadlineToShow(finalSignUpDeadline);
+  }, [eventDateTime, rescheduleDateTime, signUpDeadline]);
 
   useEffect(() => {
     showAlertDeadline();
-  }, [signUpDeadline, date]);
+  }, [signUpDeadlineToShow]);
 
   const showAlertDeadline = () => {
-    if (!moment(signUpDeadline).isAfter(moment().format()) && moment(date).isAfter(moment().format())) {
+    if (!signUpDeadlineToShow) return;
+
+    if (!moment(signUpDeadlineToShow).isAfter(moment().format()) && moment(eventDateTime).isAfter(moment().format())) {
       setSignUpRegistrationClass(true);
     } else {
       setSignUpRegistrationClass(false);
@@ -117,14 +127,14 @@ const BoardCard = ({
             <strong>{capitalizeString(customerName)}</strong>
             <br />
             <small>
-              <Mail size={12} /> {`${email}  `}
-              <CopyClipboard className="z-index-2" text={email} />
+              <Mail size={12} /> {`${customerEmail}  `}
+              <CopyClipboard className="z-index-2" text={customerEmail} />
             </small>
 
             <br />
             <small>
-              <Phone size={12} /> {`${phone}  `}
-              <CopyClipboard text={phone} />
+              <Phone size={12} /> {`${customerPhone}  `}
+              <CopyClipboard text={customerPhone} />
             </small>
           </p>
           <p className="small">
@@ -132,39 +142,18 @@ const BoardCard = ({
             <a
               href="#"
               className="cursor-pointer"
-              onClick={() => handleEditModal({
-                  bookingId: _id,
-                  currentCustomerId: customerId,
-                  currentName: customerName,
-                  currentEmail: email,
-                  currentPhone: phone,
-                  currentCompany: company,
-                  currentCoordinatorId: eventCoordinatorId,
-                  currentCoordinatorName: coordinatorName,
-                  currentTeamclassId: teamClassId,
-                  currentTeamclassName: classTitle,
-                  currentGroupSize: attendees,
-                  currentSignUpDeadline: signUpDeadline,
-                  currentClassVariant: classVariant,
-                  currentServiceFee: serviceFee,
-                  currentSalesTax: salesTax,
-                  createdAt,
-                  updatedAt,
-                  currentStatus: status,
-                  currentEventDurationHours: eventDurationHours,
-                  currentClosedReason: closedReason,
-                  currentNotes: notes,
-                  currentPayments: payments,
-                  currentCapRegistration: capRegistration
-                })
-              }
+              onClick={async () => {
+                const bookingAndCalendarEvent = await getBookingAndCalendarEventById(_id);
+                if (!bookingAndCalendarEvent) return;
+                handleEditModal(bookingAndCalendarEvent);
+              }}
               title={'Edit booking info'}
             >
               {`${_id}  `}
             </a>
             <CopyClipboard text={_id} />
           </p>
-          <p className="small">{`${classTitle}  `}</p>
+          <p className="small">{`${className}  `}</p>
         </div>
         {date && time && (
           <Media className="pb-1">
@@ -197,7 +186,7 @@ const BoardCard = ({
               </tr>
               <tr>
                 <th className="font-weight-normal small">Total</th>
-                <td className="text-right small align-top">~ ${bookingTotal.toFixed(2)}</td>
+                <td className="text-right small align-top">~ ${totalInvoice.toFixed(2)}</td>
               </tr>
               <tr>
                 <th className="font-weight-normal small pt-1">International Attendees?</th>
@@ -215,7 +204,7 @@ const BoardCard = ({
             <tfoot>
               <tr>
                 <th className="pt-1 small">Coordinator</th>
-                <td className="font-weight-bold small text-right pt-1">{coordinatorName}</td>
+                <td className="font-weight-bold small text-right pt-1">{eventCoordinatorName}</td>
               </tr>
             </tfoot>
           </table>
@@ -228,63 +217,42 @@ const BoardCard = ({
     return (
       <div
         className="cursor-pointer"
-        onClick={() => handleEditModal({
-            bookingId: _id,
-            currentCustomerId: customerId,
-            currentName: customerName,
-            currentEmail: email,
-            currentPhone: phone,
-            currentCompany: company,
-            currentCoordinatorId: eventCoordinatorId,
-            currentCoordinatorName: coordinatorName,
-            currentTeamclassId: teamClassId,
-            currentTeamclassName: classTitle,
-            currentGroupSize: attendees,
-            currentSignUpDeadline: signUpDeadline,
-            currentClassVariant: classVariant,
-            currentServiceFee: serviceFee,
-            currentSalesTax: salesTax,
-            createdAt,
-            updatedAt,
-            currentStatus: status,
-            currentEventDurationHours: eventDurationHours,
-            currentClosedReason: closedReason,
-            currentNotes: notes,
-            currentPayments: payments,
-            currentCapRegistration: capRegistration
-          })
-        }
+        onClick={async () => {
+          const bookingAndCalendarEvent = await getBookingAndCalendarEventById(_id);
+          if (!bookingAndCalendarEvent) return;
+          handleEditModal(bookingAndCalendarEvent);
+        }}
         title={'Edit booking info'}
       >
         <p className="text-truncate m-0 p-0">
           <small>
             <strong>{capitalizeString(customerName)}</strong>
           </small>
-          <span className="text-primary small">{` ~ $${bookingTotal.toFixed(2)}`}</span>
+          <span className="text-primary small">{` ~ $${totalInvoice.toFixed(2)}`}</span>
           <br />
-          <small className="text-xs">{classTitle}</small>
+          <small className="text-xs">{className}</small>
         </p>
 
-        {calendarEvent ? (
+        {eventDateTime ? (
           <>
             <p className="m-0 p-0">
               <small>
                 <strong>Event: </strong>
-                {`${moment(date).format('MM/DD/YYYY')} ${time} `}
+                {`${moment(eventDateTime).format('MM/DD/YYYY kk:mma')} ${DEFAULT_TIME_ZONE_LABEL}`}
               </small>
-              {calendarEvent.rescheduleRequest && (
+              {rescheduleDateTime && (
                 <small>
                   <span>
                     <strong>
                       <br />
-                      Reschedule:{' '}
+                      Change:{' '}
                     </strong>
-                    {rescheduleDateTime}
+                    {`${moment(rescheduleDateTime).format('MM/DD/YYYY kk:mma')} ${DEFAULT_TIME_ZONE_LABEL}`}
                   </span>
                 </small>
               )}
             </p>
-            {calendarEvent.status === DATE_AND_TIME_CONFIRMATION_STATUS && (
+            {eventDateTimeStatus === DATE_AND_TIME_CONFIRMATION_STATUS && (
               <p className="m-0 p-0">
                 <div>
                   <small>
@@ -344,7 +312,7 @@ const BoardCard = ({
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
-          ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
+          ) : status === 'date-requested' && eventDateTimeStatus === 'reserved' ? (
             <div align="right">
               <a
                 className="mr-1"
@@ -366,7 +334,7 @@ const BoardCard = ({
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
-          ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
+          ) : status === 'date-requested' && eventDateTimeStatus === 'confirmed' ? (
             <div>
               <a
                 className="mr-1"
@@ -389,7 +357,7 @@ const BoardCard = ({
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
-          ) : status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
+          ) : status === 'date-requested' && eventDateTimeStatus === 'rejected' ? (
             <div align="right">
               <a
                 className="mr-1"
@@ -457,7 +425,7 @@ const BoardCard = ({
             </Badge>
           </CardFooter>
         )}
-        {calendarEvent && calendarEvent.status === DATE_AND_TIME_REJECTED_STATUS && (
+        {eventDateTimeStatus === DATE_AND_TIME_REJECTED_STATUS && (
           <CardFooter className="card-board-footer pr-1">
             <Badge size="sm" color={`light-warning`} pill>
               Rejected

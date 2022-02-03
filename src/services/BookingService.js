@@ -1,5 +1,7 @@
 import moment from 'moment';
 import queryGetTotalsUsingFilter from '../graphql/QueryTotalsBookingsUsingFilter';
+import queryBookingAndCalendarEventById from '../graphql/QueryBookingAndCalendarEventById';
+import queryCustomerById from '../graphql/QueryCustomerById';
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from '../utility/Constants';
 import { apolloClient } from '../utility/RealmApolloClient';
 import { getQueryFiltersFromFilterArray } from '../utility/Utils';
@@ -97,4 +99,26 @@ const getTotalsUsingFilter = async (filters) => {
   return data && data.totals;
 };
 
-export { getBookingTotals, getTotalsUsingFilter };
+const getBookingAndCalendarEventById = async (bookingId) => {
+  const { ...resultBooking } = await apolloClient.query({
+    query: queryBookingAndCalendarEventById,
+    variables: {
+      bookingId
+    }
+  });
+
+  if (!resultBooking?.data?.booking) return;
+
+  const booking = resultBooking.data.booking;
+
+  const { ...resultCustomer } = await apolloClient.query({
+    query: queryCustomerById,
+    variables: {
+      customerId: booking.customerId
+    }
+  });
+
+  return { ...booking, calendarEvent: resultBooking.data.calendarEvent, customer: resultCustomer?.data?.customer };
+};
+
+export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById };

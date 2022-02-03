@@ -10,6 +10,7 @@ export default gql`
   ) {
     getBookingsWithCriteria(input: { offset: $offset, limit: $limit, sortBy: $sortBy, filterBy: $filterBy, filterByOr: $filterByOr }) {
       count
+      total
       rows {
         updatedAt
         createdAt
@@ -21,12 +22,15 @@ export default gql`
         customerPhone
         customerEmail
         customerCompany
+        capRegistration
+        hasInternationalAttendees
         eventCoordinatorId
         eventCoordinatorName
         eventCoordinatorEmail
         className
         attendees
         eventDateTime
+        rescheduleDateTime
         hasInternationalAttendees
         eventDateTimeStatus
         signUpDeadline
