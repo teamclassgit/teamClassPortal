@@ -89,17 +89,15 @@ const BoardCard = ({
   useEffect(() => {
     if (!eventDateTime) return;
 
-    const timeObject = `${moment(eventDateTime).format('kk:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
+    const timeObject = `${moment(eventDateTime).format('hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
     setTime(timeObject);
     setDate(eventDateTime);
 
     let finalSignUpDeadline = null;
     if (signUpDeadline) {
-      finalSignUpDeadline = `${moment(signUpDeadline).format('MM/DD/YYYY kk:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
+      finalSignUpDeadline = moment(signUpDeadline);
     } else {
-      finalSignUpDeadline = `${moment(eventDateTime)
-        .subtract(DAYS_BEFORE_EVENT_REGISTRATION, 'days')
-        .format('MM/DD/YYYY kk:mma')} ${DEFAULT_TIME_ZONE_LABEL}`;
+      finalSignUpDeadline = moment(eventDateTime).subtract(DAYS_BEFORE_EVENT_REGISTRATION, 'days');
     }
 
     setSignUpDeadlineToShow(finalSignUpDeadline);
@@ -112,7 +110,9 @@ const BoardCard = ({
   const showAlertDeadline = () => {
     if (!signUpDeadlineToShow) return;
 
-    if (!moment(signUpDeadlineToShow).isAfter(moment().format()) && moment(eventDateTime).isAfter(moment().format())) {
+    const daysToRegistration = Math.abs(moment().diff(signUpDeadlineToShow, 'days'));
+    console.log(daysToRegistration);
+    if (daysToRegistration >= 0 && daysToRegistration <= 1) {
       setSignUpRegistrationClass(true);
     } else {
       setSignUpRegistrationClass(false);
@@ -238,7 +238,7 @@ const BoardCard = ({
             <p className="m-0 p-0">
               <small>
                 <strong>Event: </strong>
-                {`${moment(eventDateTime).format('MM/DD/YYYY kk:mma')} ${DEFAULT_TIME_ZONE_LABEL}`}
+                {`${moment(eventDateTime).format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`}
               </small>
               {rescheduleDateTime && (
                 <small>
@@ -247,17 +247,19 @@ const BoardCard = ({
                       <br />
                       Change:{' '}
                     </strong>
-                    {`${moment(rescheduleDateTime).format('MM/DD/YYYY kk:mma')} ${DEFAULT_TIME_ZONE_LABEL}`}
+                    {`${moment(rescheduleDateTime).format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`}
                   </span>
                 </small>
               )}
             </p>
-            {eventDateTimeStatus === DATE_AND_TIME_CONFIRMATION_STATUS && (
+            {eventDateTimeStatus === DATE_AND_TIME_CONFIRMATION_STATUS && signUpDeadlineToShow && (
               <p className="m-0 p-0">
                 <div>
                   <small>
                     <strong>Sign-up: </strong>
-                    <span className={signUpRegistrationClass && 'signup-deadline'}>{signUpDeadlineToShow}</span>
+                    <span className={signUpRegistrationClass && 'signup-deadline'}>{`${signUpDeadlineToShow.format(
+                      'MM/DD/YYYY hh:mm A'
+                    )} ${DEFAULT_TIME_ZONE_LABEL}`}</span>
                   </small>
                 </div>
               </p>
