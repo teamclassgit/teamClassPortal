@@ -91,7 +91,7 @@ export const getEventDates = (calendarEvent, signUpDeadline) => {
   const timeObject = calendarEvent ? toAmPm(calendarEvent.fromHour, calendarEvent.fromMinutes, DEFAULT_TIME_ZONE_LABEL) : null;
   let finalSignUpDeadline = null;
   if (calendarEvent && signUpDeadline) {
-    finalSignUpDeadline = `${moment(signUpDeadline).format('MM/DD/YYYY kk:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
+    finalSignUpDeadline = `${moment(signUpDeadline).format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
   } else if (!signUpDeadline) {
     finalSignUpDeadline = `${moment(dateObject).subtract(DAYS_BEFORE_EVENT_REGISTRATION, 'days').format('MM/DD/YYYY')} ${timeObject}`;
   }

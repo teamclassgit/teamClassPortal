@@ -249,8 +249,11 @@ const BookingList = () => {
     setMainFilter(query);
   }, [classFilterContext, coordinatorFilterContext, dateFilterContext, textFilterContext]);
 
-  const onEditCompleted = () => {
-    allBookingsResultRequested.refetch();
+  const onEditCompleted = (bookingId) => {
+    const currentFilters = [...bookingsFilter];
+    currentFilters.push({ name: '_id', type: 'string', operator: 'eq', value: bookingId });
+    currentFilters.push({ name: '_id', type: 'string', operator: 'neq', value: bookingId });
+    setBookingsFilter(currentFilters);
   };
 
   const onAddCompleted = (bookingId) => {

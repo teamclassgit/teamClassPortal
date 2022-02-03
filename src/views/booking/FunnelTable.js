@@ -64,6 +64,7 @@ const FunnelTable = () => {
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
+  const [orFilters, setOrFilters] = useState([]);
   const [sortInfo, setSortInfo] = useState({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
   const [filteredRows, setFilteredRows] = useState(null);
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
@@ -156,6 +157,8 @@ const FunnelTable = () => {
               <a
                 href="#"
                 onClick={async () => {
+                  setOrFilters([]);
+                  setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
                   const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
                   if (!bookingAndCalendarEvent) return;
                   setCurrentElement(bookingAndCalendarEvent);
@@ -280,6 +283,18 @@ const FunnelTable = () => {
       }
     },
     {
+      name: 'depositPaidDate',
+      header: 'Deposits date',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return moment(value).format('LLL');
+        }
+      }
+    },
+    {
       name: 'finalPaid',
       header: 'Final paid',
       type: 'number',
@@ -287,6 +302,18 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
         return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'finalPaymentPaidDate',
+      header: 'Final payment date',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return moment(value).format('LLL');
+        }
       }
     },
     {
@@ -531,6 +558,8 @@ const FunnelTable = () => {
         { name: 'totalInvoice', type: 'number', operator: 'gte', value: undefined },
         { name: 'depositsPaid', type: 'number', operator: 'gte', value: undefined },
         { name: 'finalPaid', type: 'number', operator: 'gte', value: undefined },
+        { name: 'depositPaidDate', type: 'date', operator: 'inrange', value: undefined },
+        { name: 'finalPaymentPaidDate', type: 'date', operator: 'inrange', value: undefined },
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
         { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined }
@@ -546,8 +575,12 @@ const FunnelTable = () => {
     setFilterValue(currentFilters);
   }, [status]);
 
-  const onEditCompleted = () => {
+  const onEditCompleted = (bookingId) => {
     const sortEditedData = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+    const currentFilters = [...orFilters];
+    currentFilters.push({ name: '_id', type: 'string', operator: 'eq', value: bookingId });
+    currentFilters.push({ name: '_id', type: 'string', operator: 'neq', value: bookingId });
+    setOrFilters(currentFilters);
     setSortInfo(sortEditedData);
   };
 
@@ -567,9 +600,11 @@ const FunnelTable = () => {
         limit,
         offset: skip,
         sortBy: sortInfo,
-        filterBy: filters
+        filterBy: filters,
+        filterByOr: orFilters
       }
     });
+
     const totalCount = response.data.getBookingsWithCriteria.count;
     return { data: response.data.getBookingsWithCriteria.rows, count: totalCount };
   };

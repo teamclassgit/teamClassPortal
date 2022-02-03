@@ -191,12 +191,14 @@ const EditBookingModal = ({
         });
         console.log('Changing calendar event status', resultStatusUpdated);
       }
+
+      onEditCompleted(currentElement._id);
+
     } catch (ex) {
       console.log(ex);
     }
 
     setProcessing(false);
-    onEditCompleted();
     handleModal();
   };
 
@@ -265,12 +267,14 @@ const EditBookingModal = ({
           console.log('Changing calendar event status', resultStatusUpdated);
         }
       }
+
+      onEditCompleted(currentElement._id);
+
     } catch (ex) {
       console.log(ex);
     }
 
     setProcessing(false);
-    onEditCompleted();
     handleModal();
   };
 

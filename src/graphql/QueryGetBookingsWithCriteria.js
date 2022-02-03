@@ -36,6 +36,8 @@ export default gql`
         signUpDeadline
         depositsPaid
         finalPaid
+        depositPaidDate
+        finalPaymentPaidDate
         isRush
         taxAmount
         serviceFeeAmount
