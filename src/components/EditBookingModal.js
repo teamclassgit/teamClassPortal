@@ -344,11 +344,6 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     })
   };
 
-  console.log('classVariant', classVariant);
-  console.log('classVariantsOptions', classVariantsOptions);
-  console.log('selectedVariant', selectedVariant);
-  console.log('classVariantsOptions[selectedVariant] ', classVariantsOptions && classVariantsOptions[selectedVariant]);
-
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
