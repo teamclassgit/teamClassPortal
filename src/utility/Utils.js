@@ -148,6 +148,7 @@ export const getQueryFiltersFromFilterArray = (filterValue) => {
     .map(({ name, type, operator, value }) => {
       if (type === 'number' && (operator === 'inrange' || operator === 'notinrange')) return { name, type, operator, valueRangeNum: value };
       if (type === 'date' && (operator === 'inrange' || operator === 'notinrange')) return { name, type, operator, valueRange: value };
+      if (type === 'select' && (operator === 'inlist' || operator === 'notinlist')) return { name, type, operator, valueList: value };
       if (type === 'number') return { name, type, operator, valueNum: value };
       return { name, type, operator, value };
     });

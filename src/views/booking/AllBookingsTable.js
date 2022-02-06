@@ -15,6 +15,7 @@ import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
 import NumberFilter from '@inovua/reactdatagrid-community/NumberFilter';
 import DateFilter from '@inovua/reactdatagrid-community/DateFilter';
 import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
+import SelectFilter from '@inovua/reactdatagrid-community/SelectFilter';
 import '@inovua/reactdatagrid-enterprise/index.css';
 import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
 import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
@@ -139,13 +140,32 @@ const AllBookingsTable = () => {
         }
       }
     },
-
+    {
+      name: 'eventCoordinatorEmail',
+      header: 'Coordinator',
+      type: 'string',
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: coordinators?.map((coordinator) => {
+          return { id: coordinator.email, label: coordinator.name };
+        })
+      },
+      width: 200
+    },
     {
       name: 'bookingStage',
       header: 'Stage ',
       type: 'string',
-      filterEditor: StringFilter,
-      filterDelay: 1500,
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: ['quote', 'requested', 'rejected', 'accepted', 'deposit', 'paid', 'closed'].map((c) => {
+          return { id: c, label: c };
+        })
+      },
       defaultWidth: 200,
       render: ({ value, cellProps }) => {
         if (value) {
@@ -174,16 +194,20 @@ const AllBookingsTable = () => {
     { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
     { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
     { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'className', header: 'Class ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
     {
-      name: 'eventCoordinatorName',
-      header: 'Coordinator Name',
+      name: 'className',
+      header: 'Class ',
       type: 'string',
-      defaultVisible: false,
-      filterEditor: StringFilter,
-      filterDelay: 1500
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: classes?.map((teamClass) => {
+          return { id: teamClass.title, label: teamClass.title };
+        })
+      },
+      width: 300
     },
-    { name: 'eventCoordinatorEmail', header: 'Coordinator', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
     {
       name: 'attendees',
       header: 'Attendees ',
@@ -549,14 +573,13 @@ const AllBookingsTable = () => {
         { name: 'updatedAt', type: 'date', operator: 'inrange', value: undefined },
         { name: '_id', type: 'string', operator: 'contains', value: '' },
         { name: 'customerName', type: 'string', operator: 'contains', value: '' },
-        { name: 'bookingStage', type: 'string', operator: 'contains', value: '' },
+        { name: 'bookingStage', type: 'select', operator: 'inlist', value: undefined },
         { name: 'closedReason', type: 'string', operator: 'contains', value: '' },
         { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
         { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
         { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
-        { name: 'eventCoordinatorName', type: 'string', operator: 'contains', value: '' },
-        { name: 'eventCoordinatorEmail', type: 'string', operator: 'contains', value: coordinatorFilterValue },
-        { name: 'className', type: 'string', operator: 'contains', value: '' },
+        { name: 'eventCoordinatorEmail', type: 'select', operator: 'inlist', value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
+        { name: 'className', type: 'select', operator: 'inlist', value: undefined },
         { name: 'attendees', type: 'number', operator: 'gte', value: undefined },
         { name: 'taxAmount', type: 'number', operator: 'gte', value: undefined },
         { name: 'serviceFeeAmount', type: 'number', operator: 'gte', value: undefined },
@@ -597,7 +620,7 @@ const AllBookingsTable = () => {
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
-
+    console.log('filters', filters);
     const response = await apolloClient.query({
       query: queryGetBookingsWithCriteria,
       fetchPolicy: 'network-only',
@@ -699,6 +722,21 @@ ReactDataGrid.defaultProps.filterTypes.string = {
   operators: [
     {
       name: 'contains',
+      fn: {}
+    }
+  ]
+};
+
+ReactDataGrid.defaultProps.filterTypes.select = {
+  type: 'select',
+  emptyValue: undefined,
+  operators: [
+    {
+      name: 'inlist',
+      fn: {}
+    },
+    {
+      name: 'notinlist',
       fn: {}
     }
   ]
