@@ -30,7 +30,7 @@ import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
-import { getBookingAndCalendarEventById } from '../../services/BookingService';
+import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -618,6 +618,11 @@ const AllBookingsTable = () => {
     setFilterValue(currentFilters);
   };
 
+  const getDataToExport = async () => {
+    const filters = getQueryFiltersFromFilterArray(filterValue);
+    return await getAllDataToExport(filters, orFilters, sortInfo);
+  };
+
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
     console.log('filters', filters);
@@ -659,6 +664,7 @@ const AllBookingsTable = () => {
         titleView={'ALL Time Bookings (Beta)'}
         titleBadge={` ${totalRows} records found`}
         showAddModal={() => handleModal()}
+        getDataToExport={getDataToExport}
       ></TasksBar>
       <ReactDataGrid
         idProperty="_id"

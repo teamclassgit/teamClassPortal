@@ -44,6 +44,10 @@ export default gql`
         cardFeeAmount
         totalInvoice
         balance
+        salesTax
+        salesTaxState
+        taxExempt
+        discount
         bookingStage
         closedReason
         payments {

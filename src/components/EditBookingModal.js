@@ -204,7 +204,6 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       }
 
       onEditCompleted(currentElement._id);
-
     } catch (ex) {
       console.log(ex);
     }
@@ -280,7 +279,6 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       }
 
       onEditCompleted(currentElement._id);
-
     } catch (ex) {
       console.log(ex);
     }
@@ -660,9 +658,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                   value={bookingSignUpDeadline}
                   dateformat="Y-m-d H:i"
-                  data-enable-time
+                  data-enable-time={true}
                   id="signUpDateLine"
-                  className="form-control"
+                  className="flatpickr form-control"
                   placeholder="Select Date..."
                   onChange={(selectedDates, dateStr, instance) => {
                     setBookingSignUpDeadline(selectedDates);

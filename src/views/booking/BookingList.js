@@ -15,6 +15,7 @@ import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
+import { getAllDataToExport } from '../../services/BookingService';
 
 const BookingList = () => {
   const defaultFilter = [];
@@ -251,13 +252,33 @@ const BookingList = () => {
 
   const onEditCompleted = (bookingId) => {
     const currentFilters = [...bookingsFilter];
-    currentFilters.push({ name: '_id', type: 'string', operator: 'eq', value: bookingId });
-    currentFilters.push({ name: '_id', type: 'string', operator: 'neq', value: bookingId });
-    setBookingsFilter(currentFilters);
+    const newFilters = [...bookingsFilter];
+    newFilters.push({ name: '_id', type: 'string', operator: 'eq', value: bookingId });
+    newFilters.push({ name: '_id', type: 'string', operator: 'neq', value: bookingId });
+    setBookingsFilter(newFilters);
+    setTimeout(() => {
+      setBookingsFilter(currentFilters);
+    }, 500);
   };
 
   const onAddCompleted = (bookingId) => {
     setTextFilterContext({ type: 'text', value: bookingId });
+  };
+
+  const getDataToExport = async () => {
+    return await getAllDataToExport(
+      [
+        ...mainFilter,
+        {
+          name: 'bookingStage',
+          type: 'string',
+          operator: 'neq',
+          value: 'closed'
+        }
+      ],
+      bookingsFilter,
+      sortInfo
+    );
   };
 
   // ** Function to handle Modal toggle
@@ -270,7 +291,6 @@ const BookingList = () => {
         onChangeLimit={(newLimit) => {
           setLimit(newLimit);
         }}
-        bookings={[]}
         customers={customers}
         coordinators={coordinators}
         isBooking
@@ -284,6 +304,7 @@ const BookingList = () => {
         showView={false}
         titleView={'Bookings '}
         isInProgressBookings={true}
+        getDataToExport={getDataToExport}
       />
       {allBookingsResultQuote.loading ||
       allBookingsResultRequested.loading ||
