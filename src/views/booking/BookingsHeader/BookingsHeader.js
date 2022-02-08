@@ -23,6 +23,7 @@ import PropTypes from 'prop-types';
 import ExportToExcel from '../../../components/ExportToExcel';
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
 import { getCustomerEmail, getCoordinatorName } from '../common';
+import ExportToExcelLegacy from '../../../components/ExportToExcelLegacy';
 
 const BookingsHeader = ({
   classes,
@@ -323,7 +324,7 @@ const BookingsHeader = ({
                 <DropdownMenu right>
                   <DropdownItem className="align-middle w-100">
                     {isPrivateRequest ? (
-                      <ExportToExcel
+                      <ExportToExcelLegacy
                         apiData={privateRequestsExcelTable}
                         fileName={'Private Class Requests'}
                         title={
@@ -335,7 +336,7 @@ const BookingsHeader = ({
                         smallText={<h6 className="small m-0 p-0">Download file with Private Requests</h6>}
                       />
                     ) : isGeneralInquiries ? (
-                      <ExportToExcel
+                      <ExportToExcelLegacy
                         apiData={generalInquiriesExcelTable}
                         fileName={'General Inquires'}
                         title={
@@ -347,7 +348,7 @@ const BookingsHeader = ({
                         smallText={<h6 className="small m-0 p-0">Download file with General Inquiries</h6>}
                       />
                     ) : isDiscountCodes ? (
-                      <ExportToExcel
+                      <ExportToExcelLegacy
                         apiData={discountCodesExcelTable}
                         fileName={'Discount Codes'}
                         title={
@@ -360,7 +361,7 @@ const BookingsHeader = ({
                       />
                     ) : (
                       isGiftBasketsPurchase && (
-                        <ExportToExcel
+                        <ExportToExcelLegacy
                           apiData={giftBasketsPurchaseExcelTable}
                           fileName={'GiftBasketsPurchase'}
                           title={
