@@ -1,5 +1,6 @@
 import moment from 'moment';
 import queryGetTotalsUsingFilter from '../graphql/QueryTotalsBookingsUsingFilter';
+import queryGetBookingsWithCriteria from '../graphql/QueryGetBookingsWithCriteria';
 import queryBookingAndCalendarEventById from '../graphql/QueryBookingAndCalendarEventById';
 import queryCustomerById from '../graphql/QueryCustomerById';
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from '../utility/Constants';
@@ -99,6 +100,105 @@ const getTotalsUsingFilter = async (filters) => {
   return data && data.totals;
 };
 
+const getAllDataToExport = async (filters, orFilters, sortInfo) => {
+  const { data } = await apolloClient.query({
+    query: queryGetBookingsWithCriteria,
+    fetchPolicy: 'network-only',
+    variables: {
+      filterBy: filters,
+      sortBy: sortInfo,
+      filterByOr: orFilters,
+      limit: -1,
+      offset: -1
+    }
+  });
+
+  if (!data?.getBookingsWithCriteria?.rows?.length) return [];
+
+  const bookings = data.getBookingsWithCriteria.rows;
+  const bookingsArray = [];
+  const headers = [
+    '_id',
+    'createdAt',
+    'updatedAt',
+    'className',
+    'attendees',
+    'eventDateTime',
+    'signUpDeadline',
+    'classVariant',
+    'groupEvent',
+    'hasKit',
+    'kitHasAlcohol',
+    'customerName',
+    'customerPhone',
+    'customerEmail',
+    'customerCompany',
+    'eventCoordinatorName',
+    'bookingStage',
+    'closedReason',
+    'capRegistration',
+    'hasInternationalAttendees',
+    'depositsPaid',
+    'depositPaidDate',
+    'finalPaid',
+    'finalPaymentPaidDate',
+    'isRush',
+    'salesTax',
+    'salesTaxState',
+    'taxExempt',
+    'discount',
+    'taxAmount',
+    'serviceFeeAmount',
+    'cardFeeAmount',
+    'totalInvoice',
+    'balance'
+  ];
+
+  bookingsArray.push(headers);
+
+  bookings.forEach((element) => {
+    const row = [
+      element._id,
+      element.createdAt,
+      element.updatedAt,
+      element.className,
+      element.attendees,
+      element.eventDateTime,
+      element.signUpDeadline,
+      element.classVariant?.title,
+      element.classVariant?.groupEvent,
+      element.classVariant?.hasKit,
+      element.classVariant?.kitHasAlcohol,
+      element.customerName,
+      element.customerPhone,
+      element.customerEmail,
+      element.customerCompany,
+      element.eventCoordinatorName,
+      element.bookingStage,
+      element.closedReason,
+      element.capRegistration,
+      element.hasInternationalAttendees,
+      element.depositsPaid,
+      element.depositPaidDate,
+      element.finalPaid,
+      element.finalPaymentPaidDate,
+      element.isRush,
+      element.salesTax,
+      element.salesTaxState,
+      element.taxExempt,
+      element.discount,
+      element.taxAmount,
+      element.serviceFeeAmount,
+      element.cardFeeAmount,
+      element.totalInvoice,
+      element.balance
+    ];
+    bookingsArray.push(row);
+  });
+
+  return bookingsArray;
+};
+
 const getBookingAndCalendarEventById = async (bookingId) => {
   const { ...resultBooking } = await apolloClient.query({
     query: queryBookingAndCalendarEventById,
@@ -121,4 +221,4 @@ const getBookingAndCalendarEventById = async (bookingId) => {
   return { ...booking, calendarEvent: resultBooking.data.calendarEvent, customer: resultCustomer?.data?.customer };
 };
 
-export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById };
+export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport };

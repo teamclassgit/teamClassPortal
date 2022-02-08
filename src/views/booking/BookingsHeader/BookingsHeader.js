@@ -13,7 +13,8 @@ import {
   Input,
   InputGroup,
   InputGroupAddon,
-  UncontrolledButtonDropdown
+  UncontrolledButtonDropdown,
+  Spinner
 } from 'reactstrap';
 import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather';
 import PropTypes from 'prop-types';
@@ -24,7 +25,6 @@ import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
 import { getCustomerEmail, getCoordinatorName } from '../common';
 
 const BookingsHeader = ({
-  bookings,
   classes,
   coordinators,
   userData,
@@ -54,9 +54,10 @@ const BookingsHeader = ({
   showLimit,
   showView,
   switchView,
-  titleView
+  titleView,
+  getDataToExport
 }) => {
-  const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
+  const [isExporting, setIsExporting] = useState(false);
   const [discountCodesExcelTable, setDiscountCodesExcelTable] = useState([]);
   const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([]);
   const [giftBasketsPurchaseExcelTable, setGiftBasketsPurchaseExcelTable] = useState([]);
@@ -70,67 +71,8 @@ const BookingsHeader = ({
   }, [isInProgressBookings, isClosedBookings, isPrivateRequest, isGeneralInquiries, isDiscountCodes, isBooking]);
 
   useEffect(() => {
-    if (bookings) {
-      const bookingsArray = [];
-      const headers = [
-        'createdAt',
-        'UpdatedAt',
-        'BookingId',
-        'Event Date',
-        'Sign Up Deadline',
-        'Status',
-        'Name',
-        'Email',
-        'Phone',
-        'Company',
-        'Coordinator Name',
-        'Class Title',
-        'Class Variant',
-        'Price',
-        'Group Size',
-        'Deposit paid',
-        'Final Payment Paid',
-        'Balance',
-        'Close Booking Reason'
-      ];
-
-      bookingsArray.push(headers);
-
-      for (const i in bookings) {
-        const bookingInfo = bookings[i];
-
-        const row = [
-          bookingInfo.createdAt,
-          bookingInfo.updatedAt,
-          bookingInfo._id,
-          bookingInfo.eventDateTime,
-          bookingInfo.signUpDeadline,
-          bookingInfo.bookingStage,
-          bookingInfo.customerName,
-          bookingInfo.customerEmail,
-          bookingInfo.customerPhone,
-          bookingInfo.customerCompany,
-          bookingInfo.eventCoordinatorName,
-          bookingInfo.className,
-          bookingInfo.classVariant && bookingInfo.classVariant.title,
-          bookingInfo.classVariant && bookingInfo.classVariant.pricePerson + (bookingInfo.classVariant.groupEvent ? ' /Group' : ' /Person'),
-          bookingInfo.attendees,
-          bookingInfo.depositsPaid,
-          bookingInfo.finalPaid,
-          bookingInfo.balance,
-          bookingInfo.closedReason
-        ];
-        bookingsArray.push(row);
-      }
-
-      setAttendeesExcelTable(bookingsArray);
-    }
-  }, [bookings, customers, coordinators, classes]);
-
-  useEffect(() => {
     if (privateRequests) {
       const privateClassRequestsArray = [];
-
       const headers = ['Created', 'Name', 'Email', 'Phone', 'Coordinator', 'Attendees', 'Date Option 1', 'Date Option 2'];
 
       privateClassRequestsArray.push(headers);
@@ -346,8 +288,34 @@ const BookingsHeader = ({
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
             )}
-
-            {showExport && (
+            {showExport && isBooking && (
+              <UncontrolledButtonDropdown>
+                {!isExporting && (
+                  <>
+                    <DropdownToggle color="primary" caret outline title="Export">
+                      <Share size={13} />
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                      <DropdownItem className="align-middle w-100">
+                        <ExportToExcel
+                          apiDataFunc={async () => {
+                            return await getDataToExport();
+                          }}
+                          fileName={'Bookings'}
+                          setIsExporting={setIsExporting}
+                        />
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </>
+                )}
+                {isExporting && (
+                  <DropdownToggle color="primary" caret outline title="Exporting..." disabled={true}>
+                    <Spinner size="sm" />
+                  </DropdownToggle>
+                )}
+              </UncontrolledButtonDropdown>
+            )}
+            {showExport && !isBooking && (
               <UncontrolledButtonDropdown>
                 <DropdownToggle color="primary" caret outline title="Export">
                   <Share size={13} />
@@ -390,36 +358,25 @@ const BookingsHeader = ({
                         }
                         smallText={<h6 className="small m-0 p-0">Download file with Discount Codes</h6>}
                       />
-                    ) : isGiftBasketsPurchase ? (
-                      <ExportToExcel
-                        apiData={giftBasketsPurchaseExcelTable}
-                        fileName={'GiftBasketsPurchase'}
-                        title={
-                          <h6>
-                            <FileText size={13} />
-                            {' Excel File'}
-                          </h6>
-                        }
-                        smallText={<h6 className="small m-0 p-0">Download file with Gift Basket Purchases</h6>}
-                      />
                     ) : (
-                      <ExportToExcel
-                        apiData={attendeesExcelTable}
-                        fileName={'Bookings'}
-                        title={
-                          <h6>
-                            <FileText size={13} />
-                            {' Excel File'}
-                          </h6>
-                        }
-                        smallText={<h6 className="small m-0 p-0">Download file with Bookings</h6>}
-                      />
+                      isGiftBasketsPurchase && (
+                        <ExportToExcel
+                          apiData={giftBasketsPurchaseExcelTable}
+                          fileName={'GiftBasketsPurchase'}
+                          title={
+                            <h6>
+                              <FileText size={13} />
+                              {' Excel File'}
+                            </h6>
+                          }
+                          smallText={<h6 className="small m-0 p-0">Download file with Gift Basket Purchases</h6>}
+                        />
+                      )
                     )}
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
             )}
-
             {showAdd && isBooking && (
               <Button
                 outline
@@ -488,7 +445,6 @@ const BookingsHeader = ({
 export default BookingsHeader;
 
 BookingsHeader.propTypes = {
-  bookings: PropTypes.array.isRequired,
   classes: PropTypes.array.isRequired,
   coordinators: PropTypes.array.isRequired,
   customers: PropTypes.array.isRequired,
@@ -512,5 +468,6 @@ BookingsHeader.propTypes = {
   showLimit: PropTypes.bool.isRequired,
   showView: PropTypes.bool.isRequired,
   switchView: PropTypes.bool.isRequired,
-  titleView: PropTypes.string.isRequired
+  titleView: PropTypes.string.isRequired,
+  getDataToExport: PropTypes.func.isRequired
 };

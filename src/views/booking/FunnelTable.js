@@ -31,7 +31,7 @@ import AddNewBooking from '../../components/AddNewBooking';
 import BookingsTableStatusCards from './BookingsTableStatusCards';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
-import { getBookingAndCalendarEventById } from '../../services/BookingService';
+import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -642,6 +642,11 @@ const FunnelTable = () => {
     console.log(cells);
   }, []);
 
+  const getDataToExport = async () => {
+    const filters = getQueryFiltersFromFilterArray(filterValue);
+    return await getAllDataToExport(filters, orFilters, sortInfo);
+  };
+
   return (
     <div>
       <BookingsTableStatusCards status={status} setStatus={setStatus} filters={filterValue} />
@@ -653,6 +658,7 @@ const FunnelTable = () => {
         titleView={'Bookings Funnel (Beta)'}
         titleBadge={status && status.label}
         showAddModal={() => handleModal()}
+        getDataToExport={getDataToExport}
       ></TasksBar>
       <ReactDataGrid
         idProperty="_id"

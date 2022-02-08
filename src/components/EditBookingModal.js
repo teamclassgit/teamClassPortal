@@ -51,16 +51,7 @@ import {
 // @styles
 import './EditBookingModal.scss';
 
-const EditBookingModal = ({
-  currentElement,
-  allClasses,
-  allCoordinators,
-  editMode,
-  handleClose,
-  handleModal,
-  open,
-  onEditCompleted
-}) => {
+const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted }) => {
   const [active, setActive] = useState('1');
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [bookingNotes, setBookingNotes] = useState([]);
@@ -193,7 +184,6 @@ const EditBookingModal = ({
       }
 
       onEditCompleted(currentElement._id);
-
     } catch (ex) {
       console.log(ex);
     }
@@ -269,7 +259,6 @@ const EditBookingModal = ({
       }
 
       onEditCompleted(currentElement._id);
-
     } catch (ex) {
       console.log(ex);
     }
@@ -575,9 +564,9 @@ const EditBookingModal = ({
                   disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                   value={bookingSignUpDeadline}
                   dateformat="Y-m-d H:i"
-                  data-enable-time
+                  data-enable-time={true}
                   id="signUpDateLine"
-                  className="form-control"
+                  className="flatpickr form-control"
                   placeholder="Select Date..."
                   onChange={(selectedDates, dateStr, instance) => {
                     setBookingSignUpDeadline(selectedDates);

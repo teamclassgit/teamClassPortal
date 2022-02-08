@@ -79,7 +79,7 @@ const BoardBookings = ({
     const quoteColumn = {
       id: 0,
       title: 'Quote',
-      cards: getColumnData(filteredBookingsQuote?.rows || [], 'quote'),
+      cards: filteredBookingsQuote?.rows || [],
       totalBookings: filteredBookingsQuote?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsQuote?.count || 0
     };
@@ -88,7 +88,7 @@ const BoardBookings = ({
     const requestedColumn = {
       id: 0,
       title: 'Date/Time requested',
-      cards: getColumnData(filteredBookingsRequested?.rows || [], 'date-requested'),
+      cards: filteredBookingsRequested?.rows || [],
       totalBookings: filteredBookingsRequested?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsRequested?.count || 0
     };
@@ -97,7 +97,7 @@ const BoardBookings = ({
     const acceptedColumn = {
       id: 0,
       title: 'Date/Time accepted',
-      cards: getColumnData(filteredBookingsAccepted?.rows || [], 'accepted'),
+      cards: filteredBookingsAccepted?.rows || [],
       totalBookings: filteredBookingsAccepted?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsAccepted?.count || 0
     };
@@ -106,7 +106,7 @@ const BoardBookings = ({
     const depositColumn = {
       id: 0,
       title: 'Deposit paid',
-      cards: getColumnData(filteredBookingsDeposit?.rows || [], 'confirmed'),
+      cards: filteredBookingsDeposit?.rows || [],
       totalBookings: filteredBookingsDeposit?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsDeposit?.count || 0
     };
@@ -115,7 +115,7 @@ const BoardBookings = ({
     const finalColumn = {
       id: 0,
       title: 'Paid (Full)',
-      cards: getColumnData(filteredBookingsPaid?.rows || [], 'paid'),
+      cards: filteredBookingsPaid?.rows || [],
       totalBookings: filteredBookingsPaid?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsPaid?.count || 0
     };
