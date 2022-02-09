@@ -133,20 +133,22 @@ const AddNewAttendee = ({
   const saveNewAttendee = async () => {
     setProcessing(true);
 
-    let additionalFields = (teamClassInfo.registrationFields && teamClassInfo.registrationFields.filter((element) => element.active === true)) || [];
-
-    additionalFields =
-      additionalFields &&
-      additionalFields.map((item) => {
-        const dynamicValue = dynamicValues.find((item2) => item2.name === item.label);
-        return {
-          name: item.label,
-          value: (dynamicValue && dynamicValue.value) || '',
-          order: item.order
-        };
-      });
-
     try {
+      let additionalFields =
+        (teamClassInfo.registrationFields && teamClassInfo.registrationFields.filter((element) => element.active === true)) || [];
+
+      additionalFields = dynamicValues
+        ? additionalFields &&
+          additionalFields.map((item) => {
+            const dynamicValue = dynamicValues.find((item2) => item2.name === item.label);
+            return {
+              name: item.label,
+              value: (dynamicValue && dynamicValue.value) || '',
+              order: item.order
+            };
+          })
+        : [];
+
       const newElement = {
         id: currentElement && currentElement._id ? currentElement._id : uuid(),
         city: newCity,
@@ -170,13 +172,12 @@ const AddNewAttendee = ({
       setData(newData);
       updateAttendeesCount(newData.length);
 
-      setProcessing(false);
-
       handleModal();
     } catch (ex) {
       console.log(ex);
-      setProcessing(false);
     }
+
+    setProcessing(false);
   };
 
   const cancel = () => {
