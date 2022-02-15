@@ -108,41 +108,41 @@ const BookingCalendarList = () => {
       queryOr.push({ name: 'customerPhone', type: 'string', operator: 'contains', value: textFilterContext.value });
       queryOr.push({ name: 'customerCompany', type: 'string', operator: 'contains', value: textFilterContext.value });
       queryOr.push({ name: '_id', type: 'string', operator: 'contains', value: textFilterContext.value });
-    } else {
-      if (classFilterContext) {
+    }
+
+    if (classFilterContext) {
+      const filter = {
+        name: 'classId',
+        type: 'string',
+        operator: 'contains',
+        value: classFilterContext.value
+      };
+      query.push(filter);
+    }
+
+    if (dateFilterContext) {
+      const filter = {
+        name: 'createdAt',
+        type: 'date',
+        operator: 'inrange',
+        value: {
+          start: moment(dateFilterContext.value[0]).format(),
+          end: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
+        }
+      };
+      query.push(filter);
+    }
+
+    if (coordinatorFilterContext && coordinatorFilterContext.value) {
+      const coordinators = coordinatorFilterContext.value;
+      if (coordinators?.length) {
         const filter = {
-          name: 'classId',
-          type: 'string',
-          operator: 'contains',
-          value: classFilterContext.value
+          name: 'eventCoordinatorId',
+          type: 'select',
+          operator: 'inlist',
+          valueList: coordinators
         };
         query.push(filter);
-      }
-
-      if (dateFilterContext) {
-        const filter = {
-          name: 'createdAt',
-          type: 'date',
-          operator: 'inrange',
-          value: {
-            start: moment(dateFilterContext.value[0]).format(),
-            end: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
-          }
-        };
-        query.push(filter);
-      }
-
-      if (coordinatorFilterContext && coordinatorFilterContext.value) {
-        const coordinators = coordinatorFilterContext.value;
-        coordinators.forEach((coordinator) => {
-          const filter = {
-            name: 'eventCoordinatorId',
-            type: 'string',
-            operator: 'contains',
-            value: coordinator
-          };
-          queryOr.push(filter);
-        });
       }
     }
 

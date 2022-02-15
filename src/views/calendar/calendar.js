@@ -9,7 +9,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
 import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Alert } from 'reactstrap';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import './calendar.scss';
 import { BOOKING_DATE_REQUESTED_STATUS } from '../../utility/Constants';
 
@@ -36,8 +36,8 @@ const Calendar = ({ bookings, classes }) => {
           classVariant:
             item.classVariant && `${item.classVariant.title} $${item.classVariant.pricePerson}${item.classVariant.groupEvent ? '/group' : '/person'}`,
           signUpDeadline: item.signUpDeadline,
-          eventDate: moment(item.eventDateTime).format('LLL'),
-          date: moment(item.eventDateTime).format('YYYY-MM-DD HH:mm'),
+          eventDate: moment(item.eventDateTime)?.tz(item.timezone)?.format('LLL'),
+          date: moment(item.eventDateTime)?.tz(item.timezone)?.format('YYYY-MM-DD HH:mm'),
           backgroundColor: item.status === BOOKING_DATE_REQUESTED_STATUS ? '#FF6563' : '#557FE7',
           status: item.status
         };

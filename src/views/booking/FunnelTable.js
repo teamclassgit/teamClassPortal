@@ -6,7 +6,7 @@ import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
 import { Calendar, Check, DollarSign, Edit2, User, Users } from 'react-feather';
 import Avatar from '@components/avatar';
-import moment from 'moment';
+import moment from 'moment-timezone';
 window.moment = moment;
 import { getQueryFiltersFromFilterArray, getUserData } from '../../utility/Utils';
 
@@ -86,270 +86,9 @@ const FunnelTable = () => {
 
   const columns = [
     {
-      name: 'createdAt',
-      header: 'Created',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
-        });
-      }
-    },
-    {
-      name: 'bookingStage',
-      header: 'Stage ',
-      type: 'string',
-      filterEditor: StringFilter,
-      filterDelay: 1500,
-      defaultWidth: 200,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return <span className="float-left">{value}</span>;
-        }
-      },
-      defaultVisible: false
-    },
-    {
-      name: 'closedReason',
-      header: 'Closed Reason ',
-      type: 'string',
-      filterEditor: StringFilter,
-      filterDelay: 1500,
-      defaultWidth: 200,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return <span className="float-left">{value}</span>;
-        }
-      },
-      defaultVisible: false
-    },
-    {
-      name: 'updatedAt',
-      header: 'Updated',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
-        });
-      },
-      defaultVisible: false
-    },
-    {
-      name: '_id',
-      header: 'Id',
-      type: 'string',
-      filterEditor: StringFilter,
-      filterDelay: 1500,
-      width: 200,
-      render: ({ value, cellProps }) => {
-        return (
-          <>
-            <small>
-              <a
-                href="#"
-                onClick={async () => {
-                  setOrFilters([]);
-                  setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
-                  const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
-                  if (!bookingAndCalendarEvent) return;
-                  setCurrentElement(bookingAndCalendarEvent);
-                  handleEditModal();
-                }}
-                title={`Edit booking info ${cellProps.data._id}`}
-              >
-                {cellProps.data._id}
-              </a>
-            </small>
-          </>
-        );
-      }
-    },
-    {
-      name: 'eventCoordinatorEmail',
-      header: 'Coordinator',
-      type: 'string',
-      filterEditor: SelectFilter,
-      filterEditorProps: {
-        multiple: true,
-        wrapMultiple: false,
-        dataSource: coordinators?.map((coordinator) => {
-          return { id: coordinator.email, label: coordinator.name };
-        })
-      },
-      width: 200
-    },
-    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    {
-      name: 'className',
-      header: 'Class ',
-      type: 'string',
-      filterEditor: SelectFilter,
-      filterEditorProps: {
-        multiple: true,
-        wrapMultiple: false,
-        dataSource: classes?.map((teamClass) => {
-          return { id: teamClass.title, label: teamClass.title };
-        })
-      },
-      width: 300
-    },
-    {
-      name: 'attendees',
-      header: 'Attendees ',
-      type: 'number',
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      defaultWidth: 112,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return <span className="float-right">{value}</span>;
-        }
-      }
-    },
-    {
-      name: 'eventDateTime',
-      header: 'Event date',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
-        }
-      }
-    },
-    {
-      name: 'signUpDeadline',
-      header: 'Registration',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
-        }
-      }
-    },
-    {
-      name: 'taxAmount',
-      header: 'Tax',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      defaultVisible: false,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'serviceFeeAmount',
-      header: 'Service Fee',
-      type: 'number',
-      defaultWidth: 150,
-      defaultVisible: false,
-      filterDelay: 1500,
-      filterEditor: NumberFilter,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'cardFeeAmount',
-      header: 'Card Fee',
-      type: 'number',
-      defaultWidth: 150,
-      defaultVisible: false,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'totalInvoice',
-      header: 'Total',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'depositsPaid',
-      header: 'Deposits',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'depositPaidDate',
-      header: 'Deposits date',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
-        }
-      }
-    },
-    {
-      name: 'finalPaid',
-      header: 'Final paid',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'finalPaymentPaidDate',
-      header: 'Final payment date',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
-        }
-      }
-    },
-    {
-      name: 'balance',
-      header: 'Balance',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
       name: 'actions',
       header: 'Links',
-      defaultWidth: 220,
+      defaultWidth: 200,
       render: ({ value, cellProps }) => {
         if (cellProps.data) {
           return cellProps.data.status === 'quote' ? (
@@ -507,6 +246,267 @@ const FunnelTable = () => {
             )
           );
         }
+      }
+    },
+    {
+      name: 'createdAt',
+      header: 'Created',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        return moment(value).calendar(null, {
+          lastDay: '[Yesterday]',
+          sameDay: 'LT',
+          lastWeek: 'dddd',
+          sameElse: 'MMMM Do, YYYY'
+        });
+      }
+    },
+    {
+      name: 'bookingStage',
+      header: 'Stage ',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      },
+      defaultVisible: false
+    },
+    {
+      name: 'closedReason',
+      header: 'Closed Reason ',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      },
+      defaultVisible: false
+    },
+    {
+      name: 'updatedAt',
+      header: 'Updated',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        return moment(value).calendar(null, {
+          lastDay: '[Yesterday]',
+          sameDay: 'LT',
+          lastWeek: 'dddd',
+          sameElse: 'MMMM Do, YYYY'
+        });
+      },
+      defaultVisible: false
+    },
+    {
+      name: '_id',
+      header: 'Id',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      width: 200,
+      render: ({ value, cellProps }) => {
+        return (
+          <>
+            <small>
+              <a
+                href="#"
+                onClick={async () => {
+                  setOrFilters([]);
+                  setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
+                  const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
+                  if (!bookingAndCalendarEvent) return;
+                  setCurrentElement(bookingAndCalendarEvent);
+                  handleEditModal();
+                }}
+                title={`Edit booking info ${cellProps.data._id}`}
+              >
+                {cellProps.data._id}
+              </a>
+            </small>
+          </>
+        );
+      }
+    },
+    {
+      name: 'eventCoordinatorEmail',
+      header: 'Coordinator',
+      type: 'string',
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: coordinators?.map((coordinator) => {
+          return { id: coordinator.email, label: coordinator.name };
+        })
+      },
+      width: 200
+    },
+    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    {
+      name: 'className',
+      header: 'Class ',
+      type: 'string',
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: classes?.map((teamClass) => {
+          return { id: teamClass.title, label: teamClass.title };
+        })
+      },
+      width: 300
+    },
+    {
+      name: 'attendees',
+      header: 'Attendees ',
+      type: 'number',
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultWidth: 112,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-right">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'eventDateTime',
+      header: 'Event date',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return `${moment(value)?.tz(cellProps.data.timezone)?.format('LLL')} CT`;
+        }
+      }
+    },
+    {
+      name: 'signUpDeadline',
+      header: 'Registration',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return `${moment(value)?.format('LLL')}`;
+        }
+      }
+    },
+    {
+      name: 'taxAmount',
+      header: 'Tax',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultVisible: false,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'serviceFeeAmount',
+      header: 'Service Fee',
+      type: 'number',
+      defaultWidth: 150,
+      defaultVisible: false,
+      filterDelay: 1500,
+      filterEditor: NumberFilter,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'cardFeeAmount',
+      header: 'Card Fee',
+      type: 'number',
+      defaultWidth: 150,
+      defaultVisible: false,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'totalInvoice',
+      header: 'Total',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'depositsPaid',
+      header: 'Deposits',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'depositPaidDate',
+      header: 'Deposits date',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return moment(value).format('LLL');
+        }
+      }
+    },
+    {
+      name: 'finalPaid',
+      header: 'Final paid',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'finalPaymentPaidDate',
+      header: 'Final payment date',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return moment(value).format('LLL');
+        }
+      }
+    },
+    {
+      name: 'balance',
+      header: 'Balance',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
       }
     }
   ];

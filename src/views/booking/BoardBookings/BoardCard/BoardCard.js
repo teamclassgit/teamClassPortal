@@ -2,7 +2,7 @@
 import Avatar from '@components/avatar';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone } from 'react-feather';
 import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
 import { useHistory } from 'react-router';
@@ -35,6 +35,7 @@ const BoardCard = ({
     customerPhone,
     customerCompany,
     eventDateTime,
+    timezone,
     rescheduleDateTime,
     customerId,
     eventCoordinatorName,
@@ -89,7 +90,7 @@ const BoardCard = ({
   useEffect(() => {
     if (!eventDateTime) return;
 
-    const timeObject = `${moment(eventDateTime).format('hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
+    const timeObject = `${moment(eventDateTime)?.tz(timezone)?.format('hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
     setTime(timeObject);
     setDate(eventDateTime);
 
@@ -238,7 +239,7 @@ const BoardCard = ({
             <p className="m-0 p-0">
               <small>
                 <strong>Event: </strong>
-                {`${moment(eventDateTime).format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`}
+                {`${moment(eventDateTime)?.tz(timezone)?.format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`}
               </small>
               {rescheduleDateTime && (
                 <small>
@@ -247,7 +248,7 @@ const BoardCard = ({
                       <br />
                       Change:{' '}
                     </strong>
-                    {`${moment(rescheduleDateTime).format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`}
+                    {`${moment(rescheduleDateTime)?.tz(timezone)?.format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`}
                   </span>
                 </small>
               )}
