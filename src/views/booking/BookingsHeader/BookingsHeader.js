@@ -68,7 +68,7 @@ const BookingsHeader = ({
   const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext);
 
   useEffect(() => {
-    setTextFilterContext('');
+    setTextFilterContext(null);
   }, [isInProgressBookings, isClosedBookings, isPrivateRequest, isGeneralInquiries, isDiscountCodes, isBooking]);
 
   useEffect(() => {
@@ -95,10 +95,6 @@ const BookingsHeader = ({
       setPrivateRequestsExcelTable(privateClassRequestsArray);
     }
   }, [privateRequests, coordinators]);
-
-  useEffect(() => {
-    setSearchValue(textFilterContext?.value);
-  }, [textFilterContext]);
 
   useEffect(() => {
     if (generalInquiries) {

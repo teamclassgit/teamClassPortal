@@ -34,6 +34,7 @@ export default gql`
         hasInternationalAttendees
         eventDateTimeStatus
         signUpDeadline
+        timezone
         depositsPaid
         finalPaid
         depositPaidDate
