@@ -26,7 +26,7 @@ import Select from 'react-select';
 import classnames from 'classnames';
 import moment from 'moment';
 import { useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck } from 'react-feather';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
@@ -78,6 +78,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [selectedPriceTier, setSelectedPriceTier] = React.useState(null);
   const [selectedMinimumTier, setSelectedMinimumTier] = React.useState(null);
   const [selectedMaximumTier, setSelectedMaximumTier] = React.useState(null);
+  const [joinLink, setJoinLink] = useState("");
+  const [passwordLink, setPasswordLink] = useState("");
+  const [trackingLink, setTrackingLink] = useState("");
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -110,6 +113,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setSelectedPriceTier(currentElement.classVariant && currentElement.classVariant.pricePerson);
     setSelectedMinimumTier(currentElement.classVariant && currentElement.classVariant.minimum);
     setSelectedMaximumTier(currentElement.classVariant && currentElement.classVariant.maximum);
+    setTrackingLink(currentElement.shippingTrackingLink);
+    setJoinLink(currentElement.joinInfo && currentElement.joinInfo.joinUrl);
+    setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
   }, [currentElement]);
 
   useEffect(() => {
@@ -245,7 +251,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
           closedReason: closedBookingReason,
           notes: bookingNotes,
-          capRegistration: isCapRegistration
+          capRegistration: isCapRegistration,
+          shippingTrackingLink: trackingLink,
+          joinInfo: {joinUrl: joinLink, password: passwordLink}
         }
       });
 
@@ -365,18 +373,22 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
         </NavItem>
         <NavItem>
           <NavLink
-            title="Notes"
+            title="Settings"
             active={active === '2'}
             onClick={() => {
               toggle('2');
             }}
           >
-            <Edit size="18" />
+            <Settings size="18" />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink title="Settings">
-            <Settings size="18" />
+          <NavLink
+            title="Notes"
+            active={active === '3'}
+            onClick={() => toggle('3')}
+          >
+            <Edit size="18" />
           </NavLink>
         </NavItem>
       </Nav>
@@ -770,7 +782,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
             )}
           </ModalBody>
         </TabPane>
-        <TabPane tabId="2">
+        <TabPane tabId="3">
           <b className="text-primary ml-2">Notes</b>
           <Card className="notes-card mt-1">
             <CardBody>
@@ -817,7 +829,99 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
             </Button>
           </div>
         </TabPane>
-        <TabPane tabId="3">Settings tab</TabPane>
+        <TabPane tabId="2">
+          <ModalBody className="flex-grow-1">
+            <FormGroup>
+              <Label for="joinUrl">
+                <strong>Id:</strong> <span className="text-primary">{`${currentElement?._id}`}</span>
+              </Label>
+            </FormGroup>
+            <FormGroup>
+              <Label for="joinUrl">Event join info</Label>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Video size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  id="joinUrl"
+                  name="joinUrl"
+                  placeholder="Event link"
+                  value={joinLink}
+                  pattern="https?://.+"
+                  onChange={(e) => setJoinLink(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Key size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  id="key"
+                  name="key"
+                  placeholder="Event password"
+                  value={passwordLink}
+                  onChange={(e) => setPasswordLink(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <Label for="trackingLink">Shipping tracking</Label>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Truck size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  id="trackingLink"
+                  name="trackingLink"
+                  placeholder="Tracking doc link"
+                  value={trackingLink}
+                  pattern="https?://.+"
+                  onChange={(e) => setTrackingLink(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
+
+            {editMode && (
+              <div align="center">
+                <Button
+                  className="mr-1"
+                  size="sm"
+                  color={closedBookingReason ? 'danger' : 'primary'}
+                  onClick={saveChangesBooking}
+                  disabled={
+                    !customerName ||
+                    !customerEmail ||
+                    !emailValid ||
+                    !customerPhone ||
+                    !coordinatorId ||
+                    !bookingTeamClassId ||
+                    !classVariant ||
+                    !groupSize
+                  }
+                >
+                  {!processing && !closedBookingReason
+                    ? 'Save'
+                    : closedBookingReason && processing
+                    ? 'Saving...'
+                    : processing
+                    ? 'Saving...'
+                    : 'Close booking?'}
+                </Button>
+                <Button color="secondary" size="sm" onClick={cancel} outline>
+                  Cancel
+                </Button>
+              </div>
+            )}
+          </ModalBody>
+        </TabPane>
       </TabContent>
     </Modal>
   );

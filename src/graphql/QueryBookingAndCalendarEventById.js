@@ -111,6 +111,13 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      shippingTrackingLink
+      joinInfo {
+        eventId
+        joinUrl
+        manualLink
+        password
+      }
     }
   }
 `;

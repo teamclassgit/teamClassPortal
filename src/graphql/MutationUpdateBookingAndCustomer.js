@@ -29,6 +29,8 @@ export default gql`
     $company: String
     $closedReason: String
     $capRegistration: Boolean
+    $joinInfo: BookingJoinInfoUpdateInput
+    $shippingTrackingLink: String
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -92,6 +94,8 @@ export default gql`
         signUpDeadline: $signUpDeadline
         closedReason: $closedReason
         capRegistration: $capRegistration
+        joinInfo: $joinInfo
+        shippingTrackingLink: $shippingTrackingLink
       }
     ) {
       _id
@@ -136,6 +140,13 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      shippingTrackingLink
+      joinInfo {
+        eventId
+        joinUrl
+        manualLink
+        password
+      }
     }
   }
 `;
