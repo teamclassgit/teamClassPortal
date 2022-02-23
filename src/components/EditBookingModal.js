@@ -35,7 +35,7 @@ import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
 import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
-import { getUserData, isValidEmail } from '../utility/Utils';
+import { getUserData, isValidEmail, isUrlValid } from '../utility/Utils';
 import { selectThemeColors } from '@utils';
 import {
   BOOKING_CLOSED_STATUS,
@@ -81,6 +81,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [joinLink, setJoinLink] = useState("");
   const [passwordLink, setPasswordLink] = useState("");
   const [trackingLink, setTrackingLink] = useState("");
+  const [isValidUrl, setIsValidUrl] = useState({
+    trackingLink: true,
+    joinUrl: true
+  });
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -140,6 +144,11 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
 
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
+  };
+
+  const urlValidation = ({target}) => {
+    const {name, value} = target;
+    setIsValidUrl({...isValidUrl, [name]: isUrlValid(value)});
   };
 
   const options = { phone: true, phoneRegionCode: 'US' };
@@ -845,12 +854,13 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   </InputGroupText>
                 </InputGroupAddon>
                 <Input
+                  type="text"
                   id="joinUrl"
                   name="joinUrl"
                   placeholder="Event link"
                   value={joinLink}
-                  pattern="https?://.+"
                   onChange={(e) => setJoinLink(e.target.value)}
+                  onBlur={(e) => urlValidation(e)}
                 />
               </InputGroup>
             </FormGroup>
@@ -862,6 +872,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   </InputGroupText>
                 </InputGroupAddon>
                 <Input
+                  type="text"
                   id="key"
                   name="key"
                   placeholder="Event password"
@@ -879,12 +890,13 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   </InputGroupText>
                 </InputGroupAddon>
                 <Input
+                  type="text"
                   id="trackingLink"
                   name="trackingLink"
                   placeholder="Tracking doc link"
                   value={trackingLink}
-                  pattern="https?://.+"
                   onChange={(e) => setTrackingLink(e.target.value)}
+                  onBlur={(e) => urlValidation(e)}
                 />
               </InputGroup>
             </FormGroup>
@@ -904,7 +916,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                     !coordinatorId ||
                     !bookingTeamClassId ||
                     !classVariant ||
-                    !groupSize
+                    !groupSize || 
+                    !isValidUrl.joinUrl ||
+                    !isValidUrl.trackingLink
                   }
                 >
                   {!processing && !closedBookingReason
