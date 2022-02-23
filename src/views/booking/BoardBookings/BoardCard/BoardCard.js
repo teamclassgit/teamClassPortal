@@ -476,7 +476,7 @@ const BoardCard = ({
                   href={joinInfo?.joinUrl}
                   target={'_blank'}
                   rel="noopener noreferrer"
-                  title={`password: ${joinInfo.password}`}
+                  title={joinInfo?.password ? `password: ${joinInfo.password}` : ""}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Video size={18} />} />
                 </a>
