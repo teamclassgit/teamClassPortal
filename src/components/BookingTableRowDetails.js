@@ -110,7 +110,7 @@ const RowDetails = ({ data }) => {
                   <a href={data?.joinInfo?.joinUrl} target={'_blank'} rel="noopener noreferrer" title={'Zoom link'}>
                     Link to the conference
                   </a>
-                  {` (${data?.joinInfo?.password})`}
+                  {data?.joinInfo?.password ? `(${data?.joinInfo?.password})` : ""}
                   <CopyClipboard className="z-index-2" text={data?.joinInfo?.joinUrl} />
                 </>
               ) : (

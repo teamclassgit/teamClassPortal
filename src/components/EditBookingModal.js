@@ -232,6 +232,18 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
 
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
+      let joinInfo = {...currentElement.joinInfo};
+      if (!joinLink && !passwordLink) {
+        joinInfo = undefined;
+      } else if (joinInfo && joinInfo.joinUrl) {
+        joinInfo.joinUrl = joinLink;
+        joinInfo.password = passwordLink;
+      } else {
+        joinInfo = {
+          joinUrl: joinLink,
+          password: passwordLink
+        };
+      }
       const resultUpdateBooking = await updateBooking({
         variables: {
           bookingId: currentElement._id,
@@ -262,7 +274,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           notes: bookingNotes,
           capRegistration: isCapRegistration,
           shippingTrackingLink: trackingLink,
-          joinInfo: {joinUrl: joinLink, password: passwordLink}
+          joinInfo,
+          joinInfo_unset: joinInfo ? false : true
         }
       });
 

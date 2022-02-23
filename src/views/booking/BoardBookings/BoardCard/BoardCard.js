@@ -302,7 +302,7 @@ const BoardCard = ({
           </Button>
         </CardHeader>
         <CardBody className="p-1 ">{flippedCard ? cardBack() : cardFront()}</CardBody>
-        <CardFooter className="card-board-footer">
+        <CardFooter className="card-board-footer justify-content-end">
           {status === 'quote' ? (
             <div align="right">
               <a
@@ -429,7 +429,7 @@ const BoardCard = ({
               "justify-content-between" : 
                 "justify-content-end"}`}
           >
-            <div>
+            <div className="ml-1">
               {shippingTrackingLink && (
                 <a
                 className="mr-1"
@@ -459,7 +459,7 @@ const BoardCard = ({
         )}
         {eventDateTimeStatus === DATE_AND_TIME_REJECTED_STATUS && (
           <CardFooter className="card-board-footer pr-1">
-            <div>
+            <div className="ml-1">
               {shippingTrackingLink && (
                 <a
                   className="mr-1"

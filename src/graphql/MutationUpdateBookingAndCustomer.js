@@ -30,6 +30,7 @@ export default gql`
     $closedReason: String
     $capRegistration: Boolean
     $joinInfo: BookingJoinInfoUpdateInput
+    $joinInfo_unset: Boolean
     $shippingTrackingLink: String
   ) {
     updateOneCustomer(
@@ -95,6 +96,7 @@ export default gql`
         closedReason: $closedReason
         capRegistration: $capRegistration
         joinInfo: $joinInfo
+        joinInfo_unset: $joinInfo_unset
         shippingTrackingLink: $shippingTrackingLink
       }
     ) {
