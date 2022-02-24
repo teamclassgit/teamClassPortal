@@ -458,30 +458,7 @@ const BoardCard = ({
           </CardFooter>
         )}
         {eventDateTimeStatus === DATE_AND_TIME_REJECTED_STATUS && (
-          <CardFooter className="card-board-footer pr-1">
-            <div className="ml-1">
-              {shippingTrackingLink && (
-                <a
-                  className="mr-1"
-                  href={shippingTrackingLink}
-                  target={'_blank'}
-                  rel="noopener noreferrer"
-                  title={'Shipping Tracking'}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Truck size={18} />} />
-                </a>
-              )}
-              {joinInfo && joinInfo?.joinUrl && (
-                <a
-                  href={joinInfo?.joinUrl}
-                  target={'_blank'}
-                  rel="noopener noreferrer"
-                  title={joinInfo?.password ? `password: ${joinInfo.password}` : ""}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Video size={18} />} />
-                </a>
-              )}
-            </div>
+          <CardFooter className="card-board-footer justify-content-end pr-1">
             <Badge size="sm" color={`light-warning`} pill>
               Rejected
             </Badge>
