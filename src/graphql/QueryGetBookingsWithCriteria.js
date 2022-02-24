@@ -72,6 +72,13 @@ export default gql`
           pricePerson
           title
         }
+        shippingTrackingLink
+        joinInfo {
+          eventId
+          joinUrl
+          manualLink
+          password
+        }
       }
     }
   }

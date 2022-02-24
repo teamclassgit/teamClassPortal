@@ -94,6 +94,11 @@ export const isPhoneValid = (phone) => {
   return !phone || reg.test(phone);
 };
 
+export const isUrlValid = (url) => {
+  const reg = /https?:\/\/.+/;
+  return !url || reg.test(url);
+};
+
 // ** React Select Theme Colors
 export const selectThemeColors = (theme) => ({
   ...theme,

@@ -102,6 +102,37 @@ const RowDetails = ({ data }) => {
             <td>Sign Up Date</td>
             <td>{data.signUpDeadline && moment(data.signUpDeadline).format('LL')}</td>
           </tr>
+          <tr>
+            <td>Conference Link</td>
+            <td>
+              {data?.joinInfo && data?.joinInfo?.joinUrl ? (
+                <>
+                  <a href={data?.joinInfo?.joinUrl} target={'_blank'} rel="noopener noreferrer" title={'Zoom link'}>
+                    Link to the conference
+                  </a>
+                  {data?.joinInfo?.password ? `(${data?.joinInfo?.password})` : ""}
+                  <CopyClipboard className="z-index-2" text={data?.joinInfo?.joinUrl} />
+                </>
+              ) : (
+                <span>No link available</span>
+              )}
+            </td>
+          </tr>
+          <tr>
+            <td>Shipping tracking link</td>
+            <td>
+              {data?.shippingTrackingLink ? (
+                <>
+                  <a href={data?.shippingTrackingLink} target={'_blank'} rel="noopener noreferrer" title={'Shipping tracking'}>
+                    Link to shipping tracking document
+                  </a>
+                  <CopyClipboard className="z-index-2" text={data?.shippingTrackingLink} />
+                </>
+              ) : (
+                <span>No link available</span>
+              )}
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

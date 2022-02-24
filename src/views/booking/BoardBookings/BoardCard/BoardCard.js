@@ -3,7 +3,7 @@ import Avatar from '@components/avatar';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment-timezone';
-import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone } from 'react-feather';
+import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video } from 'react-feather';
 import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
 import { useHistory } from 'react-router';
 // @scripts
@@ -46,7 +46,9 @@ const BoardCard = ({
     eventCoordinatorId,
     signUpDeadline,
     closedReason,
-    totalInvoice
+    totalInvoice,
+    shippingTrackingLink,
+    joinInfo
   }
 }) => {
   const [date, setDate] = useState(null);
@@ -300,7 +302,7 @@ const BoardCard = ({
           </Button>
         </CardHeader>
         <CardBody className="p-1 ">{flippedCard ? cardBack() : cardFront()}</CardBody>
-        <CardFooter className="card-board-footer">
+        <CardFooter className="card-board-footer justify-content-end">
           {status === 'quote' ? (
             <div align="right">
               <a
@@ -422,14 +424,41 @@ const BoardCard = ({
         </CardFooter>
 
         {showFinalPaymentLabel && (
-          <CardFooter className="card-board-footer pr-1">
+          <CardFooter 
+            className={`card-board-footer pr-1 ${shippingTrackingLink || joinInfo?.joinUrl ? 
+              "justify-content-between" : 
+                "justify-content-end"}`}
+          >
+            <div className="ml-1">
+              {shippingTrackingLink && (
+                <a
+                className="mr-1"
+                  href={shippingTrackingLink}
+                  target={'_blank'}
+                  rel="noopener noreferrer"
+                  title={'Shipping Tracking'}
+                >
+                  <Avatar color="light-primary" size="sm" icon={<Truck size={18} />} />
+                </a>
+              )}
+              {joinInfo && joinInfo?.joinUrl && (
+                <a
+                  href={joinInfo?.joinUrl}
+                  target={'_blank'}
+                  rel="noopener noreferrer"
+                  title={`password: ${joinInfo.password}`}
+                >
+                  <Avatar color="light-primary" size="sm" icon={<Video size={18} />} />
+                </a>
+              )}
+            </div>
             <Badge size="sm" color={`light-${showFinalPaymentLabel}`} pill>
               Final Payment
             </Badge>
           </CardFooter>
         )}
         {eventDateTimeStatus === DATE_AND_TIME_REJECTED_STATUS && (
-          <CardFooter className="card-board-footer pr-1">
+          <CardFooter className="card-board-footer justify-content-end pr-1">
             <Badge size="sm" color={`light-warning`} pill>
               Rejected
             </Badge>
