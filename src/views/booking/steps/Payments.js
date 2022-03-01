@@ -61,7 +61,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
 
     const newPayment = { ...payment };
     newPayment.paymentName = 'deposit';
-    const newPaymentsList = payments.filter((element) => element.paymentName !== 'final');
+    const newPaymentsList = payments.filter((element) => element.paymentName !== 'final' || element.status !== 'succeeded');
     newPaymentsList.push(newPayment);
 
     try {
@@ -287,7 +287,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                               <></>
                             )}
                             {/* Deposit payment to final */}
-                            {payments && !payments.filter(item => item.paymentName === "final").length > 0 && (
+                            {payments && !payments.filter(item => item.paymentName === "final" && item.status === "succeeded").length > 0 && (
                               !processing && element.paymentName === 'deposit' && element.status === PAYMENT_STATUS_SUCCEEDED && (
                                 !clickedConvertToFinal ? (
                                   <small>
