@@ -86,18 +86,19 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     setProcessing(false);
   };
 
-  const convertFinalPaymentToFinal = async (payment, idx) => {
+  const convertDepositPaymentToFinal = async (payment, idx) => {
     setProcessing(true);
 
     const newPayment = { ...payment };
     newPayment.paymentName = 'final';
-    payments[idx] = newPayment;
+    const newPaymentsArray = [...payments];
+    newPaymentsArray[idx] = newPayment;
 
     try {
       const result = await updateBooking({
         variables: {
           bookingId: booking._id,
-          payments,
+          payments: newPaymentsArray,
           status: BOOKING_PAID_STATUS,
           updatedAt: new Date()
         }
@@ -315,7 +316,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                                           href="#"
                                           onClick={(e) => {
                                             e.preventDefault();
-                                            convertFinalPaymentToFinal(element, index);
+                                            convertDepositPaymentToFinal(element, index);
                                           }}
                                         >
                                           Yes
