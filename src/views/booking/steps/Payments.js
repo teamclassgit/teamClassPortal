@@ -34,6 +34,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [clickedConvert, setClickedConvert] = useState(false);
+  const [clickedConvertToFinal, setClickedConvertToFinal] = useState(false);
   const [payments, setPayments] = useState([]);
   const [modal, setModal] = useState(false);
   const [mode, setMode] = useState(null);
@@ -82,6 +83,36 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     }
 
     setClickedConvert(false);
+    setProcessing(false);
+  };
+
+  const convertDepositPaymentToFinal = async (payment) => {
+    setProcessing(true);
+
+    const newPayment = { ...payment };
+    newPayment.paymentName = 'final';
+    const newPaymentsArray = [...payments];
+    newPaymentsArray[indexPayment] = newPayment;
+
+    try {
+      const result = await updateBooking({
+        variables: {
+          bookingId: booking._id,
+          payments: newPaymentsArray,
+          status: BOOKING_PAID_STATUS,
+          updatedAt: new Date()
+        }
+      });
+
+      if (result && result.data && result.data.updateOneBooking) {
+        setPayments(newPaymentsArray);
+        setBooking(result.data.updateOneBooking);
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+
+    setClickedConvertToFinal(false);
     setProcessing(false);
   };
 
@@ -198,7 +229,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                         <div className={`text-default'}`}>
                           {capitalizeString(element.paymentName)}
                           {booking && booking.status !== BOOKING_CLOSED_STATUS && <span>
-                            {processing && (
+                            {processing && index === indexPayment && (
                               <small>
                                 <br />
                                 <span>Converting...</span>
@@ -254,6 +285,59 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                               )
                             ) : (
                               <></>
+                            )}
+                            {/* Deposit payment to final */}
+                            {payments && !payments.filter(item => item.paymentName === "final" && item.status === "succeeded").length > 0 && (
+                              !processing && element.paymentName === 'deposit' && element.status === PAYMENT_STATUS_SUCCEEDED && (
+                                !clickedConvertToFinal ? (
+                                  <small>
+                                    <br />
+                                    <a
+                                      href="#"
+                                      title="Convert this final payment will move this booking to paid status"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        setClickedConvertToFinal(true);
+                                        setIndexPayment(index);
+                                      }}
+                                    >
+                                      Convert to final
+                                    </a>
+                                  </small>
+                                ) : index === indexPayment && (
+                                  <div>
+                                    <p className="mt-1">
+                                      <small className="text text-danger text-justify">Are you sure to convert this payment to final?</small>
+                                    </p>
+                                    <small className="ml-1">
+                                      <div className="d-flex justify-content-start">
+                                        <a
+                                          className="btn btn-primary btn-sm"
+                                          href="#"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            convertDepositPaymentToFinal(element);
+                                          }}
+                                        >
+                                          Yes
+                                        </a>{' '}
+                                        <a
+                                          className="btn btn-secondary btn-sm"
+                                          href="#"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            setClickedConvertToFinal(false);
+                                          }}
+                                        >
+                                          No
+                                        </a>
+                                      </div>
+                                    </small>
+                                    <br />
+                                    <small className="ml-2"></small>
+                                  </div>
+                                )
+                              )
                             )}
                           </span>}
                         </div>
@@ -318,7 +402,8 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                         )}
                       </td>
                     </tr>
-                  ))}
+                  ))
+                }
               </tbody>
             </Table>
           </Card>
