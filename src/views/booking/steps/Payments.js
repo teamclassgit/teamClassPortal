@@ -105,7 +105,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
       });
 
       if (result && result.data && result.data.updateOneBooking) {
-        setPayments(payments);
+        setPayments(newPaymentsArray);
         setBooking(result.data.updateOneBooking);
       }
     } catch (ex) {
