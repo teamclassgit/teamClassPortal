@@ -766,7 +766,7 @@ const FunnelTable = () => {
           onEditCompleted={onEditCompleted}
           setSelected={setSelected}
         />
-      </Modal>;
+      </Modal>
     </div>
   );
 };
