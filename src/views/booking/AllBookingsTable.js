@@ -9,6 +9,7 @@ import Avatar from '@components/avatar';
 import moment from 'moment-timezone';
 window.moment = moment;
 import { getQueryFiltersFromFilterArray, getUserData } from '../../utility/Utils';
+import { Modal } from 'reactstrap';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
@@ -31,6 +32,7 @@ import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
 import { getAllDataToExport, getBookingAndCalendarEventById, closeManyBookingsOneReason } from '../../services/BookingService';
+import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -71,7 +73,7 @@ const AllBookingsTable = () => {
   const [cellSelection, setCellSelection] = useState({});
   const [selected, setSelected] = useState({});
   const [closedReason, setClosedReason] = useState("");
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
 
@@ -84,6 +86,8 @@ const AllBookingsTable = () => {
   const handleEdit = (rowId) => {
     history.push(`/booking/${rowId}`);
   };
+
+  const toggle = () => setIsOpenModal(!isOpenModal);
 
   const columns = [
     {
@@ -668,23 +672,23 @@ const AllBookingsTable = () => {
       },
       {
         label: "Won",
-        onClick: () => { setClosedReason("Won"); }
+        onClick: () => { setClosedReason("Won"); toggle(); }
       },
       {
         label: "Lost",
-        onClick: () => { setClosedReason("Lost"); }
+        onClick: () => { setClosedReason("Lost"); toggle(); }
       },
       {
         label: "Mistake",
-        onClick: () => { setClosedReason("Mistake"); }
+        onClick: () => { setClosedReason("Mistake"); toggle(); }
       },
       {
         label: "Duplicated",
-        onClick: () => { setClosedReason("Duplicated"); }
+        onClick: () => { setClosedReason("Duplicated"); toggle(); }
       },
       {
         label: "Test",
-        onClick: () => { setClosedReason("Test"); }
+        onClick: () => { setClosedReason("Test"); toggle(); }
       }
     ];
   };
@@ -696,21 +700,7 @@ const AllBookingsTable = () => {
 
   const idBookingselected = toArray(selected);
 
-  useEffect(() => {
-    if (isConfirmed && idBookingselected.length > 0) {
-      closeManyBookingsOneReason(idBookingselected, closedReason);
-      onEditCompleted(idBookingselected[0]);
-    }
-  }, [isConfirmed]);
-
-  useEffect(() => {
-    if (closedReason !== "" && idBookingselected.length > 0) {
-      setIsConfirmed(confirm(`Do you want to close seleted bookings with reason \"${closedReason}\"`));
-    } else {
-      return setClosedReason("");
-    }
-  }, [closedReason]);
-
+  console.log("all book", isOpenModal);
   return (
     <div>
       <TasksBar
@@ -746,7 +736,7 @@ const AllBookingsTable = () => {
         checkboxColumn
         enableSelection={true}
         onSelectionChange={onSelectionChange}
-        renderRowContextMenu={renderRowContextMenu}
+        renderRowContextMenu={idBookingselected.length > 0 ? renderRowContextMenu : null}
         expandedRows={expandedRows}
         collapsedRows={collapsedRows}
         onExpandedRowsChange={onExpandedRowsChange}
@@ -775,6 +765,15 @@ const AllBookingsTable = () => {
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}
         onEditCompleted={onEditCompleted}
       />
+      <Modal isOpen={isOpenModal} centered>
+        <ConfirmBookingsToClose
+          toggle={toggle}
+          closedReason={closedReason}
+          idBookingselected={idBookingselected}
+          onEditCompleted={onEditCompleted}
+          setSelected={setSelected}
+        />
+      </Modal>
     </div>
   );
 };
