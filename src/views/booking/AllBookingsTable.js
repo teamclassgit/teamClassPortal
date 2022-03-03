@@ -30,7 +30,7 @@ import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
-import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
+import { getAllDataToExport, getBookingAndCalendarEventById, closeManyBookingsOneReason } from '../../services/BookingService';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -69,6 +69,9 @@ const AllBookingsTable = () => {
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
+  const [selected, setSelected] = useState({});
+  const [closedReason, setClosedReason] = useState("");
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
 
@@ -657,6 +660,57 @@ const AllBookingsTable = () => {
     console.log(cells);
   }, []);
 
+  const renderRowContextMenu = (menuProps) => {
+    menuProps.autoDismiss = true;
+    menuProps.items = [
+      {
+        label: "Close with reason:", disabled: true
+      },
+      {
+        label: "Won",
+        onClick: () => { setClosedReason("Won"); }
+      },
+      {
+        label: "Lost",
+        onClick: () => { setClosedReason("Lost"); }
+      },
+      {
+        label: "Mistake",
+        onClick: () => { setClosedReason("Mistake"); }
+      },
+      {
+        label: "Duplicated",
+        onClick: () => { setClosedReason("Duplicated"); }
+      },
+      {
+        label: "Test",
+        onClick: () => { setClosedReason("Test"); }
+      }
+    ];
+  };
+
+  const onSelectionChange = useCallback(({ selected }) => {
+    setSelected(selected);
+  }, []);
+  const toArray = selected => Object.keys(selected);
+
+  const idBookingselected = toArray(selected);
+
+  useEffect(() => {
+    if (isConfirmed && idBookingselected.length > 0) {
+      closeManyBookingsOneReason(idBookingselected, closedReason);
+      onEditCompleted(idBookingselected[0]);
+    }
+  }, [isConfirmed]);
+
+  useEffect(() => {
+    if (closedReason !== "" && idBookingselected.length > 0) {
+      setIsConfirmed(confirm(`Do you want to close seleted bookings with reason \"${closedReason}\"`));
+    } else {
+      return setClosedReason("");
+    }
+  }, [closedReason]);
+
   return (
     <div>
       <TasksBar
@@ -688,6 +742,11 @@ const AllBookingsTable = () => {
         enableClipboard={true}
         onCopySelectedCellsChange={onCopySelectedCellsChange}
         onPasteSelectedCellsChange={onPasteSelectedCellsChange}*/
+        selected={selected}
+        checkboxColumn
+        enableSelection={true}
+        onSelectionChange={onSelectionChange}
+        renderRowContextMenu={renderRowContextMenu}
         expandedRows={expandedRows}
         collapsedRows={collapsedRows}
         onExpandedRowsChange={onExpandedRowsChange}
