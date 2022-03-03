@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
 import { Calendar, Check, DollarSign, Edit2, User, Users } from 'react-feather';
+import { Modal } from 'reactstrap';
 import Avatar from '@components/avatar';
 import moment from 'moment-timezone';
 window.moment = moment;
@@ -32,6 +33,8 @@ import BookingsTableStatusCards from './BookingsTableStatusCards';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
 import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
+import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
+
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -71,12 +74,17 @@ const FunnelTable = () => {
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
+  const [selected, setSelected] = useState({});
+  const [closedReason, setClosedReason] = useState("");
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
 
   const handleEditModal = () => {
     setEditModal(!editModal);
   };
+
+  const toggle = () => setIsOpenModal(!isOpenModal);
 
   const history = useHistory();
 
@@ -647,6 +655,42 @@ const FunnelTable = () => {
     return await getAllDataToExport(filters, orFilters, sortInfo);
   };
 
+  const renderRowContextMenu = (menuProps) => {
+    menuProps.autoDismiss = true;
+    menuProps.items = [
+      {
+        label: "Close with reason:", disabled: true
+      },
+      {
+        label: "Won",
+        onClick: () => { setClosedReason("Won"); toggle(); }
+      },
+      {
+        label: "Lost",
+        onClick: () => { setClosedReason("Lost"); toggle(); }
+      },
+      {
+        label: "Mistake",
+        onClick: () => { setClosedReason("Mistake"); toggle(); }
+      },
+      {
+        label: "Duplicated",
+        onClick: () => { setClosedReason("Duplicated"); toggle(); }
+      },
+      {
+        label: "Test",
+        onClick: () => { setClosedReason("Test"); toggle(); }
+      }
+    ];
+  };
+
+  const onSelectionChange = useCallback(({ selected }) => {
+    setSelected(selected);
+  }, []);
+  const toArray = selected => Object.keys(selected);
+
+  const idBookingselected = toArray(selected);
+
   return (
     <div>
       <BookingsTableStatusCards status={status} setStatus={setStatus} filters={filterValue} />
@@ -682,6 +726,11 @@ const FunnelTable = () => {
         enableClipboard={true}
         onCopySelectedCellsChange={onCopySelectedCellsChange}
         onPasteSelectedCellsChange={onPasteSelectedCellsChange}*/
+        selected={selected}
+        checkboxColumn
+        enableSelection={true}
+        onSelectionChange={onSelectionChange}
+        renderRowContextMenu={idBookingselected.length > 0 ? renderRowContextMenu : null}
         expandedRows={expandedRows}
         collapsedRows={collapsedRows}
         onExpandedRowsChange={onExpandedRowsChange}
@@ -709,6 +758,15 @@ const FunnelTable = () => {
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}
         onEditCompleted={onEditCompleted}
       />
+      <Modal isOpen={isOpenModal} centered>
+        <ConfirmBookingsToClose
+          toggle={toggle}
+          closedReason={closedReason}
+          idBookingselected={idBookingselected}
+          onEditCompleted={onEditCompleted}
+          setSelected={setSelected}
+        />
+      </Modal>;
     </div>
   );
 };
