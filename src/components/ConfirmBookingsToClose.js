@@ -15,7 +15,7 @@ const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEdit
   return (
     <>
       <ModalHeader>
-        Pay Attention
+        Confirmation
       </ModalHeader>
       <ModalBody className="py-3">
         <p className="text-center">Do you want to close {idBookingselected.length} selected bookings with reason:</p>
