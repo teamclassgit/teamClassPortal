@@ -12,6 +12,18 @@ import { closeManyBookingsOneReason } from "../services/BookingService";
 
 const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEditCompleted, setSelected }) => {
 
+  const updateClosedStatus = async () => {
+
+    try {
+      await closeManyBookingsOneReason(idBookingselected, closedReason);
+      onEditCompleted(idBookingselected[0]);
+    } catch (error) {
+      console.error(error);
+    }
+    setSelected({});
+    toggle();
+  };
+
   return (
     <>
       <ModalHeader>
@@ -32,12 +44,7 @@ const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEdit
         <Button
           className="float-right text-align-center ml-1"
           color="primary"
-          onClick={async () => {
-            await closeManyBookingsOneReason(idBookingselected, closedReason);
-            toggle();
-            onEditCompleted(idBookingselected[0]);
-            setSelected({});
-          }}
+          onClick={updateClosedStatus}
         >
           Confirm
         </Button>

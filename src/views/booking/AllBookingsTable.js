@@ -87,7 +87,11 @@ const AllBookingsTable = () => {
     history.push(`/booking/${rowId}`);
   };
 
-  const toggle = () => setIsOpenModal(!isOpenModal);
+  const toggle = () => {
+    setOrFilters([]);
+    setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
+    setIsOpenModal(!isOpenModal);
+  };
 
   const columns = [
     {
