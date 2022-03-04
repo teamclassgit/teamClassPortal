@@ -39,7 +39,7 @@ const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEdit
             setSelected({});
           }}
         >
-          OK
+          Confirm
         </Button>
       </ModalFooter>
     </>
