@@ -18,8 +18,8 @@ const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEdit
         Pay Attention
       </ModalHeader>
       <ModalBody className="py-3">
-        <h5 className="text-center">Do you want to close selected bookings with reason:</h5>
-        <p className="text-center">{closedReason}</p>
+        <p className="text-center">Do you want to close {idBookingselected.length} selected bookings with reason:</p>
+        <h5 className="text-center font-weight-bold">{closedReason}</h5>
       </ModalBody>
       <ModalFooter>
         <Button
@@ -27,7 +27,7 @@ const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEdit
           color="light"
           onClick={toggle}
         >
-          Close
+          Cancel
         </Button>
         <Button
           className="float-right text-align-center ml-1"
@@ -47,7 +47,11 @@ const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEdit
 };
 
 ConfirmBookingsToClose.propTypes = {
-  toggle: PropTypes.func.isRequired
+  toggle: PropTypes.func.isRequired,
+  closedReason: PropTypes.string.isRequired,
+  idBookingselected: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onEditCompleted: PropTypes.func.isRequired,
+  setSelected: PropTypes.func.isRequired
 };
 
 export default ConfirmBookingsToClose;
