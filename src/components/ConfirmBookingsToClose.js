@@ -1,6 +1,8 @@
 // @packages
 import PropTypes from "prop-types";
+import { useState } from "react";
 import {
+  Alert,
   Button,
   ModalBody,
   ModalFooter,
@@ -11,17 +13,22 @@ import {
 import { closeBookingsWithReason } from "../services/BookingService";
 
 const ConfirmBookingsToClose = ({toggle, closedReason, selectedBookingsIds, onEditCompleted, setSelected }) => {
+  const [closingBookingsInProcess, setClosingBookingsInProcess] = useState(false);
+  const [isCatchError, setIsCatchError] = useState(false);
 
   const updateClosedStatus = async () => {
 
     try {
+      setClosingBookingsInProcess(true);
       await closeBookingsWithReason(selectedBookingsIds, closedReason);
       onEditCompleted(selectedBookingsIds[0]);
-    } catch (error) {
-      console.error(error);
+      setSelected({});
+      toggle();
+      closingBookingsInProcess(false);
+    } catch {
+      setIsCatchError(true);
+      setClosingBookingsInProcess(false);
     }
-    setSelected({});
-    toggle();
   };
 
   return (
@@ -45,10 +52,18 @@ const ConfirmBookingsToClose = ({toggle, closedReason, selectedBookingsIds, onEd
           className="float-right text-align-center ml-1"
           color="primary"
           onClick={updateClosedStatus}
+          disabled={closingBookingsInProcess || isCatchError}
         >
-          Confirm
+          { closingBookingsInProcess ? "Processing..." : "Confirm" }
         </Button>
       </ModalFooter>
+      {isCatchError && (
+        <Alert color='danger text-center'>
+          <div className='alert-body'>
+            Something went wrong, please try again.
+          </div>
+        </Alert>
+      )}
     </>
   );
 };
