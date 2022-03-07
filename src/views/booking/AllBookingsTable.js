@@ -9,6 +9,7 @@ import Avatar from '@components/avatar';
 import moment from 'moment-timezone';
 window.moment = moment;
 import { getQueryFiltersFromFilterArray, getUserData } from '../../utility/Utils';
+import { Modal } from 'reactstrap';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
@@ -30,7 +31,8 @@ import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
-import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
+import { getAllDataToExport, getBookingAndCalendarEventById, closeManyBookingsOneReason } from '../../services/BookingService';
+import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -69,6 +71,9 @@ const AllBookingsTable = () => {
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
+  const [selected, setSelected] = useState({});
+  const [closedReason, setClosedReason] = useState("");
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
 
@@ -80,6 +85,12 @@ const AllBookingsTable = () => {
 
   const handleEdit = (rowId) => {
     history.push(`/booking/${rowId}`);
+  };
+
+  const toggle = () => {
+    setOrFilters([]);
+    setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
+    setIsOpenModal(!isOpenModal);
   };
 
   const columns = [
@@ -657,6 +668,43 @@ const AllBookingsTable = () => {
     console.log(cells);
   }, []);
 
+  const renderRowContextMenu = (menuProps) => {
+    menuProps.autoDismiss = true;
+    menuProps.items = [
+      {
+        label: "Close with reason:", disabled: true
+      },
+      {
+        label: "Won",
+        onClick: () => { setClosedReason("Won"); toggle(); }
+      },
+      {
+        label: "Lost",
+        onClick: () => { setClosedReason("Lost"); toggle(); }
+      },
+      {
+        label: "Mistake",
+        onClick: () => { setClosedReason("Mistake"); toggle(); }
+      },
+      {
+        label: "Duplicated",
+        onClick: () => { setClosedReason("Duplicated"); toggle(); }
+      },
+      {
+        label: "Test",
+        onClick: () => { setClosedReason("Test"); toggle(); }
+      }
+    ];
+  };
+
+  const onSelectionChange = useCallback(({ selected }) => {
+    setSelected(selected);
+  }, []);
+  const toArray = selected => Object.keys(selected);
+
+  const selectedBookingsIds = toArray(selected);
+
+  console.log("all book", isOpenModal);
   return (
     <div>
       <TasksBar
@@ -688,6 +736,11 @@ const AllBookingsTable = () => {
         enableClipboard={true}
         onCopySelectedCellsChange={onCopySelectedCellsChange}
         onPasteSelectedCellsChange={onPasteSelectedCellsChange}*/
+        selected={selected}
+        checkboxColumn
+        enableSelection={true}
+        onSelectionChange={onSelectionChange}
+        renderRowContextMenu={selectedBookingsIds.length > 0 ? renderRowContextMenu : null}
         expandedRows={expandedRows}
         collapsedRows={collapsedRows}
         onExpandedRowsChange={onExpandedRowsChange}
@@ -716,6 +769,15 @@ const AllBookingsTable = () => {
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}
         onEditCompleted={onEditCompleted}
       />
+      <Modal isOpen={isOpenModal} centered>
+        <ConfirmBookingsToClose
+          toggle={toggle}
+          closedReason={closedReason}
+          selectedBookingsIds={selectedBookingsIds}
+          onEditCompleted={onEditCompleted}
+          setSelected={setSelected}
+        />
+      </Modal>
     </div>
   );
 };

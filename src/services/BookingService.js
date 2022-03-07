@@ -2,6 +2,7 @@ import moment from 'moment';
 import queryGetTotalsUsingFilter from '../graphql/QueryTotalsBookingsUsingFilter';
 import queryGetBookingsWithCriteria from '../graphql/QueryGetBookingsWithCriteria';
 import queryBookingAndCalendarEventById from '../graphql/QueryBookingAndCalendarEventById';
+import mutationUpdateManyBookings from '../graphql/MutationUpdateManyBookings';
 import queryCustomerById from '../graphql/QueryCustomerById';
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from '../utility/Constants';
 import { apolloClient } from '../utility/RealmApolloClient';
@@ -221,4 +222,20 @@ const getBookingAndCalendarEventById = async (bookingId) => {
   return { ...booking, calendarEvent: resultBooking.data.calendarEvent, customer: resultCustomer?.data?.customer };
 };
 
-export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport };
+const closeBookingsWithReason = async (bookingsId, closedReason) => {
+  const { data } = await apolloClient.mutate({
+    mutation: mutationUpdateManyBookings,
+    variables: {
+      query: {
+        _id_in: bookingsId
+      },
+      set: {
+        updatedAt: new Date(),
+        status: "closed",
+        closedReason
+      }
+    }
+  });
+};
+
+export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason };
