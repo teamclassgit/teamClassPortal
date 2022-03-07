@@ -228,12 +228,12 @@ const closeBookingsWithReason = async (bookingsId, closedReason) => {
     variables: {
       query: {
         _id_in: bookingsId
-      },
-      set: {
-        updatedAt: new Date(),
-        status: "closed",
-        closedReason
       }
+      // set: {
+      //   updatedAt: new Date(),
+      //   status: "closed",
+      //   closedReason
+      // }
     }
   });
 };

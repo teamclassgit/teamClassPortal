@@ -51,8 +51,11 @@ const ConfirmBookingsToClose = ({toggle, closedReason, selectedBookingsIds, onEd
         <Button
           className="float-right text-align-center ml-1"
           color="primary"
-          onClick={updateClosedStatus}
-          disabled={closingBookingsInProcess || isCatchError}
+          onClick={() => {
+            updateClosedStatus();
+            setIsCatchError(false);
+          }}
+          disabled={closingBookingsInProcess}
         >
           { closingBookingsInProcess ? "Processing..." : "Confirm" }
         </Button>
