@@ -693,7 +693,7 @@ const FunnelTable = () => {
   }, []);
   const toArray = selected => Object.keys(selected);
 
-  const idBookingselected = toArray(selected);
+  const selectedBookingsIds = toArray(selected);
 
   return (
     <div>
@@ -734,7 +734,7 @@ const FunnelTable = () => {
         checkboxColumn
         enableSelection={true}
         onSelectionChange={onSelectionChange}
-        renderRowContextMenu={idBookingselected.length > 0 ? renderRowContextMenu : null}
+        renderRowContextMenu={selectedBookingsIds.length > 0 ? renderRowContextMenu : null}
         expandedRows={expandedRows}
         collapsedRows={collapsedRows}
         onExpandedRowsChange={onExpandedRowsChange}
@@ -766,7 +766,7 @@ const FunnelTable = () => {
         <ConfirmBookingsToClose
           toggle={toggle}
           closedReason={closedReason}
-          idBookingselected={idBookingselected}
+          selectedBookingsIds={selectedBookingsIds}
           onEditCompleted={onEditCompleted}
           setSelected={setSelected}
         />

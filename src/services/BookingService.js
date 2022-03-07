@@ -222,7 +222,7 @@ const getBookingAndCalendarEventById = async (bookingId) => {
   return { ...booking, calendarEvent: resultBooking.data.calendarEvent, customer: resultCustomer?.data?.customer };
 };
 
-const closeManyBookingsOneReason = async (bookingsId, closedReason) => {
+const closeBookingsWithReason = async (bookingsId, closedReason) => {
   const { data } = await apolloClient.mutate({
     mutation: mutationUpdateManyBookings,
     variables: {
@@ -238,4 +238,4 @@ const closeManyBookingsOneReason = async (bookingsId, closedReason) => {
   });
 };
 
-export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeManyBookingsOneReason };
+export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason };

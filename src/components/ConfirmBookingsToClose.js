@@ -8,15 +8,15 @@ import {
 } from "reactstrap";
 
 // @scripts
-import { closeManyBookingsOneReason } from "../services/BookingService";
+import { closeBookingsWithReason } from "../services/BookingService";
 
-const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEditCompleted, setSelected }) => {
+const ConfirmBookingsToClose = ({toggle, closedReason, selectedBookingsIds, onEditCompleted, setSelected }) => {
 
   const updateClosedStatus = async () => {
 
     try {
-      await closeManyBookingsOneReason(idBookingselected, closedReason);
-      onEditCompleted(idBookingselected[0]);
+      await closeBookingsWithReason(selectedBookingsIds, closedReason);
+      onEditCompleted(selectedBookingsIds[0]);
     } catch (error) {
       console.error(error);
     }
@@ -30,7 +30,7 @@ const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEdit
         Confirmation
       </ModalHeader>
       <ModalBody className="py-3">
-        <p className="text-center">Are you sure to close {idBookingselected.length} selected bookings with reason</p>
+        <p className="text-center">Are you sure to close {selectedBookingsIds.length} selected bookings with reason</p>
         <h5 className="text-center font-weight-bold">{closedReason}?</h5>
       </ModalBody>
       <ModalFooter>
@@ -56,7 +56,7 @@ const ConfirmBookingsToClose = ({toggle, closedReason, idBookingselected, onEdit
 ConfirmBookingsToClose.propTypes = {
   toggle: PropTypes.func.isRequired,
   closedReason: PropTypes.string.isRequired,
-  idBookingselected: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedBookingsIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   onEditCompleted: PropTypes.func.isRequired,
   setSelected: PropTypes.func.isRequired
 };
