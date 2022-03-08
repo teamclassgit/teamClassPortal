@@ -15,6 +15,10 @@ export default gql`
       fromMinutes
       month
       rushFee
+      timezone
+      timezoneLabel
+      displayTimezone
+      displayTimezoneLabel
     }
     booking(query: { _id: $bookingId }) {
       _id

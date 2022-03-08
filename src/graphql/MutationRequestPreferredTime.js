@@ -16,6 +16,10 @@ mutation requestPreferredTime(
   $bookingStatus: String!,
   $isRushFee: Boolean!,
   $rushFee: Float!,
+  $timezone: String
+  $timezoneLabel: String
+  $displayTimezone: String
+  $displayTimezoneLabel: String
   $updatedAt: DateTime!
 ) {
    upsertOneCalendarEvent(
@@ -33,6 +37,10 @@ mutation requestPreferredTime(
               toMinutes:$toMinutes
               status:$status
               rushFee:$isRushFee
+              timezone:$timezone
+              timezoneLabel:$timezoneLabel
+              displayTimezone: $displayTimezone
+              displayTimezoneLabel: $displayTimezoneLabel
           }) {
       _id
       classId
@@ -46,6 +54,10 @@ mutation requestPreferredTime(
       toMinutes
       status
       rushFee
+      timezone
+      timezoneLabel
+      displayTimezone
+      displayTimezoneLabel
   }
   updateOneBooking(query: {_id: $bookingId}, set: {updatedAt: $updatedAt, status: $bookingStatus, rushFee:$rushFee}) {
       _id

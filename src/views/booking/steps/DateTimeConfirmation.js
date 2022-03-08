@@ -13,7 +13,9 @@ import {
   DATE_AND_TIME_CONFIRMATION_STATUS,
   BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_CLOSED_STATUS,
-  RUSH_FEE
+  RUSH_FEE,
+  DEFAULT_TIME_ZONE,
+  DEFAULT_TIME_ZONE_LABEL
 } from '../../../utility/Constants';
 import { useMutation } from '@apollo/client';
 import mutationRequestPreferredTime from '../../../graphql/MutationRequestPreferredTime';
@@ -173,6 +175,10 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         status: DATE_AND_TIME_CONFIRMATION_STATUS,
         isRushFee: isRushDate(),
         rushFee: classRushFee,
+        timezone: calendarEvent ? calendarEvent.timezone : DEFAULT_TIME_ZONE,
+        timezoneLabel: calendarEvent ? calendarEvent.timezoneLabel : DEFAULT_TIME_ZONE_LABEL,
+        displayTimezone: calendarEvent?.displayTimezone ? calendarEvent.displayTimezone : null,
+        displayTimezoneLabel: calendarEvent?.displayTimezoneLabel ? calendarEvent.displayTimezoneLabel : null,
         bookingStatus: booking.status === BOOKING_QUOTE_STATUS ? BOOKING_DATE_REQUESTED_STATUS : booking.status,
         updatedAt: new Date()
       };

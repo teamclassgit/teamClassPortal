@@ -35,6 +35,7 @@ export default gql`
         eventDateTimeStatus
         signUpDeadline
         timezone
+        timezoneLabel
         depositsPaid
         finalPaid
         depositPaidDate

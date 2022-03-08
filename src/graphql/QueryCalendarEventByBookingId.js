@@ -15,5 +15,9 @@ query ListCalendarEvents($bookingId:String!) {
       fromMinutes
       month
       rushFee
+      timezone
+      timezoneLabel
+      displayTimezone
+      displayTimezoneLabel
   }
 }`;

@@ -15,6 +15,10 @@ export default gql`
       day
       toMinutes
       rushFee
+      timezone
+      timezoneLabel
+      displayTimezone
+      displayTimezoneLabel
     }
   }
 `;
