@@ -49,6 +49,7 @@ export const getBookingValue = (rowStatus) => {
 };
 
 export const getCoordinatorName = (coordinatorId, coordinators) => {
+  if (!coordinatorId || !coordinators) return;
   const result = coordinators.find((element) => element._id === coordinatorId);
   return (result && result.name) || '';
 };
