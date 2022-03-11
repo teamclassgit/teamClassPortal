@@ -1,10 +1,10 @@
 // @packages
-import Proptypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import Proptypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-// @scripts 
-import ConversationView from "./ConversationsView";
+// @scripts
+import ConversationView from './ConversationsView';
 import {
   informationId,
   setLastReadIndex,
@@ -14,12 +14,7 @@ import {
   setTotalUnreadMessagesCount as setTotalUnreadMessagesCountAction
 } from '../../redux/actions/chat';
 
-const ConversationsList = ({ 
-  client,
-  info,
-  userData,
-  notifications
-}) => {
+const ConversationsList = ({ client, info, userData, notifications }) => {
   const [conversationUnread, setConversationUnread] = useState(null);
 
   const conversations = useSelector((state) => state.reducer.convo);
@@ -32,15 +27,10 @@ const ConversationsList = ({
 
   const dispatch = useDispatch();
 
-  const updateCurrentConvo = async (
-    updateCurrentConvo,
-    convo, 
-    updateParticipants, 
-    convoId
-  ) => {
+  const updateCurrentConvo = async (updateCurrentConvo, convo, updateParticipants, convoId) => {
     dispatch(updateCurrentConvo(convo?.sid));
     dispatch(informationId(convoId ?? null));
-    
+
     if (convo) {
       try {
         const participants = await convo.getParticipants();
@@ -51,12 +41,7 @@ const ConversationsList = ({
     }
   };
 
-  const setUnreadMessagesCount = (
-    currentconvoSid,
-    convoSid,
-    unreadMessages,
-    updateUnreadMessages
-  ) => {
+  const setUnreadMessagesCount = (currentconvoSid, convoSid, unreadMessages, updateUnreadMessages) => {
     if (currentconvoSid === convoSid && unreadMessages[convoSid] !== 0) {
       dispatch(updateUnreadMessages(convoSid, 0));
       return 0;
@@ -79,10 +64,7 @@ const ConversationsList = ({
     setFilterConversationUnreadMessages();
   }, [unreadMessages]);
 
-  const setTotalUnreadMessagesCount = (
-    unreadMessages,
-    setTotalUnreadMessagesCount
-  ) => {
+  const setTotalUnreadMessagesCount = (unreadMessages, setTotalUnreadMessagesCount) => {
     let totalUnreadMessages = 0;
     Object.keys(unreadMessages).forEach((key) => {
       totalUnreadMessages += unreadMessages[key];
@@ -94,29 +76,26 @@ const ConversationsList = ({
     if (messages === undefined || messages === null || messages.length === 0) {
       return false;
     }
-    return messages[messages.length - 1].author ===
-      localStorage.getItem("username")
-      ? messages[messages.length - 1]
-      : false;
+    return messages[messages.length - 1].author === localStorage.getItem('username') ? messages[messages.length - 1] : false;
   };
 
   const getLastMessage = (messages, typingData) => {
     if (messages === undefined || messages === null) {
-      return "Loading...";
+      return 'Loading...';
     }
     if (typingData.length) {
       return getTypingMessage(typingData);
     }
     if (messages.length === 0) {
-      return "No messages";
+      return 'No messages';
     }
     if (!!messages[messages.length - 1].media) {
-      return "Media message";
+      return 'Media message';
     }
     return messages[messages.length - 1].body;
   };
 
-  if (messages === undefined || messages === null) { 
+  if (messages === undefined || messages === null) {
     return <div className="empty" />;
   }
 
@@ -133,28 +112,17 @@ const ConversationsList = ({
             conversationUnread={conversationUnread}
             notifications={notifications}
             infoId={infoId}
-            key={convo?.sid || convo?._id}
+            key={convo?._id}
             longInfo={convo?._id}
             setSid={updateCurrentConversation}
             userData={userData}
-            lastMessage={getLastMessage(
-              messages[convo?.sid] ?? [],
-              typingData[convo?.sid] ?? []
-            )}
+            lastMessage={getLastMessage(messages[convo?.sid] ?? [], typingData[convo?.sid] ?? [])}
             messages={messages[convo.sid]}
             myMessage={isMyMessage(messages[convo.sid])}
             typingInfo={typingData[convo.sid] ?? []}
-            unreadMessagesCount={setUnreadMessagesCount(
-              sid,
-              convo?.sid,
-              unreadMessages,
-              updateUnreadMessages
-            )}
+            unreadMessagesCount={setUnreadMessagesCount(sid, convo?.sid, unreadMessages, updateUnreadMessages)}
             updateUnreadMessages={updateUnreadMessages}
-            updateTotalUnreadCount={setTotalUnreadMessagesCount(
-              unreadMessages,
-              setTotalUnreadMessagesCountAction
-            )}
+            updateTotalUnreadCount={setTotalUnreadMessagesCount(unreadMessages, setTotalUnreadMessagesCountAction)}
             participants={participants[convo.sid] ?? []}
             convo={convo}
             otherConvo={conversations.find((item) => item?.sid === convo?.sid)}
@@ -165,9 +133,9 @@ const ConversationsList = ({
                   updateCurrentConversation,
                   conversations.find((item) => item?.sid === convo?.sid),
                   updateParticipants,
-                  convo?._id
+                  convo._id
                 );
-                dispatch(updateUnreadMessages(convo.sid, 0));
+                if (convo?.sid) dispatch(updateUnreadMessages(convo.sid, 0));
               } catch (e) {
                 console.log(e);
               }

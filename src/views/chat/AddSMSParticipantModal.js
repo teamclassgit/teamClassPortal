@@ -54,7 +54,7 @@ const AddSMSParticipantModal = ({
         modalFooter={
           <AddParticipantFooter
             action={action}
-            actionName={ActionName.Save}
+            actionName='Save'
             isSaveDisabled={!name || !proxyName || !!error}
             onBack={onBack}
           />

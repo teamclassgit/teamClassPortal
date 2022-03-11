@@ -43,54 +43,59 @@ const BookingCheckoutSummary = ({
   return (
     <div className={chat && styles.container}>
       <Card className={chat && styles.subContainer}>
-        {!chat &&
         <CardHeader>
           <h4 className="text-center">
             {teamClass?.title}
-            <br />
-            <br />
-            <Badge className="booking-checkout-summary-priceBadge">
-              ${bookingInfo.classVariant && bookingInfo.classVariant.pricePerson} /{' '}
-              {bookingInfo.classVariant && bookingInfo.classVariant.groupEvent ? 'group' : 'person'}
-            </Badge>
+            {!chat && (
+              <>
+                <br />
+                <br />
+                <Badge className="booking-checkout-summary-priceBadge">
+                  ${bookingInfo.classVariant && bookingInfo.classVariant.pricePerson} /{' '}
+                  {bookingInfo.classVariant && bookingInfo.classVariant.groupEvent ? 'group' : 'person'}
+                </Badge>
+              </>
+            )}
           </h4>
-        </CardHeader>}
+        </CardHeader>
         <CardBody className={changeSpace && styles.changeSpaceCard}>
-          <div className="text-block pb-1 pt-1 pl-2 pr-2 booking-checkout-summary-imageBox">
-            <Media className="align-items-center">
-              <img
-                src={
-                  teamClass?.catalogImage && teamClass?.catalogImage.indexOf('https:') !== -1
-                    ? teamClass?.catalogImage
-                    : `/content/img/photo/listing/${teamClass?.catalogImage}`
-                }
-                width={100}
-                height={67}
-                layout="fixed"
-                alt=""
-                className="rounded"
-                sizes="(max-width: 576px) 100vw, 530px"
-              />
-              <Media body>
-                <Row>
-                  <Col>
-                    <p className="text-sm mb-0 text-black ml-4">
-                      <strong>{bookingInfo.classVariant && bookingInfo.classVariant.title}</strong>
-                    </p>
-                    <p className="text-muted text-xs mb-0 ml-4">{bookingInfo.eventDurationHours * 60} Minutes</p>
-                    <p className="text-muted text-sm mb-0 ml-4">
-                      {bookingInfo.classVariant && bookingInfo.classVariant.hasKit && (
-                        <Badge className="booking-checkout-summary-kit-tag">
-                          <i className="fa fa-gift text-primary"></i>
-                          <span className="text-primary name"> Kit included </span>
-                        </Badge>
-                      )}
-                    </p>
-                  </Col>
-                </Row>
+          {!chat && (
+            <div className="text-block pb-1 pt-1 pl-2 pr-2 booking-checkout-summary-imageBox">
+              <Media className="align-items-center">
+                <img
+                  src={
+                    teamClass?.catalogImage && teamClass?.catalogImage.indexOf('https:') !== -1
+                      ? teamClass?.catalogImage
+                      : `/content/img/photo/listing/${teamClass?.catalogImage}`
+                  }
+                  width={100}
+                  height={67}
+                  layout="fixed"
+                  alt=""
+                  className="rounded"
+                  sizes="(max-width: 576px) 100vw, 530px"
+                />
+                <Media body>
+                  <Row>
+                    <Col>
+                      <p className="text-sm mb-0 text-black ml-4">
+                        <strong>{bookingInfo.classVariant && bookingInfo.classVariant.title}</strong>
+                      </p>
+                      <p className="text-muted text-xs mb-0 ml-4">{bookingInfo.eventDurationHours * 60} Minutes</p>
+                      <p className="text-muted text-sm mb-0 ml-4">
+                        {bookingInfo.classVariant && bookingInfo.classVariant.hasKit && (
+                          <Badge className="booking-checkout-summary-kit-tag">
+                            <i className="fa fa-gift text-primary"></i>
+                            <span className="text-primary name"> Kit included </span>
+                          </Badge>
+                        )}
+                      </p>
+                    </Col>
+                  </Row>
+                </Media>
               </Media>
-            </Media>
-          </div>
+            </div>
+          )}
           <div className="text-block py-1">
             <h6 className="mb-0 text-black booking-checkout-summary-subTitle">
               {`Booking status `}{' '}
@@ -144,8 +149,8 @@ const BookingCheckoutSummary = ({
             <tbody>
               <tr>
                 <th className="font-weight-normal pt-1">
-                  ${bookingInfo.pricePerson} x
-                  {` ${  attendeesToInvoice < bookingInfo.classMinimum ? bookingInfo.classMinimum : attendeesToInvoice  } `} attendees
+                  ${bookingInfo.pricePerson} x{` ${attendeesToInvoice < bookingInfo.classMinimum ? bookingInfo.classMinimum : attendeesToInvoice} `}{' '}
+                  attendees
                   {attendeesToInvoice < bookingInfo.classMinimum && <FormText color="muted">Under {bookingInfo.classMinimum} group fee</FormText>}
                 </th>
                 <td className="text-right pt-1">${totalWithoutFee}</td>
@@ -182,11 +187,8 @@ const BookingCheckoutSummary = ({
               {totalRushFee > 0 && (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">
-                    {`Rush fee ($${(bookingInfo.rushFee || RUSH_FEE.toFixed(2))}`} x {` ${ 
-                      attendeesToInvoice < bookingInfo.classVariant.classMinimum
-                        ? bookingInfo.classVariant.classMinimum
-                        : attendeesToInvoice 
-                    })`}{" "}
+                    {`Rush fee ($${bookingInfo.rushFee || RUSH_FEE.toFixed(2)}`} x{' '}
+                    {` ${attendeesToInvoice < bookingInfo.classVariant.classMinimum ? bookingInfo.classVariant.classMinimum : attendeesToInvoice})`}{' '}
                   </th>
                   <td className="text-right pt-1 text-sm">${totalRushFee}</td>
                 </tr>

@@ -9,6 +9,7 @@ export default gql`
       customer {
         name
         email
+        phone
         company
         _id
       }

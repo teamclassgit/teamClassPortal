@@ -63,15 +63,8 @@ const useTwilioClient = () => {
     updateToken();
   }, [client]);
 
-  console.log({
-    bookingIds: conversations?.map((convo) => convo?.friendlyName),
-    userId: userData?._id,
-    searchText: inputValue,
-    limit: client?.connectionState === 'connecting' ? 0 : 50
-  });
-
   useQuery(queryConversationsDetail, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'network-only',
     variables: {
       bookingIds: conversations?.map((convo) => convo?.friendlyName),
       userId: userData?._id,
@@ -105,7 +98,7 @@ const useTwilioClient = () => {
       setData(dataSorted);
       setTimeout(() => {
         setIsInfoReady(true);
-      }, 6000);
+      }, 2000);
     }
   }, [conversations, infoDetails]);
 

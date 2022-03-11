@@ -28,7 +28,6 @@ const ConversationDetails = ({ conversation, convo, participants }) => (
 );
 
 ConversationDetails.propTypes = {
-  conversation: PropTypes.object.isRequired,
   convo: PropTypes.object.isRequired,
   participants: PropTypes.array.isRequired
 };

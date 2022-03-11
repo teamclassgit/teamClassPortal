@@ -11,15 +11,12 @@ import queryBookingById from '../../graphql/QueryBookingById';
 import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByClassId';
 import queryClassById from '../../graphql/QueryClassById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
-import { getBookingTotals } from '../../utility/Utils';
+import { getBookingTotals } from '../../services/BookingService';
 
 // @styles
 import './SidebarRight.scss';
 
-const SidebarRight = ({
-  client,
-  id
-}) => {
+const SidebarRight = ({ client, id }) => {
   const [attendees, setAttendees] = useState([]);
   const [attendeesToInvoice, setAttendeesToInvoice] = useState(null);
   const [bookingInfo, setBookingInfo] = useState(null);
@@ -121,8 +118,8 @@ const SidebarRight = ({
     const initialDepositPaid = !isNaN(bookingTotals.customDeposit)
       ? bookingTotals.customDeposit
       : depositsPaid && depositsPaid.length > 0
-        ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100
-        : 0;
+      ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100
+      : 0;
 
     const finalPayment = bookingTotals.finalValue - initialDepositPaid;
     setInitialDeposit(initialDepositPaid.toFixed(2));
@@ -161,20 +158,18 @@ const SidebarRight = ({
 
   return (
     <div>
-      <div className='sidebar-sub'>
+      <div className="sidebar-sub">
         <div
-          className='chat-profile-sidebar'
+          className="chat-profile-sidebar"
           style={{
             transform: 'translateX(-99%)'
           }}
         >
-          <div className='sidebar-right-container'>
-            <h4>
-              Details
-            </h4>
+          <div className="sidebar-right-container">
+            <h4>Details</h4>
           </div>
-          {bookingInfo && client?.connectionState !== "denied" && (
-            <div className='booking-container'>
+          {bookingInfo && client?.connectionState !== 'denied' && (
+            <div className="booking-container">
               <BookingCheckoutSummary
                 teamClass={teamClass}
                 chat
