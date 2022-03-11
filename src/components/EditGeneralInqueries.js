@@ -1,5 +1,5 @@
 // @packages
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Alert,
@@ -23,28 +23,53 @@ import {
 import { Calendar, Info, Mail, Phone, User } from "react-feather";
 import { useMutation } from "@apollo/client";
 import MutationUpdateOneQuestion from "../graphql/MutationUpdateOneQuestion";
+import Select from 'react-select';
+import { selectThemeColors } from '@utils';
 
-const EditGeneralInqueries = ({ open, currentElement, closeModal }) => {
+const EditGeneralInqueries = ({ open, currentElement, closeModal, allCoordinators }) => {
   const [active, setActive] = useState('1');
-  const [{eventCoordinatorId}, setEventCoordinatorId] = useState({});
   const [isCatchError, setIsCatchError] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [coordinatorId, setCoordinatorId] = useState(null);
+  const [coordinatorName, setCoordinatorName] = useState(null);
 
   const [updateOneQuestion] = useMutation(MutationUpdateOneQuestion, {});
-
-  const handleChange = ({ target }) => {
-    const { name, value } = target;
-    setEventCoordinatorId({
-      ...eventCoordinatorId,
-      [name]: value
-    });
-  };
 
   const toggle = (numberTab) => {
     if (active !== numberTab) {
       setActive(numberTab);
     }
   };
+
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      height: 30,
+      minHeight: 30,
+      fontSize: 12
+    }),
+    option: (provided) => ({
+      ...provided,
+      borderBottom: '1px dotted',
+      padding: 10,
+      fontSize: 12
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      padding: 0,
+      paddingBottom: 7,
+      fontSize: 12
+    })
+  };
+
+  useEffect(() => {
+    if (!currentElement?._id) return;
+    const coordinator = allCoordinators.find(element => {
+      return (element._id === currentElement.eventCoordinatorId);
+    });
+
+    setCoordinatorName(coordinator?.name);
+  }, [currentElement]);
 
   const handleSubmit = async (e) => {
     try {
@@ -53,7 +78,7 @@ const EditGeneralInqueries = ({ open, currentElement, closeModal }) => {
       await updateOneQuestion({
         variables: {
           id: currentElement._id,
-          eventCoordinatorId
+          eventCoordinatorId: coordinatorId
         }
       });
       setProcessing(false);
@@ -158,15 +183,32 @@ const EditGeneralInqueries = ({ open, currentElement, closeModal }) => {
                 </InputGroup>
               </FormGroup>
               <FormGroup>
-                <Label>Event Coordinator Id</Label>
-                <Input
-                  type="text"
-                  className="form-control"
-                  name="eventCoordinatorId"
-                  id="eventCoordinatorId"
-                  autoComplete="off"
-                  defaultValue={currentElement?.eventCoordinatorId || ""}
-                  onChange={handleChange}
+                <Label for="selectCoordinator">Event Coordinator*</Label>
+                <Select
+                  theme={selectThemeColors}
+                  styles={selectStyles}
+                  name="selectCoordinator"
+                  className="react-select"
+                  classNamePrefix="select"
+                  placeholder="Select..."
+                  value={{
+                    label: coordinatorName,
+                    value: coordinatorId
+                  }}
+                  options={
+                    allCoordinators &&
+                    allCoordinators.map((item) => {
+                      return {
+                        value: item._id,
+                        label: item.name
+                      };
+                    })
+                  }
+                  onChange={(option) => {
+                    setCoordinatorId(option.value);
+                    setCoordinatorName(option.label);
+                  }}
+                  isClearable={false}
                 />
               </FormGroup>
               <FormGroup>
@@ -186,9 +228,9 @@ const EditGeneralInqueries = ({ open, currentElement, closeModal }) => {
                   className="mr-1"
                   size="sm"
                   color="primary"
-                  disabled={!eventCoordinatorId}
+                  disabled={!coordinatorName}
                 >
-                  Save
+                  {processing ? "Saving" : "Save"}
                 </Button>
                 <Button color="secondary" size="sm" onClick={closeModal} outline>
                   Cancel
@@ -212,7 +254,8 @@ const EditGeneralInqueries = ({ open, currentElement, closeModal }) => {
 EditGeneralInqueries.propTypes = {
   open: PropTypes.bool.isRequired,
   currentElement:PropTypes.object.isRequired,
-  closeModal: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired,
+  allCoordinators: PropTypes.array.isRequired
 };
 
 export default EditGeneralInqueries;

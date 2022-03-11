@@ -167,6 +167,7 @@ const TableGeneralInquiries = ({ filteredData, coordinators }) => {
       <EditGeneralInqueries
         open={editModal}
         closeModal={toggleModal}
+        allCoordinators={coordinators}
         currentElement={currentElement}
       />
     </>
