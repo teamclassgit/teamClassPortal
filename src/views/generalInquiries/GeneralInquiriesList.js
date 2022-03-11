@@ -9,6 +9,7 @@ import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
 import DataTableGeneralInquiries from './TableGeneralInquiries';
 import FiltersModal from '../booking/BoardBookings/FiltersModal';
 import queryAllQuestions from '../../graphql/QueryAllQuestions';
+import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
 
 const GeneralInquiresList = () => {
@@ -17,15 +18,28 @@ const GeneralInquiresList = () => {
   const [generalInquiriesFilter, setGeneralInquiriesFilter] = useState({});
   const [limit, setLimit] = useState(200);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
-  const { textFilterContext, dateFilterContext } = useContext(FiltersContext);
+  const { textFilterContext, dateFilterContext, coordinatorFilterContext } = useContext(FiltersContext);
+  const [coordinators, setCoordinators] = useState([]);
 
   const { ...allQuestions } = useQuery(queryAllQuestions, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "cache-and-network",
     variables: {
       filter: generalInquiriesFilter,
       limit
     },
     pollInterval: 300000
+  });
+
+  useQuery(queryAllCoordinators, {
+    variables: {
+      filter: {}
+    },
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      if (data?.eventCoordinators) {
+        setCoordinators(data.eventCoordinators);
+      }
+    }
   });
 
   useEffect(() => {
@@ -57,6 +71,10 @@ const GeneralInquiresList = () => {
   useEffect(() => {
     let query = {};
 
+    if (coordinatorFilterContext) {
+      query = { ...query, eventCoordinatorId_in: coordinatorFilterContext.value };
+    }
+
     if (dateFilterContext) {
       query = {
         ...query,
@@ -66,7 +84,7 @@ const GeneralInquiresList = () => {
     }
 
     setGeneralInquiriesFilter(query);
-  }, [dateFilterContext]);
+  }, [dateFilterContext, coordinatorFilterContext]);
 
   useEffect(() => {
     handleSearch((textFilterContext && textFilterContext.value) || '');
@@ -101,13 +119,18 @@ const GeneralInquiresList = () => {
       ) : (
         <>
           <Col sm="12">
-            {generalInquiries && generalInquiries.length > 0 && <DataTableGeneralInquiries filteredData={filteredGeneralInquiries} />}
+            {generalInquiries && generalInquiries.length > 0 && (
+              <DataTableGeneralInquiries
+              filteredData={filteredGeneralInquiries}
+              coordinators={coordinators}/>
+            )}
           </Col>
           <FiltersModal
             open={showFiltersModal}
             handleModal={() => setShowFiltersModal(!showFiltersModal)}
             isFilterByClass={false}
-            isFilterByCoordinator={false}
+            coordinators={coordinators}
+            isFilterByCoordinator={true}
             isFilterByCreationDate={true}
           />
         </>
