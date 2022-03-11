@@ -26,7 +26,7 @@ import Select from 'react-select';
 import classnames from 'classnames';
 import moment from 'moment';
 import { useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit } from 'react-feather';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck } from 'react-feather';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
@@ -35,7 +35,7 @@ import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
 import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
-import { getUserData, isValidEmail } from '../utility/Utils';
+import { getUserData, isValidEmail, isUrlValid } from '../utility/Utils';
 import { selectThemeColors } from '@utils';
 import {
   BOOKING_CLOSED_STATUS,
@@ -51,44 +51,7 @@ import {
 // @styles
 import './EditBookingModal.scss';
 
-const EditBookingModal = ({
-  currentElement: {
-    bookingId,
-    createdAt,
-    currentClassVariant,
-    currentClosedReason,
-    currentCompany,
-    currentCoordinatorId,
-    currentCoordinatorName,
-    currentCustomerId,
-    currentEmail,
-    currentEventDurationHours,
-    currentGroupSize,
-    currentName,
-    currentNotes,
-    currentPayments,
-    currentPhone,
-    currentSalesTax,
-    currentServiceFee,
-    currentSignUpDeadline,
-    currentStatus,
-    currentTeamclassId,
-    currentTeamclassName,
-    currentCapRegistration
-  },
-  allBookings,
-  allCalendarEvents,
-  allClasses,
-  allCoordinators,
-  allCustomers,
-  editMode,
-  handleClose,
-  handleModal,
-  open,
-  setBookings,
-  setCustomers,
-  onEditCompleted
-}) => {
+const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted }) => {
   const [active, setActive] = useState('1');
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [bookingNotes, setBookingNotes] = useState([]);
@@ -110,6 +73,18 @@ const EditBookingModal = ({
   const [inputNote, setInputNote] = useState('');
   const [processing, setProcessing] = useState(false);
   const [isCapRegistration, setIsCapRegistration] = useState(false);
+  const [isGroupVariant, setIsGroupVariant] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [selectedPriceTier, setSelectedPriceTier] = React.useState(null);
+  const [selectedMinimumTier, setSelectedMinimumTier] = React.useState(null);
+  const [selectedMaximumTier, setSelectedMaximumTier] = React.useState(null);
+  const [joinLink, setJoinLink] = useState("");
+  const [passwordLink, setPasswordLink] = useState("");
+  const [trackingLink, setTrackingLink] = useState("");
+  const [isValidUrl, setIsValidUrl] = useState({
+    trackingLink: true,
+    joinUrl: true
+  });
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -118,34 +93,62 @@ const EditBookingModal = ({
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
 
   useEffect(() => {
-    setBookingNotes(currentNotes);
-    setBookingSignUpDeadline([currentSignUpDeadline]);
-    setBookingTeamClassId(currentTeamclassId);
-    setBookingTeamClassName(currentTeamclassName);
-    setClassVariant(currentClassVariant);
-    setClosedBookingReason(currentClosedReason);
-    setCoordinatorId(currentCoordinatorId);
-    setCoordinatorName(currentCoordinatorName);
-    setCustomerCompany(currentCompany);
-    setCustomerEmail(currentEmail);
-    setCustomerName(currentName);
-    setCustomerPhone(currentPhone);
-    setGroupSize(currentGroupSize);
-    setIsCapRegistration(currentCapRegistration);
+    if (!currentElement?._id) return;
 
-    const filteredCalendarEvent = allCalendarEvents && allCalendarEvents.find((element) => element.bookingId === bookingId);
-    if (filteredCalendarEvent) setCalendarEvent(filteredCalendarEvent);
-  }, [bookingId]);
+    const teamClass = allClasses.find((element) => element._id === currentElement.teamClassId);
+    const coordinator = allCoordinators.find((element) => element._id === currentElement.eventCoordinatorId);
+    const customer = currentElement.customer;
+
+    setBookingNotes(currentElement.notes);
+    setBookingSignUpDeadline([currentElement.signUpDeadline]);
+    setBookingTeamClassId(teamClass?._id);
+    setBookingTeamClassName(teamClass?.title);
+    setClassVariant(currentElement.classVariant);
+    setClosedBookingReason(currentElement.closedReason);
+    setCoordinatorId(coordinator?._id);
+    setCoordinatorName(coordinator?.name);
+    setCustomerCompany(customer?.company);
+    setCustomerEmail(customer?.email);
+    setCustomerName(customer?.name);
+    setCustomerPhone(customer?.phone);
+    setGroupSize(currentElement.attendees);
+    setIsCapRegistration(currentElement.capRegistration);
+    setCalendarEvent(currentElement.calendarEvent);
+    setSelectedPriceTier(currentElement.classVariant && currentElement.classVariant.pricePerson);
+    setSelectedMinimumTier(currentElement.classVariant && currentElement.classVariant.minimum);
+    setSelectedMaximumTier(currentElement.classVariant && currentElement.classVariant.maximum);
+    setTrackingLink(currentElement.shippingTrackingLink);
+    setJoinLink(currentElement.joinInfo && currentElement.joinInfo.joinUrl);
+    setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
+  }, [currentElement]);
 
   useEffect(() => {
     if (bookingTeamClassId) {
       const filteredClass = allClasses.find((element) => element._id === bookingTeamClassId);
-      if (filteredClass) setClassVariantsOptions(filteredClass.variants);
+      if (filteredClass) {
+        setClassVariantsOptions(filteredClass.variants);
+      }
     }
   }, [bookingTeamClassId]);
 
+  useEffect(() => {
+    if (classVariant) {
+      setSelectedVariant(classVariant.order);
+      if (classVariant.groupEvent) {
+        setSelectedPriceTier(classVariant.pricePerson);
+        setSelectedMinimumTier(classVariant.minimum);
+        setSelectedMaximumTier(classVariant.maximum);
+      }
+    }
+  }, [classVariant]);
+
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
+  };
+
+  const urlValidation = ({target}) => {
+    const {name, value} = target;
+    setIsValidUrl({...isValidUrl, [name]: isUrlValid(value)});
   };
 
   const options = { phone: true, phoneRegionCode: 'US' };
@@ -159,132 +162,9 @@ const EditBookingModal = ({
     setAttendeesValid(size > 0);
   };
 
-  const openBooking = async () => {
-    setProcessing(true);
-
-    try {
-      const reOpenBookingStatus = getStatusToReOpenBooking();
-      const resultUpdateBooking = await updateOpenBooking({
-        variables: {
-          bookingId,
-          updatedAt: new Date(),
-          status: reOpenBookingStatus
-        }
-      });
-
-      if (!resultUpdateBooking || !resultUpdateBooking.data) {
-        setProcessing(false);
-        return;
-      }
-      // setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
-
-      const calendarEventObject = allCalendarEvents && allCalendarEvents.find((item) => item.bookingId === bookingId);
-      if (reOpenBookingStatus !== BOOKING_QUOTE_STATUS && calendarEventObject && calendarEventObject.status === DATE_AND_TIME_CANCELED_STATUS) {
-        const calendarEventStatus = getStatusToReOpenCalendarEvent(reOpenBookingStatus);
-        const resultStatusUpdated = await updateCalendarEventStatus({
-          variables: {
-            calendarEventId: calendarEventObject._id,
-            status: calendarEventStatus
-          }
-        });
-        console.log('Changing calendar event status', resultStatusUpdated);
-      }
-    } catch (ex) {
-      console.log(ex);
-    }
-
-    setProcessing(false);
-    handleModal();
-  };
-
-  const saveChangesBooking = async () => {
-    setProcessing(true);
-    console.log('entró');
-
-    try {
-      const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
-      const resultUpdateBooking = await updateBooking({
-        variables: {
-          bookingId,
-          date: new Date(),
-          teamClassId: bookingTeamClassId,
-          classVariant,
-          instructorId: teamClass.instructorId,
-          instructorName: teamClass.instructorName,
-          customerId: currentCustomerId,
-          customerName,
-          eventDate: new Date(),
-          eventDurationHours: classVariant.duration ? classVariant.duration : currentEventDurationHours,
-          eventCoordinatorId: coordinatorId,
-          attendees: groupSize,
-          classMinimum: classVariant.minimum,
-          pricePerson: classVariant.pricePerson,
-          serviceFee: currentServiceFee,
-          salesTax: currentSalesTax,
-          discount: 0,
-          createdAt,
-          updatedAt: new Date(),
-          status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentStatus,
-          email: customerEmail,
-          phone: customerPhone,
-          company: customerCompany,
-          signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
-          closedReason: closedBookingReason,
-          notes: bookingNotes,
-          capRegistration: isCapRegistration
-        }
-      });
-
-      if (!resultUpdateBooking || !resultUpdateBooking.data) {
-        setProcessing(false);
-        return;
-      }
-
-      setCustomers([
-        resultUpdateBooking.data.updateOneCustomer,
-        ...allCustomers.filter((element) => element._id !== resultUpdateBooking.data.updateOneCustomer._id)
-      ]);
-
-      if (closedBookingReason) {
-        const resultEmail = await removeCampaignRequestQuote({
-          variables: { customerEmail: customerEmail.toLowerCase() }
-        });
-        console.log('Remove campaign before redirecting:', resultEmail);
-        //   setBookings([...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)]);
-        // } else {
-        //   setBookings([
-        //     resultUpdateBooking.data.updateOneBooking,
-        //     ...allBookings.filter((element) => element._id !== resultUpdateBooking.data.updateOneBooking._id)
-        //   ]);
-      }
-
-      if (
-        closedBookingReason === 'Lost' ||
-        closedBookingReason === 'Duplicated' ||
-        closedBookingReason === 'Mistake' ||
-        closedBookingReason === 'Test'
-      ) {
-        const calendarEventObject = allCalendarEvents && allCalendarEvents.find((item) => item.bookingId === bookingId);
-        if (calendarEventObject) {
-          const resultStatusUpdated = await updateCalendarEventStatus({
-            variables: {
-              calendarEventId: calendarEventObject._id,
-              status: DATE_AND_TIME_CANCELED_STATUS
-            }
-          });
-          console.log('Changing calendar event status', resultStatusUpdated);
-        }
-      }
-    } catch (ex) {
-      console.log(ex);
-    }
-
-    setProcessing(false);
-    handleModal();
-    onEditCompleted();
-  };
-
   const getStatusToReOpenBooking = () => {
+    const currentPayments = currentElement.payments;
+
     if (!calendarEvent) {
       return BOOKING_QUOTE_STATUS;
     } else if (currentPayments && currentPayments.length > 0) {
@@ -309,6 +189,134 @@ const EditBookingModal = ({
     return calendarEventStatus;
   };
 
+  const openBooking = async () => {
+    setProcessing(true);
+
+    try {
+      const reOpenBookingStatus = getStatusToReOpenBooking();
+      const resultUpdateBooking = await updateOpenBooking({
+        variables: {
+          bookingId: currentElement._id,
+          updatedAt: new Date(),
+          status: reOpenBookingStatus
+        }
+      });
+
+      if (!resultUpdateBooking || !resultUpdateBooking.data) {
+        setProcessing(false);
+        return;
+      }
+
+      if (reOpenBookingStatus !== BOOKING_QUOTE_STATUS && calendarEvent && calendarEvent.status === DATE_AND_TIME_CANCELED_STATUS) {
+        const calendarEventStatus = getStatusToReOpenCalendarEvent(reOpenBookingStatus);
+        const resultStatusUpdated = await updateCalendarEventStatus({
+          variables: {
+            calendarEventId: calendarEvent._id,
+            status: calendarEventStatus
+          }
+        });
+        console.log('Changing calendar event status', resultStatusUpdated);
+      }
+
+      onEditCompleted(currentElement._id);
+    } catch (ex) {
+      console.log(ex);
+    }
+
+    setProcessing(false);
+    handleModal();
+  };
+
+  const saveChangesBooking = async () => {
+    setProcessing(true);
+
+    try {
+      const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
+      let joinInfo = {...currentElement.joinInfo};
+      if (!joinLink && !passwordLink) {
+        joinInfo = undefined;
+      } else if (joinInfo && joinInfo.joinUrl) {
+        joinInfo.joinUrl = joinLink;
+        joinInfo.password = passwordLink;
+      } else {
+        joinInfo = {
+          joinUrl: joinLink,
+          password: passwordLink
+        };
+      }
+      const resultUpdateBooking = await updateBooking({
+        variables: {
+          bookingId: currentElement._id,
+          date: new Date(),
+          teamClassId: bookingTeamClassId,
+          classVariant,
+          instructorId: teamClass.instructorId,
+          instructorName: teamClass.instructorName,
+          customerId: currentElement.customerId,
+          customerName,
+          eventDate: new Date(),
+          eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
+          eventCoordinatorId: coordinatorId,
+          attendees: groupSize,
+          classMinimum: classVariant.minimum,
+          pricePerson: classVariant.pricePerson,
+          serviceFee: currentElement.serviceFee,
+          salesTax: currentElement.salesTax,
+          discount: currentElement.discount,
+          createdAt: currentElement.createdAt,
+          updatedAt: new Date(),
+          status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentElement.status,
+          email: customerEmail,
+          phone: customerPhone,
+          company: customerCompany,
+          signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
+          closedReason: closedBookingReason,
+          notes: bookingNotes,
+          capRegistration: isCapRegistration,
+          shippingTrackingLink: trackingLink,
+          joinInfo,
+          joinInfo_unset: joinInfo ? false : true
+        }
+      });
+
+      if (!resultUpdateBooking || !resultUpdateBooking.data) {
+        setProcessing(false);
+        return;
+      }
+
+      if (closedBookingReason) {
+        const resultEmail = await removeCampaignRequestQuote({
+          variables: { customerEmail: customerEmail.toLowerCase() }
+        });
+        console.log('Remove campaign before redirecting:', resultEmail);
+      }
+
+      if (
+        closedBookingReason === 'Lost' ||
+        closedBookingReason === 'Duplicated' ||
+        closedBookingReason === 'Mistake' ||
+        closedBookingReason === 'Test'
+      ) {
+        if (calendarEvent) {
+          const resultStatusUpdated = await updateCalendarEventStatus({
+            variables: {
+              calendarEventId: calendarEventObject._id,
+              status: DATE_AND_TIME_CANCELED_STATUS
+            }
+          });
+          console.log('Changing calendar event status', resultStatusUpdated);
+        }
+      }
+
+      onEditCompleted(currentElement._id);
+    } catch (ex) {
+      console.log(ex);
+    }
+
+    setProcessing(false);
+    handleModal();
+  };
+
   const saveNotes = async () => {
     setProcessing(true);
     const newArray = bookingNotes ? [...bookingNotes] : [];
@@ -320,18 +328,14 @@ const EditBookingModal = ({
     });
 
     try {
-      const resultNotesUpdated = await updateBookingNotes({
+      await updateBookingNotes({
         variables: {
-          id: bookingId,
+          id: currentElement._id,
           notes: newArray,
           updatedAt: new Date()
         }
       });
       setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)));
-      // setBookings([
-      //   resultNotesUpdated.data.updateOneBooking,
-      //   ...allBookings.filter((element) => element._id !== resultNotesUpdated.data.updateOneBooking._id)
-      // ]);
     } catch (ex) {
       console.log(ex);
     }
@@ -391,18 +395,22 @@ const EditBookingModal = ({
         </NavItem>
         <NavItem>
           <NavLink
-            title="Notes"
+            title="Settings"
             active={active === '2'}
             onClick={() => {
               toggle('2');
             }}
           >
-            <Edit size="18" />
+            <Settings size="18" />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink title="Settings">
-            <Settings size="18" />
+          <NavLink
+            title="Notes"
+            active={active === '3'}
+            onClick={() => toggle('3')}
+          >
+            <Edit size="18" />
           </NavLink>
         </NavItem>
       </Nav>
@@ -411,7 +419,7 @@ const EditBookingModal = ({
           <ModalBody className="flex-grow-1">
             <FormGroup>
               <Label for="full-name">
-                <strong>Id:</strong> <span className="text-primary">{`${bookingId}`}</span>
+                <strong>Id:</strong> <span className="text-primary">{`${currentElement?._id}`}</span>
               </Label>
             </FormGroup>
             <FormGroup>
@@ -424,7 +432,7 @@ const EditBookingModal = ({
                 </InputGroupAddon>
                 <Input
                   id="full-name"
-                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                   placeholder="Full Name *"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
@@ -441,7 +449,7 @@ const EditBookingModal = ({
                 <Input
                   type="email"
                   id="email"
-                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                   placeholder="Email *"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
@@ -462,7 +470,7 @@ const EditBookingModal = ({
                 <Cleave
                   className="form-control"
                   placeholder="Phone *"
-                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                   options={options}
                   id="phone"
                   value={customerPhone}
@@ -479,7 +487,7 @@ const EditBookingModal = ({
                 </InputGroupAddon>
                 <Input
                   id="company"
-                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                   placeholder="Company"
                   value={customerCompany}
                   onChange={(e) => setCustomerCompany(e.target.value)}
@@ -491,7 +499,7 @@ const EditBookingModal = ({
               <Select
                 theme={selectThemeColors}
                 styles={selectStyles}
-                isDisabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
@@ -519,7 +527,7 @@ const EditBookingModal = ({
               <Label for="full-name">Event Details*</Label>
               <Select
                 styles={selectStyles}
-                isDisabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                 theme={selectThemeColors}
                 className="react-select"
                 classNamePrefix="select"
@@ -550,51 +558,125 @@ const EditBookingModal = ({
               <Label for="full-name">Class Variant*</Label>
               <Select
                 theme={selectThemeColors}
-                isDisabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                 styles={selectStyles}
                 className="react-select"
                 classNamePrefix="select"
                 placeholder="Select..."
                 value={{
-                  label: classVariant && `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`,
+                  label:
+                    classVariant && classVariant.groupEvent
+                      ? `${classVariant && classVariant.title} ${classVariant && classVariant.groupEvent ? '/group' : '/person'}`
+                      : `${classVariant && classVariant.title} $${classVariant && classVariant.pricePerson}${
+                          classVariant && classVariant.groupEvent ? '/group' : '/person'
+                        }`,
                   value: classVariant
                 }}
                 options={
                   classVariantsOptions &&
                   classVariantsOptions.map((element) => {
+                    const variant = {
+                      title: element.title,
+                      notes: element.notes,
+                      minimum: element.minimum,
+                      duration: element.duration,
+                      pricePerson: element.pricePerson,
+                      hasKit: element.hasKit,
+                      order: element.order,
+                      active: element.active,
+                      groupEvent: element.groupEvent
+                    };
                     return {
-                      value: element,
-                      label: `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                      value: variant,
+                      label: element.groupEvent
+                        ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
+                        : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                     };
                   })
                 }
-                onChange={(option) => setClassVariant(option.value)}
+                onChange={(option) => {
+                  if (!option.value.groupEvent) {
+                    setClassVariant(option.value);
+                    setIsGroupVariant(false);
+                  } else {
+                    setIsGroupVariant(true);
+                  }
+                  setSelectedVariant(option.value.order);
+                  setGroupSize('');
+                  setSelectedPriceTier('');
+                  setSelectedMinimumTier('');
+                  setSelectedMaximumTier('');
+                }}
                 isClearable={false}
               />
             </FormGroup>
-            <FormGroup>
-              <Label for="full-name">Group Size*</Label>
-              <InputGroup size="sm">
-                <Input
-                  id="attendees"
-                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
-                  placeholder="Group Size *"
-                  value={groupSize}
-                  onChange={(e) => setGroupSize(e.target.value)}
-                  type="number"
-                  onBlur={(e) => {
-                    groupSizeValidation(e.target.value);
+            {isGroupVariant || (classVariantsOptions[selectedVariant] && classVariantsOptions[selectedVariant].groupEvent) ? (
+              <FormGroup className="mt-1">
+                <Label for="full-name">Group Size*</Label>
+                <Select
+                  theme={selectThemeColors}
+                  className="react-select"
+                  classNamePrefix="select"
+                  placeholder="Select..."
+                  isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  value={{
+                    label: `${selectedMinimumTier} - ${selectedMaximumTier} attendees / $ ${selectedPriceTier}`,
+                    value: classVariant
                   }}
+                  options={
+                    classVariantsOptions[selectedVariant].priceTiers &&
+                    classVariantsOptions[selectedVariant].priceTiers.map((item) => {
+                      const variant = {
+                        title: classVariantsOptions[selectedVariant].title,
+                        notes: classVariantsOptions[selectedVariant].notes,
+                        minimum: item.minimum,
+                        maximum: item.maximum,
+                        duration: classVariantsOptions[selectedVariant].duration,
+                        pricePerson: item.price,
+                        hasKit: classVariantsOptions[selectedVariant].hasKit,
+                        order: classVariantsOptions[selectedVariant].order,
+                        active: classVariantsOptions[selectedVariant].active,
+                        groupEvent: classVariantsOptions[selectedVariant].groupEvent
+                      };
+                      return {
+                        value: variant,
+                        label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
+                      };
+                    })
+                  }
+                  onChange={(option) => {
+                    setClassVariant(option.value);
+                    setGroupSize(option.value.maximum);
+                  }}
+                  isClearable={false}
+                  styles={selectStyles}
                 />
-              </InputGroup>
-            </FormGroup>
+              </FormGroup>
+            ) : (
+              <FormGroup className="mt-1">
+                <Label for="full-name">Group Size*</Label>
+                <InputGroup size="sm">
+                  <Input
+                    id="attendees"
+                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                    placeholder="Group Size *"
+                    value={groupSize}
+                    onChange={(e) => setGroupSize(e.target.value)}
+                    type="number"
+                    onBlur={(e) => {
+                      groupSizeValidation(e.target.value);
+                    }}
+                  />
+                </InputGroup>
+              </FormGroup>
+            )}
             <FormGroup>
               <CustomInput
                 type="switch"
                 id="exampleCustomSwitch"
                 name="customSwitch"
                 label="Turn on/off registration's cap based on group size"
-                disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                 inline
                 value={isCapRegistration}
                 checked={isCapRegistration}
@@ -607,19 +689,19 @@ const EditBookingModal = ({
               <Label for="date-time-picker">Sign Up Deadline (Custom)</Label>
               <InputGroup size="sm">
                 <Flatpickr
-                  disabled={currentStatus === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                   value={bookingSignUpDeadline}
                   dateformat="Y-m-d H:i"
-                  data-enable-time
+                  data-enable-time={true}
                   id="signUpDateLine"
-                  className="form-control"
+                  className="flatpickr form-control"
                   placeholder="Select Date..."
                   onChange={(selectedDates, dateStr, instance) => {
                     setBookingSignUpDeadline(selectedDates);
                   }}
                 />
               </InputGroup>
-              {bookingSignUpDeadline && currentStatus !== BOOKING_CLOSED_STATUS && (
+              {bookingSignUpDeadline && currentElement.status !== BOOKING_CLOSED_STATUS && (
                 <dt className="text-right">
                   <small>
                     <a href="#" onClick={(e) => setBookingSignUpDeadline([])}>
@@ -630,9 +712,9 @@ const EditBookingModal = ({
               )}
             </FormGroup>
             <FormGroup>
-              {currentStatus === BOOKING_CLOSED_STATUS ? (
+              {currentElement.status === BOOKING_CLOSED_STATUS ? (
                 <span className="text-lg">
-                  Closed with reason: <strong>{currentClosedReason}</strong>
+                  Closed with reason: <strong>{currentElement.closedReason}</strong>
                 </span>
               ) : (
                 <>
@@ -667,7 +749,6 @@ const EditBookingModal = ({
                   size="sm"
                   color={closedBookingReason ? 'danger' : 'primary'}
                   onClick={() => {
-                    console.log('llamando la función');
                     saveChangesBooking();
                   }}
                   disabled={
@@ -684,17 +765,17 @@ const EditBookingModal = ({
                   {!processing && !closedBookingReason
                     ? 'Save'
                     : closedBookingReason && processing
-                      ? 'Saving...'
-                      : processing
-                        ? 'Saving...'
-                        : 'Close booking?'}
+                    ? 'Saving...'
+                    : processing
+                    ? 'Saving...'
+                    : 'Close booking?'}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel
                 </Button>
               </div>
             )}
-            {currentStatus === BOOKING_CLOSED_STATUS && (
+            {currentElement.status === BOOKING_CLOSED_STATUS && (
               <div align="center">
                 <Button
                   className="mr-1"
@@ -723,7 +804,7 @@ const EditBookingModal = ({
             )}
           </ModalBody>
         </TabPane>
-        <TabPane tabId="2">
+        <TabPane tabId="3">
           <b className="text-primary ml-2">Notes</b>
           <Card className="notes-card mt-1">
             <CardBody>
@@ -770,7 +851,104 @@ const EditBookingModal = ({
             </Button>
           </div>
         </TabPane>
-        <TabPane tabId="3">Settings tab</TabPane>
+        <TabPane tabId="2">
+          <ModalBody className="flex-grow-1">
+            <FormGroup>
+              <Label for="joinUrl">
+                <strong>Id:</strong> <span className="text-primary">{`${currentElement?._id}`}</span>
+              </Label>
+            </FormGroup>
+            <FormGroup>
+              <Label for="joinUrl">Event join info</Label>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Video size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  type="text"
+                  id="joinUrl"
+                  name="joinUrl"
+                  placeholder="Event link"
+                  value={joinLink}
+                  onChange={(e) => setJoinLink(e.target.value)}
+                  onBlur={(e) => urlValidation(e)}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Key size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  type="text"
+                  id="key"
+                  name="key"
+                  placeholder="Event password"
+                  value={passwordLink}
+                  onChange={(e) => setPasswordLink(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <Label for="trackingLink">Shipping tracking</Label>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Truck size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  type="text"
+                  id="trackingLink"
+                  name="trackingLink"
+                  placeholder="Tracking doc link"
+                  value={trackingLink}
+                  onChange={(e) => setTrackingLink(e.target.value)}
+                  onBlur={(e) => urlValidation(e)}
+                />
+              </InputGroup>
+            </FormGroup>
+
+            {editMode && (
+              <div align="center">
+                <Button
+                  className="mr-1"
+                  size="sm"
+                  color={closedBookingReason ? 'danger' : 'primary'}
+                  onClick={saveChangesBooking}
+                  disabled={
+                    !customerName ||
+                    !customerEmail ||
+                    !emailValid ||
+                    !customerPhone ||
+                    !coordinatorId ||
+                    !bookingTeamClassId ||
+                    !classVariant ||
+                    !groupSize || 
+                    !isValidUrl.joinUrl ||
+                    !isValidUrl.trackingLink
+                  }
+                >
+                  {!processing && !closedBookingReason
+                    ? 'Save'
+                    : closedBookingReason && processing
+                    ? 'Saving...'
+                    : processing
+                    ? 'Saving...'
+                    : 'Close booking?'}
+                </Button>
+                <Button color="secondary" size="sm" onClick={cancel} outline>
+                  Cancel
+                </Button>
+              </div>
+            )}
+          </ModalBody>
+        </TabPane>
       </TabContent>
     </Modal>
   );

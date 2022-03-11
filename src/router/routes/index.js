@@ -3,7 +3,7 @@ import { lazy } from 'react';
 
 // @constants
 const TemplateTitle = '%s - TeamClass Ops Dashboard';
-const DefaultRoute = '/allbookings';
+const DefaultRoute = '/pipeline';
 
 // @routes
 const Routes = [
@@ -16,12 +16,8 @@ const Routes = [
     component: lazy(() => import('../../views/booking/BookingList'))
   },
   {
-    path: '/allbookings',
-    component: lazy(() => import('../../views/booking/BookingsTable'))
-  },
-  {
-    path: '/bookings',
-    component: lazy(() => import('../../views/booking/BookingsTable'))
+    path: '/pipeline',
+    component: lazy(() => import('../../views/booking/FunnelTable'))
   },
   {
     appLayout: true,
@@ -30,8 +26,8 @@ const Routes = [
     path: '/chat'
   },
   {
-    path: '/closedBookings',
-    component: lazy(() => import('../../views/booking/BookingClosedList'))
+    path: '/allbookings',
+    component: lazy(() => import('../../views/booking/AllBookingsTable'))
   },
   {
     path: '/booking/:id',

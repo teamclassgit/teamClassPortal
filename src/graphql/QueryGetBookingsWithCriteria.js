@@ -1,9 +1,16 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query GetBookings($offset: Int!, $limit: Int!, $sortBy: QueryWithCriteriumSortBy, $filterBy: [QueryWithCriteriumFilterBy]) {
-    getBookingsWithCriteria(input: { offset: $offset, limit: $limit, sortBy: $sortBy, filterBy: $filterBy }) {
+  query GetBookings(
+    $offset: Int!
+    $limit: Int!
+    $sortBy: QueryWithCriteriumSortBy
+    $filterBy: [QueryWithCriteriumFilterBy]
+    $filterByOr: [QueryWithCriteriumFilterByOr]
+  ) {
+    getBookingsWithCriteria(input: { offset: $offset, limit: $limit, sortBy: $sortBy, filterBy: $filterBy, filterByOr: $filterByOr }) {
       count
+      total
       rows {
         updatedAt
         createdAt
@@ -15,23 +22,36 @@ export default gql`
         customerPhone
         customerEmail
         customerCompany
+        capRegistration
+        hasInternationalAttendees
         eventCoordinatorId
         eventCoordinatorName
         eventCoordinatorEmail
         className
         attendees
         eventDateTime
+        rescheduleDateTime
         hasInternationalAttendees
         eventDateTimeStatus
         signUpDeadline
+        timezone
+        timezoneLabel
         depositsPaid
         finalPaid
+        depositPaidDate
+        finalPaymentPaidDate
         isRush
         taxAmount
         serviceFeeAmount
         cardFeeAmount
         totalInvoice
         balance
+        salesTax
+        salesTaxState
+        taxExempt
+        discount
+        bookingStage
+        closedReason
         payments {
           amount
           createdAt
@@ -52,6 +72,13 @@ export default gql`
           order
           pricePerson
           title
+        }
+        shippingTrackingLink
+        joinInfo {
+          eventId
+          joinUrl
+          manualLink
+          password
         }
       }
     }

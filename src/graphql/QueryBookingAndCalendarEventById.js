@@ -1,7 +1,25 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query GetBooking($bookingId: String!) {
+  query GetBookingAndCalendarEvent($bookingId: String!) {
+    calendarEvent(query: { bookingId: $bookingId }) {
+      _id
+      classId
+      bookingId
+      status
+      toHour
+      toMinutes
+      year
+      day
+      fromHour
+      fromMinutes
+      month
+      rushFee
+      timezone
+      timezoneLabel
+      displayTimezone
+      displayTimezoneLabel
+    }
     booking(query: { _id: $bookingId }) {
       _id
       date
@@ -97,6 +115,13 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      shippingTrackingLink
+      joinInfo {
+        eventId
+        joinUrl
+        manualLink
+        password
+      }
     }
   }
 `;

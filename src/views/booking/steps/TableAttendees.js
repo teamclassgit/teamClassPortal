@@ -31,6 +31,7 @@ import {
 import ExportToExcel from '../../../components/ExportToExcel';
 import ExportToCsv from '../../../components/ExportToCsv';
 import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
+import ExportToExcelLegacy from '../../../components/ExportToExcelLegacy';
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
   <div className="custom-control custom-checkbox">
@@ -276,7 +277,7 @@ const DataTableAttendees = ({
                   </DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem className="align-middle w-100">
-                      <ExportToExcel
+                      <ExportToExcelLegacy
                         apiData={excelHeadersTemplate}
                         fileName={'Template'}
                         title={
@@ -299,7 +300,7 @@ const DataTableAttendees = ({
                       </DropdownItem>
                     )}
                     <DropdownItem className="align-middle w-100">
-                      <ExportToExcel
+                      <ExportToExcelLegacy
                         apiData={attendeesExcelTable}
                         fileName={`${customer && customer.name}${customer && customer.company ? ', ' : ''}${
                           customer && customer.company ? customer.company : ''

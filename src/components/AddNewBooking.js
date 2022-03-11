@@ -13,11 +13,11 @@ import '@styles/react/libs/flatpickr/flatpickr.scss';
 
 // @scripts
 import 'cleave.js/dist/addons/cleave-phone.us';
-import mutationNewBooking from '../../graphql/MutationInsertBookingAndCustomer';
-import { BOOKING_QUOTE_STATUS } from '../../utility/Constants';
-import { isValidEmail, getUserData } from '../../utility/Utils';
+import mutationNewBooking from '../graphql/MutationInsertBookingAndCustomer';
+import { BOOKING_QUOTE_STATUS, SALES_TAX, SALES_TAX_STATE, SERVICE_FEE } from '../utility/Constants';
+import { isValidEmail, getUserData } from '../utility/Utils';
 
-const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers, handleModal, open, setBookings, setCustomers, onAddCompleted }) => {
+const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleModal, open, onAddCompleted }) => {
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [classVariant, setClassVariant] = useState(null);
   const [classVariantsOptions, setClassVariantsOptions] = useState([]);
@@ -36,9 +36,8 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [warning, setWarning] = useState({ open: false, message: '' });
-
-  const serviceFeeValue = 0.1;
-  const salesTaxValue = 0.0825;
+  const [isGroupVariant, setIsGroupVariant] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState(null);
 
   const options = { phone: true, phoneRegionCode: 'US' };
 
@@ -66,12 +65,24 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
   }, [selectedClass]);
 
   useEffect(() => {
-    const userData = getUserData();
-    if (userData && userData.customData && userData.customData.coordinatorId) {
-      setDefaultCoordinatorOption(userData.customData);
-      setOneCoordinator(userData.customData.coordinatorId);
+    if (baseElement) {
+      setNewName(baseElement.name);
+      setNewEmail(baseElement.email);
+      setNewPhone(baseElement.phone);
+      setNewCompany(baseElement.company);
+      setNewAttendees(baseElement.attendees);
+      setSelectedClass(baseElement.class);
+      setSelectedCustomer(null);
+      setIsOldCustomer(false);
+      setWarning({ open: false, message: '' });
+
+      const userData = getUserData();
+      if (userData && userData.customData && userData.customData.coordinatorId) {
+        setDefaultCoordinatorOption(userData.customData);
+        setOneCoordinator(userData.customData.coordinatorId);
+      }
     }
-  }, [bookings]);
+  }, [baseElement]);
 
   const saveNewBooking = async () => {
     setProcessing(true);
@@ -87,25 +98,25 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
       }
 
       const teamClass = classes.find((element) => element._id === selectedClass);
-
+      const newId = uuid();
       const resultCreateBooking = await createBooking({
         variables: {
-          bookingId: uuid(),
-          date: new Date(), // combine with quotaTime
+          bookingId: newId,
+          date: new Date(),
           teamClassId: selectedClass,
           classVariant,
           instructorId: teamClass.instructorId ? teamClass.instructorId : teamClass._id,
           instructorName: teamClass.instructorName,
           customerId: customer ? customer._id : uuid(),
           customerName: customer ? customer.name : newName,
-          eventDate: new Date(),
           eventDurationHours: classVariant.duration,
           eventCoordinatorId: oneCoordinator,
           attendees: newAttendees,
           classMinimum: classVariant.minimum,
           pricePerson: classVariant.pricePerson,
-          serviceFee: serviceFeeValue,
-          salesTax: salesTaxValue,
+          serviceFee: SERVICE_FEE,
+          salesTax: SALES_TAX,
+          salesTaxState: SALES_TAX_STATE,
           discount: 0,
           customerCreatedAt: customer && customer.createdAt ? customer.createdAt : new Date(),
           createdAt: new Date(),
@@ -123,23 +134,15 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
         return;
       }
 
-      setCustomers([
-        resultCreateBooking.data.upsertOneCustomer,
-        ...customers.filter((element) => element._id !== resultCreateBooking.data.upsertOneCustomer._id)
-      ]);
-
-      // setBookings([
-      //   resultCreateBooking.data.insertOneBooking,
-      //   ...bookings.filter((element) => element._id !== resultCreateBooking.data.insertOneBooking._id)
-      // ]);
       setProcessing(false);
       setClassVariant(null);
       setOneCoordinator(null);
+      onAddCompleted(newId);
     } catch (ex) {
       console.log(ex);
       setProcessing(false);
     }
-    onAddCompleted();
+
     handleModal();
   };
 
@@ -150,20 +153,6 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
   };
 
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
-
-  useEffect(() => {
-    if (baseElement) {
-      setNewName(baseElement.name);
-      setNewEmail(baseElement.email);
-      setNewPhone(baseElement.phone);
-      setNewCompany(baseElement.company);
-      setNewAttendees(baseElement.attendees);
-      setSelectedClass(baseElement.class);
-      setSelectedCustomer(null);
-      setIsOldCustomer(false);
-      setWarning({ open: false, message: '' });
-    }
-  }, [baseElement]);
 
   const getClassName = (id) => {
     const res = classes.find((element) => element._id === selectedClass);
@@ -375,33 +364,90 @@ const AddNewBooking = ({ baseElement, bookings, classes, coordinators, customers
               options={
                 classVariantsOptions &&
                 classVariantsOptions.map((element) => {
+                  const variant = {
+                    title: element.title,
+                    notes: element.notes,
+                    minimum: element.minimum,
+                    duration: element.duration,
+                    pricePerson: element.pricePerson,
+                    hasKit: element.hasKit,
+                    order: element.order,
+                    active: element.active,
+                    groupEvent: element.groupEvent
+                  };
                   return {
-                    value: element,
-                    label: `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                    value: variant,
+                    label: element.groupEvent
+                      ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
+                      : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                   };
                 })
               }
-              onChange={(option) => setClassVariant(option.value)}
+              onChange={(option) => {
+                if (!option.value.groupEvent) {
+                  setClassVariant(option.value);
+                  setIsGroupVariant(false);
+                } else {
+                  setIsGroupVariant(true);
+                }
+                setSelectedVariant(option.value.order);
+              }}
               isClearable={false}
               styles={selectStyles}
             />
           </FormGroup>
         )}
-        <FormGroup>
-          <Label for="full-name">Group Size*</Label>
-          <InputGroup size="sm">
-            <Input
-              id="attendees"
-              placeholder="Group Size *"
-              value={newAttendees}
-              onChange={(e) => setNewAttendees(e.target.value)}
-              type="number"
-              onBlur={(e) => {
-                groupSizeValidation(e.target.value);
+        {isGroupVariant ? (
+          <FormGroup>
+            <Label for="full-name">Group Size*</Label>
+            <Select
+              theme={selectThemeColors}
+              className="react-select"
+              classNamePrefix="select"
+              placeholder="Select..."
+              options={classVariantsOptions[selectedVariant].priceTiers.map((item) => {
+                const variant = {
+                  title: classVariantsOptions[selectedVariant].title,
+                  notes: classVariantsOptions[selectedVariant].notes,
+                  minimum: item.minimum,
+                  maximum: item.maximum,
+                  duration: classVariantsOptions[selectedVariant].duration,
+                  pricePerson: item.price,
+                  hasKit: classVariantsOptions[selectedVariant].hasKit,
+                  order: classVariantsOptions[selectedVariant].order,
+                  active: classVariantsOptions[selectedVariant].active,
+                  groupEvent: classVariantsOptions[selectedVariant].groupEvent
+                };
+                return {
+                  value: variant,
+                  label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
+                };
+              })}
+              onChange={(option) => {
+                setClassVariant(option.value);
+                setNewAttendees(option.value.maximum);
               }}
+              isClearable={false}
+              styles={selectStyles}
             />
-          </InputGroup>
-        </FormGroup>
+          </FormGroup>
+        ) : (
+          <FormGroup>
+            <Label for="full-name">Group Size*</Label>
+            <InputGroup size="sm">
+              <Input
+                id="attendees"
+                placeholder="Group Size *"
+                value={newAttendees}
+                onChange={(e) => setNewAttendees(e.target.value)}
+                type="number"
+                onBlur={(e) => {
+                  groupSizeValidation(e.target.value);
+                }}
+              />
+            </InputGroup>
+          </FormGroup>
+        )}
         <div align="center">
           <Button
             className="mr-1"

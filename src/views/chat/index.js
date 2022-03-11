@@ -258,6 +258,8 @@ const AppChat = () => {
     return null;
   } 
 
+  console.log("id", id);
+
   return (
     <>
       <SidebarLeft
@@ -291,8 +293,8 @@ const AppChat = () => {
       </div>
       {sid && openedConversation && client && (
         <SidebarRight 
-          conversation={openedConversation}
           client={client}
+          id={id}
         />
       )}
     </>

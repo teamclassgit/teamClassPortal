@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { Card, CardText, Row, Media } from 'reactstrap';
+import { Card, Row } from 'reactstrap';
 import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus';
 import BoardCard from './BoardCard/BoardCard';
 import Board from '@lourenci/react-kanban';
 import { BOOKING_STATUS } from '../../../utility/Constants';
-import { getCustomerPhone, getCustomerCompany, getCustomerEmail, getClassTitle, getCoordinatorName } from '../common';
 import './BoardBookings.scss';
 import '@lourenci/react-kanban/dist/styles.css';
-import { getBookingTotals } from '../../../utility/Utils';
 import Avatar from '@components/avatar';
 import { DollarSign, TrendingUp } from 'react-feather';
 
-const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, coordinators, handleEditModal }) => {
+const BoardBookings = ({
+  filteredBookingsQuote = [],
+  filteredBookingsRequested = [],
+  filteredBookingsAccepted = [],
+  filteredBookingsDeposit = [],
+  filteredBookingsPaid = [],
+  handleEditModal
+}) => {
   const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {});
   const [loading, setLoading] = useState(true);
-
-  const getTotalBooking = (bookingInfo, calendarEvent) => {
-    const bookingTotals = getBookingTotals(bookingInfo, calendarEvent && calendarEvent.rushFee ? true : false, bookingInfo.salesTax, true);
-    return bookingTotals.finalValue;
-  };
 
   const getEmptyBoard = () => {
     return {
@@ -42,17 +42,17 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
   };
 
   const getColumnData = (bookingCards, column) => {
-    if (column === 'quote' || column === 'canceled') return bookingCards.filter(({ status }) => status.indexOf(column) > -1);
+    if (column === 'quote') return bookingCards.filter(({ status }) => status.indexOf(column) > -1);
 
     if (column === 'date-requested') {
-      return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf(column) > -1 && calendarEvent && (calendarEvent.status === 'reserved' || calendarEvent.status === 'rejected');
+      return bookingCards.filter(({ status, eventDateTimeStatus }) => {
+        return status.indexOf(column) > -1 && (eventDateTimeStatus === 'reserved' || eventDateTimeStatus === 'rejected');
       });
     }
 
     if (column === 'accepted') {
-      return bookingCards.filter(({ status, calendarEvent }) => {
-        return status.indexOf('date-requested') > -1 && calendarEvent && calendarEvent.status === 'confirmed';
+      return bookingCards.filter(({ status, eventDateTimeStatus }) => {
+        return status.indexOf('date-requested') > -1 && eventDateTimeStatus === 'confirmed';
       });
     }
 
@@ -74,90 +74,55 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
   };
 
   const getBoard = () => {
-    const bookingCards = filteredBookings.map(
-      ({
-        _id,
-        teamClassId,
-        customerId,
-        customerName,
-        attendees,
-        eventDurationHours,
-        eventCoordinatorId,
-        classMinimum,
-        pricePerson,
-        serviceFee,
-        salesTax,
-        classVariant,
-        status,
-        payments,
-        createdAt,
-        updatedAt,
-        signUpDeadline,
-        closedReason,
-        notes,
-        hasInternationalAttendees,
-        capRegistration
-      }) => {
-        return {
-          customerName,
-          _id,
-          attendees,
-          teamClassId,
-          createdAt,
-          updatedAt,
-          signUpDeadline,
-          classVariant,
-          status,
-          payments,
-          customerId,
-          eventDurationHours,
-          eventCoordinatorId,
-          coordinatorName: getCoordinatorName(eventCoordinatorId, coordinators),
-          classTitle: getClassTitle(teamClassId, classes),
-          email: getCustomerEmail(customerId, customers),
-          phone: getCustomerPhone(customerId, customers),
-          company: getCustomerCompany(customerId, customers),
-          serviceFee,
-          pricePerson,
-          minimum: classMinimum,
-          salesTax,
-          attendeesAdded: 0,
-          additionals: 0,
-          calendarEvent: calendarEvents.find((element) => element.bookingId === _id),
-          closedReason,
-          notes,
-          bookingTotal: getTotalBooking(
-            {
-              classVariant,
-              classMinimum,
-              pricePerson,
-              serviceFee,
-              payments,
-              attendees,
-              salesTax
-            },
-            calendarEvents.find((element) => element.bookingId === _id)
-          ),
-          hasInternationalAttendees,
-          capRegistration
-        };
-      }
-    );
+    const columns = [];
+
+    const quoteColumn = {
+      id: 0,
+      title: 'Quote',
+      cards: filteredBookingsQuote?.rows || [],
+      totalBookings: filteredBookingsQuote?.total?.toFixed(2) || 0.0,
+      numberOfBookings: filteredBookingsQuote?.count || 0
+    };
+    columns.push(quoteColumn);
+
+    const requestedColumn = {
+      id: 0,
+      title: 'Date/Time requested',
+      cards: filteredBookingsRequested?.rows || [],
+      totalBookings: filteredBookingsRequested?.total?.toFixed(2) || 0.0,
+      numberOfBookings: filteredBookingsRequested?.count || 0
+    };
+    columns.push(requestedColumn);
+
+    const acceptedColumn = {
+      id: 0,
+      title: 'Date/Time accepted',
+      cards: filteredBookingsAccepted?.rows || [],
+      totalBookings: filteredBookingsAccepted?.total?.toFixed(2) || 0.0,
+      numberOfBookings: filteredBookingsAccepted?.count || 0
+    };
+    columns.push(acceptedColumn);
+
+    const depositColumn = {
+      id: 0,
+      title: 'Deposit paid',
+      cards: filteredBookingsDeposit?.rows || [],
+      totalBookings: filteredBookingsDeposit?.total?.toFixed(2) || 0.0,
+      numberOfBookings: filteredBookingsDeposit?.count || 0
+    };
+    columns.push(depositColumn);
+
+    const finalColumn = {
+      id: 0,
+      title: 'Paid (Full)',
+      cards: filteredBookingsPaid?.rows || [],
+      totalBookings: filteredBookingsPaid?.total?.toFixed(2) || 0.0,
+      numberOfBookings: filteredBookingsPaid?.count || 0
+    };
+    columns.push(finalColumn);
 
     return {
-      columns: BOOKING_STATUS.filter((element) => element.board === true).map(({ label, value }, index) => {
-        const columnData = getColumnData(bookingCards, value);
-        const totalBookings = columnData.reduce((previousValue, currentValue) => previousValue + currentValue.bookingTotal, 0);
-        const numberOfBookings = columnData.length;
-
-        return {
-          id: index,
-          title: label,
-          cards: columnData,
-          totalBookings: totalBookings.toFixed(2),
-          numberOfBookings
-        };
-      })
+      columns
     };
   };
 
@@ -169,26 +134,10 @@ const BoardBookings = ({ filteredBookings, customers, classes, calendarEvents, c
     const newBoard = getBoard();
     setBoard(newBoard);
     setLoading(false);
-  }, [filteredBookings]);
+  }, [filteredBookingsQuote, filteredBookingsAccepted, filteredBookingsDeposit, filteredBookingsPaid, filteredBookingsRequested]);
 
   // Here we change the status of the dragged card
-  const handleDragCard = async (booking, source, destination) => {
-    const sourceStatus = BOOKING_STATUS[source.fromColumnId].value;
-    const newStatus = BOOKING_STATUS[destination.toColumnId].value;
-    const bookingId = booking._id;
-
-    try {
-      await updateBookingStatus({
-        variables: {
-          id: bookingId,
-          status: newStatus,
-          updatedAt: new Date()
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const handleDragCard = async (booking, source, destination) => {};
 
   return (
     <>

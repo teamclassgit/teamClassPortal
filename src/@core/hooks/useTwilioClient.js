@@ -1,23 +1,17 @@
 // @packages
 import { Client } from '@twilio/conversations';
 import { isUserLoggedIn } from '@utils';
-import { useQuery, useMutation } from "@apollo/client";
-import { useState, useEffect } from "react";
+import { useQuery, useMutation } from '@apollo/client';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 // @scripts
-import mutationTokenConversations from "../../graphql/MutationTokenConversations";
+import mutationTokenConversations from '../../graphql/MutationTokenConversations';
 import queryConversationsDetail from '../../graphql/QueryConversationsDetail';
 import { getUserData } from '../../utility/Utils';
 import { handlePromiseRejection } from '../../views/chat/helpers';
 import { getConversationParticipants } from '../../views/chat/Apis';
-import {
-  addMessages,
-  addNotifications,
-  listConversations,
-  updateUnreadMessages,
-  updateParticipants
-} from '../../redux/actions/chat';
+import { addMessages, addNotifications, listConversations, updateUnreadMessages, updateParticipants } from '../../redux/actions/chat';
 
 const useTwilioClient = () => {
   const [client, setClient] = useState(null);
@@ -35,8 +29,8 @@ const useTwilioClient = () => {
 
   const dispatch = useDispatch();
 
-  localStorage.setItem("username", userDataEmail);
-  localStorage.setItem("token", token);
+  localStorage.setItem('username', userDataEmail);
+  localStorage.setItem('token', token);
 
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
@@ -69,13 +63,20 @@ const useTwilioClient = () => {
     updateToken();
   }, [client]);
 
+  console.log({
+    bookingIds: conversations?.map((convo) => convo?.friendlyName),
+    userId: userData?._id,
+    searchText: inputValue,
+    limit: client?.connectionState === 'connecting' ? 0 : 50
+  });
+
   useQuery(queryConversationsDetail, {
     fetchPolicy: 'no-cache',
     variables: {
       bookingIds: conversations?.map((convo) => convo?.friendlyName),
       userId: userData?._id,
       searchText: inputValue,
-      limit: client?.connectionState === "connecting" ? 0 : 50
+      limit: client?.connectionState === 'connecting' ? 0 : 50
     },
     onCompleted: (conversationDetails) => {
       setInfoDetails(conversationDetails?.getConversationsDetails);
@@ -83,25 +84,23 @@ const useTwilioClient = () => {
     pollInterval: 200000
   });
 
-  const newConversation = (item) => conversations?.find((convo) => (item?._id === convo?.channelState?.friendlyName));
+  const newConversation = (item) => conversations?.find((convo) => item?._id === convo?.channelState?.friendlyName || item?.customer?._id === convo?.channelState?.friendlyName);
 
   useEffect(() => {
     if (conversations !== undefined && conversations !== null) {
       const dataWithConversations = infoDetails?.map((item) => {
-        if (newConversation(item) !== undefined) {
+        const newConv = newConversation(item);
+        if (newConv !== undefined) {
           return {
             ...item,
-            ...newConversation(item)
+            ...newConv
           };
         } else {
           return item;
         }
       });
       const dataSorted = dataWithConversations?.sort((a, b) => {
-        return (
-          (b.channelState?.lastMessage?.dateCreated || b.dateUpdated) -
-          (a.channelState?.lastMessage?.dateCreated || a.dateUpdated)
-        );
+        return (b.channelState?.lastMessage?.dateCreated || b.dateUpdated) - (a.channelState?.lastMessage?.dateCreated || a.dateUpdated);
       });
       setData(dataSorted);
       setTimeout(() => {
@@ -115,42 +114,33 @@ const useTwilioClient = () => {
       client.on('stateChanged', (state) => {
         if (state === 'initialized') {
           updateConversations(client);
-          client.addListener("conversationAdded", async (conversation) => {
+          client.addListener('conversationAdded', async (conversation) => {
             handlePromiseRejection(async () => {
-              if (conversation.status === "joined") {
+              if (conversation.status === 'joined') {
                 const result = await getConversationParticipants();
                 dispatch(updateParticipants(result, conversation.sid));
               }
-              
-              updateConvoList(
-                client,
-                conversation,
-                listConversations,
-                addMessages,
-                updateUnreadMessages
-              );
+
+              updateConvoList(client, conversation, listConversations, addMessages, updateUnreadMessages);
             }, addNotifications);
           });
 
-          client.addListener("conversationUpdated", async ({ conversation }) => {
-            handlePromiseRejection(() => updateConvoList(
-              client,
-              conversation,
-              listConversations,
-              addMessages,
-              updateUnreadMessages
-            ), addNotifications);
+          client.addListener('conversationUpdated', async ({ conversation }) => {
+            handlePromiseRejection(
+              () => updateConvoList(client, conversation, listConversations, addMessages, updateUnreadMessages),
+              addNotifications
+            );
           });
         }
       });
 
-      client.addListener("tokenExpired", () => {
+      client.addListener('tokenExpired', () => {
         updateToken();
       });
 
-      client.addListener("tokenAboutToExpire", () => {
+      client.addListener('tokenAboutToExpire', () => {
         updateToken();
-      });  
+      });
 
       return () => {
         client?.removeAllListeners();
@@ -158,24 +148,18 @@ const useTwilioClient = () => {
     }
   }, [client]);
 
-  const updateConvoList = async (
-    client,
-    conversation,
-    listConversations,
-    addMessages,
-    updateUnreadMessages
-  ) => {
-    if (conversation.status === "joined") {
+  const updateConvoList = async (client, conversation, listConversations, addMessages, updateUnreadMessages) => {
+    if (conversation.status === 'joined') {
       const messages = await conversation.getMessages();
       dispatch(addMessages(conversation.sid, messages.items));
     } else {
       dispatch(addMessages(conversation.sid, []));
     }
-  
+
     loadUnreadMessagesCount(conversation, updateUnreadMessages);
-  
+
     const subscribedConversations = await client.getSubscribedConversations();
-    
+
     dispatch(listConversations(subscribedConversations.items));
   };
 
@@ -204,5 +188,5 @@ const useTwilioClient = () => {
     userDataEmail
   };
 };
- 
+
 export default useTwilioClient;

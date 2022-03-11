@@ -59,6 +59,7 @@
     "leaflet": "1.6.0",
     "lodash": "4.17.21",
     "moment": "2.29.1",
+    "moment-timezone": "^0.5.34",
     "nouislider": "14.6.2",
     "nouislider-react": "3.3.8",
     "postcss-rtl": "1.5.0",

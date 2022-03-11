@@ -94,6 +94,11 @@ export const isPhoneValid = (phone) => {
   return !phone || reg.test(phone);
 };
 
+export const isUrlValid = (url) => {
+  const reg = /https?:\/\/.+/;
+  return !url || reg.test(url);
+};
+
 // ** React Select Theme Colors
 export const selectThemeColors = (theme) => ({
   ...theme,
@@ -106,88 +111,6 @@ export const selectThemeColors = (theme) => ({
     neutral30: '#ededed' // for input hover border-color
   }
 });
-
-//get totals associated to a booking
-export const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false) => {
-  const minimum = bookingInfo.classVariant ? bookingInfo.classVariant.minimum : bookingInfo.classMinimum;
-
-  //pricePerson is currently in use for group based pricing too
-  const price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
-
-  const discount = bookingInfo.discount;
-  let totalTaxableAdditionalItems = 0;
-  let totalNoTaxableAdditionalItems = 0;
-  let customDeposit = 0,
-    customAttendees = undefined;
-
-  if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
-    customDeposit = bookingInfo.invoiceDetails[0].unitPrice;
-    customAttendees = bookingInfo.invoiceDetails[1].units;
-
-    const items = bookingInfo.invoiceDetails.slice(2);
-
-    totalTaxableAdditionalItems = items
-      .filter((element) => element.taxable === true)
-      .reduce((previous, current) => {
-        const currentTotal = current.unitPrice * current.units;
-        return previous + currentTotal;
-      }, 0);
-
-    totalNoTaxableAdditionalItems = items
-      .filter((element) => element.taxable === false)
-      .reduce((previous, current) => {
-        const currentTotal = current.unitPrice * current.units;
-        return previous + currentTotal;
-      }, 0);
-  }
-
-  const attendees = customAttendees || bookingInfo.attendees;
-
-  const addons = bookingInfo.addons
-    ? bookingInfo.addons.reduce((previous, current) => {
-        return previous + (current.unit === 'Attendee' ? current.unitPrice * attendees : current.unitPrice);
-      }, 0)
-    : 0;
-
-  const withoutFee =
-    bookingInfo.classVariant && bookingInfo.classVariant.groupEvent ? price : attendees > minimum ? price * attendees : price * minimum;
-
-  const underGroupFee = attendees > minimum || (bookingInfo.classVariant && bookingInfo.classVariant.groupEvent) ? 0 : price * (minimum - attendees);
-
-  let cardFee = 0;
-  const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
-  const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
-  const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
-  const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * SERVICE_FEE;
-  const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
-  const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
-  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + tax - totalDiscount;
-
-  if (isCardFeeIncluded && !bookingInfo.ccFeeExempt) {
-    cardFee = finalValue * CREDIT_CARD_FEE;
-    finalValue = finalValue + cardFee;
-}
-
-  const initialDeposit = finalValue * DEPOSIT;
-
-  return {
-    withoutFee,
-    underGroupFee,
-    rushFee,
-    fee,
-    tax,
-    addons,
-    finalValue,
-    initialDeposit,
-    customDeposit,
-    customAttendees,
-    totalTaxableAdditionalItems,
-    totalNoTaxableAdditionalItems,
-    cardFee,
-    discount,
-    totalDiscount
-  };
-};
 
 //gets the absoluteUrl of the site
 export const absoluteUrl = (req, setLocalhost) => {
@@ -230,6 +153,7 @@ export const getQueryFiltersFromFilterArray = (filterValue) => {
     .map(({ name, type, operator, value }) => {
       if (type === 'number' && (operator === 'inrange' || operator === 'notinrange')) return { name, type, operator, valueRangeNum: value };
       if (type === 'date' && (operator === 'inrange' || operator === 'notinrange')) return { name, type, operator, valueRange: value };
+      if (type === 'select' && (operator === 'inlist' || operator === 'notinlist')) return { name, type, operator, valueList: value };
       if (type === 'number') return { name, type, operator, valueNum: value };
       return { name, type, operator, value };
     });

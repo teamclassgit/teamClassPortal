@@ -1,11 +1,13 @@
 // @packages
-import React from 'react';
-import { Button, ButtonGroup, Col, DropdownItem, DropdownMenu, DropdownToggle, Row, UncontrolledButtonDropdown } from 'reactstrap';
-import { Share, FileText, Plus } from 'react-feather';
+import React, { useState } from 'react';
+import { Button, ButtonGroup, Col, DropdownItem, DropdownMenu, DropdownToggle, Row, Spinner, UncontrolledButtonDropdown } from 'reactstrap';
+import { Share, Plus } from 'react-feather';
 import PropTypes from 'prop-types';
 import ExportToExcel from './ExportToExcel';
 
-const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal }) => {
+const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDataToExport }) => {
+  const [isExporting, setIsExporting] = useState(false);
+
   return (
     <Row>
       <Col md={6} lg={6}>
@@ -21,24 +23,29 @@ const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal }) => {
         <div align="right">
           <ButtonGroup>
             <UncontrolledButtonDropdown>
-              <DropdownToggle color="primary" caret outline title="Export">
-                <Share size={13} />
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem className="align-middle w-100">
-                  <ExportToExcel
-                    apiData={[]}
-                    fileName={'Bookings'}
-                    title={
-                      <h6>
-                        <FileText size={13} />
-                        {' Excel File'}
-                      </h6>
-                    }
-                    smallText={<h6 className="small m-0 p-0">Download</h6>}
-                  />
-                </DropdownItem>
-              </DropdownMenu>
+              {!isExporting && (
+                <>
+                  <DropdownToggle color="primary" caret outline title="Export">
+                    <Share size={13} />
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem className="align-middle w-100">
+                      <ExportToExcel
+                        apiDataFunc={async () => {
+                          return await getDataToExport();
+                        }}
+                        fileName={'Bookings'}
+                        setIsExporting={setIsExporting}
+                      />
+                    </DropdownItem>
+                  </DropdownMenu>
+                </>
+              )}
+              {isExporting && (
+                <DropdownToggle color="primary" caret outline title="Exporting..." disabled={true}>
+                  <Spinner size="sm" />
+                </DropdownToggle>
+              )}
             </UncontrolledButtonDropdown>
             <Button
               outline
@@ -71,5 +78,6 @@ TasksBar.propTypes = {
   titleView: PropTypes.string.isRequired,
   titleBadge: PropTypes.string.isRequired,
   setElementToAdd: PropTypes.func.isRequired,
-  showAddModal: PropTypes.func.isRequired
+  showAddModal: PropTypes.func.isRequired,
+  getDataToExport: PropTypes.func.isRequired
 };

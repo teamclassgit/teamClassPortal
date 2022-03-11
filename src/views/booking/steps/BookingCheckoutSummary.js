@@ -43,6 +43,7 @@ const BookingCheckoutSummary = ({
   return (
     <div className={chat && styles.container}>
       <Card className={chat && styles.subContainer}>
+        {!chat &&
         <CardHeader>
           <h4 className="text-center">
             {teamClass?.title}
@@ -53,7 +54,7 @@ const BookingCheckoutSummary = ({
               {bookingInfo.classVariant && bookingInfo.classVariant.groupEvent ? 'group' : 'person'}
             </Badge>
           </h4>
-        </CardHeader>
+        </CardHeader>}
         <CardBody className={changeSpace && styles.changeSpaceCard}>
           <div className="text-block pb-1 pt-1 pl-2 pr-2 booking-checkout-summary-imageBox">
             <Media className="align-items-center">
@@ -91,14 +92,14 @@ const BookingCheckoutSummary = ({
             </Media>
           </div>
           <div className="text-block py-1">
-            <h6 className="mb-0 text-black ml-2 booking-checkout-summary-subTitle">
+            <h6 className="mb-0 text-black booking-checkout-summary-subTitle">
               {`Booking status `}{' '}
               <Badge color="secondary" className="text-xs booking-checkout-summary-date-status ml-1">
                 <StatusSelector row={bookingInfo} calendarEvent={calendarEvent} />
               </Badge>
             </h6>
             <ul className="list-unstyled mb-0">
-              <li className="mb-0 ml-2 mr-2">
+              <li className="mb-0">
                 {requestEventDate && (
                   <table className="w-100">
                     <tbody>

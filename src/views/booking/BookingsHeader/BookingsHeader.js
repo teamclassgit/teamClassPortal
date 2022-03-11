@@ -13,7 +13,8 @@ import {
   Input,
   InputGroup,
   InputGroupAddon,
-  UncontrolledButtonDropdown
+  UncontrolledButtonDropdown,
+  Spinner
 } from 'reactstrap';
 import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather';
 import PropTypes from 'prop-types';
@@ -21,21 +22,10 @@ import PropTypes from 'prop-types';
 // @scripts
 import ExportToExcel from '../../../components/ExportToExcel';
 import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
-import {
-  getCustomerPhone,
-  getCustomerCompany,
-  getCustomerEmail,
-  getClassTitle,
-  getCoordinatorName,
-  getFormattedEventDate,
-  getDepositPaid,
-  getFinalPaymentPaid,
-  getLastPaymentDate
-} from '../common';
+import { getCustomerEmail, getCoordinatorName } from '../common';
+import ExportToExcelLegacy from '../../../components/ExportToExcelLegacy';
 
 const BookingsHeader = ({
-  bookings,
-  calendarEvents,
   classes,
   coordinators,
   userData,
@@ -65,83 +55,25 @@ const BookingsHeader = ({
   showLimit,
   showView,
   switchView,
-  titleView
+  titleView,
+  getDataToExport
 }) => {
-  const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
+  const [isExporting, setIsExporting] = useState(false);
   const [discountCodesExcelTable, setDiscountCodesExcelTable] = useState([]);
   const [generalInquiriesExcelTable, setGeneralInquiriesExcelTable] = useState([]);
   const [giftBasketsPurchaseExcelTable, setGiftBasketsPurchaseExcelTable] = useState([]);
   const [limit, setLimit] = useState(defaultLimit);
   const [privateRequestsExcelTable, setPrivateRequestsExcelTable] = useState([]);
   const [searchValue, setSearchValue] = useState(null);
-  const { setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext);
+  const { textFilterContext, setTextFilterContext, classFilterContext, coordinatorFilterContext } = useContext(FiltersContext);
 
   useEffect(() => {
-    setTextFilterContext('');
+    setTextFilterContext(null);
   }, [isInProgressBookings, isClosedBookings, isPrivateRequest, isGeneralInquiries, isDiscountCodes, isBooking]);
-
-  useEffect(() => {
-    if (bookings) {
-      const bookingsArray = [];
-      const headers = [
-        'Updated',
-        'BookingId',
-        'Status',
-        'Name',
-        'Email',
-        'Phone',
-        'Company',
-        'Coordinator Name',
-        'ClassId',
-        'Class Title',
-        'Class Variants',
-        'Price',
-        'Group Size',
-        'Deposit paid',
-        'Final Payment Paid',
-        'Last Payment Date',
-        'Sign Up Deadline',
-        'Close Booking Reason',
-        'Event Date'
-      ];
-
-      bookingsArray.push(headers);
-
-      for (const i in bookings) {
-        const bookingInfo = bookings[i];
-
-        const row = [
-          bookingInfo.updatedAt,
-          bookingInfo._id,
-          bookingInfo.status,
-          bookingInfo.customerName,
-          getCustomerEmail(bookingInfo.customerId, customers),
-          getCustomerPhone(bookingInfo.customerId, customers),
-          getCustomerCompany(bookingInfo.customerId, customers),
-          getCoordinatorName(bookingInfo.eventCoordinatorId, coordinators),
-          bookingInfo.teamClassId,
-          getClassTitle(bookingInfo.teamClassId, classes),
-          bookingInfo.classVariant && bookingInfo.classVariant.title,
-          bookingInfo.classVariant && bookingInfo.classVariant.pricePerson + (bookingInfo.classVariant.groupEvent ? ' /Group' : ' /Person'),
-          bookingInfo.attendees,
-          getDepositPaid(bookingInfo),
-          getFinalPaymentPaid(bookingInfo),
-          getLastPaymentDate(bookingInfo),
-          bookingInfo.signUpDeadline,
-          bookingInfo.closedReason,
-          getFormattedEventDate(bookingInfo._id, calendarEvents)
-        ];
-        bookingsArray.push(row);
-      }
-
-      setAttendeesExcelTable(bookingsArray);
-    }
-  }, [bookings, customers, coordinators, classes, calendarEvents]);
 
   useEffect(() => {
     if (privateRequests) {
       const privateClassRequestsArray = [];
-
       const headers = ['Created', 'Name', 'Email', 'Phone', 'Coordinator', 'Attendees', 'Date Option 1', 'Date Option 2'];
 
       privateClassRequestsArray.push(headers);
@@ -256,7 +188,7 @@ const BookingsHeader = ({
   };
 
   return (
-    <Card className="w-100  shadow-none bg-transparent m-0">
+    <Card className="w-100 shadow-none bg-transparent m-0 p-0">
       <CardHeader>
         <Col md={4}>
           <CardTitle tag="h4" className="mr-4">
@@ -353,8 +285,34 @@ const BookingsHeader = ({
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
             )}
-
-            {showExport && (
+            {showExport && isBooking && (
+              <UncontrolledButtonDropdown>
+                {!isExporting && (
+                  <>
+                    <DropdownToggle color="primary" caret outline title="Export">
+                      <Share size={13} />
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                      <DropdownItem className="align-middle w-100">
+                        <ExportToExcel
+                          apiDataFunc={async () => {
+                            return await getDataToExport();
+                          }}
+                          fileName={'Bookings'}
+                          setIsExporting={setIsExporting}
+                        />
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </>
+                )}
+                {isExporting && (
+                  <DropdownToggle color="primary" caret outline title="Exporting..." disabled={true}>
+                    <Spinner size="sm" />
+                  </DropdownToggle>
+                )}
+              </UncontrolledButtonDropdown>
+            )}
+            {showExport && !isBooking && (
               <UncontrolledButtonDropdown>
                 <DropdownToggle color="primary" caret outline title="Export">
                   <Share size={13} />
@@ -362,7 +320,7 @@ const BookingsHeader = ({
                 <DropdownMenu right>
                   <DropdownItem className="align-middle w-100">
                     {isPrivateRequest ? (
-                      <ExportToExcel
+                      <ExportToExcelLegacy
                         apiData={privateRequestsExcelTable}
                         fileName={'Private Class Requests'}
                         title={
@@ -374,7 +332,7 @@ const BookingsHeader = ({
                         smallText={<h6 className="small m-0 p-0">Download file with Private Requests</h6>}
                       />
                     ) : isGeneralInquiries ? (
-                      <ExportToExcel
+                      <ExportToExcelLegacy
                         apiData={generalInquiriesExcelTable}
                         fileName={'General Inquires'}
                         title={
@@ -386,7 +344,7 @@ const BookingsHeader = ({
                         smallText={<h6 className="small m-0 p-0">Download file with General Inquiries</h6>}
                       />
                     ) : isDiscountCodes ? (
-                      <ExportToExcel
+                      <ExportToExcelLegacy
                         apiData={discountCodesExcelTable}
                         fileName={'Discount Codes'}
                         title={
@@ -397,36 +355,25 @@ const BookingsHeader = ({
                         }
                         smallText={<h6 className="small m-0 p-0">Download file with Discount Codes</h6>}
                       />
-                    ) : isGiftBasketsPurchase ? (
-                      <ExportToExcel
-                        apiData={giftBasketsPurchaseExcelTable}
-                        fileName={'GiftBasketsPurchase'}
-                        title={
-                          <h6>
-                            <FileText size={13} />
-                            {' Excel File'}
-                          </h6>
-                        }
-                        smallText={<h6 className="small m-0 p-0">Download file with Gift Basket Purchases</h6>}
-                      />
                     ) : (
-                      <ExportToExcel
-                        apiData={attendeesExcelTable}
-                        fileName={'Bookings'}
-                        title={
-                          <h6>
-                            <FileText size={13} />
-                            {' Excel File'}
-                          </h6>
-                        }
-                        smallText={<h6 className="small m-0 p-0">Download file with Bookings</h6>}
-                      />
+                      isGiftBasketsPurchase && (
+                        <ExportToExcelLegacy
+                          apiData={giftBasketsPurchaseExcelTable}
+                          fileName={'GiftBasketsPurchase'}
+                          title={
+                            <h6>
+                              <FileText size={13} />
+                              {' Excel File'}
+                            </h6>
+                          }
+                          smallText={<h6 className="small m-0 p-0">Download file with Gift Basket Purchases</h6>}
+                        />
+                      )
                     )}
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
             )}
-
             {showAdd && isBooking && (
               <Button
                 outline
@@ -495,8 +442,6 @@ const BookingsHeader = ({
 export default BookingsHeader;
 
 BookingsHeader.propTypes = {
-  bookings: PropTypes.array.isRequired,
-  calendarEvents: PropTypes.array.isRequired,
   classes: PropTypes.array.isRequired,
   coordinators: PropTypes.array.isRequired,
   customers: PropTypes.array.isRequired,
@@ -520,5 +465,6 @@ BookingsHeader.propTypes = {
   showLimit: PropTypes.bool.isRequired,
   showView: PropTypes.bool.isRequired,
   switchView: PropTypes.bool.isRequired,
-  titleView: PropTypes.string.isRequired
+  titleView: PropTypes.string.isRequired,
+  getDataToExport: PropTypes.func.isRequired
 };

@@ -18,7 +18,7 @@ import './SidebarRight.scss';
 
 const SidebarRight = ({
   client,
-  conversation
+  id
 }) => {
   const [attendees, setAttendees] = useState([]);
   const [attendeesToInvoice, setAttendeesToInvoice] = useState(null);
@@ -46,8 +46,6 @@ const SidebarRight = ({
   const [getClassEvents, { ...calendarEventsByClassResult }] = useLazyQuery(queryCalendarEventsByClassId);
   const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById);
   const [getTeamClass, { ...classResult }] = useLazyQuery(queryClassById);
-
-  const id = conversation?.channelState?.friendlyName;
 
   useQuery(queryBookingById, {
     variables: {

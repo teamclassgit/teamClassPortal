@@ -10,6 +10,7 @@ export default gql`
         name
         email
         company
+        _id
       }
       classTitle
       classOption   

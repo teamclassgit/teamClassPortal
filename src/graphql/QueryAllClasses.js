@@ -22,6 +22,11 @@ export default gql`
         order
         active
         groupEvent
+        priceTiers {
+          maximum
+          minimum
+          price
+        }
       }
       category
     }

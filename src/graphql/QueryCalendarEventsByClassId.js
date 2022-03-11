@@ -16,5 +16,9 @@ query ListCalendarEvents($classId:String!) {
       month
       rushFee
       isBlockedDate
+      timezone
+      timezoneLabel
+      displayTimezone
+      displayTimezoneLabel
   }
 }`;

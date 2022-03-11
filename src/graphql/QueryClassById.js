@@ -75,6 +75,11 @@ export default gql`
         active
         groupEvent
         kitHasAlcohol
+        priceTiers {
+          maximum
+          minimum
+          price
+        }
       }
       registrationFields {
         label

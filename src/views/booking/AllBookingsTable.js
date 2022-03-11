@@ -6,15 +6,17 @@ import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
 import { Calendar, Check, DollarSign, Edit2, User, Users } from 'react-feather';
 import Avatar from '@components/avatar';
-import moment from 'moment';
+import moment from 'moment-timezone';
 window.moment = moment;
 import { getQueryFiltersFromFilterArray, getUserData } from '../../utility/Utils';
+import { Modal } from 'reactstrap';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
 import NumberFilter from '@inovua/reactdatagrid-community/NumberFilter';
 import DateFilter from '@inovua/reactdatagrid-community/DateFilter';
 import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
+import SelectFilter from '@inovua/reactdatagrid-community/SelectFilter';
 import '@inovua/reactdatagrid-enterprise/index.css';
 import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
 import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
@@ -22,14 +24,15 @@ import './BookingsTable.scss';
 
 // @scripts
 import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
+import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import EditBookingModal from '../../components/EditBookingModal';
-import AddNewBooking from './AddNewBooking';
-import BookingsTableStatusCards from './BookingsTableStatusCards';
+import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
+import { getAllDataToExport, getBookingAndCalendarEventById, closeManyBookingsOneReason } from '../../services/BookingService';
+import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -49,11 +52,11 @@ const onRenderRow = (rowProps) => {
   }
 };
 
-const DataGrid = () => {
+const AllBookingsTable = () => {
   const skin = useSelector((state) => state.bookingsBackground);
   const genericFilter = {};
   const [gridRef, setGridRef] = useState(null);
-  const [status, setStatus] = useState({ value: 'quote', label: 'Quote', calendarEventStatus: '' });
+  const [totalRows, setTotalRows] = useState(0);
   const [editModal, setEditModal] = useState(false);
   const [currentElement, setCurrentElement] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
@@ -62,11 +65,15 @@ const DataGrid = () => {
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
+  const [orFilters, setOrFilters] = useState([]);
   const [sortInfo, setSortInfo] = useState({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
   const [filteredRows, setFilteredRows] = useState(null);
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
+  const [selected, setSelected] = useState({});
+  const [closedReason, setClosedReason] = useState("");
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
 
@@ -80,215 +87,17 @@ const DataGrid = () => {
     history.push(`/booking/${rowId}`);
   };
 
+  const toggle = () => {
+    setOrFilters([]);
+    setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
+    setIsOpenModal(!isOpenModal);
+  };
+
   const columns = [
-    {
-      name: 'createdAt',
-      header: 'Created',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
-        });
-      }
-    },
-    {
-      name: 'updatedAt',
-      header: 'Updated',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
-        });
-      },
-      defaultVisible: false
-    },
-    {
-      name: '_id',
-      header: 'Id',
-      type: 'string',
-      filterEditor: StringFilter, 
-      filterDelay: 1500,
-      width: 200,
-      render: ({ value, cellProps }) => {
-        return (
-          <>
-            <small>
-              <a
-                href="#"
-                onClick={() => {
-                  setCurrentElement({
-                    bookingId: value,
-                    currentCustomerId: cellProps.data.customerId,
-                    currentName: cellProps.data.customerName,
-                    currentEmail: cellProps.data.customerEmail,
-                    currentPhone: cellProps.data.customerPhone,
-                    currentCompany: cellProps.data.customerCompany,
-                    currentCoordinatorId: cellProps.data.eventCoordinatorId,
-                    currentCoordinatorName: cellProps.data.eventCoordinatorName,
-                    currentTeamclassId: cellProps.data.classId,
-                    currentTeamclassName: cellProps.data.className,
-                    currentGroupSize: cellProps.data.attendees,
-                    currentSignUpDeadline: cellProps.data.signUpDeadline,
-                    currentClassVariant: cellProps.data.classVariant,
-                    currentServiceFee: cellProps.data.serviceFeeAmount,
-                    currentSalesTax: cellProps.data.taxAmount,
-                    createdAt: cellProps.data.createdAt,
-                    updatedAt: cellProps.data.updatedAt,
-                    currentStatus: cellProps.data.status,
-                    currentEventDurationHours: cellProps.data.eventDurationHours,
-                    currentClosedReason: cellProps.data.closedReason,
-                    currentNotes: cellProps.data.notes,
-                    currentPayments: cellProps.data.payments,
-                    currentCapRegistration: cellProps.data.capRegistration
-                  });
-                  handleEditModal();
-                }}
-                title={`Edit booking info ${cellProps.data._id}`}
-              >
-                {cellProps.data._id}
-              </a>
-            </small>
-          </>
-        );
-      }
-    },
-    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'className', header: 'Class ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'eventCoordinatorName', header: 'Coordinator Name', type: 'string', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'eventCoordinatorEmail', header: 'Coordinator', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    {
-      name: 'attendees',
-      header: 'Attendees ',
-      type: 'number',
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      defaultWidth: 112,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return <span className="float-right">{value}</span>;
-        }
-      }
-    },
-    {
-      name: 'eventDateTime',
-      header: 'Event date',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
-        }
-      }
-    },
-    {
-      name: 'signUpDeadline',
-      header: 'Registration',
-      type: 'date',
-      width: 250,
-      filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
-        }
-      }
-    },
-    {
-      name: 'taxAmount',
-      header: 'Tax',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      defaultVisible: false,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'serviceFeeAmount',
-      header: 'Service Fee',
-      type: 'number',
-      defaultWidth: 150,
-      defaultVisible: false,
-      filterDelay: 1500,
-      filterEditor: NumberFilter,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'cardFeeAmount',
-      header: 'Card Fee',
-      type: 'number',
-      defaultWidth: 150,
-      defaultVisible: false,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'totalInvoice',
-      header: 'Total',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'depositsPaid',
-      header: 'Deposits',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'finalPaid',
-      header: 'Final paid',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
-    {
-      name: 'balance',
-      header: 'Balance',
-      type: 'number',
-      defaultWidth: 150,
-      filterEditor: NumberFilter,
-      filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
-      }
-    },
     {
       name: 'actions',
       header: 'Links',
-      defaultWidth: 220,
+      defaultWidth: 200,
       render: ({ value, cellProps }) => {
         if (cellProps.data) {
           return cellProps.data.status === 'quote' ? (
@@ -302,6 +111,14 @@ const DataGrid = () => {
                 >
                   <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                 </a>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
+                </a>
+              </div>
+            </small>
+          ) : cellProps.data.status === 'closed' ? (
+            <small>
+              <div className="d-flex">
                 <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
@@ -447,19 +264,274 @@ const DataGrid = () => {
           );
         }
       }
+    },
+    {
+      name: '_id',
+      header: 'Id',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      width: 200,
+      render: ({ value, cellProps }) => {
+        return (
+          <>
+            <small>
+              <a
+                href="#"
+                onClick={async () => {
+                  setOrFilters([]);
+                  setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
+                  const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
+                  if (!bookingAndCalendarEvent) return;
+                  setCurrentElement(bookingAndCalendarEvent);
+                  handleEditModal();
+                }}
+                title={`Edit booking info ${cellProps.data._id}`}
+              >
+                {cellProps.data._id}
+              </a>
+            </small>
+          </>
+        );
+      }
+    },
+    {
+      name: 'createdAt',
+      header: 'Created',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        return moment(value).calendar(null, {
+          lastDay: '[Yesterday]',
+          sameDay: 'LT',
+          lastWeek: 'dddd',
+          sameElse: 'MMMM Do, YYYY'
+        });
+      }
+    },
+    {
+      name: 'eventDateTime',
+      header: 'Event date',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return `${moment(value)?.tz(cellProps.data.timezone)?.format('LLL')} CT`;
+        }
+      }
+    },
+    {
+      name: 'eventCoordinatorEmail',
+      header: 'Coordinator',
+      type: 'string',
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: coordinators?.map((coordinator) => {
+          return { id: coordinator.email, label: coordinator.name };
+        })
+      },
+      width: 200
+    },
+    {
+      name: 'bookingStage',
+      header: 'Stage ',
+      type: 'string',
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: ['quote', 'requested', 'rejected', 'accepted', 'deposit', 'paid', 'closed'].map((c) => {
+          return { id: c, label: c };
+        })
+      },
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'updatedAt',
+      header: 'Updated',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        return moment(value).calendar(null, {
+          lastDay: '[Yesterday]',
+          sameDay: 'LT',
+          lastWeek: 'dddd',
+          sameElse: 'MMMM Do, YYYY'
+        });
+      },
+      defaultVisible: false
+    },
+
+    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
+    { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    {
+      name: 'className',
+      header: 'Class ',
+      type: 'string',
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: classes?.map((teamClass) => {
+          return { id: teamClass.title, label: teamClass.title };
+        })
+      },
+      width: 300
+    },
+    {
+      name: 'attendees',
+      header: 'Attendees ',
+      type: 'number',
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultWidth: 112,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-right">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'signUpDeadline',
+      header: 'Registration',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return `${moment(value)?.format('LLL')}`;
+        }
+      }
+    },
+    {
+      name: 'taxAmount',
+      header: 'Tax',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultVisible: false,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'serviceFeeAmount',
+      header: 'Service Fee',
+      type: 'number',
+      defaultWidth: 150,
+      defaultVisible: false,
+      filterDelay: 1500,
+      filterEditor: NumberFilter,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'cardFeeAmount',
+      header: 'Card Fee',
+      type: 'number',
+      defaultWidth: 150,
+      defaultVisible: false,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'totalInvoice',
+      header: 'Total',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'depositsPaid',
+      header: 'Deposits',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'depositPaidDate',
+      header: 'Deposits date',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return moment(value).format('LLL');
+        }
+      }
+    },
+    {
+      name: 'finalPaid',
+      header: 'Final paid',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'finalPaymentPaidDate',
+      header: 'Final payment date',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return moment(value).format('LLL');
+        }
+      }
+    },
+    {
+      name: 'balance',
+      header: 'Balance',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">${value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'closedReason',
+      header: 'Closed Reason ',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
     }
   ];
-
-   /*const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'no-cache',
-    variables: {
-      filter: genericFilter
-    },
-    onCompleted: (data) => {
-      if (data) setCustomers(data.customers);
-    },
-    pollInterval: 200000
-  });*/
 
   const { ...allClasses } = useQuery(queryAllClasses, {
     fetchPolicy: 'cache-and-network',
@@ -481,13 +553,22 @@ const DataGrid = () => {
       if (data) setCoordinators(data.eventCoordinators);
     },
     fetchPolicy: 'cache-and-network'
-  }); 
+  });
+
+  const { ...allCustomersResult } = useQuery(queryAllCustomers, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      filter: {}
+    },
+    onCompleted: (data) => {
+      if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
+  });
 
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
-  useEffect(() => {
-    if (!status) return;
-
+  const applyFilters = () => {
     let currentFilters = [...filterValue];
 
     if (currentFilters && currentFilters.length === 0) {
@@ -503,12 +584,13 @@ const DataGrid = () => {
         { name: 'updatedAt', type: 'date', operator: 'inrange', value: undefined },
         { name: '_id', type: 'string', operator: 'contains', value: '' },
         { name: 'customerName', type: 'string', operator: 'contains', value: '' },
+        { name: 'bookingStage', type: 'select', operator: 'inlist', value: undefined },
+        { name: 'closedReason', type: 'string', operator: 'contains', value: '' },
         { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
         { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
         { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
-        { name: 'eventCoordinatorName', type: 'string', operator: 'contains', value: '' },
-        { name: 'eventCoordinatorEmail', type: 'string', operator: 'contains', value: coordinatorFilterValue },
-        { name: 'className', type: 'string', operator: 'contains', value: '' },
+        { name: 'eventCoordinatorEmail', type: 'select', operator: 'inlist', value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
+        { name: 'className', type: 'select', operator: 'inlist', value: undefined },
         { name: 'attendees', type: 'number', operator: 'gte', value: undefined },
         { name: 'taxAmount', type: 'number', operator: 'gte', value: undefined },
         { name: 'serviceFeeAmount', type: 'number', operator: 'gte', value: undefined },
@@ -516,46 +598,58 @@ const DataGrid = () => {
         { name: 'totalInvoice', type: 'number', operator: 'gte', value: undefined },
         { name: 'depositsPaid', type: 'number', operator: 'gte', value: undefined },
         { name: 'finalPaid', type: 'number', operator: 'gte', value: undefined },
+        { name: 'depositPaidDate', type: 'date', operator: 'inrange', value: undefined },
+        { name: 'finalPaymentPaidDate', type: 'date', operator: 'inrange', value: undefined },
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
         { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined }
       ];
     }
 
-    currentFilters = currentFilters.filter((filter) => filter.name !== 'status' && filter.name !== 'eventDateTimeStatus');
-    currentFilters.push({ name: 'status', type: 'string', operator: 'contains', value: status.value });
-    if (status && status.calendarEventStatus) {
-      currentFilters.push({ name: 'eventDateTimeStatus', type: 'string', operator: 'contains', value: status.calendarEventStatus });
-    }
-
     setFilterValue(currentFilters);
-  }, [status]);
+    setOrFilters([]);
+  };
+  useEffect(() => {
+    applyFilters();
+  }, []);
 
-  const onEditCompleted = () => {
+  const onEditCompleted = (bookingId) => {
     const sortEditedData = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+    const currentFilters = [...orFilters];
+    currentFilters.push({ name: '_id', type: 'string', operator: 'eq', value: bookingId });
+    currentFilters.push({ name: '_id', type: 'string', operator: 'neq', value: bookingId });
+    setOrFilters(currentFilters);
     setSortInfo(sortEditedData);
   };
 
-  const onAddCompleted = () => {
-    const sortAddedData = { dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' };
-    setSortInfo(sortAddedData);
+  const onAddCompleted = (bookingId) => {
+    const currentFilters = [...filterValue.filter((element) => element.name !== '_id')];
+    const idFilter = { name: '_id', type: 'string', operator: 'contains', value: bookingId };
+    currentFilters.push(idFilter);
+    setFilterValue(currentFilters);
+  };
+
+  const getDataToExport = async () => {
+    const filters = getQueryFiltersFromFilterArray(filterValue);
+    return await getAllDataToExport(filters, orFilters, sortInfo);
   };
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
     console.log('filters', filters);
-
-    const response = await apolloClient
-      .query({
-        query: queryGetBookingsWithCriteria,
-        variables: {
-          limit,
-          offset: skip,
-          sortBy: sortInfo,
-          filterBy: filters
-        }
-      });
+    const response = await apolloClient.query({
+      query: queryGetBookingsWithCriteria,
+      fetchPolicy: 'network-only',
+      variables: {
+        limit,
+        offset: skip,
+        sortBy: sortInfo,
+        filterBy: filters,
+        filterByOr: orFilters
+      }
+    });
     const totalCount = response.data.getBookingsWithCriteria.count;
+    setTotalRows(totalCount);
     return { data: response.data.getBookingsWithCriteria.rows, count: totalCount };
   };
 
@@ -574,14 +668,51 @@ const DataGrid = () => {
     console.log(cells);
   }, []);
 
+  const renderRowContextMenu = (menuProps) => {
+    menuProps.autoDismiss = true;
+    menuProps.items = [
+      {
+        label: "Close with reason:", disabled: true
+      },
+      {
+        label: "Won",
+        onClick: () => { setClosedReason("Won"); toggle(); }
+      },
+      {
+        label: "Lost",
+        onClick: () => { setClosedReason("Lost"); toggle(); }
+      },
+      {
+        label: "Mistake",
+        onClick: () => { setClosedReason("Mistake"); toggle(); }
+      },
+      {
+        label: "Duplicated",
+        onClick: () => { setClosedReason("Duplicated"); toggle(); }
+      },
+      {
+        label: "Test",
+        onClick: () => { setClosedReason("Test"); toggle(); }
+      }
+    ];
+  };
+
+  const onSelectionChange = useCallback(({ selected }) => {
+    setSelected(selected);
+  }, []);
+  const toArray = selected => Object.keys(selected);
+
+  const selectedBookingsIds = toArray(selected);
+
+  console.log("all book", isOpenModal);
   return (
     <div>
-      <BookingsTableStatusCards status={status} setStatus={setStatus} filters={filterValue} />
       <TasksBar
         setElementToAdd={setElementToAdd}
-        titleView={'Bookings (Beta)'}
-        titleBadge={status && status.label}
+        titleView={'ALL Time Bookings (Beta)'}
+        titleBadge={` ${totalRows} records found`}
         showAddModal={() => handleModal()}
+        getDataToExport={getDataToExport}
       ></TasksBar>
       <ReactDataGrid
         idProperty="_id"
@@ -605,17 +736,22 @@ const DataGrid = () => {
         enableClipboard={true}
         onCopySelectedCellsChange={onCopySelectedCellsChange}
         onPasteSelectedCellsChange={onPasteSelectedCellsChange}*/
+        selected={selected}
+        checkboxColumn
+        enableSelection={true}
+        onSelectionChange={onSelectionChange}
+        renderRowContextMenu={selectedBookingsIds.length > 0 ? renderRowContextMenu : null}
         expandedRows={expandedRows}
         collapsedRows={collapsedRows}
         onExpandedRowsChange={onExpandedRowsChange}
         onRenderRow={onRenderRow}
         rowExpandHeight={400}
         renderRowDetails={renderRowDetails}
+        licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
       />
       <AddNewBooking
         open={showAddModal}
         handleModal={handleModal}
-        bookings={[]}
         classes={classes}
         setCustomers={setCustomers}
         customers={customers}
@@ -629,18 +765,24 @@ const DataGrid = () => {
         currentElement={currentElement}
         allCoordinators={coordinators}
         allClasses={classes}
-        allBookings={[]}
-        allCustomers={customers}
-        setCustomers={setCustomers}
         handleClose={() => setCurrentElement({})}
-        editMode={true}
+        editMode={currentElement && currentElement.status !== 'closed' ? true : false}
         onEditCompleted={onEditCompleted}
       />
+      <Modal isOpen={isOpenModal} centered>
+        <ConfirmBookingsToClose
+          toggle={toggle}
+          closedReason={closedReason}
+          selectedBookingsIds={selectedBookingsIds}
+          onEditCompleted={onEditCompleted}
+          setSelected={setSelected}
+        />
+      </Modal>
     </div>
   );
 };
 
-export default DataGrid;
+export default AllBookingsTable;
 
 ReactDataGrid.defaultProps.filterTypes.string = {
   type: 'string',
@@ -648,6 +790,21 @@ ReactDataGrid.defaultProps.filterTypes.string = {
   operators: [
     {
       name: 'contains',
+      fn: {}
+    }
+  ]
+};
+
+ReactDataGrid.defaultProps.filterTypes.select = {
+  type: 'select',
+  emptyValue: undefined,
+  operators: [
+    {
+      name: 'inlist',
+      fn: {}
+    },
+    {
+      name: 'notinlist',
       fn: {}
     }
   ]
