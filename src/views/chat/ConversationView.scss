@@ -51,6 +51,8 @@
 
 .unread-message-count {
   display: flex;
+  position: relative;
+  left: 10px;
   height: fit-content;
   margin: auto;
   width: fit-content;

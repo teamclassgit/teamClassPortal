@@ -80,9 +80,7 @@ const SidebarLeft = ({
           <PerfectScrollbar
             className="chat-user-list-wrapper list-group"
             options={{ wheelPropagation: false }}
-            style={{
-              height: 'calc(100% - 110px)'
-            }}
+            style={{ height: 'calc(100% - 110px)' }}
           >
             <h4 className="chat-list-title">Chats</h4>
             {isInfoReady ? (
@@ -93,9 +91,7 @@ const SidebarLeft = ({
                 selectedBooking={selectedBooking}
                 setSelectedBooking={setSelectedBooking}
               />
-            ) : (
-              <Spinner className="spinner" color="primary" />
-            )}
+            ) : (<Spinner className="spinner" color="primary" />)}
           </PerfectScrollbar>
         </div>
       </div>

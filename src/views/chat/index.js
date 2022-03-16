@@ -249,6 +249,7 @@ const AppChat = () => {
               status={status}
               conversation={openedConversation}
               info={data}
+              id={selectedBooking}
               openedConversationInfo={openedConversationInfo}
               openedNotConversations={openedNotConversations}
             />

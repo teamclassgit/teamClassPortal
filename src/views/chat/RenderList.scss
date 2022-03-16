@@ -12,3 +12,33 @@
 .render-list-span {
   font-weight: bold;
 }
+
+.render-list-overflow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 150px;
+  color: #557FE7 !important;
+}
+
+.list-group-item {
+  border: none;
+  &:focus {
+    outline: 0;
+  }
+  small {
+    font-size: 11px;
+  }
+}
+
+.list-group-item-active {
+  background-color: aliceblue !important;
+  color: #82868b !important;
+  &:focus {
+    background-color: aliceblue !important;
+    color: #82868b !important;
+  }
+  small {
+    font-size: 11px;
+  }
+}

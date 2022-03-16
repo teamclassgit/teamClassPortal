@@ -19,6 +19,7 @@ const ConversationContainer = ({
   openedConversationInfo,
   openedNotConversations,
   status,
+  id,
   userData
 }) => {
   const sid = useSelector((state) => state.reducer.sid.sid);
@@ -31,7 +32,7 @@ const ConversationContainer = ({
   return (
     <div 
       className={
-        sid && conversation && client ? "chatContainer-with-conversations" 
+        id ? "chatContainer-with-conversations" 
           : "chatContainer-without-conversations"
       }
     >
@@ -42,7 +43,7 @@ const ConversationContainer = ({
             convo={conversation}
             participants={participants}
           />
-         
+
           <MessagesBox
             addMessage={pushMessages}
             client={client}

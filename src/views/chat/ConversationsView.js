@@ -134,11 +134,24 @@ const ConversationView = (props) => {
     <>
       {!notifications && (
         <div className="conversation-view-container" onClick={props.onClick} style={{ backgroundColor }}>
-          <span className="render-list">
-            <span className="render-list-span">{`${capitalizeString(customer?.name)}`}</span>
-            <small>
-              <strong>{customer?.company && ` (${capitalizeString(customer?.company)})`}</strong>
-            </small>
+          <span className="d-flex">
+            <span className="render-list-span render-list">
+              <a title={capitalizeString(customer?.name)}>
+                {`${capitalizeString(customer?.name)}`}
+              </a>
+            </span>
+              <strong className='render-list'>
+                <a title={capitalizeString(customer?.company)}>
+                  {customer?.company && ` (${capitalizeString(customer?.company)})`}
+                </a>
+              </strong>
+            {unreadMessagesCount > 0 && (
+              <div className="unread-message-count">
+                <Badge pill color="danger">
+                  {unreadMessagesCount}
+                </Badge>
+              </div>
+            )}
           </span>
           <small>
             <span className="render-list">
@@ -157,14 +170,6 @@ const ConversationView = (props) => {
                   return <RenderList booking={booking} setSelectedBooking={setSelectedBooking} isActive={booking._id === selectedBooking} />;
                 })}
             </ListGroup>
-
-            {unreadMessagesCount > 0 && (
-              <div className="unread-message-count">
-                <Badge pill color="danger">
-                  {unreadMessagesCount}
-                </Badge>
-              </div>
-            )}
           </div>
           <div className={!unreadMessagesCount ? 'typing-info-container' : 'typing-info-container-hidden'} style={{ color: textColor }}>
             <div className="typing-info">
