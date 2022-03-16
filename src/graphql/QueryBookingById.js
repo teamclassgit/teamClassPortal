@@ -93,6 +93,18 @@ export default gql`
         taxable
         readOnly
       }
+      instructorInvoice {
+        createdAt
+        invoiceItems {
+          description
+          price
+          units
+        }
+        notes
+        rejectedReasons
+        status
+        updatedAt
+      }
       createdAt
       createdAt
       updatedAt

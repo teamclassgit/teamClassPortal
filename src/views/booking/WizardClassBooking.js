@@ -13,9 +13,11 @@ import BillingInfo from './steps/BillingInfo';
 import BookingCheckoutSummary from './steps/BookingCheckoutSummary';
 import DateTimeConfirmation from './steps/DateTimeConfirmation';
 import InvoiceBuilder from './steps/InvoiceBuilder';
+import PartnersInvoice from './steps/PartnersInvoice';
 import Payments from './steps/Payments';
 import queryAttendeesByBookingId from '../../graphql/QueryAttendeesByBookingId';
 import queryBookingById from '../../graphql/QueryBookingById';
+import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
 import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByClassId';
 import queryClassById from '../../graphql/QueryClassById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
@@ -65,6 +67,24 @@ const WizardClassBooking = () => {
       setBookingInfo(data.booking);
     }
   });
+  // const result2 = useQuery(queryGetBookingsWithCriteria, {
+  //   variables: {
+  //     filterBy: {
+  //       name: 'bookingId',
+  //       type: 'string',
+  //       operator: 'eq',
+  //       value: id
+  //     },
+  //     sortBy: {},
+  //     limit: -1,
+  //     offset: -1
+  //   },
+  //   pollInterval: 300000,
+  //   onCompleted: (data) => {
+  //     console.log('data', data);
+  //     // setBookingInfo(data.booking);
+  //   }
+  // });
 
   useEffect(() => {
     if (bookingInfo && attendeesResult.data) {
@@ -131,12 +151,9 @@ const WizardClassBooking = () => {
     const initialDepositPaid = bookingTotals.customDeposit
       ? bookingTotals.customDeposit
       : depositsPaid && depositsPaid.length > 0
-        ? depositsPaid.reduce(
-          (previous, current) => previous + current.amount,
-          0
-        ) / 100
-        : 0; //amount is in cents
-        
+      ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100
+      : 0; //amount is in cents
+
     const finalPayment = bookingTotals.finalValue - initialDepositPaid;
     setInitialDeposit(initialDepositPaid.toFixed(2));
     setPayment(finalPayment.toFixed(2));
@@ -167,7 +184,6 @@ const WizardClassBooking = () => {
           classId: bookingInfo.teamClassId
         }
       });
-
     }
   }, [bookingInfo]);
 
@@ -192,13 +208,13 @@ const WizardClassBooking = () => {
       )
     },
 
-    {
-      id: 'personal-info',
-      title: 'Customer',
-      subtitle: 'Basic info',
-      icon: <CreditCard size={18} />,
-      content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
-    },
+    // {
+    //   id: 'personal-info',
+    //   title: 'Customer',
+    //   subtitle: 'Basic info',
+    //   icon: <CreditCard size={18} />,
+    //   content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
+    // },
 
     {
       id: 'step-address',
@@ -250,6 +266,13 @@ const WizardClassBooking = () => {
           calendarEvent={calendarEvent}
         ></InvoiceBuilder>
       )
+    },
+    {
+      id: 'partner-invoice',
+      title: 'Partner Invoice',
+      subtitle: 'Partner invoice details',
+      icon: <DollarSign size={18} />,
+      content: <PartnersInvoice booking={bookingInfo}></PartnersInvoice>
     }
   ];
 
