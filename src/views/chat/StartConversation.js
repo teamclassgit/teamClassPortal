@@ -80,7 +80,7 @@ const StartConversation = ({ client, info }) => {
           <MessageSquare />
         </div>
         {client && info?._id && !inProcess && (
-          <div onClick={onCreateNewConversation}>
+          <div onClick={onCreateNewConversation} >
             <h4 className="sidebar-toggle start-chat-text">Start Conversation</h4>
           </div>
         )}

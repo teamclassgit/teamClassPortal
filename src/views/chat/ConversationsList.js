@@ -14,23 +14,22 @@ import {
   setTotalUnreadMessagesCount as setTotalUnreadMessagesCountAction
 } from '../../redux/actions/chat';
 
-const ConversationsList = ({ client, info, userData, notifications }) => {
+const ConversationsList = ({ client, info, userData, notifications, setSelectedBooking, selectedBooking }) => {
   const [conversationUnread, setConversationUnread] = useState(null);
-
   const conversations = useSelector((state) => state.reducer.convo);
+  const [infoByCustomers, setInfoByCustomers] = useState([]);
   const infoId = useSelector((state) => state.reducer.information.info);
   const messages = useSelector((state) => state.reducer.messages);
   const participants = useSelector((state) => state.reducer.participants);
   const sid = useSelector((state) => state.reducer.sid.sid);
   const typingData = useSelector((state) => state.reducer.typingData);
   const unreadMessages = useSelector((state) => state.reducer.unreadMessages.unreadMessages);
-
   const dispatch = useDispatch();
 
   const updateCurrentConvo = async (updateCurrentConvo, convo, updateParticipants, convoId) => {
     dispatch(updateCurrentConvo(convo?.sid));
     dispatch(informationId(convoId ?? null));
-
+    
     if (convo) {
       try {
         const participants = await convo.getParticipants();
@@ -63,6 +62,21 @@ const ConversationsList = ({ client, info, userData, notifications }) => {
   useEffect(() => {
     setFilterConversationUnreadMessages();
   }, [unreadMessages]);
+
+  useEffect(() => {
+    const customers =
+      info?.reduce((prev, current) => {
+        const customerFound = prev.find((item) => item._id === current.customer._id);
+        if (!customerFound) {
+          return [...prev, { ...current.customer, sid, bookings: [current] }];
+        } else {
+          customerFound.bookings.push(current);
+          return prev;
+        }
+      }, []) || [];
+
+    setInfoByCustomers(customers);
+  }, [info]);
 
   const setTotalUnreadMessagesCount = (unreadMessages, setTotalUnreadMessagesCount) => {
     let totalUnreadMessages = 0;
@@ -101,11 +115,15 @@ const ConversationsList = ({ client, info, userData, notifications }) => {
 
   return (
     <div id="conversation-list">
-      {info?.map((convo) => {
+      {infoByCustomers?.map((customer) => {
+        const convo = customer?.bookings?.length > 0 ? customer.bookings[0] : undefined;
         return (
           <ConversationView
             client={client}
+            customer={customer}
             convoId={convo?.sid || convo?._id}
+            selectedBooking={selectedBooking}
+            setSelectedBooking={setSelectedBooking}
             convoClass={convo?.classTitle}
             currentConvoSid={sid}
             info={info}

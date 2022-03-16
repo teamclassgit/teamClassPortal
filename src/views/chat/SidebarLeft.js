@@ -26,7 +26,9 @@ const SidebarLeft = ({
   status,
   isInfoReady,
   userData,
-  userSidebarLeft
+  userSidebarLeft,
+  setSelectedBooking,
+  selectedBooking
 }) => {
   const changeHandler = (event) => {
     setInputValue(event.target.value);
@@ -84,7 +86,13 @@ const SidebarLeft = ({
           >
             <h4 className="chat-list-title">Chats</h4>
             {isInfoReady ? (
-              <ConversationsList client={client} info={infoDetails} userData={userData} />
+              <ConversationsList
+                client={client}
+                info={infoDetails}
+                userData={userData}
+                selectedBooking={selectedBooking}
+                setSelectedBooking={setSelectedBooking}
+              />
             ) : (
               <Spinner className="spinner" color="primary" />
             )}

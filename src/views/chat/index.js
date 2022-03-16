@@ -39,6 +39,8 @@ const AppChat = () => {
 
   const [updateTokenConversations] = useMutation(mutationTokenConversations);
 
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
   const id = useSelector((state) => state.reducer.information.info);
   const sid = useSelector((state) => state.reducer.sid.sid);
   const sidRef = useRef('');
@@ -235,6 +237,8 @@ const AppChat = () => {
         sidebar={sidebar}
         userData={userData}
         userSidebarLeft={userSidebarLeft}
+        selectedBooking={selectedBooking}
+        setSelectedBooking={setSelectedBooking}
       />
       <div className="content-right">
         <div className="content-wrapper">
@@ -251,7 +255,7 @@ const AppChat = () => {
           </div>
         </div>
       </div>
-      {id && sid && openedConversation && client && <SidebarRight client={client} id={id} />}
+      {selectedBooking && client && <SidebarRight client={client} id={selectedBooking} />}
     </>
   );
 };
