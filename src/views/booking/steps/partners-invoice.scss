@@ -16,7 +16,6 @@
 }
 
 .event-confirmation-container{
-
   .card-body {
     background-color: #e7eaf9;
     border-radius:5px;
@@ -47,7 +46,11 @@
 
 .booking-id-text{
   overflow: hidden;
-  width: 200px;
+  width: 150px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.form-control{
+  padding: 10px
 }

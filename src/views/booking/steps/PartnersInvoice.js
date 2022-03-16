@@ -74,8 +74,8 @@ const PartnersInvoice = ({ booking }) => {
                   <span className="d-flex justify-content-center">
                     <Icon className="mb-1 event-confirmed-icon" fontSize={30} icon="akar-icons:circle-check" />
                   </span>
-                  <h2 className="text-center mt-2 mb-3 font-weight-bold">Event Confirmed</h2>
-                  <p className="text-justify mb-3">Please confirm heacount, class price, and any additional charges.</p>
+                  <h2 className="text-center mt-2 mb-2 font-weight-bold">Event Confirmed</h2>
+                  <p className="text-justify mb-2">Please confirm heacount, class price, and any additional charges.</p>
                   <p className="text-justify">Click submit to confirm your invoice and collect the payment.</p>
                 </CardBody>
               </Card>
