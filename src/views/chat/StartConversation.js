@@ -2,12 +2,11 @@
 import Proptypes from 'prop-types';
 import React, { useState } from 'react';
 import { MessageSquare } from 'react-feather';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from '@apollo/client';
 
 // @scripts
-import { addConversation, addParticipant } from './Apis';
-import { updateCurrentConversation, informationId, updateParticipants, listConversations } from '../../redux/actions/chat';
+import { updateCurrentConversation, informationId, listConversations } from '../../redux/actions/chat';
 import mutationCreateTwilioConversation from '../../graphql/conversations/createConversation';
 import { Spinner } from 'reactstrap';
 
@@ -16,46 +15,21 @@ const StartConversation = ({ client, info }) => {
   const [createConversation] = useMutation(mutationCreateTwilioConversation);
   const [inProcess, setInProcess] = useState(false);
 
-  const createUser = async (identity, convo) => {
-    try {
-      await createUserConversation({
-        variables: {
-          identity
-        }
-      });
-      await participants(convo);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const participants = async (convo) => {
-    const nameProxy = '';
-    try {
-      await addParticipant(info?.instructor?.email, nameProxy, true, convo);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const onSave = async () => {
-    if (client && info) {
-      try {
-        const convo = await addConversation(info?._id, updateParticipants, client, dispatch);
-        dispatch(updateCurrentConversation(convo?.sid));
-        createUser(info?.instructor?.email, convo);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
+  const id = useSelector((state) => state.reducer.information.info);
+  const sid = useSelector((state) => state.reducer.sid.sid);
 
   const updateConversations = async () => {
     if (client) {
+      const currentId = id;
+      const currentSid = sid;
       const conversations = await client?.getSubscribedConversations();
       dispatch(listConversations(conversations?.items ?? []));
       dispatch(updateCurrentConversation(null));
       dispatch(informationId(null));
+      setTimeout(() => {
+        dispatch(updateCurrentConversation(currentSid));
+        dispatch(informationId(currentId));
+      }, 500);
     }
   };
 
@@ -80,7 +54,7 @@ const StartConversation = ({ client, info }) => {
           <MessageSquare />
         </div>
         {client && info?._id && !inProcess && (
-          <div onClick={onCreateNewConversation} >
+          <div onClick={onCreateNewConversation}>
             <h4 className="sidebar-toggle start-chat-text">Start Conversation</h4>
           </div>
         )}

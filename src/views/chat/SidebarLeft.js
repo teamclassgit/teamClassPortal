@@ -32,6 +32,7 @@ const SidebarLeft = ({
 }) => {
   const changeHandler = (event) => {
     setInputValue(event.target.value);
+    setSelectedBooking(null);
   };
   const debouncedChangeHandler = useMemo(() => debounce(changeHandler, 1000), []);
 

@@ -29,7 +29,7 @@ const ConversationsList = ({ client, info, userData, notifications, setSelectedB
   const updateCurrentConvo = async (updateCurrentConvo, convo, updateParticipants, convoId) => {
     dispatch(updateCurrentConvo(convo?.sid));
     dispatch(informationId(convoId ?? null));
-    
+
     if (convo) {
       try {
         const participants = await convo.getParticipants();
@@ -154,6 +154,13 @@ const ConversationsList = ({ client, info, userData, notifications, setSelectedB
                   convo._id
                 );
                 if (convo?.sid) dispatch(updateUnreadMessages(convo.sid, 0));
+
+                const selected = customer?.bookings?.find((element) => element._id === selectedBooking);
+                console.log('selected ', selectedBooking, selected);
+                if (!selected) {
+                  console.log(selectedBooking, customer.bookings);
+                  //setSelectedBooking(null);
+                }
               } catch (e) {
                 console.log(e);
               }
