@@ -48,6 +48,7 @@ const WizardClassBooking = () => {
   const [totalTax, setTotalTax] = useState(0);
   const [totalUnderGroupFee, setTotalUnderGroupFee] = useState(0);
   const [totalWithoutFee, setTotalWithoutFee] = useState(0);
+  const [newStepsArray, setNewStepsArray] = useState([]);
 
   const [getTeamClass, { ...classResult }] = useLazyQuery(queryClassById);
   const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById);
@@ -191,7 +192,6 @@ const WizardClassBooking = () => {
     {
       id: 'account-details',
       title: 'Event Date',
-      subtitle: 'Date and time',
       icon: <Calendar size={18} />,
       content: (
         <DateTimeConfirmation
@@ -219,7 +219,6 @@ const WizardClassBooking = () => {
     {
       id: 'step-address',
       title: 'Attendees',
-      subtitle: 'Who is coming',
       icon: <Users size={18} />,
       content: (
         <Attendees
@@ -237,7 +236,6 @@ const WizardClassBooking = () => {
     {
       id: 'payments',
       title: 'Payments',
-      subtitle: 'Received payments',
       icon: <DollarSign size={18} />,
       content: (
         <Payments
@@ -253,7 +251,6 @@ const WizardClassBooking = () => {
     {
       id: 'final-invoice',
       title: 'Final Invoice',
-      subtitle: 'Final invoice details',
       icon: <DollarSign size={18} />,
       content: (
         <InvoiceBuilder
@@ -266,15 +263,15 @@ const WizardClassBooking = () => {
           calendarEvent={calendarEvent}
         ></InvoiceBuilder>
       )
-    },
-    {
-      id: 'partner-invoice',
-      title: 'Partner Invoice',
-      subtitle: 'Partner invoice details',
-      icon: <DollarSign size={18} />,
-      content: <PartnersInvoice booking={bookingInfo}></PartnersInvoice>
     }
   ];
+  const newSteps = [...steps];
+  newSteps.push({
+    id: 'partner-invoice',
+    title: 'Partner Invoice',
+    icon: <DollarSign size={18} />,
+    content: <PartnersInvoice booking={bookingInfo}></PartnersInvoice>
+  });
 
   const isRushDate = () => {
     return calendarEvent && calendarEvent.rushFee;
@@ -294,7 +291,7 @@ const WizardClassBooking = () => {
           <Wizard
             type="modern-horizontal"
             ref={ref}
-            steps={steps}
+            steps={bookingInfo && bookingInfo.instructorInvoice ? newSteps : steps}
             options={{
               linear: false
             }}
