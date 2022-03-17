@@ -2,7 +2,7 @@
 import Proptypes from 'prop-types';
 import React, { useState } from 'react';
 import { MessageSquare } from 'react-feather';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useMutation } from '@apollo/client';
 
 // @scripts
@@ -15,21 +15,12 @@ const StartConversation = ({ client, info }) => {
   const [createConversation] = useMutation(mutationCreateTwilioConversation);
   const [inProcess, setInProcess] = useState(false);
 
-  const id = useSelector((state) => state.reducer.information.info);
-  const sid = useSelector((state) => state.reducer.sid.sid);
-
   const updateConversations = async () => {
     if (client) {
-      const currentId = id;
-      const currentSid = sid;
       const conversations = await client?.getSubscribedConversations();
       dispatch(listConversations(conversations?.items ?? []));
       dispatch(updateCurrentConversation(null));
       dispatch(informationId(null));
-      setTimeout(() => {
-        dispatch(updateCurrentConversation(currentSid));
-        dispatch(informationId(currentId));
-      }, 500);
     }
   };
 
@@ -38,7 +29,7 @@ const StartConversation = ({ client, info }) => {
       setInProcess(true);
       const bookingId = info?._id;
       try {
-        const result = await createConversation({ variables: { bookingId } });
+        await createConversation({ variables: { bookingId } });
         updateConversations();
       } catch (error) {
         console.log(error);
