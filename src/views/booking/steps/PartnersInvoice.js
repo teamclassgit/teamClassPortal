@@ -281,7 +281,11 @@ const PartnersInvoice = ({ booking }) => {
             )}
             <Row className="">
               <Col lg={12} className="">
-                {invoiceInstructorStatus === 'approved' && <Alert color="primary">This invoice has been approved</Alert>}
+                {invoiceInstructorStatus === 'approved' && (
+                  <Alert color="primary" className="mt-2">
+                    This invoice has been approved
+                  </Alert>
+                )}
                 {invoiceInstructorStatus === 'rejected' && <Alert color="warning">This invoice has been rejected</Alert>}
               </Col>
             </Row>
