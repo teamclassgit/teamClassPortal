@@ -153,16 +153,6 @@ const ConversationView = (props) => {
               </div>
             )}
           </span>
-          <small>
-            <span className="render-list">
-              <br></br>
-              <span className="render-list-span">Phone:</span> {`${capitalizeString(customer?.phone)}`}
-            </span>
-            <span className="render-list">
-              <br></br>
-              <span className="render-list-span">Email:</span> {`${customer?.email.toLowerCase()}`}
-            </span>
-          </small>
           <div style={{ color: muted ? 'gray' : 'black' }}>
             <ListGroup tag="div">
               {customer &&
