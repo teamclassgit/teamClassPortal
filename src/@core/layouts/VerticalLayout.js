@@ -1,34 +1,26 @@
-// ** React Imports
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-
-// ** Store & Actions
-import { useSelector, useDispatch } from 'react-redux';
-import { handleMenuCollapsed, handleContentWidth, handleMenuHidden } from '@store/actions/layout';
-
-// ** Third Party Components
-import classnames from 'classnames';
-import { ArrowUp } from 'react-feather';
-import ScrollToTop from 'react-scroll-up';
-import { Navbar, Button } from 'reactstrap';
-
-// ** Configs
-import themeConfig from '@configs/themeConfig';
-
-// ** Custom Components
+// @packages
 import Customizer from '@components/customizer';
+import React, { useState, useEffect } from 'react';
+import ScrollToTop from 'react-scroll-up';
+import SidebarComponent from './components/menu/vertical-menu';
+import classnames from 'classnames';
+import themeConfig from '@configs/themeConfig';
+import { ArrowUp } from 'react-feather';
+import { Navbar, Button } from 'reactstrap';
+import { handleMenuCollapsed, handleContentWidth, handleMenuHidden } from '@store/actions/layout';
+import { useFooterType } from '@hooks/useFooterType';
+import { useLocation } from 'react-router-dom';
+import { useNavbarColor } from '@hooks/useNavbarColor';
+import { useNavbarType } from '@hooks/useNavbarType';
+import { useRTL } from '@hooks/useRTL';
+import { useSelector, useDispatch } from 'react-redux';
+import { useSkin } from '@hooks/useSkin';
+
+// @scripts
 import FooterComponent from './components/footer';
 import NavbarComponent from './components/navbar';
-import SidebarComponent from './components/menu/vertical-menu';
 
-// ** Custom Hooks
-import { useRTL } from '@hooks/useRTL';
-import { useSkin } from '@hooks/useSkin';
-import { useNavbarType } from '@hooks/useNavbarType';
-import { useFooterType } from '@hooks/useFooterType';
-import { useNavbarColor } from '@hooks/useNavbarColor';
-
-// ** Styles
+// @styles
 import '@styles/base/core/menu/menu-types/vertical-menu.scss';
 import '@styles/base/core/menu/menu-types/vertical-overlay-menu.scss';
 
@@ -175,9 +167,10 @@ const VerticalLayout = props => {
       ></div>
       {/* Vertical Nav Menu Overlay */}
 
-      {themeConfig.layout.customizer === true ? (
+      {!themeConfig.layout.customizer === true ? (
         <Customizer
           skin={skin}
+          onlyChat
           setSkin={setSkin}
           footerType={footerType}
           setFooterType={setFooterType}
