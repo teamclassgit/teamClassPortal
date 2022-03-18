@@ -1,12 +1,13 @@
 // @packages
 import { Fragment, useEffect, useState } from 'react';
-import { Alert, Button, Card, CardBody, Col, Input, Row } from 'reactstrap';
+import { Alert, Button, Card, CardBody, Col, Input, FormGroup, Label, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
 import { Icon } from '@iconify/react';
 import { useMutation } from '@apollo/client';
 import moment from 'moment';
 
 // @scripts
 import mutationUpdateBookingInvoiceInstructor from '../../../graphql/MutationUpdateBookingInvoiceInstructor';
+import DropZone from '../../../@core/components/drop-zone';
 
 // @styles
 import './partners-invoice.scss';
@@ -18,8 +19,21 @@ const PartnersInvoice = ({ booking }) => {
   const [rejectedReasons, setRejectedReasons] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
-  const [action, setAction] = useState(null);
+  const [isPayInvoice, setIsPayInvoice] = useState(false);
+  const [showPayInvoiceButton, setShowPayInvoiceButton] = useState(
+    booking.instructorInvoice && booking.instructorInvoice.status === 'approved' ? true : false
+  );
+  const [showModal, setShowModal] = useState(false);
+  const [isStripeOption, setIsStripeOption] = useState(true);
+  const [isOtherOption, setIsOtherOption] = useState(false);
+  const [active, setActive] = useState('1');
   const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
+
+  const toggle = (tab) => {
+    if (active !== tab) {
+      setActive(tab);
+    }
+  };
 
   // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
 
@@ -110,187 +124,283 @@ const PartnersInvoice = ({ booking }) => {
           </Col>
         </Row>
       </div>
-      <div className="card-container">
-        <Row>
-          <Col lg={4}>
-            <div className="event-confirmation-container">
-              <Card>
-                <CardBody>
-                  <span className="d-flex justify-content-center">
-                    <Icon className="mb-1 event-confirmed-icon" fontSize={30} icon="akar-icons:circle-check" />
-                  </span>
-                  <h2 className="text-center mt-2 mb-2 font-weight-bold">Event Confirmed</h2>
-                  <p className="text-justify mb-2">Please confirm heacount, class price, and any additional charges.</p>
-                  <p className="text-justify">Click submit to confirm your invoice and collect the payment.</p>
-                </CardBody>
-              </Card>
-            </div>
-          </Col>
-          <Col lg={8}>
-            <Row>
-              <Col lg={5} className="mb-2">
-                <span>Item/Description</span>
-              </Col>
-              <Col lg={2} className="mb-2">
-                <span>Price($)</span>
-              </Col>
-              <Col lg={2} className="mb-2">
-                <span>Quantity</span>
-              </Col>
-              <Col lg={3} className="d-flex justify-content-center mb-2">
-                <span>Total</span>
-              </Col>
-            </Row>
-            {booking.instructorInvoice &&
-              booking.instructorInvoice.invoiceItems.map((invoice) => {
-                return (
-                  <Row className="mb-1">
-                    <Col lg={5}>
-                      <Input
-                        type="text"
-                        name="description"
-                        id="description"
-                        disabled
-                        placeholder="Item / Description"
-                        value={invoice.description}
-                        // onChange={(e) => handleChange(e, index)}
-                      />
-                    </Col>
-                    <Col lg={2}>
-                      <Input
-                        type="number"
-                        name="price"
-                        id="price"
-                        disabled
-                        placeholder="Price"
-                        value={invoice.price}
-                        // onChange={(e) => handleChange(e, index)}
-                      />
-                    </Col>
-                    <Col lg={2}>
-                      <Input
-                        type="number"
-                        name="units"
-                        id="units"
-                        disabled
-                        placeholder="Unit"
-                        value={invoice.units}
-                        // onChange={(e) => handleChange(e, index)}
-                      />
-                    </Col>
-                    <Col lg={3} className="d-flex justify-content-center pop-up-target-total-row">
-                      <span>{`$${invoice.price * invoice.units}`}</span>
-                    </Col>
-                  </Row>
-                );
-              })}
-            <Row>
-              <Col lg={12} className="my-2">
-                <span>Notes/comments (optional)</span>
-              </Col>
-              <Col lg={12}>
-                <Input
-                  type="textarea"
-                  name="notes"
-                  value={booking?.instructorInvoice?.notes}
-                  disabled
-                  // onChange={(e) => setNotes(e.target.value)}
-                  maxLength={1000}
-                  className="textarea-fit-content"
-                  id="notes"
-                  placeholder="Share notes/comments about your invoice"
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={12}>
-                <div className="mt-2 d-flex justify-content-end">
-                  <span className="total-title">Total{'  '}</span>
-                  <span className="total-value">{`$ ${totalInvoice}`}</span>
-                </div>
-              </Col>
-            </Row>
-            {!isRejected && (
+      <div>
+        <div className="card-container">
+          <Row>
+            <Col lg={4}>
+              <div className="event-confirmation-container">
+                <Card>
+                  <CardBody>
+                    <span className="d-flex justify-content-center">
+                      <Icon className="mb-1 event-confirmed-icon" fontSize={30} icon="akar-icons:circle-check" />
+                    </span>
+                    <h2 className="text-center mt-2 mb-2 font-weight-bold">Event Confirmed</h2>
+                    <p className="text-justify mb-2">Please confirm heacount, class price, and any additional charges.</p>
+                    <p className="text-justify">Click submit to confirm your invoice and collect the payment.</p>
+                  </CardBody>
+                </Card>
+              </div>
+            </Col>
+            <Col lg={8}>
               <Row>
-                <Col lg={12}>
-                  <div className="button-container d-flex justify-content-end mt-2">
-                    {invoiceInstructorStatus !== 'rejected' && (
-                      <Button
-                        className="mr-2"
-                        onClick={(e) => {
-                          setIsRejected(true);
-                        }}
-                      >
-                        {'Reject'}
-                      </Button>
-                    )}
-                    <Button
-                      onClick={(e) => {
-                        setIsRejected(false);
-                        handleSaveInfo(action);
-                      }}
-                    >
-                      {processing ? 'Saving' : 'Accept'}
-                    </Button>
-                  </div>
+                <Col lg={5} className="mb-2">
+                  <span>Item/Description</span>
+                </Col>
+                <Col lg={2} className="mb-2">
+                  <span>Price($)</span>
+                </Col>
+                <Col lg={2} className="mb-2">
+                  <span>Quantity</span>
+                </Col>
+                <Col lg={3} className="d-flex justify-content-center mb-2">
+                  <span>Total</span>
                 </Col>
               </Row>
-            )}
-            {isRejected && (
-              <Row className="mt-2">
-                <Col lg={12} className="mb-2">
-                  <span>Rejected Reason*</span>
+              {booking.instructorInvoice &&
+                booking.instructorInvoice.invoiceItems.map((invoice) => {
+                  return (
+                    <Row className="mb-1">
+                      <Col lg={5}>
+                        <Input
+                          type="text"
+                          name="description"
+                          id="description"
+                          disabled
+                          placeholder="Item / Description"
+                          value={invoice.description}
+                          // onChange={(e) => handleChange(e, index)}
+                        />
+                      </Col>
+                      <Col lg={2}>
+                        <Input
+                          type="number"
+                          name="price"
+                          id="price"
+                          disabled
+                          placeholder="Price"
+                          value={invoice.price}
+                          // onChange={(e) => handleChange(e, index)}
+                        />
+                      </Col>
+                      <Col lg={2}>
+                        <Input
+                          type="number"
+                          name="units"
+                          id="units"
+                          disabled
+                          placeholder="Unit"
+                          value={invoice.units}
+                          // onChange={(e) => handleChange(e, index)}
+                        />
+                      </Col>
+                      <Col lg={3} className="d-flex justify-content-center pop-up-target-total-row">
+                        <span>{`$${invoice.price * invoice.units}`}</span>
+                      </Col>
+                    </Row>
+                  );
+                })}
+              <Row>
+                <Col lg={12} className="my-2">
+                  <span>Notes/comments (optional)</span>
                 </Col>
                 <Col lg={12}>
                   <Input
                     type="textarea"
-                    name="rejectedReasons"
+                    name="notes"
+                    value={booking?.instructorInvoice?.notes}
+                    disabled
+                    // onChange={(e) => setNotes(e.target.value)}
                     maxLength={1000}
                     className="textarea-fit-content"
-                    id="rejectedReasons"
-                    placeholder=""
-                    onChange={(e) => setRejectedReasons(e.target.value)}
+                    id="notes"
+                    placeholder="Share notes/comments about your invoice"
                   />
                 </Col>
+              </Row>
+              <Row>
                 <Col lg={12}>
-                  <div className="d-flex justify-content-end mt-2">
-                    <Button
-                      className="small mr-2"
-                      onClick={(e) => {
-                        setIsRejected(true);
-                        handleSaveInfo();
-                      }}
-                    >
-                      {processing ? 'Saving' : 'Save'}
-                    </Button>
-                    <Button className="small" onClick={(e) => setIsRejected(false)}>
-                      Cancel
-                    </Button>
+                  <div className="mt-2 d-flex justify-content-end">
+                    <span className="total-title">Total{'  '}</span>
+                    <span className="total-value">{`$ ${totalInvoice}`}</span>
                   </div>
                 </Col>
               </Row>
-            )}
+              {!isRejected && !showPayInvoiceButton ? (
+                <Row>
+                  <Col lg={12}>
+                    <div className="button-container d-flex justify-content-end mt-2">
+                      {invoiceInstructorStatus !== 'rejected' && (
+                        <Button
+                          className="mr-2"
+                          onClick={(e) => {
+                            setIsRejected(true);
+                            setIsPayInvoice(false);
+                          }}
+                        >
+                          {'Reject'}
+                        </Button>
+                      )}
+                      <Button
+                        onClick={(e) => {
+                          setIsRejected(false);
+                          setShowPayInvoiceButton(true);
+                          handleSaveInfo();
+                        }}
+                      >
+                        {processing ? 'Saving' : 'Accept'}
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              ) : (
+                showPayInvoiceButton && (
+                  <Row>
+                    <Col lg={12}>
+                      <div className="d-flex justify-content-end mt-2">
+                        <Button
+                          color="primary"
+                          onClick={(e) => {
+                            setIsPayInvoice(true);
+                            setShowModal(!showModal);
+                          }}
+                        >
+                          Pay Invoice
+                        </Button>
+                      </div>
+                    </Col>
+                  </Row>
+                )
+              )}
+              {/* {!isRejected && invoiceInstructorStatus === 'approved' && showPayInvoiceButton && (
+                
+              )} */}
+              {isRejected && (
+                <Row className="mt-2">
+                  <Col lg={12} className="mb-2">
+                    <span>Rejected Reason*</span>
+                  </Col>
+                  <Col lg={12}>
+                    <Input
+                      type="textarea"
+                      name="rejectedReasons"
+                      maxLength={1000}
+                      className="textarea-fit-content"
+                      id="rejectedReasons"
+                      placeholder=""
+                      onChange={(e) => setRejectedReasons(e.target.value)}
+                    />
+                  </Col>
+                  <Col lg={12}>
+                    <div className="d-flex justify-content-end mt-2">
+                      <Button
+                        className="small mr-2"
+                        onClick={(e) => {
+                          setIsRejected(true);
+                          handleSaveInfo();
+                        }}
+                      >
+                        {processing ? 'Saving' : 'Save'}
+                      </Button>
+                      <Button className="small" onClick={(e) => setIsRejected(false)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              )}
 
-            {invoiceInstructorStatus === 'rejected' && booking.instructorInvoice.rejectedReasons && (
-              <Row className="mt-2">
-                <Col lg={12} className="mb-2">
-                  <span>Rejected Reason: </span>
-                  <span>{booking.instructorInvoice.rejectedReasons}</span>
+              {invoiceInstructorStatus === 'rejected' && booking.instructorInvoice.rejectedReasons && (
+                <Row className="mt-2">
+                  <Col lg={12} className="mb-2">
+                    <span>Rejected Reason: </span>
+                    <span>{booking.instructorInvoice.rejectedReasons}</span>
+                  </Col>
+                </Row>
+              )}
+              <Row className="">
+                <Col lg={12} className="">
+                  {invoiceInstructorStatus === 'approved' && (
+                    <Alert color="primary" className="mt-2">
+                      This invoice has been approved
+                    </Alert>
+                  )}
+                  {invoiceInstructorStatus === 'rejected' && (
+                    <Alert color="warning" className="mt-2">
+                      This invoice has been rejected
+                    </Alert>
+                  )}
                 </Col>
               </Row>
-            )}
-            <Row className="">
-              <Col lg={12} className="">
-                {invoiceInstructorStatus === 'approved' && (
-                  <Alert color="primary" className="mt-2">
-                    This invoice has been approved
-                  </Alert>
+            </Col>
+          </Row>
+        </div>
+        <div>
+          <div className="vertically-centered-modal">
+            <Modal isOpen={showModal} toggle={() => setShowModal(!showModal)} className="modal-dialog-centered">
+              <ModalHeader
+                toggle={() => {
+                  setShowModal(!showModal);
+                }}
+              >
+                Pay Invoice
+              </ModalHeader>
+              <ModalBody>
+                <FormGroup check inline>
+                  <Label check>
+                    <Input
+                      type="radio"
+                      name="ex1"
+                      defaultChecked
+                      onClick={(e) => {
+                        setIsStripeOption(true);
+                        setIsOtherOption(false);
+                      }}
+                    />{' '}
+                    Stripe
+                  </Label>
+                </FormGroup>
+                <FormGroup check inline>
+                  <Label check>
+                    <Input
+                      type="radio"
+                      name="ex1"
+                      onClick={(e) => {
+                        setIsOtherOption(true);
+                        setIsStripeOption(false);
+                      }}
+                    />{' '}
+                    Other
+                  </Label>
+                </FormGroup>
+                {isStripeOption && (
+                  <div className="d-flex justify-content-center mt-2">
+                    <Button>Submit Payment</Button>
+                  </div>
                 )}
-                {invoiceInstructorStatus === 'rejected' && <Alert color="warning">This invoice has been rejected</Alert>}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+                {isOtherOption && (
+                  <div>
+                    <DropZone dropText={'Upload your files'} />
+                    <div className="d-flex justify-content-center mt-2">
+                      <Button>Submit Payment</Button>
+                    </div>
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                {isStripeOption && (
+                  <div>
+                    <span className="small">Pay invoice with stripe connection</span>
+                  </div>
+                )}
+                {isOtherOption && (
+                  <div>
+                    <span className="small">Upload your proof of payment</span>
+                  </div>
+                )}
+              </ModalFooter>
+            </Modal>
+          </div>
+        </div>
       </div>
     </Fragment>
   );
