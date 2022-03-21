@@ -270,7 +270,7 @@ const WizardClassBooking = () => {
     id: 'partner-invoice',
     title: 'Partner Invoice',
     icon: <DollarSign size={18} />,
-    content: <PartnersInvoice booking={bookingInfo}></PartnersInvoice>
+    content: <PartnersInvoice booking={bookingInfo} calendarEvent={calendarEvent}></PartnersInvoice>
   });
 
   const isRushDate = () => {

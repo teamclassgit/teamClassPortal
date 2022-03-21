@@ -2,17 +2,18 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Alert, Button, Card, CardBody, Col, Input, FormGroup, Label, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
 import { Icon } from '@iconify/react';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import moment from 'moment';
 
 // @scripts
 import mutationUpdateBookingInvoiceInstructor from '../../../graphql/MutationUpdateBookingInvoiceInstructor';
 import DropZone from '../../../@core/components/drop-zone';
+import { getEventFullDate } from '../../../utility/Utils';
 
 // @styles
 import './partners-invoice.scss';
 
-const PartnersInvoice = ({ booking }) => {
+const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [totalInvoice, setTotalInvoice] = useState(0);
   const [isRejected, setIsRejected] = useState(false);
   const [invoiceInstructorStatus, setInvoiceInstructorStatus] = useState(booking.instructorInvoice && booking.instructorInvoice.status);
@@ -35,6 +36,10 @@ const PartnersInvoice = ({ booking }) => {
     }
   };
 
+  const calendarEventDate = moment(getEventFullDate(calendarEvent)).format('LL');
+
+  // console.log('calendarEventDate', calendarEvent);
+  // console.log('calendarEventDate', calendarEventDate);
   // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
 
   useEffect(() => {
@@ -108,7 +113,7 @@ const PartnersInvoice = ({ booking }) => {
           <Col lg={3}>
             <span className="title">Event Date</span>
             <div>
-              <a>{moment(booking?.eventDate).format('MMM DD, YYYY')}</a>
+              <a>{calendarEventDate}</a>
             </div>
           </Col>
           <Col lg={3}>
