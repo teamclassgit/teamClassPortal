@@ -62,9 +62,7 @@ const BoardCard = ({
   const [showAlertEventPayment, setShowAlertEventPayment] = useState(null);
 
   const history = useHistory();
-  if (customerTags && Array.isArray(customerTags) && customerTags.length > 0) {
-    console.log(customerTags);
-  }
+  
   useEffect(() => {
     const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
     const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
