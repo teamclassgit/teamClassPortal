@@ -373,7 +373,7 @@ const FunnelTable = () => {
 
         if (isNotEmptyArray(data.customerTags)) {
           return (<div>
-            {data.customerName}
+            {data.customerName}{" "}
               <span className="card-tags text-warning">{data.customerTags.join(", ")}</span>
           </div>);  
         }
