@@ -6,49 +6,9 @@
     font-size: 13px;
 }
 
-// .dark-layout{
-    
-//     .bookings-table {
-//         background-color: $theme-dark-card-bg;
-//         color: lightgray
-//     }
-
-//     .InovuaReactDataGrid__column-header__content {
-//         background-color: $theme-dark-card-bg;
-//         color: lightgray
-//     }
-
-//     .InovuaReactDataGrid__column-header__filter-wrapper {
-//         background-color: $theme-dark-card-bg;
-//         color: lightgray
-//     }
-//     .inovua-react-toolkit-text-input.inovua-react-toolkit-text-input{
-//         background-color: $theme-dark-card-bg;
-//         color: lightgray
-//     }
-
-//     .inovua-react-toolkit-date-input {
-//         background-color: $theme-dark-card-bg;
-//         color: lightgray
-//     }
-
-//     .inovua-react-toolkit-date-input__input {
-//         background-color: $theme-dark-card-bg;
-//         color: lightgray
-//     }
-
-//     .inovua-react-toolkit-numeric-input {
-//         background-color: $theme-dark-card-bg;
-//         color: lightgray
-//     }
-
-//     .InovuaReactDataGrid .InovuaReactDataGrid__cell{
-//         background-color: $theme-dark-card-bg;
-//         color: lightgray
-//     }
-
-//     .InovuaReactDataGrid .InovuaReactDataGrid__row__cell:hover{
-//         background-color: $dark;
-//         color: lightgray
-//     }
-// }
+.card-tags {
+    position: absolute;
+    top: 0px;
+    margin-left: 0px;
+    font-size: 10px;
+}
