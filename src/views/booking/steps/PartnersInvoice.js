@@ -2,7 +2,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Alert, Button, Card, CardBody, Col, Input, FormGroup, Label, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
 import { Icon } from '@iconify/react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import moment from 'moment';
 
 // @scripts
@@ -20,7 +20,6 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [rejectedReasons, setRejectedReasons] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
-  const [isPayInvoice, setIsPayInvoice] = useState(false);
   const [showPayInvoiceButton, setShowPayInvoiceButton] = useState(
     booking.instructorInvoice && booking.instructorInvoice.status === 'approved' ? true : false
   );
@@ -30,17 +29,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [active, setActive] = useState('1');
   const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
 
-  const toggle = (tab) => {
-    if (active !== tab) {
-      setActive(tab);
-    }
-  };
-
   const calendarEventDate = moment(getEventFullDate(calendarEvent)).format('LL');
-
-  // console.log('calendarEventDate', calendarEvent);
-  // console.log('calendarEventDate', calendarEventDate);
-  // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
 
   useEffect(() => {
     if (booking.instructorInvoice) {
@@ -86,9 +75,6 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     setProcessing(false);
   };
 
-  // console.log('booking', booking);
-  // console.log('rejectedReasons', rejectedReasons);
-  // console.log('isRejected', isRejected);
   return (
     <Fragment>
       <div className="header-container">
@@ -173,30 +159,13 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                           disabled
                           placeholder="Item / Description"
                           value={invoice.description}
-                          // onChange={(e) => handleChange(e, index)}
                         />
                       </Col>
                       <Col lg={2}>
-                        <Input
-                          type="number"
-                          name="price"
-                          id="price"
-                          disabled
-                          placeholder="Price"
-                          value={invoice.price}
-                          // onChange={(e) => handleChange(e, index)}
-                        />
+                        <Input type="number" name="price" id="price" disabled placeholder="Price" value={invoice.price} />
                       </Col>
                       <Col lg={2}>
-                        <Input
-                          type="number"
-                          name="units"
-                          id="units"
-                          disabled
-                          placeholder="Unit"
-                          value={invoice.units}
-                          // onChange={(e) => handleChange(e, index)}
-                        />
+                        <Input type="number" name="units" id="units" disabled placeholder="Unit" value={invoice.units} />
                       </Col>
                       <Col lg={3} className="d-flex justify-content-center pop-up-target-total-row">
                         <span>{`$${invoice.price * invoice.units}`}</span>
@@ -214,7 +183,6 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                     name="notes"
                     value={booking?.instructorInvoice?.notes}
                     disabled
-                    // onChange={(e) => setNotes(e.target.value)}
                     maxLength={1000}
                     className="textarea-fit-content"
                     id="notes"
@@ -230,6 +198,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                   </div>
                 </Col>
               </Row>
+
               {!isRejected && !showPayInvoiceButton ? (
                 <Row>
                   <Col lg={12}>
@@ -239,7 +208,6 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                           className="mr-2"
                           onClick={(e) => {
                             setIsRejected(true);
-                            setIsPayInvoice(false);
                           }}
                         >
                           {'Reject'}
@@ -265,7 +233,6 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         <Button
                           color="primary"
                           onClick={(e) => {
-                            setIsPayInvoice(true);
                             setShowModal(!showModal);
                           }}
                         >
@@ -276,9 +243,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                   </Row>
                 )
               )}
-              {/* {!isRejected && invoiceInstructorStatus === 'approved' && showPayInvoiceButton && (
-                
-              )} */}
+
               {isRejected && (
                 <Row className="mt-2">
                   <Col lg={12} className="mb-2">
@@ -382,6 +347,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                     <Button>Submit Payment</Button>
                   </div>
                 )}
+
                 {isOtherOption && (
                   <div>
                     <DropZone dropText={'Upload your files'} />
@@ -397,6 +363,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                     <span className="small">Pay invoice with stripe connection</span>
                   </div>
                 )}
+
                 {isOtherOption && (
                   <div>
                     <span className="small">Upload your proof of payment</span>
