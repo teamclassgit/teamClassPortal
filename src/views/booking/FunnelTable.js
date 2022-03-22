@@ -9,7 +9,7 @@ import { Modal } from 'reactstrap';
 import Avatar from '@components/avatar';
 import moment from 'moment-timezone';
 window.moment = moment;
-import { getQueryFiltersFromFilterArray, getUserData } from '../../utility/Utils';
+import { getQueryFiltersFromFilterArray, getUserData, isNotEmptyArray } from '../../utility/Utils';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
@@ -363,7 +363,23 @@ const FunnelTable = () => {
       },
       width: 200
     },
-    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { 
+      name: 'customerName', 
+      header: 'Customer ', 
+      type: 'string', 
+      filterEditor: StringFilter, 
+      filterDelay: 1500,
+      render: ({data}) => {
+
+        if (isNotEmptyArray(data.customerTags)) {
+          return (<div>
+            {data.customerName}{" "}
+              <span className="card-tags text-warning">{data.customerTags.join(", ")}</span>
+          </div>);  
+        }
+        return data.customerName;
+      }
+    },
     { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
     { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
     { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },

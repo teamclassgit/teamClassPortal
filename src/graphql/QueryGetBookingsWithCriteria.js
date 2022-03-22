@@ -52,6 +52,8 @@ export default gql`
         discount
         bookingStage
         closedReason
+        bookingTags
+        customerTags
         payments {
           amount
           createdAt
