@@ -151,3 +151,5 @@ export const getQueryFiltersFromFilterArray = (filterValue) => {
 
   return filters;
 };
+
+export const isNotEmptyArray = arr => Array.isArray(arr) && arr.length > 0;

@@ -3,12 +3,12 @@ import Avatar from '@components/avatar';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment-timezone';
-import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video } from 'react-feather';
+import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video, Tag } from 'react-feather';
 import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
 import { useHistory } from 'react-router';
 // @scripts
 import CopyClipboard from '../../../../components/CopyClipboard';
-import { capitalizeString } from '../../../../utility/Utils';
+import { capitalizeString, isNotEmptyArray } from '../../../../utility/Utils';
 // @styles
 import './BoardCard.scss';
 import {
@@ -48,7 +48,8 @@ const BoardCard = ({
     closedReason,
     totalInvoice,
     shippingTrackingLink,
-    joinInfo
+    joinInfo,
+    customerTags
   }
 }) => {
   const [date, setDate] = useState(null);
@@ -61,7 +62,9 @@ const BoardCard = ({
   const [showAlertEventPayment, setShowAlertEventPayment] = useState(null);
 
   const history = useHistory();
-
+  if (customerTags && Array.isArray(customerTags) && customerTags.length > 0) {
+    console.log(customerTags);
+  }
   useEffect(() => {
     const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
     const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
@@ -114,7 +117,6 @@ const BoardCard = ({
     if (!signUpDeadlineToShow) return;
 
     const daysToRegistration = Math.abs(moment().diff(signUpDeadlineToShow, 'days'));
-    console.log(daysToRegistration);
     if (daysToRegistration >= 0 && daysToRegistration <= 1) {
       setSignUpRegistrationClass(true);
     } else {
@@ -291,6 +293,14 @@ const BoardCard = ({
     <>
       <Card className="card-board">
         <CardHeader className="p-0 m-0">
+          
+          {isNotEmptyArray(customerTags) && (
+            <span className="card-tags text-warning">
+              <Tag size="10"></Tag>
+              {" "}{customerTags.join(", ")}
+            </span>
+          )}
+
           <Button
             color="link"
             className="flip-button text-muted"
