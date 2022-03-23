@@ -97,6 +97,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
   // // console.log('booking.instructorInvoice', booking.instructorInvoice);
   // // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
+  console.log('invoiceInstructorStatus', invoiceInstructorStatus);
 
   return (
     <Fragment>
@@ -225,27 +226,33 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
               {!isRejected && !showPayInvoiceButton ? (
                 <Row>
                   <Col lg={12}>
-                    <div className="button-container d-flex justify-content-end mt-2">
-                      {invoiceInstructorStatus !== 'rejected' && (
+                    {invoiceInstructorStatus !== 'paid' ? (
+                      <div className="button-container d-flex justify-content-end mt-2">
+                        {invoiceInstructorStatus !== 'rejected' && (
+                          <Button
+                            className="mr-2"
+                            onClick={(e) => {
+                              setIsRejected(true);
+                            }}
+                          >
+                            {'Reject'}
+                          </Button>
+                        )}
                         <Button
-                          className="mr-2"
                           onClick={(e) => {
-                            setIsRejected(true);
+                            setIsRejected(false);
+                            setShowPayInvoiceButton(true);
+                            handleSaveInfo();
                           }}
                         >
-                          {'Reject'}
+                          {processing ? 'Saving' : 'Accept'}
                         </Button>
-                      )}
-                      <Button
-                        onClick={(e) => {
-                          setIsRejected(false);
-                          setShowPayInvoiceButton(true);
-                          handleSaveInfo();
-                        }}
-                      >
-                        {processing ? 'Saving' : 'Accept'}
-                      </Button>
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="d-flex justify-content-end mt-2">
+                        <Alert>This invoice has been paid!</Alert>
+                      </div>
+                    )}
                   </Col>
                 </Row>
               ) : (
@@ -253,19 +260,15 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                   <Row>
                     <Col lg={12}>
                       <div className="d-flex justify-content-end mt-2">
-                        {invoiceInstructorStatus === 'paid' ? (
-                          <Alert>This invoice has been paid!</Alert>
-                        ) : (
-                          <Button
-                            color="primary"
-                            onClick={(e) => {
-                              setShowModal(!showModal);
-                              setIsPaid(true);
-                            }}
-                          >
-                            Pay Invoice
-                          </Button>
-                        )}
+                        <Button
+                          color="primary"
+                          onClick={(e) => {
+                            setShowModal(!showModal);
+                            setIsPaid(true);
+                          }}
+                        >
+                          Pay Invoice
+                        </Button>
                       </div>
                     </Col>
                   </Row>
@@ -377,7 +380,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                       onClick={(e) => {
                         handleSaveInfo();
                         setShowModal(!showModal);
-                        alert(isPaid);
+                        setShowPayInvoiceButton(false);
                       }}
                     >
                       Submit Payment
@@ -393,6 +396,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         onClick={(e) => {
                           handleSaveInfo();
                           setShowModal(!showModal);
+                          setShowPayInvoiceButton(false);
                           updateImages();
                         }}
                         disabled={previewArr && previewArr.length === 0}
