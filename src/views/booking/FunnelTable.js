@@ -536,6 +536,32 @@ const FunnelTable = () => {
       render: ({ value, cellProps }) => {
         return <span className="float-right">${value.toFixed(2)}</span>;
       }
+    },
+    {
+      name: 'customerTags',
+      header: 'Customer Tags',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 140,
+      render: ({ value, cellProps }) => {
+        if (isNotEmptyArray(value)) {
+          return <span className="float-left">{value.join(",")}</span>;
+        }
+      }
+    },
+    {
+      name: 'bookingTags',
+      header: 'Booking Tags',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 140,
+      render: ({ value, cellProps }) => {
+        if (isNotEmptyArray(value)) {
+          return <span className="float-left">{value.join(",")}</span>;
+        }
+      }
     }
   ];
 
