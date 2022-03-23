@@ -27,7 +27,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [isStripeOption, setIsStripeOption] = useState(true);
   const [isOtherOption, setIsOtherOption] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
-  const [previewArr, setPreviewArr] = useState([]);
+  const [attachedFile, setAttachedFile] = useState([]);
   const [fileUrl, setFileUrl] = useState(null);
   const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
 
@@ -81,8 +81,8 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
   const updateImages = async () => {
     let result = '';
-    for (let i = 0; i < previewArr.length; i++) {
-      result = await uploadFile(previewArr[i].successful[0].data);
+    for (let i = 0; i < attachedFile.length; i++) {
+      result = await uploadFile(attachedFile[i].successful[0].data);
       if (result.error) {
         throw new Error(result.error);
       } else {
@@ -390,7 +390,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
                 {isOtherOption && (
                   <div>
-                    <DropZone dropText={'Upload your files'} previewArr={previewArr} setPreviewArr={setPreviewArr} fileUrl={fileUrl} />
+                    <DropZone dropText={'Upload your files'} attachedFile={attachedFile} setAttachedFile={setAttachedFile} fileUrl={fileUrl} />
                     <div className="d-flex justify-content-center mt-2">
                       <Button
                         onClick={(e) => {
@@ -399,7 +399,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                           setShowPayInvoiceButton(false);
                           updateImages();
                         }}
-                        disabled={previewArr && previewArr.length === 0}
+                        disabled={attachedFile && attachedFile.length === 0}
                       >
                         Submit Payment
                       </Button>

@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardBody } from 'reactstrap';
 // @styles
 import './drop-zone.scss';
 
-const DropZone = ({ dropText, previewArr, setPreviewArr, fileUrl }) => {
+const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
   const uppy = new Uppy({
     meta: { type: 'avatar' },
     autoProceed: true
@@ -17,14 +17,14 @@ const DropZone = ({ dropText, previewArr, setPreviewArr, fileUrl }) => {
   uppy.use(thumbnailGenerator);
 
   uppy.on('complete', (file) => {
-    const arr = previewArr;
+    const arr = attachedFile;
     arr.push(file);
-    setPreviewArr([...arr]);
+    setAttachedFile([...arr]);
   });
 
   const renderPreview = () => {
-    if (previewArr.length) {
-      return previewArr.map((item, index) => item.successful.map((item2) => (
+    if (attachedFile.length) {
+      return attachedFile.map((item, index) => item.successful.map((item2) => (
           <ul className="list-unstyled">
             <li className="mt-2">
               <a href={fileUrl} target="_blank">
@@ -44,7 +44,7 @@ const DropZone = ({ dropText, previewArr, setPreviewArr, fileUrl }) => {
     }
   };
 
-  // console.log('previewArr', previewArr);
+  // console.log('attachedFile', attachedFile);
 
   return (
     <Card className="mt-2">
