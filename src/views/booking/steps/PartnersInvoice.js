@@ -97,7 +97,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
   // // console.log('booking.instructorInvoice', booking.instructorInvoice);
   // // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
-  console.log('invoiceInstructorStatus', invoiceInstructorStatus);
+  // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
 
   return (
     <Fragment>
