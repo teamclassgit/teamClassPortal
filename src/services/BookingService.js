@@ -153,12 +153,11 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'cardFeeAmount',
     'totalInvoice',
     'balance',
-    'customerTags',
-    'bookingTags'
+    'customerTags'
   ];
 
   bookingsArray.push(headers);
-  
+
   bookings.forEach((element) => {
     const row = [
       element._id,
@@ -195,8 +194,7 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.cardFeeAmount,
       element.totalInvoice,
       element.balance,
-      (isNotEmptyArray(element.customerTags) ? element.customerTags.join(", ") : ""),
-      (isNotEmptyArray(element.bookingTags) ? element.bookingTags.join(", ") : "")
+      (isNotEmptyArray(element.customerTags) ? element.customerTags.join(", ") : "")
     ];
     bookingsArray.push(row);
   });

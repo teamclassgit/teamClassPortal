@@ -541,22 +541,16 @@ const FunnelTable = () => {
       name: 'customerTags',
       header: 'Customer Tags',
       type: 'string',
-      filterEditor: StringFilter,
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: ['repeat'].map((tag) => {
+          return { id: tag, label: tag };
+        })
+      },
       filterDelay: 1500,
-      defaultWidth: 140,
-      render: ({ value, cellProps }) => {
-        if (isNotEmptyArray(value)) {
-          return <span className="float-left">{value.join(",")}</span>;
-        }
-      }
-    },
-    {
-      name: 'bookingTags',
-      header: 'Booking Tags',
-      type: 'string',
-      filterEditor: StringFilter,
-      filterDelay: 1500,
-      defaultWidth: 140,
+      defaultWidth: 200,
       render: ({ value, cellProps }) => {
         if (isNotEmptyArray(value)) {
           return <span className="float-left">{value.join(",")}</span>;
@@ -634,7 +628,8 @@ const FunnelTable = () => {
         { name: 'finalPaymentPaidDate', type: 'date', operator: 'inrange', value: undefined },
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined }
+        { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined },
+        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined}
       ];
     }
 
