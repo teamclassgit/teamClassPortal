@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "3.3.16",
+    "@aws-amplify/core": "^4.4.2",
     "@casl/ability": "5.2.2",
     "@casl/react": "2.1.1",
     "@fullcalendar/core": "5.3.0",
@@ -28,6 +29,7 @@
     "apollo-link-http": "1.5.17",
     "apollo-link-logger": "2.0.0",
     "availity-reactstrap-validation-safe": "2.6.1",
+    "aws-amplify": "^4.3.17",
     "axios": "0.21.1",
     "axios-mock-adapter": "1.19.0",
     "babel-plugin-react-intl": "5.1.18",

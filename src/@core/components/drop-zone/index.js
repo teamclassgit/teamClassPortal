@@ -8,9 +8,7 @@ import { Card, CardHeader, CardTitle, CardBody } from 'reactstrap';
 // @styles
 import './drop-zone.scss';
 
-const DropZone = ({ dropText }) => {
-  const [previewArr, setPreviewArr] = useState([]);
-
+const DropZone = ({ dropText, previewArr, setPreviewArr, fileUrl }) => {
   const uppy = new Uppy({
     meta: { type: 'avatar' },
     autoProceed: true
@@ -18,19 +16,35 @@ const DropZone = ({ dropText }) => {
 
   uppy.use(thumbnailGenerator);
 
-  uppy.on('thumbnail:generated', (file, preview) => {
+  uppy.on('complete', (file) => {
     const arr = previewArr;
-    arr.push(preview);
+    arr.push(file);
     setPreviewArr([...arr]);
   });
 
   const renderPreview = () => {
     if (previewArr.length) {
-      return previewArr.map((src, index) => <img key={index} className="rounded mt-2 mr-1" src={src} alt="avatar" />);
+      return previewArr.map((item, index) => item.successful.map((item2) => (
+          <ul className="list-unstyled">
+            <li className="mt-2">
+              <a href={fileUrl} target="_blank">
+                {item2.type === 'application/pdf' ? (
+                  <img src="https://www.comfatolima.com.co/wp-content/uploads/2018/10/icon-pdf.png" width="35px" height="20px" alt="pdf-icon" />
+                ) : (
+                  <img src="https://sm.pcmag.com/pcmag_au/review/m/microsoft-/microsoft-photos_aguw.jpg" width="40px" height="20px" alt="pdf-icon" />
+                )}
+                {item2.data.name}
+              </a>
+            </li>
+          </ul>
+        ))
+      );
     } else {
       return null;
     }
   };
+
+  // console.log('previewArr', previewArr);
 
   return (
     <Card className="mt-2">

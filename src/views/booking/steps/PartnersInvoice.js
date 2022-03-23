@@ -8,7 +8,7 @@ import moment from 'moment';
 // @scripts
 import mutationUpdateBookingInvoiceInstructor from '../../../graphql/MutationUpdateBookingInvoiceInstructor';
 import DropZone from '../../../@core/components/drop-zone';
-import { getEventFullDate } from '../../../utility/Utils';
+import { getEventFullDate, uploadFile } from '../../../utility/Utils';
 
 // @styles
 import './partners-invoice.scss';
@@ -26,7 +26,9 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [showModal, setShowModal] = useState(false);
   const [isStripeOption, setIsStripeOption] = useState(true);
   const [isOtherOption, setIsOtherOption] = useState(false);
-  const [active, setActive] = useState('1');
+  const [isPaid, setIsPaid] = useState(false);
+  const [previewArr, setPreviewArr] = useState([]);
+  const [fileUrl, setFileUrl] = useState(null);
   const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
 
   const calendarEventDate = moment(getEventFullDate(calendarEvent)).format('LL');
@@ -47,7 +49,10 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const handleSaveInfo = async () => {
     setProcessing(true);
     let newStatus = '';
-    if (!isRejected) {
+    if (isPaid) {
+      newStatus = 'paid';
+      setInvoiceInstructorStatus('paid');
+    } else if (!isRejected && !isPaid) {
       newStatus = 'approved';
       setInvoiceInstructorStatus('approved');
       setRejectedReasons('');
@@ -69,11 +74,29 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
         }
       });
     } catch (ex) {
-      console.log('ex', ex);
       setError(ex);
     }
     setProcessing(false);
   };
+
+  const updateImages = async () => {
+    let result = '';
+    for (let i = 0; i < previewArr.length; i++) {
+      result = await uploadFile(previewArr[i].successful[0].data);
+      if (result.error) {
+        throw new Error(result.error);
+      } else {
+        setFileUrl(result.url);
+      }
+    }
+    return result;
+  };
+
+  // console.log('isPaid', isPaid);
+  // console.log(updateImages);
+
+  // // console.log('booking.instructorInvoice', booking.instructorInvoice);
+  // // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
 
   return (
     <Fragment>
@@ -230,14 +253,19 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                   <Row>
                     <Col lg={12}>
                       <div className="d-flex justify-content-end mt-2">
-                        <Button
-                          color="primary"
-                          onClick={(e) => {
-                            setShowModal(!showModal);
-                          }}
-                        >
-                          Pay Invoice
-                        </Button>
+                        {invoiceInstructorStatus === 'paid' ? (
+                          <Alert>This invoice has been paid!</Alert>
+                        ) : (
+                          <Button
+                            color="primary"
+                            onClick={(e) => {
+                              setShowModal(!showModal);
+                              setIsPaid(true);
+                            }}
+                          >
+                            Pay Invoice
+                          </Button>
+                        )}
                       </div>
                     </Col>
                   </Row>
@@ -283,13 +311,13 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 <Row className="mt-2">
                   <Col lg={12} className="mb-2">
                     <span>Rejected Reason: </span>
-                    <span>{booking.instructorInvoice.rejectedReasons}</span>
+                    <span className="text-justify">{booking.instructorInvoice.rejectedReasons}</span>
                   </Col>
                 </Row>
               )}
               <Row className="">
                 <Col lg={12} className="">
-                  {invoiceInstructorStatus === 'approved' && (
+                  {invoiceInstructorStatus === 'approved' && !isPaid && (
                     <Alert color="primary" className="mt-2">
                       This invoice has been approved
                     </Alert>
@@ -310,6 +338,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
               <ModalHeader
                 toggle={() => {
                   setShowModal(!showModal);
+                  setIsPaid(false);
                 }}
               >
                 Pay Invoice
@@ -344,15 +373,32 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 </FormGroup>
                 {isStripeOption && (
                   <div className="d-flex justify-content-center mt-2">
-                    <Button>Submit Payment</Button>
+                    <Button
+                      onClick={(e) => {
+                        handleSaveInfo();
+                        setShowModal(!showModal);
+                        alert(isPaid);
+                      }}
+                    >
+                      Submit Payment
+                    </Button>
                   </div>
                 )}
 
                 {isOtherOption && (
                   <div>
-                    <DropZone dropText={'Upload your files'} />
+                    <DropZone dropText={'Upload your files'} previewArr={previewArr} setPreviewArr={setPreviewArr} fileUrl={fileUrl} />
                     <div className="d-flex justify-content-center mt-2">
-                      <Button>Submit Payment</Button>
+                      <Button
+                        onClick={(e) => {
+                          handleSaveInfo();
+                          setShowModal(!showModal);
+                          updateImages();
+                        }}
+                        disabled={previewArr && previewArr.length === 0}
+                      >
+                        Submit Payment
+                      </Button>
                     </div>
                   </div>
                 )}
