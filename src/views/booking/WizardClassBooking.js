@@ -3,13 +3,12 @@ import Breadcrumbs from '@components/breadcrumbs';
 import React, { useRef, useState, useEffect } from 'react';
 import Wizard from '@components/wizard';
 import moment from 'moment';
-import { Calendar, CreditCard, Users, DollarSign } from 'react-feather';
+import { Calendar, Users, DollarSign } from 'react-feather';
 import { Col, Row, Spinner } from 'reactstrap';
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { useParams, useHistory } from 'react-router-dom';
 // @scripts
 import Attendees from './steps/Attendees';
-import BillingInfo from './steps/BillingInfo';
 import BookingCheckoutSummary from './steps/BookingCheckoutSummary';
 import DateTimeConfirmation from './steps/DateTimeConfirmation';
 import InvoiceBuilder from './steps/InvoiceBuilder';
@@ -17,7 +16,6 @@ import PartnersInvoice from './steps/PartnersInvoice';
 import Payments from './steps/Payments';
 import queryAttendeesByBookingId from '../../graphql/QueryAttendeesByBookingId';
 import queryBookingById from '../../graphql/QueryBookingById';
-import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
 import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByClassId';
 import queryClassById from '../../graphql/QueryClassById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
@@ -48,7 +46,6 @@ const WizardClassBooking = () => {
   const [totalTax, setTotalTax] = useState(0);
   const [totalUnderGroupFee, setTotalUnderGroupFee] = useState(0);
   const [totalWithoutFee, setTotalWithoutFee] = useState(0);
-  const [newStepsArray, setNewStepsArray] = useState([]);
 
   const [getTeamClass, { ...classResult }] = useLazyQuery(queryClassById);
   const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById);
@@ -68,24 +65,6 @@ const WizardClassBooking = () => {
       setBookingInfo(data.booking);
     }
   });
-  // const result2 = useQuery(queryGetBookingsWithCriteria, {
-  //   variables: {
-  //     filterBy: {
-  //       name: 'bookingId',
-  //       type: 'string',
-  //       operator: 'eq',
-  //       value: id
-  //     },
-  //     sortBy: {},
-  //     limit: -1,
-  //     offset: -1
-  //   },
-  //   pollInterval: 300000,
-  //   onCompleted: (data) => {
-  //     console.log('data', data);
-  //     // setBookingInfo(data.booking);
-  //   }
-  // });
 
   useEffect(() => {
     if (bookingInfo && attendeesResult.data) {
@@ -208,14 +187,6 @@ const WizardClassBooking = () => {
       )
     },
 
-    // {
-    //   id: 'personal-info',
-    //   title: 'Customer',
-    //   subtitle: 'Basic info',
-    //   icon: <CreditCard size={18} />,
-    //   content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
-    // },
-
     {
       id: 'step-address',
       title: 'Attendees',
@@ -265,6 +236,7 @@ const WizardClassBooking = () => {
       )
     }
   ];
+
   const newSteps = [...steps];
   newSteps.push({
     id: 'partner-invoice',

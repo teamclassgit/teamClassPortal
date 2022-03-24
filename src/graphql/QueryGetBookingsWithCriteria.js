@@ -73,6 +73,19 @@ export default gql`
           pricePerson
           title
         }
+        instructorInvoice {
+          createdAt
+          invoiceItems {
+            description
+            price
+            units
+          }
+          notes
+          rejectedReasons
+          status
+          updatedAt
+          paymentReceipt
+        }
         shippingTrackingLink
         joinInfo {
           eventId

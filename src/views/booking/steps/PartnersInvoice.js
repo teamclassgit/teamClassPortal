@@ -51,7 +51,6 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     let newStatus = '';
     if (isPaid) {
       newStatus = 'paid';
-      console.log('entrando aquí');
       setInvoiceInstructorStatus('paid');
     } else if (!isRejected && !isPaid) {
       newStatus = 'approved';
@@ -89,26 +88,16 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
         throw new Error(result.error);
       } else {
         setFileUrl(result.url);
-        console.log('fileUrl DENTRO', fileUrl);
-        console.log('luego, savingInfo');
       }
     }
     return result;
   };
-  console.log('fileUrl FUERA', fileUrl);
 
   useEffect(() => {
     if (fileUrl) {
       handleSaveInfo();
     }
   }, [fileUrl]);
-
-  // console.log('isPaid', isPaid);
-  // console.log(updateImages);
-
-  // // console.log('booking.instructorInvoice', booking.instructorInvoice);
-  // // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
-  // console.log('invoiceInstructorStatus', invoiceInstructorStatus);
 
   return (
     <Fragment>
