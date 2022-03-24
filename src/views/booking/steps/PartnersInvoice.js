@@ -51,6 +51,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     let newStatus = '';
     if (isPaid) {
       newStatus = 'paid';
+      console.log('entrando aquí');
       setInvoiceInstructorStatus('paid');
     } else if (!isRejected && !isPaid) {
       newStatus = 'approved';
@@ -70,7 +71,8 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
           notes: booking.instructorInvoice.notes,
           rejectedReasons,
           status: newStatus,
-          updatedAt: new Date()
+          updatedAt: new Date(),
+          paymentReceipt: fileUrl
         }
       });
     } catch (ex) {
@@ -79,7 +81,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     setProcessing(false);
   };
 
-  const updateImages = async () => {
+  const updateAttachedFile = async () => {
     let result = '';
     for (let i = 0; i < attachedFile.length; i++) {
       result = await uploadFile(attachedFile[i].successful[0].data);
@@ -87,10 +89,19 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
         throw new Error(result.error);
       } else {
         setFileUrl(result.url);
+        console.log('fileUrl DENTRO', fileUrl);
+        console.log('luego, savingInfo');
       }
     }
     return result;
   };
+  console.log('fileUrl FUERA', fileUrl);
+
+  useEffect(() => {
+    if (fileUrl) {
+      handleSaveInfo();
+    }
+  }, [fileUrl]);
 
   // console.log('isPaid', isPaid);
   // console.log(updateImages);
@@ -378,9 +389,9 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                   <div className="d-flex justify-content-center mt-2">
                     <Button
                       onClick={(e) => {
-                        handleSaveInfo();
                         setShowModal(!showModal);
                         setShowPayInvoiceButton(false);
+                        handleSaveInfo();
                       }}
                     >
                       Submit Payment
@@ -394,10 +405,9 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                     <div className="d-flex justify-content-center mt-2">
                       <Button
                         onClick={(e) => {
-                          handleSaveInfo();
                           setShowModal(!showModal);
                           setShowPayInvoiceButton(false);
-                          updateImages();
+                          updateAttachedFile();
                         }}
                         disabled={attachedFile && attachedFile.length === 0}
                       >

@@ -11,7 +11,8 @@ import './drop-zone.scss';
 const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
   const uppy = new Uppy({
     meta: { type: 'avatar' },
-    autoProceed: true
+    autoProceed: true,
+    restrictions: { maxNumberOfFiles: 1 }
   });
 
   uppy.use(thumbnailGenerator);
@@ -25,7 +26,7 @@ const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
   const renderPreview = () => {
     if (attachedFile.length) {
       return attachedFile.map((item, index) => item.successful.map((item2) => (
-          <ul className="list-unstyled">
+          <ul key={index} className="list-unstyled">
             <li className="mt-2">
               <a href={fileUrl} target="_blank">
                 {item2.type === 'application/pdf' ? (

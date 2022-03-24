@@ -9,6 +9,7 @@ export default gql`
     $updatedAt: DateTime
     $invoiceItems: [BookingInstructorInvoiceInvoiceItemUpdateInput]
     $notes: String
+    $paymentReceipt: String
   ) {
     updateOneBooking(
       query: { _id: $bookingId }
@@ -20,6 +21,7 @@ export default gql`
           invoiceItems: $invoiceItems
           notes: $notes
           updatedAt: $updatedAt
+          paymentReceipt: $paymentReceipt
         }
       }
     ) {
@@ -115,6 +117,7 @@ export default gql`
         rejectedReasons
         status
         updatedAt
+        paymentReceipt
       }
       createdAt
       createdAt

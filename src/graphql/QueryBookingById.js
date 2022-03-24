@@ -104,6 +104,7 @@ export default gql`
         rejectedReasons
         status
         updatedAt
+        paymentReceipt
       }
       createdAt
       createdAt
