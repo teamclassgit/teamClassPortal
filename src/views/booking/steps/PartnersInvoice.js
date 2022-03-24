@@ -362,6 +362,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                       type="radio"
                       name="ex1"
                       defaultChecked
+                      checked={isStripeOption}
                       onClick={(e) => {
                         setIsStripeOption(true);
                         setIsOtherOption(false);
@@ -375,6 +376,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                     <Input
                       type="radio"
                       name="ex1"
+                      checked={isOtherOption}
                       onClick={(e) => {
                         setIsOtherOption(true);
                         setIsStripeOption(false);
