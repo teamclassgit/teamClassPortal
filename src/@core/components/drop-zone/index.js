@@ -3,16 +3,28 @@ import { useState } from 'react';
 import Uppy from '@uppy/core';
 import thumbnailGenerator from '@uppy/thumbnail-generator';
 import { DragDrop } from '@uppy/react';
-import { Card, CardHeader, CardTitle, CardBody } from 'reactstrap';
+import { Button, Card, CardHeader, CardTitle, CardBody, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { X } from 'react-feather';
 
 // @styles
 import './drop-zone.scss';
 
 const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [removeIndex, setRemoveIndex] = useState(null);
+
   const uppy = new Uppy({
     meta: { type: 'avatar' },
     autoProceed: true,
-    restrictions: { maxNumberOfFiles: 1 }
+    restrictions: {
+      maxNumberOfFiles: 1
+    }
+  });
+
+  uppy.setOptions({
+    restrictions: {
+      maxNumberOfFiles: 1
+    }
   });
 
   uppy.use(thumbnailGenerator);
@@ -34,7 +46,16 @@ const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
                 ) : (
                   <img src="https://sm.pcmag.com/pcmag_au/review/m/microsoft-/microsoft-photos_aguw.jpg" width="40px" height="20px" alt="pdf-icon" />
                 )}
-                {item2.data.name}
+                {item2.data.name}{' '}
+                <a
+                  onClick={(e) => {
+                    setRemoveIndex(index);
+                    setShowModal(!showModal);
+                  }}
+                  title="Remove"
+                >
+                  <X className="file-remove-icon" />
+                </a>
               </a>
             </li>
           </ul>
@@ -45,18 +66,41 @@ const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
     }
   };
 
-  // console.log('attachedFile', attachedFile);
-
   return (
-    <Card className="mt-2">
-      <CardHeader>
-        <CardTitle tag="h4"> {dropText}</CardTitle>
-      </CardHeader>
-      <CardBody>
-        <DragDrop uppy={uppy} />
-        {renderPreview()}
-      </CardBody>
-    </Card>
+    <div>
+      <Modal isOpen={showModal} toggle={() => setShowModal(!showModal)} className="modal-dialog-centered">
+        <ModalHeader
+          toggle={() => {
+            setShowModal(!showModal);
+          }}
+        >
+          Remove file?
+        </ModalHeader>
+        <ModalBody>
+          <div className="d-flex justify-content-center">
+            <Button
+              onClick={(e) => {
+                const newAttachedFile = [...attachedFile];
+                newAttachedFile.splice(removeIndex, 1);
+                setAttachedFile(newAttachedFile);
+                setShowModal(!showModal);
+              }}
+            >
+              Yes
+            </Button>
+          </div>
+        </ModalBody>
+      </Modal>
+      <Card className="mt-2">
+        <CardHeader>
+          <CardTitle tag="h4"> {dropText}</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <DragDrop uppy={uppy} />
+          {renderPreview()}
+        </CardBody>
+      </Card>
+    </div>
   );
 };
 

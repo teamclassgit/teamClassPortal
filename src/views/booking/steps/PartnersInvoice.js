@@ -401,16 +401,20 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                   <div>
                     <DropZone dropText={'Upload your files'} attachedFile={attachedFile} setAttachedFile={setAttachedFile} fileUrl={fileUrl} />
                     <div className="d-flex justify-content-center mt-2">
-                      <Button
-                        onClick={(e) => {
-                          setShowModal(!showModal);
-                          setShowPayInvoiceButton(false);
-                          updateAttachedFile();
-                        }}
-                        disabled={attachedFile && attachedFile.length === 0}
-                      >
-                        Submit Payment
-                      </Button>
+                      {attachedFile && attachedFile.length > 1 ? (
+                        'Upload just one file'
+                      ) : (
+                        <Button
+                          onClick={(e) => {
+                            setShowModal(!showModal);
+                            setShowPayInvoiceButton(false);
+                            updateAttachedFile();
+                          }}
+                          disabled={(attachedFile && attachedFile.length === 0) || (attachedFile && attachedFile.length > 1)}
+                        >
+                          Submit Payment
+                        </Button>
+                      )}
                     </div>
                   </div>
                 )}
