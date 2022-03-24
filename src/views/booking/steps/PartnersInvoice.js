@@ -249,8 +249,17 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         </Button>
                       </div>
                     ) : (
-                      <div className="d-flex justify-content-end mt-2">
-                        <Alert>This invoice has been paid!</Alert>
+                      <div>
+                        <div className="d-flex justify-content-end mt-2">
+                          <Alert>This invoice has been paid!</Alert>
+                        </div>
+                        <div className="d-flex justify-content-end">
+                          <small>
+                            <a href={booking?.instructorInvoice?.paymentReceipt} target="_blank" className="pop-up-payment-link">
+                              Payment receipt
+                            </a>
+                          </small>
+                        </div>
                       </div>
                     )}
                   </Col>

@@ -58,3 +58,14 @@
 .modal .modal-header .close {
   transform: none !important;
 }
+
+.pop-up-payment-link {
+  color: blue;
+  cursor:pointer;
+  text-decoration: underline !important;
+  font-size: 0.7rem;
+}
+
+.pop-up-payment-link:hover{
+  color: var(--color-button-second);
+}
