@@ -373,7 +373,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     hasKit: element.hasKit,
                     order: element.order,
                     active: element.active,
-                    groupEvent: element.groupEvent
+                    groupEvent: element.groupEvent,
+                    instructorFlatFee: element.instructorFlatFee
                   };
                   return {
                     value: variant,
@@ -416,7 +417,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                   hasKit: classVariantsOptions[selectedVariant].hasKit,
                   order: classVariantsOptions[selectedVariant].order,
                   active: classVariantsOptions[selectedVariant].active,
-                  groupEvent: classVariantsOptions[selectedVariant].groupEvent
+                  groupEvent: classVariantsOptions[selectedVariant].groupEvent,
+                  instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee
                 };
                 return {
                   value: variant,

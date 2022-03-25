@@ -22,7 +22,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       item: 'Class / Attendees',
       unitPrice: 0,
       units: 1,
-      priceEditable: false,
+      priceEditable: true,
       unitsEditable: true,
       taxable: true,
       readOnly: true

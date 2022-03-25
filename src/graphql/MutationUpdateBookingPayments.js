@@ -19,6 +19,7 @@ export default gql`
         order
         active
         groupEvent
+        instructorFlatFee
       }
       addons {
         icon

@@ -13,7 +13,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   const minimum = bookingInfo.classVariant ? bookingInfo.classVariant.minimum : bookingInfo.classMinimum;
 
   //pricePerson is currently in use for group based pricing too
-  const price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
+  let price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
 
   const discount = bookingInfo.discount;
   let totalTaxableAdditionalItems = 0;
@@ -24,6 +24,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
     customDeposit = bookingInfo.invoiceDetails[0].unitPrice;
     customAttendees = bookingInfo.invoiceDetails[1].units;
+    price = bookingInfo.invoiceDetails[1].unitPrice;
 
     const items = bookingInfo.invoiceDetails.slice(2);
 
@@ -58,11 +59,13 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   let cardFee = 0;
   const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
+  const instructorFlatFee = bookingInfo.classVariant?.instructorFlatFee ? bookingInfo.classVariant.instructorFlatFee : 0;
+
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
   const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * SERVICE_FEE;
   const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
-  const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
-  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + tax - totalDiscount;
+  const tax = (withoutFee + fee + rushFee + instructorFlatFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
+  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + instructorFlatFee + tax - totalDiscount;
 
   if (isCardFeeIncluded && !bookingInfo.ccFeeExempt) {
     cardFee = finalValue * CREDIT_CARD_FEE;
@@ -82,6 +85,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
     initialDeposit,
     customDeposit,
     customAttendees,
+    customPrice: price,
     totalTaxableAdditionalItems,
     totalNoTaxableAdditionalItems,
     cardFee,
