@@ -15,6 +15,8 @@ import moment from 'moment';
 import { capitalizeString } from '../../../utility/Utils';
 import StatusSelector from '../TableBookings/StatusSelector';
 
+import styles from './BookingCheckoutSummary.module.scss';
+
 const BookingCheckoutSummary = ({
   teamClass,
   bookingInfo,
@@ -22,8 +24,10 @@ const BookingCheckoutSummary = ({
   requestEventDate,
   calendarEvent,
   totalWithoutFee,
+  chat,
   totalAddons,
   totalServiceFee,
+  changeSpace,
   totalCardFee,
   tax,
   totalTax,
@@ -38,63 +42,69 @@ const BookingCheckoutSummary = ({
   totalRushFee
 }) => {
   return (
-    <div>
-      <Card>
+    <div className={chat && styles.container}>
+      <Card className={chat && styles.subContainer}>
         <CardHeader>
           <h4 className="text-center">
-            {teamClass.title}
-            <br />
-            <br />
-            <Badge className="booking-checkout-summary-priceBadge">
-              ${bookingInfo.classVariant?.pricePerson} / {bookingInfo.classVariant?.groupEvent ? 'group' : 'person'}
-            </Badge>
+            {teamClass?.title}
+            {!chat && (
+              <>
+                <br />
+                <br />
+                <Badge className="booking-checkout-summary-priceBadge">
+                   ${bookingInfo.classVariant?.pricePerson} / {bookingInfo.classVariant?.groupEvent ? 'group' : 'person'}
+                </Badge>
+              </>
+            )}
           </h4>
         </CardHeader>
-        <CardBody className="p-0">
-          <div className="text-block pb-1 pt-1 pl-2 pr-2 booking-checkout-summary-imageBox">
-            <Media className="align-items-center">
-              <img
-                src={
-                  teamClass.catalogImage && teamClass.catalogImage.indexOf('https:') !== -1
-                    ? teamClass.catalogImage
-                    : `/content/img/photo/listing/${teamClass.catalogImage}`
-                }
-                width={100}
-                height={67}
-                layout="fixed"
-                alt=""
-                className="rounded"
-                sizes="(max-width: 576px) 100vw, 530px"
-              />
-              <Media body>
-                <Row>
-                  <Col>
-                    <p className="text-sm mb-0 text-black ml-4">
-                      <strong>{bookingInfo.classVariant && bookingInfo.classVariant.title}</strong>
-                    </p>
-                    <p className="text-muted text-xs mb-0 ml-4">{bookingInfo.eventDurationHours * 60} Minutes</p>
-                    <p className="text-muted text-sm mb-0 ml-4">
-                      {bookingInfo.classVariant && bookingInfo.classVariant.hasKit && (
-                        <Badge className="booking-checkout-summary-kit-tag">
-                          <i className="fa fa-gift text-primary"></i>
-                          <span className="text-primary name"> Kit included </span>
-                        </Badge>
-                      )}
-                    </p>
-                  </Col>
-                </Row>
+        <CardBody className={changeSpace && styles.changeSpaceCard}>
+          {!chat && (
+            <div className="text-block pb-1 pt-1 pl-2 pr-2 booking-checkout-summary-imageBox">
+              <Media className="align-items-center">
+                <img
+                  src={
+                    teamClass?.catalogImage && teamClass?.catalogImage.indexOf('https:') !== -1
+                      ? teamClass?.catalogImage
+                      : `/content/img/photo/listing/${teamClass?.catalogImage}`
+                  }
+                  width={100}
+                  height={67}
+                  layout="fixed"
+                  alt=""
+                  className="rounded"
+                  sizes="(max-width: 576px) 100vw, 530px"
+                />
+                <Media body>
+                  <Row>
+                    <Col>
+                      <p className="text-sm mb-0 text-black ml-4">
+                        <strong>{bookingInfo.classVariant && bookingInfo.classVariant.title}</strong>
+                      </p>
+                      <p className="text-muted text-xs mb-0 ml-4">{bookingInfo.eventDurationHours * 60} Minutes</p>
+                      <p className="text-muted text-sm mb-0 ml-4">
+                        {bookingInfo.classVariant && bookingInfo.classVariant.hasKit && (
+                          <Badge className="booking-checkout-summary-kit-tag">
+                            <i className="fa fa-gift text-primary"></i>
+                            <span className="text-primary name"> Kit included </span>
+                          </Badge>
+                        )}
+                      </p>
+                    </Col>
+                  </Row>
+                </Media>
               </Media>
-            </Media>
-          </div>
+            </div>
+          )}
           <div className="text-block py-1">
-            <h6 className="mb-0 text-black ml-2 booking-checkout-summary-subTitle">
+            <h6 className="mb-0 text-black booking-checkout-summary-subTitle">
               {`Booking status `}{' '}
               <Badge color="secondary" className="text-xs booking-checkout-summary-date-status ml-1">
                 <StatusSelector row={bookingInfo} calendarEvent={calendarEvent} />
               </Badge>
             </h6>
             <ul className="list-unstyled mb-0">
-              <li className="mb-0 ml-2 mr-2">
+              <li className="mb-0">
                 {requestEventDate && (
                   <table className="w-100">
                     <tbody>
@@ -182,7 +192,7 @@ const BookingCheckoutSummary = ({
                 <th className="font-weight-normal text-sm pt-1">Booking fee ({bookingInfo.serviceFee * 100}%)</th>
                 <td className="text-right pt-1 text-sm">${totalServiceFee}</td>
               </tr>
-              {isRushDate() && totalRushFee > 0 && (
+              {totalRushFee > 0 && (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">
                     {`Rush fee ($${bookingInfo.rushFee || RUSH_FEE.toFixed(2)}`} x{' '}

@@ -1,0 +1,44 @@
+.render-list-container {
+  display: grid;
+}
+
+.render-list {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top; 
+  white-space: nowrap;
+}
+
+.render-list-span {
+  font-weight: bold;
+}
+
+.render-list-overflow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 150px;
+  color: #557FE7 !important;
+}
+
+.list-group-item {
+  border: none;
+  &:focus {
+    outline: 0;
+  }
+  small {
+    font-size: 11px;
+  }
+}
+
+.list-group-item-active {
+  background-color: #F5F5F5 !important;
+  color: #82868b !important;
+  &:focus {
+    background-color: #F5F5F5 !important;
+    color: #82868b !important;
+  }
+  small {
+    font-size: 11px;
+  }
+}

@@ -2,18 +2,18 @@ import { gql } from "@apollo/client";
 
 export default gql`
 mutation createDiscountCode(
-  $id: String!,
-  $discountCode: String!, 
-  $description: String!, 
-  $expirationDate: DateTime!, 
-  $redemptions: Int!, 
-  $customerId: String,
-  $createdAt: DateTime!,
-  $updatedAt: DateTime!
-  $type: String!
-  $discount: Float!
-  $maxDiscount: Float!
   $active: Boolean!
+  $createdAt: DateTime!,
+  $customerId: String,
+  $description: String!, 
+  $discount: Float!
+  $discountCode: String!, 
+  $expirationDate: DateTime!, 
+  $id: String!,
+  $maxDiscount: Float!
+  $redemptions: Int!, 
+  $type: String!
+  $updatedAt: DateTime!
 ) {
     insertOneDiscountCode(
      data: {

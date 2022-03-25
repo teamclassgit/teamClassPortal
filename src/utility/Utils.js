@@ -129,15 +129,6 @@ export const absoluteUrl = (req, setLocalhost) => {
   };
 };
 
-export const getEventFullDate = (calendarEvent) => {
-  if (!calendarEvent) return;
-
-  const eventDate = new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day);
-  const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}`;
-
-  return moment(`${moment(eventDate).format('DD/MM/YYYY')} ${eventTime}`, 'DD/MM/YYYY HH:mm');
-};
-
 export const getQueryFiltersFromFilterArray = (filterValue) => {
   if (!filterValue) filterValue = [];
 
@@ -160,3 +151,5 @@ export const getQueryFiltersFromFilterArray = (filterValue) => {
 
   return filters;
 };
+
+export const isNotEmptyArray = arr => Array.isArray(arr) && arr.length > 0;

@@ -28,17 +28,10 @@ ul.list-inline {
     line-height: 1.5;
     &.active {
       &:hover {
-        background-color: $primary;
+        background-color: #ddd;
       }
       &:focus {
-        // color: $body-color;
         outline: 0;
-        &:hover {
-          color: $white;
-        }
-      }
-      small {
-        color: $white !important;
       }
     }
     &:hover {
@@ -56,10 +49,9 @@ ul.list-inline {
   }
   .list-group-item-action {
     &.active {
-      background-color: $primary;
-      color: $white;
+      background-color: #ddd;
       &:focus {
-        background-color: $primary;
+        background-color: #ddd;
       }
     }
     &:focus {

@@ -10,6 +10,7 @@ export default gql`
       phone
       name
       type
+      eventCoordinatorId
     }
   }
 `;

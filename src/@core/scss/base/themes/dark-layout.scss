@@ -1727,6 +1727,10 @@
           border-color: $theme-dark-border-color;
         }
 
+        .chat-fixed-title {
+          border-bottom: 1px solid $theme-dark-border-color !important;
+        }
+
         .chat-user-list-wrapper {
           .chat-users-list {
             li {

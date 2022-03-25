@@ -1,0 +1,15 @@
+.chatContainer-with-conversations {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: calc(100% - 300px);
+}
+
+.chatContainer-without-conversations {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}

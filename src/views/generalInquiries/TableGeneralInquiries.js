@@ -7,13 +7,38 @@ import moment from 'moment';
 import { Card } from 'reactstrap';
 import { ChevronDown } from 'react-feather';
 
+// @scripts
+import { getCoordinatorName } from '../booking/common';
+import EditGeneralInqueries from '../../components/EditGeneralInqueries';
+
 // @styles
 import '../booking/TableBookings/TableBookings.scss';
 
-const TableGeneralInquiries = ({ filteredData }) => {
+const TableGeneralInquiries = ({ filteredData, coordinators }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [currentElement, setCurrentElement] = useState({});
+  const [editModal, setEditModal] = useState(false);
 
   const columns = [
+    {
+      name: 'Id',
+      selector: 'id',
+      sortable: true,
+      maxWidth: '12%',
+      cell: (row) => (
+        <small>
+            <a
+              className="text-primary"
+              onClick={() => {
+                setCurrentElement(row);
+                toggleModal();
+              }}
+            >
+              {row?._id}
+            </a>
+        </small>
+      )
+    },
     {
       name: 'Created',
       selector: 'date',
@@ -21,7 +46,7 @@ const TableGeneralInquiries = ({ filteredData }) => {
       maxWidth: '8%',
       cell: (row) => (
         <small>
-          {moment(row.date).calendar(null, {
+          {moment(row?.date).calendar(null, {
             lastDay: '[Yesterday]',
             sameDay: 'LT',
             lastWeek: 'dddd',
@@ -38,7 +63,7 @@ const TableGeneralInquiries = ({ filteredData }) => {
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
-            <span className="d-block font-weight-bold">{row.name}</span>
+            <span className="d-block font-weight-bold">{row?.name}</span>
           </div>
         </small>
       )
@@ -51,7 +76,7 @@ const TableGeneralInquiries = ({ filteredData }) => {
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
-            <span className="d-block font-weight-bold">{row.email}</span>
+            <span className="d-block font-weight-bold">{row?.email}</span>
           </div>
         </small>
       )
@@ -64,8 +89,19 @@ const TableGeneralInquiries = ({ filteredData }) => {
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
-            <span className="d-block font-weight-bold">{row.phone}</span>
+            <span className="d-block font-weight-bold">{row?.phone}</span>
           </div>
+        </small>
+      )
+    },
+    {
+      name: 'Coordinator',
+      selector: 'coordinator.name',
+      sortable: true,
+      maxWidth: '120px',
+      cell: (row) => (
+        <small>
+          <span className="d-block font-weight-bold">{getCoordinatorName(row?.eventCoordinatorId, coordinators)}</span>
         </small>
       )
     },
@@ -76,11 +112,13 @@ const TableGeneralInquiries = ({ filteredData }) => {
       maxWidth: '55%',
       cell: (row) => (
         <small>
-          <span className="d-block font-weight-bold">{row.inquiry}</span>
+          <span className="d-block font-weight-bold">{row?.inquiry}</span>
         </small>
       )
     }
   ];
+
+  const toggleModal = () => setEditModal(!editModal);
 
   const handlePagination = (page) => {
     setCurrentPage(page.selected);
@@ -90,9 +128,7 @@ const TableGeneralInquiries = ({ filteredData }) => {
     <ReactPaginate
       activeClassName="active"
       breakClassName="page-item"
-      breakClassName="page-item"
       breakLabel="..."
-      breakLinkClassName="page-link"
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
       forcePage={currentPage}
@@ -112,26 +148,35 @@ const TableGeneralInquiries = ({ filteredData }) => {
   );
 
   return (
-    <Card>
-      <DataTable
-        className="react-dataTable"
-        columns={columns}
-        data={filteredData}
-        defaultSortAsc={false}
-        defaultSortField={'updatedAt'}
-        noHeader
-        pagination
-        paginationComponent={CustomPagination}
-        paginationDefaultPage={currentPage + 1}
-        paginationPerPage={8}
-        sortIcon={<ChevronDown size={10} />}
+    <>
+      <Card>
+        <DataTable
+          className="react-dataTable"
+          columns={columns}
+          data={filteredData}
+          defaultSortAsc={false}
+          defaultSortField={'updatedAt'}
+          noHeader
+          pagination
+          paginationComponent={CustomPagination}
+          paginationDefaultPage={currentPage + 1}
+          paginationPerPage={8}
+          sortIcon={<ChevronDown size={10} />}
+        />
+      </Card>
+      <EditGeneralInqueries
+        open={editModal}
+        closeModal={toggleModal}
+        allCoordinators={coordinators}
+        currentElement={currentElement}
       />
-    </Card>
+    </>
   );
 };
 
 export default TableGeneralInquiries;
 
 TableGeneralInquiries.propTypes = {
+  coordinators: PropTypes.array.isRequired,
   filteredData: PropTypes.array.isRequired
 };

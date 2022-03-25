@@ -20,6 +20,12 @@ const Routes = [
     component: lazy(() => import('../../views/booking/FunnelTable'))
   },
   {
+    appLayout: true,
+    className: 'chat-application',
+    component: lazy(() => import('../../views/chat')),
+    path: '/chat'
+  },
+  {
     path: '/allbookings',
     component: lazy(() => import('../../views/booking/AllBookingsTable'))
   },

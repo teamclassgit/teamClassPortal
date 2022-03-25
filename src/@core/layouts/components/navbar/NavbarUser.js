@@ -1,15 +1,27 @@
 // @packages
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 import { NavItem, NavLink } from 'reactstrap';
 import { Sun, Moon, Menu } from 'react-feather';
+import { isUserLoggedIn } from '@utils';
 import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
-import { themeDark } from '../../../../redux/actions/bookingsBackground';
 
 // @scripts
 import UserDropdown from './UserDropdown';
+import { getUserData } from '../../../../utility/Utils';
+import { themeDark } from '../../../../redux/actions/bookingsBackground';
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
+  const [userData, setUserData] = useState(null);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isUserLoggedIn() !== null) {
+      setUserData(getUserData());
+    }
+  }, []);
+
   const ThemeToggler = () => {
     if (skin === 'dark') {
       return <Sun className="ficon" onClick={() => setSkin('light')} />;
@@ -17,7 +29,6 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
       return <Moon className="ficon" onClick={() => setSkin('dark')} />;
     }
   };
-  const dispatch = useDispatch();
 
   const dispatchFuntion = () => {
     dispatch(themeDark(skin));
@@ -43,8 +54,8 @@ const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
           </NavLink>
         </NavItem>
       </div>
-      <ul className="nav navbar-nav align-items-center ml-auto">
-        <UserDropdown />
+      <ul className='nav navbar-nav align-items-center ml-auto'>
+        <UserDropdown userData={userData} />
       </ul>
     </>
   );
