@@ -39,6 +39,7 @@ export default gql`
         active
         groupEvent
         kitHasAlcohol
+        instructorFlatFee
       }
       notes {
         note

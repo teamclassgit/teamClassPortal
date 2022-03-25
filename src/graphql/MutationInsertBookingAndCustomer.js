@@ -126,6 +126,7 @@ export default gql`
         pricePerson
         hasKit
         groupEvent
+        instructorFlatFee
       }
       createdAt
       updatedAt

@@ -20,6 +20,7 @@ import styles from './BookingCheckoutSummary.module.scss';
 const BookingCheckoutSummary = ({
   teamClass,
   bookingInfo,
+  priceToInvoice,
   requestEventDate,
   calendarEvent,
   totalWithoutFee,
@@ -51,8 +52,7 @@ const BookingCheckoutSummary = ({
                 <br />
                 <br />
                 <Badge className="booking-checkout-summary-priceBadge">
-                  ${bookingInfo.classVariant && bookingInfo.classVariant.pricePerson} /{' '}
-                  {bookingInfo.classVariant && bookingInfo.classVariant.groupEvent ? 'group' : 'person'}
+                   ${bookingInfo.classVariant?.pricePerson} / {bookingInfo.classVariant?.groupEvent ? 'group' : 'person'}
                 </Badge>
               </>
             )}
@@ -149,12 +149,20 @@ const BookingCheckoutSummary = ({
             <tbody>
               <tr>
                 <th className="font-weight-normal pt-1">
-                  ${bookingInfo.pricePerson} x{` ${attendeesToInvoice < bookingInfo.classMinimum ? bookingInfo.classMinimum : attendeesToInvoice} `}{' '}
-                  attendees
-                  {attendeesToInvoice < bookingInfo.classMinimum && <FormText color="muted">Under {bookingInfo.classMinimum} group fee</FormText>}
+                  ${priceToInvoice || bookingInfo.classVariant?.pricePerson} x
+                  {` ${attendeesToInvoice < bookingInfo.classVariant.minimum ? bookingInfo.classVariant.minimum : attendeesToInvoice} `} attendees
+                  {attendeesToInvoice < bookingInfo.classVariant.minimum && (
+                    <FormText color="muted">Under {bookingInfo.classVariant.minimum} group fee</FormText>
+                  )}
                 </th>
                 <td className="text-right pt-1">${totalWithoutFee}</td>
               </tr>
+              {bookingInfo.classVariant.instructorFlatFee > 0 && (
+                <tr>
+                  <th className="font-weight-normal text-sm pt-1">Instructor fee</th>
+                  <td className="text-right pt-1 text-sm">${bookingInfo.classVariant.instructorFlatFee?.toFixed(2)}</td>
+                </tr>
+              )}
               {totalAddons > 0 && (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">Add-ons</th>
@@ -188,7 +196,7 @@ const BookingCheckoutSummary = ({
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">
                     {`Rush fee ($${bookingInfo.rushFee || RUSH_FEE.toFixed(2)}`} x{' '}
-                    {` ${attendeesToInvoice < bookingInfo.classVariant.classMinimum ? bookingInfo.classVariant.classMinimum : attendeesToInvoice})`}{' '}
+                    {` ${attendeesToInvoice < bookingInfo.classVariant.minimum ? bookingInfo.classVariant.minimum : attendeesToInvoice})`}{' '}
                   </th>
                   <td className="text-right pt-1 text-sm">${totalRushFee}</td>
                 </tr>
