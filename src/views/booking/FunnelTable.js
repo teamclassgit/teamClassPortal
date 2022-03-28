@@ -642,7 +642,6 @@ const FunnelTable = () => {
         { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
         { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
         { name: 'gclid', type: 'string', operator: 'contains', value: '' },
-        { name: 'instantBooking', type: 'string', operator: 'contains', value: '' },
         { name: 'eventCoordinatorEmail', type: 'select', operator: 'inlist', value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
         { name: 'className', type: 'select', operator: 'inlist', value: undefined },
         { name: 'attendees', type: 'number', operator: 'gte', value: undefined },

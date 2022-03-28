@@ -648,7 +648,6 @@ const AllBookingsTable = () => {
         { name: 'bookingStage', type: 'select', operator: 'inlist', value: undefined },
         { name: 'closedReason', type: 'string', operator: 'contains', value: '' },
         { name: 'gclid', type: 'string', operator: 'contains', value: '' },
-        { name: 'instantBooking', type: 'string', operator: 'contains', value: '' },
         { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
         { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
         { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
