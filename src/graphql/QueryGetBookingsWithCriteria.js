@@ -54,6 +54,8 @@ export default gql`
         closedReason
         bookingTags
         customerTags
+        gclid
+        instantBooking
         payments {
           amount
           createdAt

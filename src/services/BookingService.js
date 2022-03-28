@@ -157,7 +157,9 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'cardFeeAmount',
     'totalInvoice',
     'balance',
-    'customerTags'
+    'customerTags',
+    'gclid',
+    'instantBooking'
   ];
 
   bookingsArray.push(headers);
@@ -198,7 +200,9 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.cardFeeAmount,
       element.totalInvoice,
       element.balance,
-      (isNotEmptyArray(element.customerTags) ? element.customerTags.join(", ") : "")
+      (isNotEmptyArray(element.customerTags) ? element.customerTags.join(", ") : ""),
+      element.gclid,
+      element.instantBooking
     ];
     bookingsArray.push(row);
   });

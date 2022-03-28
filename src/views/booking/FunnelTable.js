@@ -443,7 +443,7 @@ const FunnelTable = () => {
       filterDelay: 1500,
       defaultVisible: false,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -455,7 +455,7 @@ const FunnelTable = () => {
       filterDelay: 1500,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -467,7 +467,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -478,7 +478,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -489,7 +489,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -511,7 +511,7 @@ const FunnelTable = () => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -534,7 +534,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -554,6 +554,32 @@ const FunnelTable = () => {
       render: ({ value, cellProps }) => {
         if (isNotEmptyArray(value)) {
           return <span className="float-left">{value.join(",")}</span>;
+        }
+      }
+    },
+    {
+      name: 'gclid',
+      header: 'Gclid',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'instantBooking',
+      header: 'Instant Booking',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value ? "Yes" : "No"}</span>;
         }
       }
     }
@@ -615,6 +641,7 @@ const FunnelTable = () => {
         { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
         { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
         { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
+        { name: 'gclid', type: 'string', operator: 'contains', value: '' },
         { name: 'eventCoordinatorEmail', type: 'select', operator: 'inlist', value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
         { name: 'className', type: 'select', operator: 'inlist', value: undefined },
         { name: 'attendees', type: 'number', operator: 'gte', value: undefined },
