@@ -31,6 +31,7 @@ import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truc
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
 import mutationOpenBooking from '../graphql/MutationOpenBooking';
+import mutationCloseBooking from '../graphql/MutationCloseBooking';
 import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
 import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
@@ -78,9 +79,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [selectedPriceTier, setSelectedPriceTier] = React.useState(null);
   const [selectedMinimumTier, setSelectedMinimumTier] = React.useState(null);
   const [selectedMaximumTier, setSelectedMaximumTier] = React.useState(null);
-  const [joinLink, setJoinLink] = useState("");
-  const [passwordLink, setPasswordLink] = useState("");
-  const [trackingLink, setTrackingLink] = useState("");
+  const [joinLink, setJoinLink] = useState('');
+  const [passwordLink, setPasswordLink] = useState('');
+  const [trackingLink, setTrackingLink] = useState('');
   const [isValidUrl, setIsValidUrl] = useState({
     trackingLink: true,
     joinUrl: true
@@ -91,6 +92,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
+  const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
 
   useEffect(() => {
     if (!currentElement?._id) return;
@@ -146,9 +148,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setEmailValid(isValidEmail(email));
   };
 
-  const urlValidation = ({target}) => {
-    const {name, value} = target;
-    setIsValidUrl({...isValidUrl, [name]: isUrlValid(value)});
+  const urlValidation = ({ target }) => {
+    const { name, value } = target;
+    setIsValidUrl({ ...isValidUrl, [name]: isUrlValid(value) });
   };
 
   const options = { phone: true, phoneRegionCode: 'US' };
@@ -187,6 +189,55 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       calendarEventStatus = DATE_AND_TIME_CONFIRMATION_STATUS;
     }
     return calendarEventStatus;
+  };
+
+  const closeBooking = async () => {
+    setProcessing(true);
+    try {
+      const resultCloseBooking = await updateCloseBooking({
+        variables: {
+          bookingId: currentElement._id,
+          updatedAt: new Date(),
+          status: 'closed',
+          closedReason: closedBookingReason
+        }
+      });
+
+      if (!resultCloseBooking || !resultCloseBooking.data) {
+        setProcessing(false);
+        return;
+      }
+
+      if (closedBookingReason) {
+        const resultEmail = await removeCampaignRequestQuote({
+          variables: { customerEmail: customerEmail.toLowerCase() }
+        });
+        console.log('Remove campaign before redirecting:', resultEmail);
+      }
+
+      if (
+        closedBookingReason === 'Lost' ||
+        closedBookingReason === 'Duplicated' ||
+        closedBookingReason === 'Mistake' ||
+        closedBookingReason === 'Test'
+      ) {
+        if (calendarEvent) {
+          const resultStatusUpdated = await updateCalendarEventStatus({
+            variables: {
+              calendarEventId: calendarEvent._id,
+              status: DATE_AND_TIME_CANCELED_STATUS
+            }
+          });
+          console.log('Changing calendar event status', resultStatusUpdated);
+        }
+      }
+
+      onEditCompleted(currentElement._id);
+    } catch (ex) {
+      console.log('err', ex);
+    }
+    setProcessing(false);
+    handleModal();
   };
 
   const openBooking = async () => {
@@ -232,7 +283,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
 
     try {
       const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
-      let joinInfo = {...currentElement.joinInfo};
+      let joinInfo = { ...currentElement.joinInfo };
       if (!joinLink && !passwordLink) {
         joinInfo = undefined;
       } else if (joinInfo && joinInfo.joinUrl) {
@@ -265,12 +316,12 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           discount: currentElement.discount,
           createdAt: currentElement.createdAt,
           updatedAt: new Date(),
-          status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentElement.status,
+          // status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentElement.status,
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
           signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
-          closedReason: closedBookingReason,
+          // closedReason: closedBookingReason,
           notes: bookingNotes,
           capRegistration: isCapRegistration,
           shippingTrackingLink: trackingLink,
@@ -284,29 +335,29 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
         return;
       }
 
-      if (closedBookingReason) {
-        const resultEmail = await removeCampaignRequestQuote({
-          variables: { customerEmail: customerEmail.toLowerCase() }
-        });
-        console.log('Remove campaign before redirecting:', resultEmail);
-      }
+      // if (closedBookingReason) {
+      //   const resultEmail = await removeCampaignRequestQuote({
+      //     variables: { customerEmail: customerEmail.toLowerCase() }
+      //   });
+      //   console.log('Remove campaign before redirecting:', resultEmail);
+      // }
 
-      if (
-        closedBookingReason === 'Lost' ||
-        closedBookingReason === 'Duplicated' ||
-        closedBookingReason === 'Mistake' ||
-        closedBookingReason === 'Test'
-      ) {
-        if (calendarEvent) {
-          const resultStatusUpdated = await updateCalendarEventStatus({
-            variables: {
-              calendarEventId: calendarEventObject._id,
-              status: DATE_AND_TIME_CANCELED_STATUS
-            }
-          });
-          console.log('Changing calendar event status', resultStatusUpdated);
-        }
-      }
+      // if (
+      //   closedBookingReason === 'Lost' ||
+      //   closedBookingReason === 'Duplicated' ||
+      //   closedBookingReason === 'Mistake' ||
+      //   closedBookingReason === 'Test'
+      // ) {
+      //   if (calendarEvent) {
+      //     const resultStatusUpdated = await updateCalendarEventStatus({
+      //       variables: {
+      //         calendarEventId: calendarEventObject._id,
+      //         status: DATE_AND_TIME_CANCELED_STATUS
+      //       }
+      //     });
+      //     console.log('Changing calendar event status', resultStatusUpdated);
+      //   }
+      // }
 
       onEditCompleted(currentElement._id);
     } catch (ex) {
@@ -405,11 +456,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink
-            title="Notes"
-            active={active === '3'}
-            onClick={() => toggle('3')}
-          >
+          <NavLink title="Notes" active={active === '3'} onClick={() => toggle('3')}>
             <Edit size="18" />
           </NavLink>
         </NavItem>
@@ -751,7 +798,13 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   size="sm"
                   color={closedBookingReason ? 'danger' : 'primary'}
                   onClick={() => {
-                    saveChangesBooking();
+                    if (closedBookingReason) {
+                      console.log('CERRANDO EL BOOKING');
+                      closeBooking();
+                    } else {
+                      console.log('ABRIENDO EL BOOKING');
+                      saveChangesBooking();
+                    }
                   }}
                   disabled={
                     !customerName ||
@@ -931,7 +984,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                     !coordinatorId ||
                     !bookingTeamClassId ||
                     !classVariant ||
-                    !groupSize || 
+                    !groupSize ||
                     !isValidUrl.joinUrl ||
                     !isValidUrl.trackingLink
                   }

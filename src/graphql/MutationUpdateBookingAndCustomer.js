@@ -23,11 +23,11 @@ export default gql`
     $createdAt: DateTime!
     $updatedAt: DateTime!
     $signUpDeadline: DateTime
-    $status: String!
+    # $status: String!
     $phone: String!
     $email: String!
     $company: String
-    $closedReason: String
+    # $closedReason: String
     $capRegistration: Boolean
     $joinInfo: BookingJoinInfoUpdateInput
     $joinInfo_unset: Boolean
@@ -89,11 +89,11 @@ export default gql`
         serviceFee: $serviceFee
         salesTax: $salesTax
         discount: $discount
-        status: $status
+        # status: $status
         createdAt: $createdAt
         updatedAt: $updatedAt
         signUpDeadline: $signUpDeadline
-        closedReason: $closedReason
+        # closedReason: $closedReason
         capRegistration: $capRegistration
         joinInfo: $joinInfo
         joinInfo_unset: $joinInfo_unset
