@@ -179,10 +179,6 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
     })
   };
 
-  console.log('classVariantsOptions[selectedVariant]', classVariantsOptions[selectedVariant]);
-  console.log('classVariantsOptions', classVariantsOptions);
-  console.log('selectedVariant', selectedVariant);
-  console.log('isGroupVariant', isGroupVariant);
   return (
     <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={open} modalClassName="modal-slide-in">
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
@@ -393,12 +389,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                 })
               }
               onChange={(option) => {
-                console.log('option', option);
                 // eslint-disable-next-line no-unused-expressions
                 classVariantsOptions &&
                   classVariantsOptions.map((item, index) => {
                     if (item.title === option.value.title) {
-                      console.log('index', index);
                       setSelectedVariant(index);
                     }
                   });
