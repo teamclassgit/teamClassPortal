@@ -182,6 +182,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
   console.log('classVariantsOptions[selectedVariant]', classVariantsOptions[selectedVariant]);
   console.log('classVariantsOptions', classVariantsOptions);
   console.log('selectedVariant', selectedVariant);
+  console.log('isGroupVariant', isGroupVariant);
   return (
     <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={open} modalClassName="modal-slide-in">
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
@@ -351,7 +352,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
               value: selectedClass || '',
               label: getClassName(selectedClass)
             }}
-            onChange={(option) => setSelectedClass(option.value)}
+            onChange={(option) => {
+              setIsGroupVariant(false);
+              setSelectedClass(option.value);
+            }}
             isClearable={false}
             styles={selectStyles}
           />
@@ -400,10 +404,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                   });
                 if (!option.value.groupEvent) {
                   setClassVariant(option.value);
-                  // setSelectedVariant(0);
                   setIsGroupVariant(false);
                 } else {
-                  // setSelectedVariant(0);
                   setIsGroupVariant(true);
                 }
               }}
