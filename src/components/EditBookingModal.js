@@ -568,31 +568,15 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 className="react-select edit-booking-select-variant"
                 classNamePrefix="select"
                 placeholder="Select..."
-                value={
-                  classVariant
-                    ? {
-                        label:
-                          classVariant && classVariant.groupEvent
-                            ? `${classVariant && classVariant.title} ${classVariant && classVariant.groupEvent ? '/group' : '/person'}`
-                            : `${classVariant && classVariant.title} $${classVariant && classVariant.pricePerson}${
-                                classVariant && classVariant.groupEvent ? '/group' : '/person'
-                              }`,
-                        value: classVariant
-                      }
-                    : {
-                        label: option.label,
-                        value: option.value
-                      }
-                }
-                // value={{
-                //   label:
-                //     classVariant && classVariant.groupEvent
-                //       ? `${classVariant && classVariant.title} ${classVariant && classVariant.groupEvent ? '/group' : '/person'}`
-                //       : `${classVariant && classVariant.title} $${classVariant && classVariant.pricePerson}${
-                //           classVariant && classVariant.groupEvent ? '/group' : '/person'
-                //         }`,
-                //   value: classVariant
-                // }}
+                value={{
+                  label:
+                    classVariant && classVariant.groupEvent
+                      ? `${classVariant && classVariant.title} ${classVariant && classVariant.groupEvent ? '/group' : '/person'}`
+                      : `${classVariant && classVariant.title} $${classVariant && classVariant.pricePerson}${
+                          classVariant && classVariant.groupEvent ? '/group' : '/person'
+                        }`,
+                  value: classVariant
+                }}
                 options={
                   classVariantsOptions &&
                   classVariantsOptions.map((element) => {
