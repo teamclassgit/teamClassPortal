@@ -143,6 +143,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       setSelectedPriceTier(classVariant.pricePerson);
       setSelectedMinimumTier(classVariant.minimum);
       setSelectedMaximumTier(classVariant.maximum);
+      setIsGroupVariant(true);
+    } else {
+      setIsGroupVariant(false);
     }
   }, [classVariant]);
 
@@ -379,6 +382,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       fontSize: 12
     })
   };
+
+  console.log('selectedVariant', selectedVariant);
+  console.log('classVariant', classVariant);
+  console.log('isGroupVariant', isGroupVariant);
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
@@ -619,7 +626,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 isClearable={false}
               />
             </FormGroup>
-            {isGroupVariant || (classVariantsOptions[selectedVariant] && classVariantsOptions[selectedVariant].groupEvent) ? (
+            {isGroupVariant && classVariantsOptions[selectedVariant] && classVariantsOptions[selectedVariant].groupEvent ? (
               <FormGroup className="mt-1">
                 <Label for="full-name">Group Size*</Label>
                 <Select
