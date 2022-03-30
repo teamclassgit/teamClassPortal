@@ -397,11 +397,11 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     }
                   });
                 if (!option.value.groupEvent) {
-                  setClassVariant(option.value);
                   setIsGroupVariant(false);
                 } else {
                   setIsGroupVariant(true);
                 }
+                setClassVariant(option.value);
               }}
               isClearable={false}
               styles={selectStyles}
