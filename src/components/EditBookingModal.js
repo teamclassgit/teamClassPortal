@@ -120,6 +120,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setTrackingLink(currentElement.shippingTrackingLink);
     setJoinLink(currentElement.joinInfo && currentElement.joinInfo.joinUrl);
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
+    setIsGroupVariant(currentElement.classVariant && currentElement.classVariant.groupEvent ? true : false);
   }, [currentElement]);
 
   useEffect(() => {
@@ -554,7 +555,6 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 }}
                 onChange={(option) => {
                   setClassVariant(null);
-                  setIsGroupVariant(false);
                   setBookingTeamClassId(option.value);
                   setBookingTeamClassName(option.label);
                 }}
@@ -574,10 +574,12 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 value={{
                   label:
                     classVariant && classVariant.groupEvent
-                      ? `${classVariant && classVariant.title} ${classVariant && classVariant.groupEvent ? '/group' : '/person'}`
-                      : `${classVariant && classVariant.title} $${classVariant && classVariant.pricePerson}${
+                      ? `${classVariant && classVariant.title ? classVariant.title : ''} ${
                           classVariant && classVariant.groupEvent ? '/group' : '/person'
-                        }`,
+                        }`
+                      : `${classVariant && classVariant.title ? classVariant.title : ''} $${
+                          classVariant && classVariant.pricePerson ? classVariant.pricePerson : ''
+                        }${classVariant && classVariant.groupEvent ? '/group' : '/person'}`,
                   value: classVariant
                 }}
                 options={
@@ -619,14 +621,11 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   }
                   setClassVariant(option.value);
                   setGroupSize('');
-                  setSelectedPriceTier('');
-                  setSelectedMinimumTier('');
-                  setSelectedMaximumTier('');
                 }}
                 isClearable={false}
               />
             </FormGroup>
-            {isGroupVariant && classVariantsOptions[selectedVariant] && classVariantsOptions[selectedVariant].groupEvent ? (
+            {classVariant && classVariant.groupEvent ? (
               <FormGroup className="mt-1">
                 <Label for="full-name">Group Size*</Label>
                 <Select
@@ -636,10 +635,13 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   placeholder="Select..."
                   isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                   value={{
-                    label: `${selectedMinimumTier} - ${selectedMaximumTier} attendees / $ ${selectedPriceTier}`,
+                    label: `${selectedMinimumTier ? selectedMinimumTier : ''} - ${selectedMaximumTier ? selectedMaximumTier : ''} attendees / $ ${
+                      selectedPriceTier ? selectedPriceTier : ''
+                    }`,
                     value: classVariant
                   }}
                   options={
+                    classVariantsOptions[selectedVariant] &&
                     classVariantsOptions[selectedVariant].priceTiers &&
                     classVariantsOptions[selectedVariant].priceTiers.map((item) => {
                       const variant = {
