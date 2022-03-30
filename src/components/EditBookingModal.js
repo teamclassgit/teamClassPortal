@@ -383,6 +383,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   console.log('selectedVariant', selectedVariant);
   console.log('currentElement', currentElement);
   console.log('classVariant', classVariant);
+  console.log('isGroupVariant', isGroupVariant);
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
@@ -551,6 +552,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 }}
                 onChange={(option) => {
                   setClassVariant(null);
+                  setIsGroupVariant(false);
                   console.log('class option', option);
                   setBookingTeamClassId(option.value);
                   setBookingTeamClassName(option.label);
