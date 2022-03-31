@@ -193,13 +193,52 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
 
   const closeBooking = async () => {
     setProcessing(true);
+    const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
+    let joinInfo = { ...currentElement.joinInfo };
+    if (!joinLink && !passwordLink) {
+      joinInfo = undefined;
+    } else if (joinInfo && joinInfo.joinUrl) {
+      joinInfo.joinUrl = joinLink;
+      joinInfo.password = passwordLink;
+    } else {
+      joinInfo = {
+        joinUrl: joinLink,
+        password: passwordLink
+      };
+    }
     try {
       const resultCloseBooking = await updateCloseBooking({
         variables: {
           bookingId: currentElement._id,
+          date: new Date(),
+          teamClassId: bookingTeamClassId,
+          classVariant,
+          instructorId: teamClass.instructorId,
+          instructorName: teamClass.instructorName,
+          customerId: currentElement.customerId,
+          customerName,
+          eventDate: new Date(),
+          eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
+          eventCoordinatorId: coordinatorId,
+          attendees: groupSize,
+          classMinimum: classVariant.minimum,
+          pricePerson: classVariant.pricePerson,
+          serviceFee: currentElement.serviceFee,
+          salesTax: currentElement.salesTax,
+          discount: currentElement.discount,
+          createdAt: currentElement.createdAt,
           updatedAt: new Date(),
           status: 'closed',
-          closedReason: closedBookingReason
+          email: customerEmail,
+          phone: customerPhone,
+          company: customerCompany,
+          signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
+          closedReason: closedBookingReason,
+          notes: bookingNotes,
+          capRegistration: isCapRegistration,
+          shippingTrackingLink: trackingLink,
+          joinInfo,
+          joinInfo_unset: joinInfo ? false : true
         }
       });
 
@@ -316,10 +355,12 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           discount: currentElement.discount,
           createdAt: currentElement.createdAt,
           updatedAt: new Date(),
+          // status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentElement.status,
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
           signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
+          // closedReason: closedBookingReason,
           notes: bookingNotes,
           capRegistration: isCapRegistration,
           shippingTrackingLink: trackingLink,
@@ -332,6 +373,30 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
         setProcessing(false);
         return;
       }
+
+      // if (closedBookingReason) {
+      //   const resultEmail = await removeCampaignRequestQuote({
+      //     variables: { customerEmail: customerEmail.toLowerCase() }
+      //   });
+      //   console.log('Remove campaign before redirecting:', resultEmail);
+      // }
+
+      // if (
+      //   closedBookingReason === 'Lost' ||
+      //   closedBookingReason === 'Duplicated' ||
+      //   closedBookingReason === 'Mistake' ||
+      //   closedBookingReason === 'Test'
+      // ) {
+      //   if (calendarEvent) {
+      //     const resultStatusUpdated = await updateCalendarEventStatus({
+      //       variables: {
+      //         calendarEventId: calendarEventObject._id,
+      //         status: DATE_AND_TIME_CANCELED_STATUS
+      //       }
+      //     });
+      //     console.log('Changing calendar event status', resultStatusUpdated);
+      //   }
+      // }
 
       onEditCompleted(currentElement._id);
     } catch (ex) {
