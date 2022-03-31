@@ -125,17 +125,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setClassVariantsOptions(filteredClass.variants);
   }, [currentElement]);
 
-  // useEffect(() => {
-  //   if (bookingTeamClassId) {
-  //     const filteredClass = allClasses.find((element) => element._id === bookingTeamClassId);
-  //     if (filteredClass) {
-  //       setClassVariantsOptions(filteredClass.variants);
-  //     }
-  //   }
-  // }, [bookingTeamClassId]);
-
   useEffect(() => {
-    console.log('ENTRANDO A ESTE USEEFFECR');
     if (classVariant && classVariant.groupEvent) {
       // eslint-disable-next-line no-unused-expressions
       classVariantsOptions &&
@@ -386,11 +376,6 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       fontSize: 12
     })
   };
-
-  console.log('classVariant', classVariant);
-  console.log('selectedVariant', selectedVariant);
-  console.log('classVariantsOptions', classVariantsOptions);
-  console.log('classVariantsOptions[selectedVariant]', classVariantsOptions[selectedVariant]);
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
