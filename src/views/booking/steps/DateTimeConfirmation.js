@@ -29,17 +29,10 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
   const [createOrUpdateCalendarEvent, { ...calendarEventData }] = useMutation(mutationRequestPreferredTime, {});
 
   const isDateTooEarly = () => {
-    /*  const today = new Date()
-          const reference = new Date()
-          reference.setDate(today.getDate() + DAYS_AFTER_CURRENT_DATE_NOT_AVAILABLE_TO_SCHEDULE)//5 days
-  
-          return date && date.length > 0 && date[0] > today && date[0] <= reference */
-
     return false;
   };
 
   const isDateInThePast = () => {
-    //This validation can be added if want to avoid dates in the past !date || date.length === 0 ? false : date[0] <= new Date()
     return false;
   };
 
@@ -54,7 +47,6 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
   };
 
   React.useEffect(() => {
-    //setDate([new Date(2021, 4, 10)])
     setDate(
       calendarEvent ? [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)] : [new Date().setDate(new Date().getDate() + 20)]
     );
