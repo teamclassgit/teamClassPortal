@@ -355,12 +355,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           discount: currentElement.discount,
           createdAt: currentElement.createdAt,
           updatedAt: new Date(),
-          // status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentElement.status,
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
           signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
-          // closedReason: closedBookingReason,
           notes: bookingNotes,
           capRegistration: isCapRegistration,
           shippingTrackingLink: trackingLink,
@@ -373,30 +371,6 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
         setProcessing(false);
         return;
       }
-
-      // if (closedBookingReason) {
-      //   const resultEmail = await removeCampaignRequestQuote({
-      //     variables: { customerEmail: customerEmail.toLowerCase() }
-      //   });
-      //   console.log('Remove campaign before redirecting:', resultEmail);
-      // }
-
-      // if (
-      //   closedBookingReason === 'Lost' ||
-      //   closedBookingReason === 'Duplicated' ||
-      //   closedBookingReason === 'Mistake' ||
-      //   closedBookingReason === 'Test'
-      // ) {
-      //   if (calendarEvent) {
-      //     const resultStatusUpdated = await updateCalendarEventStatus({
-      //       variables: {
-      //         calendarEventId: calendarEventObject._id,
-      //         status: DATE_AND_TIME_CANCELED_STATUS
-      //       }
-      //     });
-      //     console.log('Changing calendar event status', resultStatusUpdated);
-      //   }
-      // }
 
       onEditCompleted(currentElement._id);
     } catch (ex) {
@@ -838,10 +812,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   color={closedBookingReason ? 'danger' : 'primary'}
                   onClick={() => {
                     if (closedBookingReason) {
-                      console.log('CERRANDO EL BOOKING');
                       closeBooking();
                     } else {
-                      console.log('ABRIENDO EL BOOKING');
                       saveChangesBooking();
                     }
                   }}
