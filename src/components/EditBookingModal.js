@@ -98,6 +98,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     const teamClass = allClasses.find((element) => element._id === currentElement.teamClassId);
     const coordinator = allCoordinators.find((element) => element._id === currentElement.eventCoordinatorId);
     const customer = currentElement.customer;
+    const filteredClass = allClasses.find((element) => element._id === teamClass?._id);
 
     setBookingNotes(currentElement.notes);
     setBookingSignUpDeadline([currentElement.signUpDeadline]);
@@ -121,18 +122,20 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setJoinLink(currentElement.joinInfo && currentElement.joinInfo.joinUrl);
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
     setIsGroupVariant(currentElement.classVariant && currentElement.classVariant.groupEvent ? true : false);
+    setClassVariantsOptions(filteredClass.variants);
   }, [currentElement]);
 
-  useEffect(() => {
-    if (bookingTeamClassId) {
-      const filteredClass = allClasses.find((element) => element._id === bookingTeamClassId);
-      if (filteredClass) {
-        setClassVariantsOptions(filteredClass.variants);
-      }
-    }
-  }, [bookingTeamClassId]);
+  // useEffect(() => {
+  //   if (bookingTeamClassId) {
+  //     const filteredClass = allClasses.find((element) => element._id === bookingTeamClassId);
+  //     if (filteredClass) {
+  //       setClassVariantsOptions(filteredClass.variants);
+  //     }
+  //   }
+  // }, [bookingTeamClassId]);
 
   useEffect(() => {
+    console.log('ENTRANDO A ESTE USEEFFECR');
     if (classVariant && classVariant.groupEvent) {
       // eslint-disable-next-line no-unused-expressions
       classVariantsOptions &&
@@ -383,6 +386,11 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       fontSize: 12
     })
   };
+
+  console.log('classVariant', classVariant);
+  console.log('selectedVariant', selectedVariant);
+  console.log('classVariantsOptions', classVariantsOptions);
+  console.log('classVariantsOptions[selectedVariant]', classVariantsOptions[selectedVariant]);
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
