@@ -543,6 +543,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   label: bookingTeamClassName
                 }}
                 onChange={(option) => {
+                  const filteredClass = allClasses.find((element) => element._id === option.value);
+                  setClassVariantsOptions(filteredClass.variants);
                   setClassVariant(null);
                   setBookingTeamClassId(option.value);
                   setBookingTeamClassName(option.label);
