@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  mutation updateBookingAndCustomer(
+  mutation updateBookingStatusToClose(
     $bookingId: String!
     $date: DateTime!
     $teamClassId: String!
@@ -23,9 +23,11 @@ export default gql`
     $createdAt: DateTime!
     $updatedAt: DateTime!
     $signUpDeadline: DateTime
+    $status: String!
     $phone: String!
     $email: String!
     $company: String
+    $closedReason: String
     $capRegistration: Boolean
     $joinInfo: BookingJoinInfoUpdateInput
     $joinInfo_unset: Boolean
@@ -87,9 +89,11 @@ export default gql`
         serviceFee: $serviceFee
         salesTax: $salesTax
         discount: $discount
+        status: $status
         createdAt: $createdAt
         updatedAt: $updatedAt
         signUpDeadline: $signUpDeadline
+        closedReason: $closedReason
         capRegistration: $capRegistration
         joinInfo: $joinInfo
         joinInfo_unset: $joinInfo_unset

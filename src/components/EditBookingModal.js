@@ -31,6 +31,7 @@ import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truc
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
 import mutationOpenBooking from '../graphql/MutationOpenBooking';
+import mutationCloseBooking from '../graphql/MutationCloseBooking';
 import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
 import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
@@ -91,6 +92,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
+  const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
 
   useEffect(() => {
     if (!currentElement?._id) return;
@@ -190,6 +192,94 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     return calendarEventStatus;
   };
 
+  const closeBooking = async () => {
+    setProcessing(true);
+    const teamClass = allClasses.find((element) => element._id === bookingTeamClassId);
+    let joinInfo = { ...currentElement.joinInfo };
+    if (!joinLink && !passwordLink) {
+      joinInfo = undefined;
+    } else if (joinInfo && joinInfo.joinUrl) {
+      joinInfo.joinUrl = joinLink;
+      joinInfo.password = passwordLink;
+    } else {
+      joinInfo = {
+        joinUrl: joinLink,
+        password: passwordLink
+      };
+    }
+    try {
+      const resultCloseBooking = await updateCloseBooking({
+        variables: {
+          bookingId: currentElement._id,
+          date: new Date(),
+          teamClassId: bookingTeamClassId,
+          classVariant,
+          instructorId: teamClass.instructorId,
+          instructorName: teamClass.instructorName,
+          customerId: currentElement.customerId,
+          customerName,
+          eventDate: new Date(),
+          eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
+          eventCoordinatorId: coordinatorId,
+          attendees: groupSize,
+          classMinimum: classVariant.minimum,
+          pricePerson: classVariant.pricePerson,
+          serviceFee: currentElement.serviceFee,
+          salesTax: currentElement.salesTax,
+          discount: currentElement.discount,
+          createdAt: currentElement.createdAt,
+          updatedAt: new Date(),
+          status: 'closed',
+          email: customerEmail,
+          phone: customerPhone,
+          company: customerCompany,
+          signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
+          closedReason: closedBookingReason,
+          notes: bookingNotes,
+          capRegistration: isCapRegistration,
+          shippingTrackingLink: trackingLink,
+          joinInfo,
+          joinInfo_unset: joinInfo ? false : true
+        }
+      });
+
+      if (!resultCloseBooking || !resultCloseBooking.data) {
+        setProcessing(false);
+        return;
+      }
+
+      if (closedBookingReason) {
+        const resultEmail = await removeCampaignRequestQuote({
+          variables: { customerEmail: customerEmail.toLowerCase() }
+        });
+        console.log('Remove campaign before redirecting:', resultEmail);
+      }
+
+      if (
+        closedBookingReason === 'Lost' ||
+        closedBookingReason === 'Duplicated' ||
+        closedBookingReason === 'Mistake' ||
+        closedBookingReason === 'Test'
+      ) {
+        if (calendarEvent) {
+          const resultStatusUpdated = await updateCalendarEventStatus({
+            variables: {
+              calendarEventId: calendarEvent._id,
+              status: DATE_AND_TIME_CANCELED_STATUS
+            }
+          });
+          console.log('Changing calendar event status', resultStatusUpdated);
+        }
+      }
+
+      onEditCompleted(currentElement._id);
+    } catch (ex) {
+      console.log('err', ex);
+    }
+    setProcessing(false);
+    handleModal();
+  };
+
   const openBooking = async () => {
     setProcessing(true);
 
@@ -266,12 +356,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           discount: currentElement.discount,
           createdAt: currentElement.createdAt,
           updatedAt: new Date(),
-          status: closedBookingReason ? BOOKING_CLOSED_STATUS : currentElement.status,
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
           signUpDeadline: bookingSignUpDeadline && bookingSignUpDeadline.length > 0 ? bookingSignUpDeadline[0] : undefined,
-          closedReason: closedBookingReason,
           notes: bookingNotes,
           capRegistration: isCapRegistration,
           shippingTrackingLink: trackingLink,
@@ -283,30 +371,6 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       if (!resultUpdateBooking || !resultUpdateBooking.data) {
         setProcessing(false);
         return;
-      }
-
-      if (closedBookingReason) {
-        const resultEmail = await removeCampaignRequestQuote({
-          variables: { customerEmail: customerEmail.toLowerCase() }
-        });
-        console.log('Remove campaign before redirecting:', resultEmail);
-      }
-
-      if (
-        closedBookingReason === 'Lost' ||
-        closedBookingReason === 'Duplicated' ||
-        closedBookingReason === 'Mistake' ||
-        closedBookingReason === 'Test'
-      ) {
-        if (calendarEvent) {
-          const resultStatusUpdated = await updateCalendarEventStatus({
-            variables: {
-              calendarEventId: calendarEventObject._id,
-              status: DATE_AND_TIME_CANCELED_STATUS
-            }
-          });
-          console.log('Changing calendar event status', resultStatusUpdated);
-        }
       }
 
       onEditCompleted(currentElement._id);
@@ -760,7 +824,11 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   size="sm"
                   color={closedBookingReason ? 'danger' : 'primary'}
                   onClick={() => {
-                    saveChangesBooking();
+                    if (closedBookingReason) {
+                      closeBooking();
+                    } else {
+                      saveChangesBooking();
+                    }
                   }}
                   disabled={
                     !customerName ||
