@@ -30,6 +30,7 @@ export default gql`
     $billingAddress: CustomerBillingAddressInsertInput
     $company: String
     $closedReason: String
+    $distributorId: String
   ) {
     upsertOneCustomer(
       query: { _id: $customerId }
@@ -86,6 +87,7 @@ export default gql`
         updatedAt: $updatedAt
         signUpDeadline: $signUpDeadline
         closedReason: $closedReason
+        distributorId: $distributorId
       }
     ) {
       _id
@@ -108,6 +110,7 @@ export default gql`
       signUpStatusLink
       checkoutLink
       taxExempt
+      distributorId
       payments {
         amount
         paymentId

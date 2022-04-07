@@ -11,6 +11,7 @@ export default gql`
       pricePerson
       hasKit
       minimum
+      distributorId
       variants {
         title
         notes
