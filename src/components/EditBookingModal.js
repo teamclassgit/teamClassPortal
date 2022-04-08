@@ -79,6 +79,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [selectedPriceTier, setSelectedPriceTier] = React.useState(null);
   const [selectedMinimumTier, setSelectedMinimumTier] = React.useState(null);
   const [selectedMaximumTier, setSelectedMaximumTier] = React.useState(null);
+  const [distributorId, setDistributorId] = useState(null);
   const [joinLink, setJoinLink] = useState('');
   const [passwordLink, setPasswordLink] = useState('');
   const [trackingLink, setTrackingLink] = useState('');
@@ -125,6 +126,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
     setIsGroupVariant(currentElement.classVariant && currentElement.classVariant.groupEvent ? true : false);
     setClassVariantsOptions(filteredClass.variants);
+    setDistributorId(currentElement?.distributorId);
   }, [currentElement]);
 
   useEffect(() => {
@@ -239,7 +241,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           capRegistration: isCapRegistration,
           shippingTrackingLink: trackingLink,
           joinInfo,
-          joinInfo_unset: joinInfo ? false : true
+          joinInfo_unset: joinInfo ? false : true,
+          distributorId
         }
       });
 
@@ -364,7 +367,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           capRegistration: isCapRegistration,
           shippingTrackingLink: trackingLink,
           joinInfo,
-          joinInfo_unset: joinInfo ? false : true
+          joinInfo_unset: joinInfo ? false : true,
+          distributorId
         }
       });
 
@@ -588,7 +592,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
               <Label for="full-name">Event Details*</Label>
               <Select
                 styles={selectStyles}
-                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                isDisabled={
+                  currentElement.status === BOOKING_CLOSED_STATUS ? true : false ||
+                  currentElement.status !== BOOKING_QUOTE_STATUS
+                }
                 theme={selectThemeColors}
                 className="react-select edit-booking-select-class"
                 classNamePrefix="select"
@@ -608,6 +615,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 }}
                 onChange={(option) => {
                   const filteredClass = allClasses.find((element) => element._id === option.value);
+                  if (filteredClass) setDistributorId(filteredClass?.distributorId);
                   setClassVariantsOptions(filteredClass.variants);
                   setClassVariant(null);
                   setBookingTeamClassId(option.value);

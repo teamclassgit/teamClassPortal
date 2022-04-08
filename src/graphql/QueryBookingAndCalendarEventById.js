@@ -85,6 +85,7 @@ export default gql`
       instructorName
       customerId
       customerName
+      distributorId
       eventDate
       eventDurationHours
       attendees

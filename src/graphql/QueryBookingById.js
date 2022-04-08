@@ -85,6 +85,7 @@ export default gql`
       taxExempt
       ccFeeExempt
       capRegistration
+      distributorId
       invoiceDetails {
         item
         unitPrice

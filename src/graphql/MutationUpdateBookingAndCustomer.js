@@ -30,6 +30,7 @@ export default gql`
     $joinInfo: BookingJoinInfoUpdateInput
     $joinInfo_unset: Boolean
     $shippingTrackingLink: String
+    $distributorId: String
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -94,6 +95,7 @@ export default gql`
         joinInfo: $joinInfo
         joinInfo_unset: $joinInfo_unset
         shippingTrackingLink: $shippingTrackingLink
+        distributorId: $distributorId
       }
     ) {
       _id
@@ -116,6 +118,7 @@ export default gql`
       signUpStatusLink
       checkoutLink
       taxExempt
+      distributorId
       payments {
         amount
         paymentId
