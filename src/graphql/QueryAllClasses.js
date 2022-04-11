@@ -28,6 +28,15 @@ export default gql`
           minimum
           price
         }
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       category
     }

@@ -152,43 +152,45 @@ const DataTableAttendees = ({
   ];
   React.useEffect(() => {
     if (attendees && teamClassInfo) {
-      const attendeesArray = [];
-      const headers = ['Name', 'Email', 'Phone'];
-
-      if (booking.classVariant && booking.classVariant.hasKit) {
-        headers.push('AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country');
-      }
-
-      for (const dynamicField in teamClassInfo.registrationFields) {
-        headers.push(teamClassInfo.registrationFields[dynamicField].label);
-      }
-
-      teamClassInfo.variants.map((item) => {
-        if (item.kitHasAlcohol) headers.push('Delivery Restriction');
-      });
-
-      setExcelHeadersTemplate([headers]);
-      attendeesArray.push(headers);
-      for (const i in attendees) {
-        const attendeeInfo = attendees[i];
-        const row = [
-          attendeeInfo.name,
-          attendeeInfo.email,
-          attendeeInfo.phone,
-          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.addressLine1 : '',
-          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.addressLine2 : '',
-          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.city : '',
-          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.state : '',
-          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.zip : '',
-          booking.classVariant && booking.classVariant.hasKit ? attendeeInfo.country : ''
+      if (attendees && teamClassInfo) {
+        const fields = [
+          ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
+          ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
         ];
-        for (const dynamicField in attendeeInfo.additionalFields) {
-          row.push(attendeeInfo.additionalFields[dynamicField].value);
+        // setRegistrationFields(fields.filter((element) => element.active === true));
+
+        const attendeesArray = [];
+        const headers = ['Name', 'Email', 'Phone', 'Address1', 'Address2', 'City', 'State', 'Zip', 'Country'];
+        fields.forEach((dynamicField) => headers.push(dynamicField.label));
+        teamClassInfo.variants.map((item) => {
+          if (item.kitHasAlcohol) headers.push('Delivery Restriction');
+        });
+        attendeesArray.push(headers);
+
+        for (const i in attendees) {
+          const attendeeInfo = attendees[i];
+          const row = [
+            attendeeInfo.name,
+            attendeeInfo.email,
+            attendeeInfo.phone,
+            attendeeInfo.addressLine1,
+            attendeeInfo.addressLine2,
+            attendeeInfo.city,
+            attendeeInfo.state,
+            attendeeInfo.zip,
+            attendeeInfo.country
+          ];
+
+          attendeeInfo.additionalFields?.forEach((dynamicField) => row.push(dynamicField.value));
+
+          if (attendeeInfo.canDeliverKitReason) row.push(attendeeInfo.canDeliverKitReason);
+
+          attendeesArray.push(row);
         }
-        if (attendeeInfo.canDeliverKitReason) row.push(attendeeInfo.canDeliverKitReason);
-        attendeesArray.push(row);
+
+        setExcelHeadersTemplate([headers]);
+        setAttendeesExcelTable(attendeesArray);
       }
-      setAttendeesExcelTable(attendeesArray);
     }
   }, [attendees, teamClassInfo]);
   // ** Function to handle filter

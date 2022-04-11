@@ -65,6 +65,15 @@ export default gql`
         active
         groupEvent
         instructorFlatFee
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       addons {
         icon

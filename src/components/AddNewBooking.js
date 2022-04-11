@@ -377,7 +377,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     order: element.order,
                     active: element.active,
                     groupEvent: element.groupEvent,
-                    instructorFlatFee: element.instructorFlatFee
+                    instructorFlatFee: element.instructorFlatFee,
+                    registrationFields: element.registrationFields
                   };
 
                   return {
@@ -430,7 +431,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     order: classVariantsOptions[selectedVariant].order,
                     active: classVariantsOptions[selectedVariant].active,
                     groupEvent: classVariantsOptions[selectedVariant].groupEvent,
-                    instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee
+                    instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee,
+                    registrationFields: classVariantsOptions[selectedVariant].registrationFields
                   };
                   return {
                     value: variant,
