@@ -242,7 +242,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           shippingTrackingLink: trackingLink,
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
-          distributorId
+          distributorId,
+          distributorId_unset: distributorId ? false : true
         }
       });
 
@@ -368,7 +369,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           shippingTrackingLink: trackingLink,
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
-          distributorId
+          distributorId,
+          distributorId_unset: distributorId ? false : true
         }
       });
 
