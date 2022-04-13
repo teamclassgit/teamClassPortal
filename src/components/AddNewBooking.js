@@ -38,6 +38,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
   const [warning, setWarning] = useState({ open: false, message: '' });
   const [isGroupVariant, setIsGroupVariant] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [distributorId, setDistributorId] = useState(null);
 
   const options = { phone: true, phoneRegionCode: 'US' };
 
@@ -60,7 +61,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
   useEffect(() => {
     if (selectedClass) {
       const filteredClass = classes.find((element) => element._id === selectedClass);
-      if (filteredClass) setClassVariantsOptions(filteredClass.variants);
+      if (filteredClass) {
+        setClassVariantsOptions(filteredClass.variants);
+        setDistributorId(filteredClass?.distributorId);
+      }
     }
   }, [selectedClass]);
 
@@ -125,7 +129,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           email: customer ? customer.email : newEmail,
           phone: customer ? customer.phone : newPhone,
           billingAddress: customer ? customer.billingAddress : null,
-          company: customer ? customer.company : newCompany
+          company: customer ? customer.company : newCompany,
+          distributorId
         }
       });
 
