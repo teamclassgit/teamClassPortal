@@ -27,7 +27,6 @@ import classnames from 'classnames';
 import moment from 'moment';
 import { useMutation } from '@apollo/client';
 import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck, List } from 'react-feather';
-import { WithContext as ReactTags } from 'react-tag-input';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
