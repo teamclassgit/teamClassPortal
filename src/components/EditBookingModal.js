@@ -468,6 +468,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setClassOptionsTags(classOptionsTags.filter((_, index) => index !== i));
   };
 
+  console.log(classOptionsTags.length);
+
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
@@ -1037,6 +1039,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   id="classOptions"
                   name="classOptions"
                   placeholder="New options"
+                  disabled={classOptionsTags.length >= 20 ? true : false}
                   onChange={(e) => setIndividualTag(e.target.value)}
                   value={individualTag}
                   onKeyDown={handleAddition}
