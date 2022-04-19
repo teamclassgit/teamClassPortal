@@ -131,6 +131,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setIsGroupVariant(currentElement.classVariant && currentElement.classVariant.groupEvent ? true : false);
     setClassVariantsOptions(filteredClass.variants);
     setDistributorId(currentElement?.distributorId);
+    setClassOptionsTags(currentElement?.additionalClassOptions || []);
   }, [currentElement]);
 
   useEffect(() => {
@@ -166,8 +167,6 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setClosedBookingReason(null);
     handleModal({});
   };
-
-  console.log("currentElement", currentElement);
 
   const groupSizeValidation = (size) => {
     setAttendeesValid(size > 0);

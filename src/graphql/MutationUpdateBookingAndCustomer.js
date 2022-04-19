@@ -146,7 +146,10 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
-      additionalClassOptions
+      additionalClassOptions {
+        id
+        text
+      }
       shippingTrackingLink
       joinInfo {
         eventId

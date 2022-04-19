@@ -104,6 +104,10 @@ export default gql`
       taxExempt
       ccFeeExempt
       capRegistration
+      additionalClassOptions {
+        id
+        text
+      }
       invoiceDetails {
         item
         unitPrice
