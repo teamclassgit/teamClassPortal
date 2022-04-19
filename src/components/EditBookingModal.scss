@@ -25,3 +25,15 @@
 .edit-booking-select-size {
     z-index: 70;
 }
+
+/* Example Styles for React Tags*/
+span.tags {
+    border: 1px solid #ddd;
+    background: #eee;
+    color: black;
+    font-size: 10px;
+    display: inline-block;
+    padding: 5px;
+    margin: 0 5px;
+    border-radius: 2px;
+}

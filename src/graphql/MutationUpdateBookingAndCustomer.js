@@ -32,6 +32,7 @@ export default gql`
     $shippingTrackingLink: String
     $distributorId: String
     $distributorId_unset: Boolean
+    $additionalClassOptions: [BookingAdditionalClassOptionUpdateInput]
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -98,6 +99,7 @@ export default gql`
         shippingTrackingLink: $shippingTrackingLink
         distributorId: $distributorId
         distributorId_unset: $distributorId_unset
+        additionalClassOptions: $additionalClassOptions
       }
     ) {
       _id
@@ -144,6 +146,7 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      additionalClassOptions
       shippingTrackingLink
       joinInfo {
         eventId
