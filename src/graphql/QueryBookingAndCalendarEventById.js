@@ -40,6 +40,15 @@ export default gql`
         groupEvent
         kitHasAlcohol
         instructorFlatFee
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       notes {
         note

@@ -140,6 +140,15 @@ export default gql`
         hasKit
         groupEvent
         instructorFlatFee
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       createdAt
       updatedAt

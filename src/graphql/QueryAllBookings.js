@@ -46,6 +46,15 @@ export default gql`
         order
         active
         groupEvent
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       createdAt
       updatedAt

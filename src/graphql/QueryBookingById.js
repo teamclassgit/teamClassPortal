@@ -22,6 +22,15 @@ export default gql`
         groupEvent
         kitHasAlcohol
         instructorFlatFee
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       notes {
         note
@@ -99,6 +108,19 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      signUpPageSettings {
+        invitationFrom
+        additionalCopyToShow
+        additionalRegistrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
+      }
     }
   }
 `;
