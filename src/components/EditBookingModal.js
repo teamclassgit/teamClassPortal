@@ -160,6 +160,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
 
   const cancel = () => {
     setClosedBookingReason(null);
+    setIsValidUrl({
+      trackingLink: true,
+      joinUrl: true
+    });
     handleModal({});
   };
 
