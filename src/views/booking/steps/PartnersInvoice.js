@@ -52,13 +52,16 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     if (isPaid) {
       newStatus = 'paid';
       setInvoiceInstructorStatus('paid');
+      console.log('PAID');
     } else if (!isRejected && !isPaid) {
       newStatus = 'approved';
       setInvoiceInstructorStatus('approved');
       setRejectedReasons('');
+      console.log('APPROVED');
     } else {
       newStatus = 'rejected';
       setInvoiceInstructorStatus('rejected');
+      console.log('REJECTED');
     }
 
     try {
@@ -100,6 +103,9 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   }, [fileUrl]);
 
   console.log('fileUrl', fileUrl);
+  console.log('invoiceInstructorStatus', invoiceInstructorStatus);
+  console.log('isRejected', isRejected);
+  console.log('isPaid', isPaid);
 
   return (
     <Fragment>
@@ -256,7 +262,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         </div>
                         <div className="d-flex justify-content-end">
                           <small>
-                            <a href={fileUrl} target="_blank" className="pop-up-payment-link">
+                            <a href={fileUrl || booking?.instructorInvoice?.paymentReceipt} target="_blank" className="pop-up-payment-link">
                               Payment receipt
                             </a>
                           </small>
