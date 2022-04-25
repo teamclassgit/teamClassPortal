@@ -16,6 +16,7 @@
 }
 
 .event-confirmation-container{
+  margin-top: 4px;
   .card-body {
     background-color: #e7eaf9;
     border-radius:5px;
@@ -68,4 +69,10 @@
 
 .pop-up-payment-link:hover{
   color: var(--color-button-second);
+}
+
+.stripe-option-message {
+  color:red;
+  display: inline-block;
+  margin-top: 10px;
 }

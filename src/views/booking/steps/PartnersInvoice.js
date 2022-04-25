@@ -143,15 +143,14 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
         <div className="card-container">
           <Row>
             <Col lg={4}>
-              <div className="event-confirmation-container">
+              <div className="event-confirmation-container ">
                 <Card>
                   <CardBody>
                     <span className="d-flex justify-content-center">
                       <Icon className="mb-1 event-confirmed-icon" fontSize={30} icon="akar-icons:circle-check" />
                     </span>
                     <h2 className="text-center mt-2 mb-2 font-weight-bold">Event Confirmed</h2>
-                    <p className="text-justify mb-2">Please confirm heacount, class price, and any additional charges.</p>
-                    <p className="text-justify">Click submit to confirm your invoice and collect the payment.</p>
+                    <p className="text-justify mb-2">Our partner has submitted a new invoice for this event.</p>
                   </CardBody>
                 </Card>
               </div>
@@ -245,7 +244,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                             handleSaveInfo();
                           }}
                         >
-                          {processing ? 'Saving' : 'Accept'}
+                          {processing ? 'Saving' : 'Approve'}
                         </Button>
                       </div>
                     ) : (
@@ -255,7 +254,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         </div>
                         <div className="d-flex justify-content-end">
                           <small>
-                            <a href={booking?.instructorInvoice?.paymentReceipt} target="_blank" className="pop-up-payment-link">
+                            <a href={fileUrl} target="_blank" className="pop-up-payment-link">
                               Payment receipt
                             </a>
                           </small>
@@ -284,7 +283,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 )
               )}
 
-              {isRejected && (
+              {isRejected && invoiceInstructorStatus !== 'rejected' && (
                 <Row className="mt-2">
                   <Col lg={12} className="mb-2">
                     <span>Rejected Reason*</span>
@@ -308,6 +307,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                           setIsRejected(true);
                           handleSaveInfo();
                         }}
+                        disabled={!rejectedReasons}
                       >
                         {processing ? 'Saving' : 'Save'}
                       </Button>
@@ -319,13 +319,26 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 </Row>
               )}
 
-              {invoiceInstructorStatus === 'rejected' && booking.instructorInvoice.rejectedReasons && (
-                <Row className="mt-2">
-                  <Col lg={12} className="mb-2">
-                    <span>Rejected Reason: </span>
-                    <span className="text-justify">{booking.instructorInvoice.rejectedReasons}</span>
-                  </Col>
-                </Row>
+              {isRejected && invoiceInstructorStatus === 'rejected' && rejectedReasons && (
+                <div>
+                  <div className="button-container d-flex justify-content-end mt-2">
+                    <Button
+                      onClick={(e) => {
+                        setIsRejected(false);
+                        setShowPayInvoiceButton(true);
+                        handleSaveInfo();
+                      }}
+                    >
+                      {processing ? 'Saving' : 'Approve'}
+                    </Button>
+                  </div>
+                  <Row className="mt-2">
+                    <Col lg={12} className="">
+                      <span>Rejected Reason: </span>
+                      <span className="text-justify">{rejectedReasons}</span>
+                    </Col>
+                  </Row>
+                </div>
               )}
               <Row className="">
                 <Col lg={12} className="">
@@ -386,16 +399,22 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                   </Label>
                 </FormGroup>
                 {isStripeOption && (
-                  <div className="d-flex justify-content-center mt-2">
-                    <Button
-                      onClick={(e) => {
-                        setShowModal(!showModal);
-                        setShowPayInvoiceButton(false);
-                        handleSaveInfo();
-                      }}
-                    >
-                      Submit Payment
-                    </Button>
+                  <div>
+                    <small className="stripe-option-message">
+                      Stripe payment are not available yet. This feature will be available in the near future.
+                    </small>
+                    <div className="d-flex justify-content-center">
+                      <Button
+                        onClick={(e) => {
+                          setShowModal(!showModal);
+                          setShowPayInvoiceButton(false);
+                          handleSaveInfo();
+                        }}
+                        disabled={isStripeOption}
+                      >
+                        Submit Payment
+                      </Button>
+                    </div>
                   </div>
                 )}
 
