@@ -420,7 +420,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
                 {isOtherOption && (
                   <div>
-                    <DropZone dropText={'Upload your files'} attachedFile={attachedFile} setAttachedFile={setAttachedFile} fileUrl={fileUrl} />
+                    <DropZone dropText={'Upload your file'} attachedFile={attachedFile} setAttachedFile={setAttachedFile} fileUrl={fileUrl} />
                     <div className="d-flex justify-content-center mt-2">
                       {attachedFile && attachedFile.length > 1 ? (
                         'Upload just one file'
