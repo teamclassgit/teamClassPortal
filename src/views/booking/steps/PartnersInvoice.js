@@ -28,7 +28,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [isOtherOption, setIsOtherOption] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [attachedFile, setAttachedFile] = useState([]);
-  const [fileUrl, setFileUrl] = useState(null);
+  const [fileUrl, setFileUrl] = useState(booking.instructorInvoice && booking.instructorInvoice.paymentReceipt);
   const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
 
   const calendarEventDate = moment(getEventFullDate(calendarEvent)).format('LL');
