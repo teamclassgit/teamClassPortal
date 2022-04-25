@@ -256,15 +256,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         </div>
                         <div className="d-flex justify-content-end">
                           <small>
-                            <a
-                              href={
-                                booking.instructorInvoice && booking.instructorInvoice.paymentReceipt
-                                  ? booking.instructorInvoice.paymentReceipt
-                                  : fileUrl
-                              }
-                              target="_blank"
-                              className="pop-up-payment-link"
-                            >
+                            <a href={fileUrl} target="_blank" className="pop-up-payment-link">
                               Payment receipt
                             </a>
                           </small>
