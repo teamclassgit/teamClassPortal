@@ -99,6 +99,8 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     }
   }, [fileUrl]);
 
+  console.log('fileUrl', fileUrl);
+
   return (
     <Fragment>
       <div className="header-container">
@@ -255,7 +257,11 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         <div className="d-flex justify-content-end">
                           <small>
                             <a
-                              href={fileUrl || (booking.instructorInvoice && booking.instructorInvoice.paymentReceipt)}
+                              href={
+                                booking.instructorInvoice && booking.instructorInvoice.paymentReceipt
+                                  ? booking.instructorInvoice.paymentReceipt
+                                  : fileUrl
+                              }
                               target="_blank"
                               className="pop-up-payment-link"
                             >
