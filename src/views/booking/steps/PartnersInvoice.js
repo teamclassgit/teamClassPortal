@@ -28,7 +28,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [isOtherOption, setIsOtherOption] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [attachedFile, setAttachedFile] = useState([]);
-  const [fileUrl, setFileUrl] = useState(booking.instructorInvoice && booking.instructorInvoice.paymentReceipt);
+  const [fileUrl, setFileUrl] = useState(null);
   const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
 
   const calendarEventDate = moment(getEventFullDate(calendarEvent)).format('LL');
@@ -254,7 +254,11 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         </div>
                         <div className="d-flex justify-content-end">
                           <small>
-                            <a href={fileUrl} target="_blank" className="pop-up-payment-link">
+                            <a
+                              href={fileUrl || (booking.instructorInvoice && booking.instructorInvoice.paymentReceipt)}
+                              target="_blank"
+                              className="pop-up-payment-link"
+                            >
                               Payment receipt
                             </a>
                           </small>
@@ -401,7 +405,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 {isStripeOption && (
                   <div>
                     <small className="stripe-option-message">
-                      Stripe payment are not available yet. This feature will be available in the near future.
+                      Stripe payments are not available yet. This feature will be available in the near future.
                     </small>
                     <div className="d-flex justify-content-center">
                       <Button
