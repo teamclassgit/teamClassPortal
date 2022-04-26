@@ -1,6 +1,6 @@
 // @packages
 import React, { useState, useEffect, useCallback } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
@@ -760,14 +760,17 @@ const AllBookingsTable = () => {
     ];
   };
 
-  const onSelectionChange = useCallback(({ selected }) => {
-    setSelected(selected);
+  const onSelectionChange = useCallback(({ selected, data }) => {
+    if (selected === true) {
+      data.forEach(booking => setSelected(prev => ({...prev, [booking._id]: booking})));
+    } else {
+      setSelected(selected);
+    }
   }, []);
   const toArray = selected => Object.keys(selected);
 
   const selectedBookingsIds = toArray(selected);
 
-  console.log("all book", isOpenModal);
   return (
     <div>
       <TasksBar
