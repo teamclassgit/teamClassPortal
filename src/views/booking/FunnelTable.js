@@ -752,8 +752,12 @@ const FunnelTable = () => {
     ];
   };
 
-  const onSelectionChange = useCallback(({ selected }) => {
-    setSelected(selected);
+  const onSelectionChange = useCallback(({ selected, data }) => {
+    if (selected === true) {
+      data.forEach(booking => setSelected(prev => ({...prev, [booking._id]: booking})));
+    } else {
+      setSelected(selected);
+    }
   }, []);
   const toArray = selected => Object.keys(selected);
 
