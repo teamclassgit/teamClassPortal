@@ -15,7 +15,8 @@ import './partners-invoice.scss';
 
 const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [totalInvoice, setTotalInvoice] = useState(0);
-  const [isRejected, setIsRejected] = useState(false);
+  const [isRejected, setIsRejected] = useState(booking.instructorInvoice && booking.instructorInvoice.status === 'rejected' ? true : false);
+  const [isPaid, setIsPaid] = useState(booking.instructorInvoice && booking.instructorInvoice.status === 'paid' ? true : false);
   const [invoiceInstructorStatus, setInvoiceInstructorStatus] = useState(booking.instructorInvoice && booking.instructorInvoice.status);
   const [rejectedReasons, setRejectedReasons] = useState(null);
   const [processing, setProcessing] = useState(false);
@@ -26,9 +27,9 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [showModal, setShowModal] = useState(false);
   const [isStripeOption, setIsStripeOption] = useState(true);
   const [isOtherOption, setIsOtherOption] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
   const [attachedFile, setAttachedFile] = useState([]);
   const [fileUrl, setFileUrl] = useState(null);
+  const [isApprovedInvoice, setIsApprovedInvoice] = useState(false);
   const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
 
   const calendarEventDate = moment(getEventFullDate(calendarEvent)).format('LL');
@@ -51,18 +52,14 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     let newStatus = '';
     if (isPaid) {
       newStatus = 'paid';
-      setInvoiceInstructorStatus('paid');
-      console.log('PAID');
     } else if (!isRejected && !isPaid) {
       newStatus = 'approved';
-      setInvoiceInstructorStatus('approved');
       setRejectedReasons('');
-      console.log('APPROVED');
     } else {
       newStatus = 'rejected';
-      setInvoiceInstructorStatus('rejected');
-      console.log('REJECTED');
     }
+
+    setInvoiceInstructorStatus(newStatus);
 
     try {
       await updateBookingInvoiceInstructor({
@@ -102,10 +99,19 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     }
   }, [fileUrl]);
 
-  console.log('fileUrl', fileUrl);
-  console.log('invoiceInstructorStatus', invoiceInstructorStatus);
-  console.log('isRejected', isRejected);
-  console.log('isPaid', isPaid);
+  useEffect(() => {
+    if (isApprovedInvoice) {
+      handleSaveInfo();
+    }
+    setIsApprovedInvoice(false);
+  }, [isApprovedInvoice]);
+
+  const handleApprove = () => {
+    setIsRejected(false);
+    setShowPayInvoiceButton(true);
+    setRejectedReasons('');
+    setIsApprovedInvoice(true);
+  };
 
   return (
     <Fragment>
@@ -158,7 +164,15 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                       <Icon className="mb-1 event-confirmed-icon" fontSize={30} icon="akar-icons:circle-check" />
                     </span>
                     <h2 className="text-center mt-2 mb-2 font-weight-bold">Event Confirmed</h2>
-                    <p className="text-justify mb-2">Our partner has submitted a new invoice for this event.</p>
+                    {(invoiceInstructorStatus === 'submitted' ||
+                      invoiceInstructorStatus === 'approved' ||
+                      invoiceInstructorStatus === 'rejected ' ||
+                      invoiceInstructorStatus === 'paid ') && (
+                      <p className="text-justify mb-2">Our partner has submitted a new invoice for this event.</p>
+                    )}
+                    {invoiceInstructorStatus === 'created' && (
+                      <p className="text-justify mb-2">This is just a draft. Final invoice has not been summitted for approval.</p>
+                    )}
                   </CardBody>
                 </Card>
               </div>
@@ -229,67 +243,46 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                   </div>
                 </Col>
               </Row>
-
-              {!isRejected && !showPayInvoiceButton ? (
-                <Row>
-                  <Col lg={12}>
-                    {invoiceInstructorStatus !== 'paid' ? (
-                      <div className="button-container d-flex justify-content-end mt-2">
-                        {invoiceInstructorStatus !== 'rejected' && (
-                          <Button
-                            className="mr-2"
-                            onClick={(e) => {
-                              setIsRejected(true);
-                            }}
-                          >
-                            {'Reject'}
-                          </Button>
-                        )}
-                        <Button
-                          onClick={(e) => {
-                            setIsRejected(false);
-                            setShowPayInvoiceButton(true);
-                            handleSaveInfo();
-                          }}
-                        >
-                          {processing ? 'Saving' : 'Approve'}
-                        </Button>
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="d-flex justify-content-end mt-2">
-                          <Alert>This invoice has been paid!</Alert>
-                        </div>
-                        <div className="d-flex justify-content-end">
-                          <small>
-                            <a href={fileUrl || booking.instructorInvoice.paymentReceipt} target="_blank" className="pop-up-payment-link">
-                              Payment receipt
-                            </a>
-                          </small>
-                        </div>
-                      </div>
+              <Row>
+                <Col lg={12}>
+                  <div className="button-container d-flex justify-content-end mt-2">
+                    {invoiceInstructorStatus === 'submitted' && (
+                      <Button
+                        className="mr-2"
+                        onClick={(e) => {
+                          setIsRejected(true);
+                        }}
+                      >
+                        {'Reject'}
+                      </Button>
                     )}
+                    {(invoiceInstructorStatus === 'submitted' || invoiceInstructorStatus === 'rejected') && (
+                      <Button
+                        onClick={(e) => {
+                          handleApprove();
+                        }}
+                      >
+                        {processing ? 'Saving' : 'Approve'}
+                      </Button>
+                    )}
+                  </div>
+                </Col>
+
+                {invoiceInstructorStatus === 'paid' && (
+                  <Col lg={12}>
+                    <div className="d-flex justify-content-end mt-2">
+                      <Alert>This invoice has been paid!</Alert>
+                    </div>
+                    <div className="d-flex justify-content-end">
+                      <small>
+                        <a href={fileUrl || booking.instructorInvoice.paymentReceipt} target="_blank" className="pop-up-payment-link">
+                          Payment receipt
+                        </a>
+                      </small>
+                    </div>
                   </Col>
-                </Row>
-              ) : (
-                showPayInvoiceButton && (
-                  <Row>
-                    <Col lg={12}>
-                      <div className="d-flex justify-content-end mt-2">
-                        <Button
-                          color="primary"
-                          onClick={(e) => {
-                            setShowModal(!showModal);
-                            setIsPaid(true);
-                          }}
-                        >
-                          Pay Invoice
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                )
-              )}
+                )}
+              </Row>
 
               {isRejected && invoiceInstructorStatus !== 'rejected' && (
                 <Row className="mt-2">
@@ -317,7 +310,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         }}
                         disabled={!rejectedReasons}
                       >
-                        {processing ? 'Saving' : 'Save'}
+                        {'Save'}
                       </Button>
                       <Button className="small" onClick={(e) => setIsRejected(false)}>
                         Cancel
@@ -327,27 +320,33 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 </Row>
               )}
 
-              {isRejected && invoiceInstructorStatus === 'rejected' && rejectedReasons && (
-                <div>
-                  <div className="button-container d-flex justify-content-end mt-2">
-                    <Button
-                      onClick={(e) => {
-                        setIsRejected(false);
-                        setShowPayInvoiceButton(true);
-                        handleSaveInfo();
-                      }}
-                    >
-                      {processing ? 'Saving' : 'Approve'}
-                    </Button>
-                  </div>
-                  <Row className="mt-2">
-                    <Col lg={12} className="">
-                      <span>Rejected Reason: </span>
-                      <span className="text-justify">{rejectedReasons}</span>
-                    </Col>
-                  </Row>
-                </div>
+              {isRejected && invoiceInstructorStatus === 'rejected' && (
+                <Row className="mt-2">
+                  <Col lg={12} className="">
+                    <span>Rejected Reason: </span>
+                    <span className="text-justify">{rejectedReasons}</span>
+                  </Col>
+                </Row>
               )}
+
+              {showPayInvoiceButton && invoiceInstructorStatus === 'approved' && (
+                <Row>
+                  <Col lg={12}>
+                    <div className="d-flex justify-content-end mt-2">
+                      <Button
+                        color="primary"
+                        onClick={(e) => {
+                          setShowModal(!showModal);
+                          setIsPaid(true);
+                        }}
+                      >
+                        Pay Invoice
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              )}
+
               <Row className="">
                 <Col lg={12} className="">
                   {invoiceInstructorStatus === 'approved' && !isPaid && (
