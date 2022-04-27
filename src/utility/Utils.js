@@ -179,6 +179,7 @@ export const uploadFile = async (file) => {
     });
     result.url = url;
   } catch (err) {
+    console.log(err);
     result.error = err;
   }
 

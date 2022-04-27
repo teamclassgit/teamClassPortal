@@ -88,6 +88,7 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
     for (let i = 0; i < attachedFile.length; i++) {
       result = await uploadFile(attachedFile[i].successful[0].data);
       if (result.error) {
+        console.log(result.error);
         throw new Error(result.error);
       } else {
         setFileUrl(result.url);
