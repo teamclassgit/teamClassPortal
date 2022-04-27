@@ -433,14 +433,12 @@ const BoardCard = ({
 
         {showFinalPaymentLabel && (
           <CardFooter 
-            className={`card-board-footer pr-1 ${shippingTrackingLink || joinInfo?.joinUrl ? 
-              "justify-content-between" : 
-                "justify-content-end"}`}
+            className={"card-board-footer pr-1 justify-content-between"}
           >
             <div className="ml-1">
-              {shippingTrackingLink && (
+              {classVariant && classVariant?.hasKit && (shippingTrackingLink ? (
                 <a
-                className="mr-1"
+                  className="mr-1"
                   href={shippingTrackingLink}
                   target={'_blank'}
                   rel="noopener noreferrer"
@@ -448,8 +446,19 @@ const BoardCard = ({
                 >
                   <Avatar color="light-primary" size="sm" icon={<Truck size={18} />} />
                 </a>
-              )}
-              {joinInfo && joinInfo?.joinUrl && (
+              ) : (
+                <a
+                  className="mr-1"
+                  href="#"
+                  target={'_blank'}
+                  rel="noopener noreferrer"
+                  title={'Update Shipping Tracking'}
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <Avatar color="light-danger" size="sm" icon={<Truck size={18} />} />
+                </a>
+              ))}
+              {joinInfo && joinInfo?.joinUrl ? (
                 <a
                   href={joinInfo?.joinUrl}
                   target={'_blank'}
@@ -457,6 +466,16 @@ const BoardCard = ({
                   title={`password: ${joinInfo.password}`}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Video size={18} />} />
+                </a>
+              ) : (
+                <a
+                  href="#"
+                  target={'_blank'}
+                  rel="noopener noreferrer"
+                  title={"Update Conference Link"}
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <Avatar color="light-danger" size="sm" icon={<Video size={18} />} />
                 </a>
               )}
             </div>
