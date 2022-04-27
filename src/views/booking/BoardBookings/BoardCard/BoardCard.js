@@ -450,9 +450,7 @@ const BoardCard = ({
                 <a
                   className="mr-1"
                   href="#"
-                  target={'_blank'}
-                  rel="noopener noreferrer"
-                  title={'Update Shipping Tracking'}
+                  title={'Tracking link has not been provided'}
                   onClick={(e) => e.preventDefault()}
                 >
                   <Avatar color="light-danger" size="sm" icon={<Truck size={18} />} />
@@ -470,9 +468,7 @@ const BoardCard = ({
               ) : (
                 <a
                   href="#"
-                  target={'_blank'}
-                  rel="noopener noreferrer"
-                  title={"Update Conference Link"}
+                  title={"Conference link has not been provided"}
                   onClick={(e) => e.preventDefault()}
                 >
                   <Avatar color="light-danger" size="sm" icon={<Video size={18} />} />
