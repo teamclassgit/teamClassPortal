@@ -11,6 +11,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import Attendees from './steps/Attendees';
 import BookingCheckoutSummary from './steps/BookingCheckoutSummary';
 import DateTimeConfirmation from './steps/DateTimeConfirmation';
+import DistributorsInvoice from './steps/DistributorsInvoice';
 import InvoiceBuilder from './steps/InvoiceBuilder';
 import PartnersInvoice from './steps/PartnersInvoice';
 import Payments from './steps/Payments';
@@ -21,6 +22,8 @@ import queryClassById from '../../graphql/QueryClassById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
 import { RUSH_FEE } from '../../utility/Constants';
 import { getBookingTotals } from '../../services/BookingService';
+//@styles
+import './wizard-class-booking.scss';
 
 const WizardClassBooking = () => {
   const [attendees, setAttendees] = useState([]);
@@ -238,12 +241,26 @@ const WizardClassBooking = () => {
   ];
 
   const newSteps = [...steps];
-  newSteps.push({
-    id: 'partner-invoice',
-    title: 'Partner Invoice',
-    icon: <DollarSign size={18} />,
-    content: <PartnersInvoice booking={bookingInfo} calendarEvent={calendarEvent}></PartnersInvoice>
-  });
+
+  if (bookingInfo && bookingInfo.instructorInvoice) {
+    console.log('EXSITE INSTRUCTOR INVOICE');
+    newSteps.push({
+      id: 'partner-invoice',
+      title: 'Partner Invoice',
+      icon: <DollarSign size={18} />,
+      content: <PartnersInvoice booking={bookingInfo} calendarEvent={calendarEvent}></PartnersInvoice>
+    });
+  }
+  if (bookingInfo && bookingInfo.distributorInvoice) {
+    newSteps.push({
+      id: 'distributor-invoice',
+      title: 'Distributor Invoice',
+      icon: <DollarSign size={18} />,
+      content: <DistributorsInvoice booking={bookingInfo} calendarEvent={calendarEvent}></DistributorsInvoice>
+    });
+  }
+
+  console.log('newSteps', newSteps);
 
   const isRushDate = () => {
     return calendarEvent && calendarEvent.rushFee;
@@ -263,7 +280,7 @@ const WizardClassBooking = () => {
           <Wizard
             type="modern-horizontal"
             ref={ref}
-            steps={bookingInfo && bookingInfo.instructorInvoice ? newSteps : steps}
+            steps={newSteps}
             options={{
               linear: false
             }}

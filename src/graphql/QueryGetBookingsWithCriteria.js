@@ -86,6 +86,19 @@ export default gql`
           updatedAt
           paymentReceipt
         }
+        distributorInvoice {
+          createdAt
+          invoiceItems {
+            description
+            price
+            units
+          }
+          notes
+          rejectedReasons
+          status
+          updatedAt
+          paymentReceipt
+        }
         shippingTrackingLink
         joinInfo {
           eventId

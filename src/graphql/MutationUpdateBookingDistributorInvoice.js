@@ -1,14 +1,35 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query GetBooking($bookingId: String!) {
-    booking(query: { _id: $bookingId }) {
+  mutation updateBooking(
+    $bookingId: String!
+    $status: String
+    $rejectedReasons: String
+    $createdAt: DateTime
+    $updatedAt: DateTime
+    $invoiceItems: [BookingDistributorInvoiceInvoiceItemUpdateInput]
+    $notes: String
+    $paymentReceipt: String
+  ) {
+    updateOneBooking(
+      query: { _id: $bookingId }
+      set: {
+        distributorInvoice: {
+          status: $status
+          rejectedReasons: $rejectedReasons
+          createdAt: $createdAt
+          invoiceItems: $invoiceItems
+          notes: $notes
+          updatedAt: $updatedAt
+          paymentReceipt: $paymentReceipt
+        }
+      }
+    ) {
       _id
       date
       expirationHours
       teamClassId
       eventCoordinatorId
-      hasInternationalAttendees
       classVariant {
         title
         notes
@@ -20,12 +41,6 @@ export default gql`
         order
         active
         groupEvent
-        kitHasAlcohol
-      }
-      notes {
-        note
-        author
-        date
       }
       addons {
         icon
@@ -77,13 +92,11 @@ export default gql`
       salesTaxState
       discount
       status
-      closedReason
       eventLink
       signUpStatusLink
       checkoutLink
       taxExempt
       ccFeeExempt
-      capRegistration
       invoiceDetails {
         item
         unitPrice
@@ -122,7 +135,6 @@ export default gql`
       createdAt
       createdAt
       updatedAt
-      signUpDeadline
     }
   }
 `;
