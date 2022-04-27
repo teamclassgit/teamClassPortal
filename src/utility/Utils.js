@@ -171,7 +171,6 @@ export const uploadFile = async (file) => {
   const { type: mimeType } = file;
   const key = `images/${uuid()}${file.name}`;
   const url = `${process.env.REACT_APP_PUBLIC_S3_BASEURL}/${key}`;
-  console.log('url', url);
   const result = { url: '', error: '' };
   try {
     await Storage.put(key, file, {
@@ -179,7 +178,6 @@ export const uploadFile = async (file) => {
     });
     result.url = url;
   } catch (err) {
-    console.log(err);
     result.error = err;
   }
 

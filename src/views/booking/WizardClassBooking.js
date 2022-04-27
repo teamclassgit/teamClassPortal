@@ -243,7 +243,6 @@ const WizardClassBooking = () => {
   const newSteps = [...steps];
 
   if (bookingInfo && bookingInfo.instructorInvoice) {
-    console.log('EXSITE INSTRUCTOR INVOICE');
     newSteps.push({
       id: 'partner-invoice',
       title: 'Partner Invoice',
@@ -259,8 +258,6 @@ const WizardClassBooking = () => {
       content: <DistributorsInvoice booking={bookingInfo} calendarEvent={calendarEvent}></DistributorsInvoice>
     });
   }
-
-  console.log('newSteps', newSteps);
 
   const isRushDate = () => {
     return calendarEvent && calendarEvent.rushFee;

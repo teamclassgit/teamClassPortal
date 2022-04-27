@@ -166,8 +166,8 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                     <h2 className="text-center mt-2 mb-2 font-weight-bold">Event Confirmed</h2>
                     {(invoiceInstructorStatus === 'submitted' ||
                       invoiceInstructorStatus === 'approved' ||
-                      invoiceInstructorStatus === 'rejected ' ||
-                      invoiceInstructorStatus === 'paid ') && (
+                      invoiceInstructorStatus === 'rejected' ||
+                      invoiceInstructorStatus === 'paid') && (
                       <p className="text-justify mb-2">Our partner has submitted a new invoice for this event.</p>
                     )}
                     {invoiceInstructorStatus === 'created' && (

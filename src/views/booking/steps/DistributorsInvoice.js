@@ -59,10 +59,7 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
       newStatus = 'rejected';
     }
 
-    console.log('newStatus', newStatus);
-
     setInvoiceDistributorStatus(newStatus);
-    console.log('ENTRNADO A LA MUTATIOM');
 
     try {
       await updateBookingInvoiceDistributor({
@@ -88,7 +85,6 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
     for (let i = 0; i < attachedFile.length; i++) {
       result = await uploadFile(attachedFile[i].successful[0].data);
       if (result.error) {
-        console.log(result.error);
         throw new Error(result.error);
       } else {
         setFileUrl(result.url);
@@ -170,8 +166,8 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
                     <h2 className="text-center mt-2 mb-2 font-weight-bold">Event Confirmed</h2>
                     {(invoiceDistributorStatus === 'submitted' ||
                       invoiceDistributorStatus === 'approved' ||
-                      invoiceDistributorStatus === 'rejected ' ||
-                      invoiceDistributorStatus === 'paid ') && (
+                      invoiceDistributorStatus === 'rejected' ||
+                      invoiceDistributorStatus === 'paid') && (
                       <p className="text-justify mb-2">Our customer has submitted a new invoice for this event.</p>
                     )}
                     {invoiceDistributorStatus === 'created' && (
