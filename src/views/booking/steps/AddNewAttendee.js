@@ -161,7 +161,11 @@ const AddNewAttendee = ({
     )
       ? true
       : false;
-    if (isShippingAlcohol || country !== ('United States of America' || 'USA' || 'usa' || 'us' || 'US')) {
+    const countryLC = country.toLowerCase();
+    if (
+      isShippingAlcohol ||
+      !(countryLC === 'united states of america' || countryLC === 'usa' || countryLC === 'us' || countryLC === 'united states')
+    ) {
       setMessageAlert("Notice: kit contains alcohol and can't be delivered to your address due to shipping restrictions.");
       return { canDeliverKit: false, canDeliverKitReason: 'Alcohol can not be delivery to shipping address' };
     } else {
