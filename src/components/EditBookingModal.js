@@ -26,7 +26,7 @@ import Select from 'react-select';
 import classnames from 'classnames';
 import moment from 'moment';
 import { useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck } from 'react-feather';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck, List } from 'react-feather';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
@@ -51,6 +51,7 @@ import {
 
 // @styles
 import './EditBookingModal.scss';
+import { set } from 'lodash';
 
 const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted }) => {
   const [active, setActive] = useState('1');
@@ -87,6 +88,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     trackingLink: true,
     joinUrl: true
   });
+  const [classOptionsTags, setClassOptionsTags] = useState([]);
+  const [individualTag, setIndividualTag] = useState('');
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -127,6 +130,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setIsGroupVariant(currentElement.classVariant && currentElement.classVariant.groupEvent ? true : false);
     setClassVariantsOptions(filteredClass.variants);
     setDistributorId(currentElement?.distributorId);
+    setClassOptionsTags(currentElement?.additionalClassOptions || []);
   }, [currentElement]);
 
   useEffect(() => {
@@ -247,7 +251,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId ? false : true
+          distributorId_unset: distributorId ? false : true,
+          additionalClassOptions: classOptionsTags
         }
       });
 
@@ -374,7 +379,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId ? false : true
+          distributorId_unset: distributorId ? false : true,
+          additionalClassOptions: classOptionsTags
         }
       });
 
@@ -450,6 +456,23 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       fontSize: 12
     })
   };
+
+  const handleAddition = (e) => {
+    if (e.key === "Enter") {
+      setIndividualTag('');
+      const tag = {
+        id: e.target.value,
+        text: e.target.value
+      };
+      setClassOptionsTags([...classOptionsTags, tag]);
+    }
+  };
+
+  const handleDelete = (i) => {
+    setClassOptionsTags(classOptionsTags.filter((_, index) => index !== i));
+  };
+
+  console.log(classOptionsTags.length);
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
@@ -1006,6 +1029,36 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 />
               </InputGroup>
             </FormGroup>
+
+            <FormGroup>
+              <Label for="classOptions">Additional class options</Label>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <List size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  type="text"
+                  id="classOptions"
+                  name="classOptions"
+                  placeholder="New options"
+                  disabled={classOptionsTags.length >= 20 ? true : false}
+                  onChange={(e) => setIndividualTag(e.target.value)}
+                  value={individualTag}
+                  onKeyDown={handleAddition}
+                />
+              </InputGroup>
+            </FormGroup>
+
+            <div className="pb-2">
+              {classOptionsTags && classOptionsTags.map((tag, index) => (
+                <span className='tags mb-1'>
+                  {tag.text}
+                  <a href="#" className='pl-1' onClick={() => handleDelete(index)}>x</a>
+                </span>
+              ))}
+            </div>
 
             {editMode && (
               <div align="center">

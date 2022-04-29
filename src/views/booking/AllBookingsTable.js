@@ -699,7 +699,6 @@ const AllBookingsTable = () => {
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
-    console.log('filters', filters);
     const response = await apolloClient.query({
       query: queryGetBookingsWithCriteria,
       fetchPolicy: 'network-only',
@@ -767,6 +766,7 @@ const AllBookingsTable = () => {
       setSelected(selected);
     }
   }, []);
+
   const toArray = selected => Object.keys(selected);
 
   const selectedBookingsIds = toArray(selected);
