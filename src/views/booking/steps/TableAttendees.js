@@ -181,7 +181,7 @@ const DataTableAttendees = ({
             attendeeInfo.country
           ];
 
-          attendeeInfo.additionalFields?.forEach((dynamicField) => row.push(dynamicField.value));
+          attendeeInfo?.additionalFields?.forEach((dynamicField) => row.push(dynamicField.value));
 
           if (attendeeInfo.canDeliverKitReason) row.push(attendeeInfo.canDeliverKitReason);
 
@@ -250,8 +250,6 @@ const DataTableAttendees = ({
       previousClassName="page-item prev"
       previousLinkClassName="page-link"
       pageLinkClassName="page-link"
-      breakClassName="page-item"
-      breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
     />
   );
@@ -412,6 +410,7 @@ const DataTableAttendees = ({
         setData={setData}
         updateAttendeesCount={updateAttendeesCount}
         teamClassInfo={teamClassInfo}
+        booking={booking}
       />
       <Modal isOpen={deleteModal} toggle={() => setDeleteModal(!deleteModal)} backdrop={false} className="modal-dialog-centered border-0">
         <ModalHeader toggle={() => setDeleteModal(!deleteModal)} close={CloseBtn}>
