@@ -31,7 +31,7 @@ import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
-import { getAllDataToExport, getBookingAndCalendarEventById, closeManyBookingsOneReason } from '../../services/BookingService';
+import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
 
 const renderRowDetails = ({ data }) => {
@@ -88,7 +88,9 @@ const AllBookingsTable = () => {
   };
 
   const toggle = () => {
-    setOrFilters([]);
+    if (isOpenModal) {
+      setSortInfo({ dir: 1, id: 'createdAt', name: 'createdAt', type: 'date' });
+    }
     setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
     setIsOpenModal(!isOpenModal);
   };
