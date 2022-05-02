@@ -160,7 +160,7 @@ const DataTableAttendees = ({
         // setRegistrationFields(fields.filter((element) => element.active === true));
 
         const attendeesArray = [];
-        const headers = ['Name', 'Email', 'Phone', 'Address1', 'Address2', 'City', 'State', 'Zip', 'Country'];
+        const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country'];
         fields.forEach((dynamicField) => headers.push(dynamicField.label));
         teamClassInfo.variants.map((item) => {
           if (item.kitHasAlcohol) headers.push('Delivery Restriction');
