@@ -133,12 +133,9 @@ const WizardClassBooking = () => {
     const initialDepositPaid = bookingTotals.customDeposit
       ? bookingTotals.customDeposit
       : depositsPaid && depositsPaid.length > 0
-        ? depositsPaid.reduce(
-          (previous, current) => previous + current.amount,
-          0
-        ) / 100
-        : 0; //amount is in cents
-        
+      ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100
+      : 0; //amount is in cents
+
     const finalPayment = bookingTotals.finalValue - initialDepositPaid;
     setInitialDeposit(initialDepositPaid.toFixed(2));
     setPayment(finalPayment.toFixed(2));
@@ -169,7 +166,6 @@ const WizardClassBooking = () => {
           classId: bookingInfo.teamClassId
         }
       });
-
     }
   }, [bookingInfo]);
 
@@ -263,7 +259,7 @@ const WizardClassBooking = () => {
     if (bookingInfo) getTotals();
   }, [bookingInfo, calendarEvent, tax]);
 
-  return bookingInfo && customer && teamClass ? (
+  return bookingInfo && teamClass ? (
     <Row>
       <Col xs={12}>
         <Breadcrumbs breadCrumbActive={id} breadCrumbParent="Bookings" breadCrumbTitle="" noHome removeRightOptions />

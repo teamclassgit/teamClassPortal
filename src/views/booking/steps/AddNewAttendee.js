@@ -101,7 +101,6 @@ const AddNewAttendee = ({
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
   };
-
   useEffect(() => {
     if (newState || newCountry) {
       const alcoholVariant = teamClassInfo.variants.map((item) => item.kitHasAlcohol);
@@ -162,7 +161,11 @@ const AddNewAttendee = ({
     )
       ? true
       : false;
-    if (isShippingAlcohol || (country && country !== 'United States of America')) {
+    const countryLC = country.toLowerCase();
+    if (
+      isShippingAlcohol ||
+      !(countryLC === 'united states of america' || countryLC === 'usa' || countryLC === 'us' || countryLC === 'united states')
+    ) {
       setMessageAlert("Notice: kit contains alcohol and can't be delivered to your address due to shipping restrictions.");
       return { canDeliverKit: false, canDeliverKitReason: 'Alcohol can not be delivery to shipping address' };
     } else {
@@ -230,7 +233,7 @@ const AddNewAttendee = ({
 
   useEffect(() => {
     if (currentElement) {
-      setDynamicValues(currentElement.additionalFields);
+      setDynamicValues(currentElement?.additionalFields);
       setNewAddress1(currentElement.addressLine1);
       setNewAddress2(currentElement.addressLine2);
       setNewCity(currentElement.city);

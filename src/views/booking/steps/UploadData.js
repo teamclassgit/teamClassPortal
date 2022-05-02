@@ -12,7 +12,7 @@ import '@uppy/status-bar/dist/style.css';
 import '@styles/react/libs/file-uploader/file-uploader.scss';
 import { v4 as uuid } from 'uuid';
 
-const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, setData, updateAttendeesCount, teamClassInfo }) => {
+const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, setData, updateAttendeesCount, teamClassInfo, booking }) => {
   const [file, setFile] = useState(null);
   const [errors, setErrors] = useState([]);
   const [showErrors, setShowErrors] = useState(false);
@@ -43,6 +43,23 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
             order: teamClassInfo.registrationFields[dynamicField].order,
             value: fileData[i][teamClassInfo.registrationFields[dynamicField].label] || ''
           });
+        }
+        if (booking?.classVariant?.registrationFields) {
+          for (const dynamicField in booking?.classVariant?.registrationFields) {
+            newAttendee.additionalFields.push({
+              name: booking?.classVariant?.registrationFields[dynamicField].label,
+              order: booking?.classVariant?.registrationFields[dynamicField].order,
+              value: fileData[i][booking?.classVariant?.registrationFields[dynamicField].label]
+            });
+          }
+        } else {
+          for (const dynamicField in booking.signUpPageSettings?.additionalRegistrationFields) {
+            newAttendee.additionalFields.push({
+              name: booking?.signUpPageSettings?.additionalRegistrationFields[dynamicField].label,
+              order: booking?.signUpPageSettings?.additionalRegistrationFields[dynamicField].order,
+              value: fileData[i][booking?.signUpPageSettings?.additionalRegistrationFields[dynamicField].label]
+            });
+          }
         }
         const row = await saveAttendee(newAttendee);
         newData.push(row);
@@ -134,6 +151,24 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
         prop: teamClassInfo.registrationFields[dynamicField].label
       }
     });
+  }
+
+  if (booking?.classVariant?.registrationFields) {
+    for (const dynamicField in booking?.classVariant?.registrationFields) {
+      Object.assign(schema, {
+        [booking?.classVariant?.registrationFields[dynamicField].label]: {
+          prop: booking?.classVariant?.registrationFields[dynamicField].label
+        }
+      });
+    }
+  } else {
+    for (const dynamicField in booking.signUpPageSettings?.additionalRegistrationFields) {
+      Object.assign(schema, {
+        [booking?.signUpPageSettings?.additionalRegistrationFields[dynamicField].label]: {
+          prop: booking?.signUpPageSettings?.additionalRegistrationFields[dynamicField].label
+        }
+      });
+    }
   }
 
   uppy.on('complete', (result) => {
