@@ -51,7 +51,6 @@ import {
 
 // @styles
 import './EditBookingModal.scss';
-import { set } from 'lodash';
 
 const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted }) => {
   const [active, setActive] = useState('1');
@@ -128,7 +127,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setJoinLink(currentElement.joinInfo && currentElement.joinInfo.joinUrl);
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
     setIsGroupVariant(currentElement.classVariant && currentElement.classVariant.groupEvent ? true : false);
-    setClassVariantsOptions(filteredClass.variants);
+    setClassVariantsOptions(filteredClass?.variants);
     setDistributorId(currentElement?.distributorId);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
   }, [currentElement]);

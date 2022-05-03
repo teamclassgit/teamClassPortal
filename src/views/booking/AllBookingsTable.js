@@ -1,6 +1,6 @@
 // @packages
 import React, { useState, useEffect, useCallback } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
@@ -31,7 +31,7 @@ import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
-import { getAllDataToExport, getBookingAndCalendarEventById, closeManyBookingsOneReason } from '../../services/BookingService';
+import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
 
 const renderRowDetails = ({ data }) => {
@@ -88,7 +88,9 @@ const AllBookingsTable = () => {
   };
 
   const toggle = () => {
-    setOrFilters([]);
+    if (isOpenModal) {
+      setSortInfo({ dir: 1, id: 'createdAt', name: 'createdAt', type: 'date' });
+    }
     setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
     setIsOpenModal(!isOpenModal);
   };
@@ -759,8 +761,12 @@ const AllBookingsTable = () => {
     ];
   };
 
-  const onSelectionChange = useCallback(({ selected }) => {
-    setSelected(selected);
+  const onSelectionChange = useCallback(({ selected, data }) => {
+    if (selected === true) {
+      data.forEach(booking => setSelected(prev => ({...prev, [booking._id]: booking})));
+    } else {
+      setSelected(selected);
+    }
   }, []);
 
   const toArray = selected => Object.keys(selected);
