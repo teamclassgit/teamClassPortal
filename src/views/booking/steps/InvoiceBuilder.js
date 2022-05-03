@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import NumberInput from '@components/number-input';
 import { DollarSign, MinusCircle, PlusCircle } from 'react-feather';
 import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, RUSH_FEE, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
-import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText, InputGroup } from 'reactstrap';
+import { Alert, Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText, InputGroup } from 'reactstrap';
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
 import Avatar from '@components/avatar';
@@ -365,7 +365,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
 
       {booking && booking.status !== BOOKING_CLOSED_STATUS && (
         <div>
-          {!moment(booking.signUpDeadline).isAfter(moment()) && (
+          {!moment(booking.signUpDeadline).isAfter(moment()) ? (
             <div className="d-flex justify-content-between">
               <span>
                 <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
@@ -382,6 +382,12 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                 <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
               </Button.Ripple>
             </div>
+          ) : (
+            <Col lg={12}>
+              <Alert className="text-center">
+                You would be able to save a final invoice to charge the customer after {moment(booking.signUpDeadline).format('LLL')}.
+              </Alert>
+            </Col>
           )}
         </div>
       )}
