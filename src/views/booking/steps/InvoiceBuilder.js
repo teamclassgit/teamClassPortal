@@ -385,7 +385,8 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           ) : (
             <Col lg={12}>
               <Alert className="text-center">
-                You would be able to save a final invoice to charge the customer after {moment(booking.signUpDeadline).format('LLL')}.
+                Final headcount is yet to be confirmed. You would be able to save a final invoice to charge the customer after{' '}
+                {moment(booking.signUpDeadline).format('LLL')}.
               </Alert>
             </Col>
           )}
