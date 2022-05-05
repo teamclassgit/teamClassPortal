@@ -36,7 +36,6 @@ import TasksBar from '../../components/TasksBar';
 import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
 
-
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
 };
@@ -584,6 +583,71 @@ const FunnelTable = () => {
           return <span className="float-left">{value ? "Yes" : "No"}</span>;
         }
       }
+    },
+    {
+      name: 'utm_campaign',
+      header: 'Utm Compaign',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_source',
+      header: 'Utm Source',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_medium',
+      header: 'Utm Medium',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_content',
+      header: 'Utm Content',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_term',
+      header: 'Utm Term',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
     }
   ];
 
@@ -666,7 +730,12 @@ const FunnelTable = () => {
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
         { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined}
+        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined},
+        { name: 'utm_campaign', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_source', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_content', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_term', type: 'string', operator: 'contains', value: '' }
       ];
     }
 

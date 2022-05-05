@@ -56,6 +56,11 @@ export default gql`
         customerTags
         gclid
         instantBooking
+        utm_campaign
+        utm_source
+        utm_medium
+        utm_content
+        utm_term
         payments {
           amount
           createdAt
