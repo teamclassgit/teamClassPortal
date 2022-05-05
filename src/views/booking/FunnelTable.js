@@ -27,6 +27,7 @@ import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCrit
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
+import queryAllInstructors from '../../graphql/QueryAllInstructors';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import BookingsTableStatusCards from './BookingsTableStatusCards';
@@ -67,6 +68,7 @@ const FunnelTable = () => {
   const [customers, setCustomers] = useState([]);
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
+  const [instructors, setInstructors] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
   const [orFilters, setOrFilters] = useState([]);
   const [sortInfo, setSortInfo] = useState({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
@@ -618,6 +620,14 @@ const FunnelTable = () => {
     pollInterval: 200000
   });
 
+  useQuery(queryAllInstructors, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      if (data) setInstructors(data.instructors);
+    },
+    pollInterval: 200000
+  });
+
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
   useEffect(() => {
@@ -825,6 +835,7 @@ const FunnelTable = () => {
         handleModal={handleEditModal}
         currentElement={currentElement}
         allCoordinators={coordinators}
+        allInstructors={instructors}
         allClasses={classes}
         handleClose={() => setCurrentElement({})}
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}
