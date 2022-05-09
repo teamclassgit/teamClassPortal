@@ -67,6 +67,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [coordinatorName, setCoordinatorName] = useState(null);
   const [instructorId, setInstructorId] = useState(null);
   const [instructorName, setInstructorName] = useState(null);
+  const [instructorAndAdditionals, setInstructorAndAdditionals] = useState([]);
   const [customerCompany, setCustomerCompany] = useState(null);
   const [customerEmail, setCustomerEmail] = useState(null);
   const [customerName, setCustomerName] = useState(null);
@@ -135,6 +136,12 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setClassVariantsOptions(filteredClass?.variants);
     setDistributorId(currentElement?.distributorId);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
+
+    if (teamClass && teamClass?.additionalInstructors) {
+      setInstructorAndAdditionals([...teamClass?.additionalInstructors, teamClass?.instructorId]);
+    } else {
+      setInstructorAndAdditionals([teamClass?.instructorId]);
+    }
   }, [currentElement]);
 
   useEffect(() => {
@@ -609,7 +616,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 }}
                 options={
                   allInstructors &&
-                  allInstructors.map((instructor) => {
+                  allInstructors.filter(instructor => (instructorAndAdditionals?.includes(instructor._id)))
+                  .map((instructor) => {
                     return {
                       value: instructor._id,
                       label: instructor.name
