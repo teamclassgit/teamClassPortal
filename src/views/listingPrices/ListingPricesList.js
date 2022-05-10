@@ -230,7 +230,7 @@ const ListingPricesList = () => {
       const filterData = data.find((item) => item.tableId === rowId);
       console.log('filterData', filterData);
 
-      if (columnId === 'instructorPrice') {
+      if (columnId === 'pricePerson') {
         if (filterData && filterData.variant.groupEvent) {
           filterData.priceTier.price = value;
         } else {
