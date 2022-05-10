@@ -1,22 +1,29 @@
 /* eslint-disable no-unused-expressions */
 // @packages
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { useQuery, useMutation } from '@apollo/client';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
 import '@inovua/reactdatagrid-enterprise/index.css';
+import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
+import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
 
 // @scripts
 import mutationUpdateClassListingPrices from '../../graphql/MutationUpdateClassListingPrices';
 import queryAllClassesForListingPrice from '../../graphql/QueryAllClassesForListingPrice';
+import queryAllInstructors from '../../graphql/QueryAllInstructors';
+
+import '../booking/BookingsTable.scss';
 
 const gridStyle = { minHeight: 600 };
 
 const ListingPricesList = () => {
+  const skin = useSelector((state) => state.bookingsBackground);
   const [teamClass, setTeamClass] = useState(null);
+  const [instructors, setInstructors] = useState(null);
   const [dataSource, setDataSource] = useState(null);
-  const [variantIndex, setVariantIndex] = useState(null);
 
   const genericFilter = {};
 
@@ -34,25 +41,27 @@ const ListingPricesList = () => {
       type: 'string',
       defaultVisible: false,
       editable: false,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="">{value}</span>;
       }
     },
     {
       name: 'title',
-      header: 'Listing Class',
+      header: 'Listing \nClass',
       type: 'string',
+      defaultWidth: 250,
       editable: false,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="">{value}</span>;
       }
     },
     {
       name: 'variantTitle',
       header: 'Variant',
+      defaultWidth: 180,
       type: 'string',
       editable: false,
-      render: ({ value, cellProps }) => {
+      render: ({ cellProps }) => {
         return <span className="">{cellProps.data.variant.title}</span>;
       }
     },
@@ -61,7 +70,7 @@ const ListingPricesList = () => {
       header: 'Person / Group',
       type: 'string',
       editable: false,
-      render: ({ value, cellProps }) => {
+      render: ({ cellProps }) => {
         return <span className="">{cellProps.data.variant.groupEvent ? 'Group' : 'Person'}</span>;
       }
     },
@@ -69,8 +78,9 @@ const ListingPricesList = () => {
       name: 'priceTiers',
       header: 'Tiers',
       type: 'string',
+      defaultWidth: 80,
       editable: false,
-      render: ({ value, cellProps }) => {
+      render: ({ cellProps }) => {
         return (
           <span className="">{cellProps.data.priceTier ? `${cellProps.data.priceTier.minimum} - ${cellProps.data.priceTier.maximum}` : ''}</span>
         );
@@ -80,7 +90,8 @@ const ListingPricesList = () => {
       name: 'pricePerson',
       header: 'Web Price',
       type: 'number',
-      render: ({ value, cellProps }) => {
+      defaultWidth: 118,
+      render: ({ cellProps }) => {
         return (
           <span className="float-right">
             $ {cellProps.data.variant.groupEvent ? cellProps.data.priceTier.price : cellProps.data.variant.pricePerson}
@@ -92,7 +103,7 @@ const ListingPricesList = () => {
       name: 'pricePersonInstructor',
       header: 'Instructor Price',
       type: 'number',
-      render: ({ value, cellProps }) => {
+      render: ({ cellProps }) => {
         return (
           <span className="float-right">
             {cellProps.data.variant.groupEvent && cellProps.data.priceTier.priceInstructor ? `$ ${cellProps.data.priceTier.priceInstructor}` : ''}
@@ -105,7 +116,7 @@ const ListingPricesList = () => {
       name: 'instructorFlatFee',
       header: 'Instructor Flat Fee',
       type: 'number',
-      render: ({ value, cellProps }) => {
+      render: ({ cellProps }) => {
         return (
           <span className="float-right">{cellProps.data.variant.instructorFlatFee ? `$ ${cellProps.data.variant.instructorFlatFee}` : ''} </span>
         );
@@ -116,17 +127,19 @@ const ListingPricesList = () => {
       header: 'Kit Included',
       type: 'string',
       editable: false,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">{cellProps.data.variant.hasKit ? 'Yes' : 'No'}</span>;
+      defaultWidth: 100,
+      render: ({ cellProps }) => {
+        return <span>{cellProps.data.variant.hasKit ? 'Yes' : 'No'}</span>;
       }
     },
     {
       name: 'variantActive',
       header: 'Variant status',
       type: 'string',
+      defaultWidth: 130,
       editable: false,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">{cellProps.data.variant.active ? 'Active' : 'Inactive'}</span>;
+      render: ({ cellProps }) => {
+        return <span>{cellProps.data.variant.active ? 'Active' : 'Inactive'}</span>;
       }
     },
     {
@@ -134,12 +147,22 @@ const ListingPricesList = () => {
       header: 'Published',
       type: 'string',
       editable: false,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">{value ? 'Yes' : 'No'}</span>;
+      defaultWidth: 115,
+      render: ({ value }) => {
+        return <span>{value ? 'Yes' : 'No'}</span>;
       }
     },
     { name: 'instructorName', header: 'Instructor Name', type: 'string', editable: false },
-    { name: 'instructorEmail', header: 'Instructor Email', type: 'string', editable: false }
+    {
+      name: 'instructorEmail',
+      header: 'Instructor Email',
+      type: 'string',
+      editable: false,
+      render: ({ cellProps }) => {
+        const classInstructor = instructors.find((item) => item._id === cellProps.data.instructorId);
+        return <span className="">{classInstructor && classInstructor.email}</span>;
+      }
+    }
   ];
 
   const { ...allTeamClasses } = useQuery(queryAllClassesForListingPrice, {
@@ -155,7 +178,18 @@ const ListingPricesList = () => {
     }
   });
 
-  console.log('columns', columns);
+  const { ...allInstructors } = useQuery(queryAllInstructors, {
+    fetchPolicy: 'no-cache',
+    pollInterval: 200000,
+    variables: {
+      filter: genericFilter
+    },
+    onCompleted: (data) => {
+      if (data) {
+        setInstructors(data.instructors);
+      }
+    }
+  });
 
   useEffect(() => {
     const newTeamClass = [];
@@ -171,6 +205,7 @@ const ListingPricesList = () => {
                 title: item.title,
                 isActive: item.isActive,
                 instructorName: item.instructorName,
+                instructorId: item.instructorId,
                 variantTitle: item2.title,
                 pricePerson: item2.pricePerson,
                 pricePersonInstructor: item2.pricePersonInstructor,
@@ -187,6 +222,7 @@ const ListingPricesList = () => {
                   title: item.title,
                   isActive: item.isActive,
                   instructorName: item.instructorName,
+                  instructorId: item.instructorId,
                   variantTitle: item2.title,
                   pricePerson: item3.price,
                   pricePersonInstructor: item3.priceInstructor,
@@ -201,13 +237,9 @@ const ListingPricesList = () => {
     setDataSource(newTeamClass);
   }, [teamClass]);
 
-  console.log('dataSource', dataSource);
-
   const updatePrices = async (newData) => {
-    console.log('newData', newData);
     const variantArray = teamClass.find((item) => item._id === newData._id).variants;
     variantArray[newData.variantIndex] = newData.variant;
-    console.log('variantArray', variantArray);
 
     try {
       const resultUpdatePrices = await updateClassListingPrices({
@@ -223,18 +255,13 @@ const ListingPricesList = () => {
 
   const onEditComplete = useCallback(
     ({ value, columnId, rowId }) => {
-      console.log('value', value);
-      console.log('columnId', columnId);
-      console.log('rowId', rowId);
       const data = [...dataSource];
       const filterData = data.find((item) => item.tableId === rowId);
-      console.log('filterData', filterData);
 
       if (columnId === 'pricePerson') {
         if (filterData && filterData.variant.groupEvent) {
           filterData.priceTier.price = value;
         } else {
-          console.log('filterData', filterData);
           filterData.variant.pricePerson = value;
         }
       }
@@ -242,7 +269,6 @@ const ListingPricesList = () => {
         if (filterData && filterData.variant.groupEvent) {
           filterData.priceTier.priceInstructor = value;
         } else {
-          console.log('filterData', filterData);
           filterData.variant.pricePersonInstructor = value;
         }
       }
@@ -251,14 +277,10 @@ const ListingPricesList = () => {
       }
 
       setDataSource(data);
-      setVariantIndex(filterData.variantIndex);
       updatePrices(filterData);
     },
     [dataSource]
   );
-
-  console.log('teamClass', teamClass);
-  console.log('variantIndex', variantIndex);
 
   return (
     teamClass &&
@@ -274,6 +296,7 @@ const ListingPricesList = () => {
           dataSource={dataSource}
           defaultFilterValue={filterValue}
           licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
+          theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
         />
       </div>
     )
