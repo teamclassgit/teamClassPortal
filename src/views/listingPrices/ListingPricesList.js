@@ -188,8 +188,8 @@ const ListingPricesList = () => {
                   isActive: item.isActive,
                   instructorName: item.instructorName,
                   variantTitle: item2.title,
-                  pricePerson: item2.pricePerson,
-                  pricePersonInstructor: item2.pricePersonInstructor,
+                  pricePerson: item3.price,
+                  pricePersonInstructor: item3.priceInstructor,
                   instructorFlatFee: item2.instructorFlatFee,
                   variant: item2,
                   priceTier: item3
