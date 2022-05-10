@@ -2,6 +2,7 @@
 // @packages
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { Spinner } from 'reactstrap';
 import { useQuery, useMutation } from '@apollo/client';
 
 //@reactdatagrid packages
@@ -283,10 +284,16 @@ const ListingPricesList = () => {
   );
 
   return (
-    teamClass &&
-    teamClass.length > 0 && (
-      <div>
-        <h3>All Classes</h3>
+    <div>
+      <h4>All Classes</h4>
+      {allTeamClasses.loading || allInstructors.loading ? (
+        <div>
+          <div>
+            <Spinner className="mr-25" />
+            <Spinner type="grow" />
+          </div>
+        </div>
+      ) : (
         <ReactDataGrid
           idProperty="tableId"
           style={gridStyle}
@@ -298,8 +305,8 @@ const ListingPricesList = () => {
           licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
           theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
         />
-      </div>
-    )
+      )}
+    </div>
   );
 };
 
