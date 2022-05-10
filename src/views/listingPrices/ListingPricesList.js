@@ -24,8 +24,7 @@ const ListingPricesList = () => {
 
   const filterValue = [
     { name: 'title', operator: 'contains', type: 'string', value: '' },
-    { name: 'variantTitle', operator: 'contains', type: 'string', value: '' },
-    { name: 'variantGroupEvent', operator: 'contains', type: 'string', value: '' }
+    { name: 'variantTitle', operator: 'contains', type: 'string', value: '' }
   ];
 
   const columns = [
@@ -43,7 +42,7 @@ const ListingPricesList = () => {
       name: 'title',
       header: 'Listing Class',
       type: 'string',
-      // editable: false,
+      editable: false,
       render: ({ value, cellProps }) => {
         return <span className="">{value}</span>;
       }
@@ -62,7 +61,6 @@ const ListingPricesList = () => {
       header: 'Person / Group',
       type: 'string',
       editable: false,
-
       render: ({ value, cellProps }) => {
         return <span className="">{cellProps.data.variant.groupEvent ? 'Group' : 'Person'}</span>;
       }
@@ -79,7 +77,7 @@ const ListingPricesList = () => {
       }
     },
     {
-      name: 'instructorPrice',
+      name: 'pricePerson',
       header: 'Web Price',
       type: 'number',
       render: ({ value, cellProps }) => {
@@ -117,6 +115,7 @@ const ListingPricesList = () => {
       name: 'variantHasKit',
       header: 'Kit Included',
       type: 'string',
+      editable: false,
       render: ({ value, cellProps }) => {
         return <span className="float-right">{cellProps.data.variant.hasKit ? 'Yes' : 'No'}</span>;
       }
@@ -125,6 +124,7 @@ const ListingPricesList = () => {
       name: 'variantActive',
       header: 'Variant status',
       type: 'string',
+      editable: false,
       render: ({ value, cellProps }) => {
         return <span className="float-right">{cellProps.data.variant.active ? 'Active' : 'Inactive'}</span>;
       }
@@ -133,12 +133,13 @@ const ListingPricesList = () => {
       name: 'isActive',
       header: 'Published',
       type: 'string',
+      editable: false,
       render: ({ value, cellProps }) => {
         return <span className="float-right">{value ? 'Yes' : 'No'}</span>;
       }
     },
-    { name: 'instructorName', header: 'Instructor Name', type: 'string' },
-    { name: 'instructorEmail', header: 'Instructor Email', type: 'string' }
+    { name: 'instructorName', header: 'Instructor Name', type: 'string', editable: false },
+    { name: 'instructorEmail', header: 'Instructor Email', type: 'string', editable: false }
   ];
 
   const { ...allTeamClasses } = useQuery(queryAllClassesForListingPrice, {
@@ -170,6 +171,10 @@ const ListingPricesList = () => {
                 title: item.title,
                 isActive: item.isActive,
                 instructorName: item.instructorName,
+                variantTitle: item2.title,
+                pricePerson: item2.pricePerson,
+                pricePersonInstructor: item2.pricePersonInstructor,
+                instructorFlatFee: item2.instructorFlatFee,
                 variant: item2
               });
             } else {
@@ -182,6 +187,10 @@ const ListingPricesList = () => {
                   title: item.title,
                   isActive: item.isActive,
                   instructorName: item.instructorName,
+                  variantTitle: item2.title,
+                  pricePerson: item2.pricePerson,
+                  pricePersonInstructor: item2.pricePersonInstructor,
+                  instructorFlatFee: item2.instructorFlatFee,
                   variant: item2,
                   priceTier: item3
                 });
@@ -190,25 +199,21 @@ const ListingPricesList = () => {
           });
       });
     setDataSource(newTeamClass);
-    // console.log(
-    //   'newTeamClass[tableId]',
-    //   newTeamClass.filter((item) => item.tableId === '076723c7-f3d9-4142-b088-a6e49807c1b10')
-    // );
   }, [teamClass]);
 
-  // console.log('newTeamClass', newTeamClass);
-  // setTeamClass(newTeamClass);
   console.log('dataSource', dataSource);
 
-  const updatePrices = async (newData, isGroupEvent) => {
+  const updatePrices = async (newData) => {
     console.log('newData', newData);
-    const newVariantArray = dataSource.filter((item) => item._id === newData._id);
-    console.log('newVariant', newVariantArray);
+    const variantArray = teamClass.find((item) => item._id === newData._id).variants;
+    variantArray[newData.variantIndex] = newData.variant;
+    console.log('variantArray', variantArray);
+
     try {
       const resultUpdatePrices = await updateClassListingPrices({
         variables: {
-          id: newVariantArray[0]._id,
-          variants: isGroupEvent ? newData.variant : newVariantArray.map((item) => item.variant)
+          id: newData._id,
+          variants: variantArray
         }
       });
     } catch (ex) {
@@ -222,33 +227,32 @@ const ListingPricesList = () => {
       console.log('columnId', columnId);
       console.log('rowId', rowId);
       const data = [...dataSource];
-      const filterData = data.filter((item) => item.tableId === rowId);
+      const filterData = data.find((item) => item.tableId === rowId);
       console.log('filterData', filterData);
 
       if (columnId === 'instructorPrice') {
-        if (filterData && filterData[0].variant.groupEvent) {
-          filterData[0].priceTier.price = value;
+        if (filterData && filterData.variant.groupEvent) {
+          filterData.priceTier.price = value;
         } else {
           console.log('filterData', filterData);
-          filterData[0].variant.pricePerson = value;
+          filterData.variant.pricePerson = value;
         }
       }
       if (columnId === 'pricePersonInstructor') {
-        if (filterData && filterData[0].variant.groupEvent) {
-          filterData[0].priceTier.priceInstructor = value;
+        if (filterData && filterData.variant.groupEvent) {
+          filterData.priceTier.priceInstructor = value;
         } else {
           console.log('filterData', filterData);
-          filterData[0].variant.pricePersonInstructor = value;
+          filterData.variant.pricePersonInstructor = value;
         }
       }
-
       if (columnId === 'instructorFlatFee') {
-        filterData[0].variant.instructorFlatFee = value;
+        filterData.variant.instructorFlatFee = value;
       }
 
       setDataSource(data);
-      setVariantIndex(filterData[0].variantIndex);
-      updatePrices(filterData[0], filterData[0].variant.groupEvent);
+      setVariantIndex(filterData.variantIndex);
+      updatePrices(filterData);
     },
     [dataSource]
   );
