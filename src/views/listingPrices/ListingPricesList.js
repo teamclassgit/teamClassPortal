@@ -2,7 +2,9 @@
 // @packages
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Spinner } from 'reactstrap';
+import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown, Spinner } from 'reactstrap';
+import { FileText, Share } from 'react-feather';
+
 import { useQuery, useMutation } from '@apollo/client';
 
 //@reactdatagrid packages
@@ -12,6 +14,8 @@ import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
 import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
 
 // @scripts
+import { isUserLoggedIn, getUserData } from '@utils';
+import ExportToExcelLegacy from '../../components/ExportToExcelLegacy';
 import mutationUpdateClassListingPrices from '../../graphql/MutationUpdateClassListingPrices';
 import queryAllClassesForListingPrice from '../../graphql/QueryAllClassesForListingPrice';
 import queryAllInstructors from '../../graphql/QueryAllInstructors';
@@ -25,6 +29,8 @@ const ListingPricesList = () => {
   const [teamClass, setTeamClass] = useState(null);
   const [instructors, setInstructors] = useState(null);
   const [dataSource, setDataSource] = useState(null);
+  const [classVariantsExcelTable, setClassVariantsExcelTable] = useState([]);
+  const [userData, setUserData] = useState(null);
 
   const genericFilter = {};
 
@@ -238,6 +244,58 @@ const ListingPricesList = () => {
     setDataSource(newTeamClass);
   }, [teamClass]);
 
+  useEffect(() => {
+    if (dataSource) {
+      const classVariantsArray = [];
+      const headers = [
+        'id',
+        'title',
+        'variant',
+        'group/person',
+        'tiers',
+        'web price',
+        'isntructor price',
+        'instructor flat fee',
+        'has kit?',
+        'variant active?',
+        'class active?',
+        'instructor name',
+        'instructor email'
+      ];
+
+      classVariantsArray.push(headers);
+
+      for (const i in dataSource) {
+        const classInstructor = instructors.find((item) => item._id === dataSource[i].instructorId);
+        const row = [
+          dataSource[i]._id,
+          dataSource[i].title,
+          dataSource[i].variantTitle,
+          dataSource[i].variant.groupEvent ? 'Group' : 'Person',
+          dataSource[i].priceTier && `${dataSource[i].priceTier.minimum} - ${dataSource[i].priceTier.maximum}`,
+          dataSource[i].variant.groupEvent ? `$${dataSource[i].priceTier.price}` : `$${dataSource[i].variant.pricePerson}`,
+          dataSource[i].variant.groupEvent
+            ? dataSource[i].priceTier.priceInstructor && `$${dataSource[i].priceTier.priceInstructor}`
+            : dataSource[i].variant.pricePersonInstructor && `$${dataSource[i].variant.pricePersonInstructor}`,
+          dataSource[i].variant.instructorFlatFee && `$${dataSource[i].variant.instructorFlatFee}`,
+          dataSource[i].variant.hasKit ? 'Yes' : 'No',
+          dataSource[i].variant.active ? 'Yes' : 'No',
+          dataSource[i].isActive ? 'Yes' : 'No',
+          classInstructor && classInstructor.email
+        ];
+
+        classVariantsArray.push(row);
+      }
+      setClassVariantsExcelTable(classVariantsArray);
+    }
+  }, [dataSource]);
+
+  useEffect(() => {
+    if (isUserLoggedIn() !== null) {
+      setUserData(getUserData());
+    }
+  }, []);
+
   const updatePrices = async (newData) => {
     const variantArray = teamClass.find((item) => item._id === newData._id).variants;
     variantArray[newData.variantIndex] = newData.variant;
@@ -285,7 +343,28 @@ const ListingPricesList = () => {
 
   return (
     <div>
-      <h4>All Classes</h4>
+      <div className="d-flex justify-content-between mb-2">
+        <h4>All Classes</h4>
+        <UncontrolledButtonDropdown>
+          <DropdownToggle color="primary" caret outline title="Export">
+            <Share size={13} />
+          </DropdownToggle>
+          <DropdownMenu right>
+            <DropdownItem className="align-middle w-100">
+              <ExportToExcelLegacy
+                apiData={classVariantsExcelTable}
+                fileName={'Listing Prices'}
+                title={
+                  <h6 className="p-0">
+                    <FileText size={13} />
+                    {'Excel file'}
+                  </h6>
+                }
+              />
+            </DropdownItem>
+          </DropdownMenu>
+        </UncontrolledButtonDropdown>
+      </div>
       {allTeamClasses.loading || allInstructors.loading ? (
         <div>
           <div>
@@ -299,7 +378,7 @@ const ListingPricesList = () => {
           style={gridStyle}
           columns={columns}
           onEditComplete={onEditComplete}
-          editable={true}
+          editable={userData?.customData?.role === 'Admin' ? true : false}
           dataSource={dataSource}
           defaultFilterValue={filterValue}
           licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
