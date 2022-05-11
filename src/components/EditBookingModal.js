@@ -301,8 +301,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
         variables: {
           bookingId: currentElement._id,
           updatedAt: new Date(),
-          status: reOpenBookingStatus,
-          closedReason: currentElement.closedReason
+          status: reOpenBookingStatus
         }
       });
 
