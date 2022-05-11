@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  mutation updateBookingStatusToOpen($bookingId: String!, $status: String!, $updatedAt: DateTime!) {
-    updateOneBooking(query: { _id: $bookingId }, set: { status: $status, closedReason: "", updatedAt: $updatedAt }) {
+  mutation updateBookingStatusToOpen($bookingId: String!, $status: String!, $updatedAt: DateTime!, $closedReason: String) {
+    updateOneBooking(query: { _id: $bookingId }, set: { status: $status, closedReason: $closedReason, updatedAt: $updatedAt }) {
       _id
       teamClassId
       customerId
