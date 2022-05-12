@@ -1,4 +1,4 @@
-import { Archive, BookOpen, Book, Calendar, Gift, HelpCircle, Tag, Database, Activity, Filter } from 'react-feather';
+import { Archive, BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Activity, Filter } from 'react-feather';
 
 export default [
   {
@@ -48,5 +48,11 @@ export default [
     title: 'Gift Baskets',
     icon: <Gift size={20} />,
     navLink: '/giftBaskets'
+  },
+  {
+    id: 'checkout7',
+    title: 'Listing Prices',
+    icon: <Edit2 size={20} />,
+    navLink: '/listingPrices'
   }
 ];

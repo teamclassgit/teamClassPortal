@@ -457,7 +457,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   };
 
   const handleAddition = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       setIndividualTag('');
       const tag = {
         id: e.target.value,
@@ -618,10 +618,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
               <Label for="full-name">Event Details*</Label>
               <Select
                 styles={selectStyles}
-                isDisabled={
-                  currentElement.status === BOOKING_CLOSED_STATUS ? true : false ||
-                  currentElement.status !== BOOKING_QUOTE_STATUS
-                }
+                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false || currentElement.status !== BOOKING_QUOTE_STATUS}
                 theme={selectThemeColors}
                 className="react-select edit-booking-select-class"
                 classNamePrefix="select"
@@ -1049,12 +1046,15 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
             </FormGroup>
 
             <div className="pb-2">
-              {classOptionsTags && classOptionsTags.map((tag, index) => (
-                <span className='tags mb-1'>
-                  {tag.text}
-                  <a href="#" className='pl-1' onClick={() => handleDelete(index)}>x</a>
-                </span>
-              ))}
+              {classOptionsTags &&
+                classOptionsTags.map((tag, index) => (
+                  <span className="tags mb-1">
+                    {tag.text}
+                    <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
+                      x
+                    </a>
+                  </span>
+                ))}
             </div>
 
             {editMode && (
