@@ -27,6 +27,7 @@ import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCrit
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
+import queryAllInstructors from '../../graphql/QueryAllInstructors';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
@@ -62,6 +63,7 @@ const AllBookingsTable = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [elementToAdd, setElementToAdd] = useState({});
   const [customers, setCustomers] = useState([]);
+  const [instructors, setInstructors] = useState([]);
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
@@ -695,6 +697,14 @@ const AllBookingsTable = () => {
     pollInterval: 200000
   });
 
+  useQuery(queryAllInstructors, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      if (data) setInstructors(data.instructors);
+    },
+    pollInterval: 200000
+  });
+
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
   const applyFilters = () => {
@@ -919,6 +929,7 @@ const AllBookingsTable = () => {
         handleModal={handleEditModal}
         currentElement={currentElement}
         allCoordinators={coordinators}
+        allInstructors={instructors}
         allClasses={classes}
         handleClose={() => setCurrentElement({})}
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}

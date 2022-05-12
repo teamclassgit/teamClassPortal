@@ -52,7 +52,7 @@ import {
 // @styles
 import './EditBookingModal.scss';
 
-const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted }) => {
+const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted, allInstructors }) => {
   const [active, setActive] = useState('1');
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [bookingNotes, setBookingNotes] = useState([]);
@@ -65,6 +65,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [closedBookingReason, setClosedBookingReason] = useState(null);
   const [coordinatorId, setCoordinatorId] = useState(null);
   const [coordinatorName, setCoordinatorName] = useState(null);
+  const [instructorId, setInstructorId] = useState(null);
+  const [instructorName, setInstructorName] = useState(null);
+  const [instructorAndAdditionals, setInstructorAndAdditionals] = useState([]);
   const [customerCompany, setCustomerCompany] = useState(null);
   const [customerEmail, setCustomerEmail] = useState(null);
   const [customerName, setCustomerName] = useState(null);
@@ -102,6 +105,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
 
     const teamClass = allClasses.find((element) => element._id === currentElement.teamClassId);
     const coordinator = allCoordinators.find((element) => element._id === currentElement.eventCoordinatorId);
+    const instructor = allInstructors.find((element) => element._id === currentElement.instructorId);
     const customer = currentElement.customer;
     const filteredClass = allClasses.find((element) => element._id === teamClass?._id);
 
@@ -113,6 +117,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setClosedBookingReason(currentElement.closedReason);
     setCoordinatorId(coordinator?._id);
     setCoordinatorName(coordinator?.name);
+    setInstructorId(instructor?._id);
+    setInstructorName(instructor?.name);
     setCustomerCompany(customer?.company);
     setCustomerEmail(customer?.email);
     setCustomerName(customer?.name);
@@ -130,6 +136,12 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setClassVariantsOptions(filteredClass?.variants);
     setDistributorId(currentElement?.distributorId);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
+
+    if (teamClass && teamClass?.additionalInstructors) {
+      setInstructorAndAdditionals([...teamClass?.additionalInstructors, teamClass?.instructorId]);
+    } else {
+      setInstructorAndAdditionals([teamClass?.instructorId]);
+    }
   }, [currentElement]);
 
   useEffect(() => {
@@ -227,6 +239,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
           customerName,
+          instructorId,
+          instructorName,
           eventDate: new Date(),
           eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
@@ -358,6 +372,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           customerId: currentElement.customerId,
           customerName,
           eventDate: new Date(),
+          instructorId,
+          instructorName,
           eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
           attendees: groupSize,
@@ -584,6 +600,36 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   onChange={(e) => setCustomerCompany(e.target.value)}
                 />
               </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <Label>Event Instructor*</Label>
+              <Select
+                theme={selectThemeColors}
+                styles={selectStyles}
+                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                className="react-select edit-booking-select-instructor"
+                classNamePrefix="select"
+                placeholder="Select..."
+                value={{
+                  label: instructorName,
+                  value: instructorId
+                }}
+                options={
+                  allInstructors &&
+                  allInstructors.filter(instructor => (instructorAndAdditionals?.includes(instructor._id)))
+                  .map((instructor) => {
+                    return {
+                      value: instructor._id,
+                      label: instructor.name
+                    };
+                  })
+                }
+                onChange={(option) => {
+                  setInstructorId(option.value);
+                  setInstructorName(option.label);
+                }}
+                isClearable={false}
+              />
             </FormGroup>
             <FormGroup>
               <Label for="full-name">Event Coordinator*</Label>
