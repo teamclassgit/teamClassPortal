@@ -33,6 +33,7 @@ export default gql`
     $distributorId: String
     $distributorId_unset: Boolean
     $additionalClassOptions: [BookingAdditionalClassOptionUpdateInput]
+    $tags: [String]
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -100,6 +101,7 @@ export default gql`
         distributorId: $distributorId
         distributorId_unset: $distributorId_unset
         additionalClassOptions: $additionalClassOptions
+        tags: $tags
       }
     ) {
       _id
@@ -123,6 +125,7 @@ export default gql`
       checkoutLink
       taxExempt
       distributorId
+      tags
       payments {
         amount
         paymentId
