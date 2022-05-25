@@ -661,6 +661,19 @@ const AllBookingsTable = () => {
           return <span className="float-left">{value}</span>;
         }
       }
+    },
+    {
+      name: 'bookingTags',
+      header: 'Bookings Tags',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value.join(", ")}</span>;
+        }
+      }
     }
   ];
 
@@ -748,7 +761,8 @@ const AllBookingsTable = () => {
         { name: 'utm_source', type: 'string', operator: 'contains', value: '' },
         { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
         { name: 'utm_content', type: 'string', operator: 'contains', value: '' },
-        { name: 'utm_term', type: 'string', operator: 'contains', value: '' }
+        { name: 'utm_term', type: 'string', operator: 'contains', value: '' },
+        { name: 'bookingTags', type: 'string', operator: 'contains', value: '' }
       ];
     }
 
