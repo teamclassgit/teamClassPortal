@@ -1120,17 +1120,18 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
               </InputGroup>
             </FormGroup>
 
-            <div className="pb-2">
-              {classOptionsTags &&
-                classOptionsTags.map((tag, index) => (
+            {classOptionsTags &&
+              classOptionsTags.map((tag, index) => (
+                <div className="pb-2">
                   <span className="tags mb-1">
                     {tag.text}
                     <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
                       x
                     </a>
                   </span>
-                ))}
-            </div>
+                </div>
+              )
+            )}
 
             <FormGroup>
               <Label for="selectedtags">Tags</Label>
