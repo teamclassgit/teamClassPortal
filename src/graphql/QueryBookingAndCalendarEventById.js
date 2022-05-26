@@ -117,6 +117,7 @@ export default gql`
         id
         text
       }
+      tags
       invoiceDetails {
         item
         unitPrice

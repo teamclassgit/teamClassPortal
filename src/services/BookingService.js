@@ -164,7 +164,8 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'utm_source',
     'utm_medium',
     'utm_content',
-    'utm_term'
+    'utm_term',
+    'bookingTags'
   ];
 
   bookingsArray.push(headers);
@@ -212,7 +213,8 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.utm_source,
       element.utm_medium,
       element.utm_content,
-      element.utm_term
+      element.utm_term,
+      (isNotEmptyArray(element.bookingTags) ? element.bookingTags.join(", ") : "")
     ];
     bookingsArray.push(row);
   });

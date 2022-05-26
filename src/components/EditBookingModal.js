@@ -92,6 +92,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   });
   const [classOptionsTags, setClassOptionsTags] = useState([]);
   const [individualTag, setIndividualTag] = useState('');
+  const [bookingTags, setBookingTags] = useState([]);
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -265,7 +266,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
           distributorId_unset: distributorId ? false : true,
-          additionalClassOptions: classOptionsTags
+          additionalClassOptions: classOptionsTags,
+          tags: bookingTags
         }
       });
 
@@ -395,7 +397,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
           distributorId_unset: distributorId ? false : true,
-          additionalClassOptions: classOptionsTags
+          additionalClassOptions: classOptionsTags,
+          tags: bookingTags
         }
       });
 
@@ -472,6 +475,25 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     })
   };
 
+  const selectStylesTags = {
+    control: (base) => ({
+      ...base,
+      fontSize: 12
+    }),
+    option: (provided) => ({
+      ...provided,
+      borderBottom: '1px dotted',
+      padding: 10,
+      fontSize: 12
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      padding: 0,
+      paddingTop: 7,
+      fontSize: 12
+    })
+  };
+
   const handleAddition = (e) => {
     if (e.key === 'Enter') {
       setIndividualTag('');
@@ -486,6 +508,13 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const handleDelete = (i) => {
     setClassOptionsTags(classOptionsTags.filter((_, index) => index !== i));
   };
+
+  const tagsList = [
+    { value: 'manual', label: 'Manual' },
+    { value: 'spam', label: 'Spam' },
+    { value: 'drift', label: 'Drift' },
+    { value: 'referral', label: 'Referral' }
+  ];
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
@@ -1091,17 +1120,34 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
               </InputGroup>
             </FormGroup>
 
-            <div className="pb-2">
-              {classOptionsTags &&
-                classOptionsTags.map((tag, index) => (
+            {classOptionsTags &&
+              classOptionsTags.map((tag, index) => (
+                <div className="pb-2">
                   <span className="tags mb-1">
                     {tag.text}
                     <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
                       x
                     </a>
                   </span>
-                ))}
-            </div>
+                </div>
+              )
+            )}
+
+            <FormGroup>
+              <Label for="selectedtags">Tags</Label>
+              <Select
+                theme={selectThemeColors}
+                className="react-select"
+                classNamePrefix="select"
+                placeholder="Booking tags"
+                options={tagsList}
+                isMulti
+                closeMenuOnSelect={false}
+                styles={selectStylesTags}
+                defaultValue={tagsList.map(tag => currentElement?.tags?.includes(tag.value) && tag)}
+                onChange={(element) => setBookingTags(element.map(tag => tag.value))}
+              />
+            </FormGroup>
 
             {editMode && (
               <div align="center">
