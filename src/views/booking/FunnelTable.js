@@ -27,6 +27,7 @@ import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCrit
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
+import queryAllInstructors from '../../graphql/QueryAllInstructors';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import BookingsTableStatusCards from './BookingsTableStatusCards';
@@ -34,7 +35,6 @@ import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
 import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
-
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -67,6 +67,7 @@ const FunnelTable = () => {
   const [customers, setCustomers] = useState([]);
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
+  const [instructors, setInstructors] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
   const [orFilters, setOrFilters] = useState([]);
   const [sortInfo, setSortInfo] = useState({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
@@ -582,6 +583,84 @@ const FunnelTable = () => {
           return <span className="float-left">{value ? "Yes" : "No"}</span>;
         }
       }
+    },
+    {
+      name: 'utm_campaign',
+      header: 'Utm Compaign',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_source',
+      header: 'Utm Source',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_medium',
+      header: 'Utm Medium',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_content',
+      header: 'Utm Content',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_term',
+      header: 'Utm Term',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'bookingTags',
+      header: 'Bookings Tags',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value.join(", ")}</span>;
+        }
+      }
     }
   ];
 
@@ -614,6 +693,14 @@ const FunnelTable = () => {
     },
     onCompleted: (data) => {
       if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
+  });
+
+  useQuery(queryAllInstructors, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      if (data) setInstructors(data.instructors);
     },
     pollInterval: 200000
   });
@@ -656,7 +743,13 @@ const FunnelTable = () => {
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
         { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined}
+        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined},
+        { name: 'utm_campaign', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_source', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_content', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_term', type: 'string', operator: 'contains', value: '' },
+        { name: 'bookingTags', type: 'string', operator: 'contains', value: '' }
       ];
     }
 
@@ -825,6 +918,7 @@ const FunnelTable = () => {
         handleModal={handleEditModal}
         currentElement={currentElement}
         allCoordinators={coordinators}
+        allInstructors={instructors}
         allClasses={classes}
         handleClose={() => setCurrentElement({})}
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}

@@ -27,6 +27,7 @@ import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCrit
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
+import queryAllInstructors from '../../graphql/QueryAllInstructors';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
@@ -62,6 +63,7 @@ const AllBookingsTable = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [elementToAdd, setElementToAdd] = useState({});
   const [customers, setCustomers] = useState([]);
+  const [instructors, setInstructors] = useState([]);
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
@@ -72,7 +74,7 @@ const AllBookingsTable = () => {
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
   const [selected, setSelected] = useState({});
-  const [closedReason, setClosedReason] = useState("");
+  const [closedReason, setClosedReason] = useState('');
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
@@ -374,18 +376,19 @@ const AllBookingsTable = () => {
       defaultVisible: false
     },
 
-    { 
-      name: 'customerName', 
-      header: 'Customer ', 
-      type: 'string', 
-      filterEditor: StringFilter, 
-      filterDelay: 1500, 
-      render: ({data}) => {
+    {
+      name: 'customerName',
+      header: 'Customer ',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      render: ({ data }) => {
         if (isNotEmptyArray(data.customerTags)) {
-          return (<div>
-            {data.customerName}{" "}
-              <span className="card-tags text-warning">{data.customerTags.join(", ")}</span>
-          </div>);  
+          return (
+            <div>
+              {data.customerName} <span className="card-tags text-warning">{data.customerTags.join(', ')}</span>
+            </div>
+          );
         }
         return data.customerName;
       }
@@ -564,7 +567,7 @@ const AllBookingsTable = () => {
       defaultWidth: 200,
       render: ({ value, cellProps }) => {
         if (isNotEmptyArray(value)) {
-          return <span className="float-left">{value.join(",")}</span>;
+          return <span className="float-left">{value.join(',')}</span>;
         }
       }
     },
@@ -590,7 +593,85 @@ const AllBookingsTable = () => {
       defaultWidth: 200,
       render: ({ value }) => {
         if (value) {
-          return <span className="float-left">{value ? "Yes" : "No"}</span>;
+          return <span className="float-left">{value ? 'Yes' : 'No'}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_campaign',
+      header: 'Utm Compaign',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_source',
+      header: 'Utm Source',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_medium',
+      header: 'Utm Medium',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_content',
+      header: 'Utm Content',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_term',
+      header: 'Utm Term',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'bookingTags',
+      header: 'Bookings Tags',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value.join(", ")}</span>;
         }
       }
     }
@@ -625,6 +706,14 @@ const AllBookingsTable = () => {
     },
     onCompleted: (data) => {
       if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
+  });
+
+  useQuery(queryAllInstructors, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      if (data) setInstructors(data.instructors);
     },
     pollInterval: 200000
   });
@@ -667,7 +756,13 @@ const AllBookingsTable = () => {
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
         { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined}
+        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined },
+        { name: 'utm_campaign', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_source', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_content', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_term', type: 'string', operator: 'contains', value: '' },
+        { name: 'bookingTags', type: 'string', operator: 'contains', value: '' }
       ];
     }
 
@@ -736,40 +831,56 @@ const AllBookingsTable = () => {
     menuProps.autoDismiss = true;
     menuProps.items = [
       {
-        label: "Close with reason:", disabled: true
+        label: 'Close with reason:',
+        disabled: true
       },
       {
-        label: "Won",
-        onClick: () => { setClosedReason("Won"); toggle(); }
+        label: 'Won',
+        onClick: () => {
+          setClosedReason('Won');
+          toggle();
+        }
       },
       {
-        label: "Lost",
-        onClick: () => { setClosedReason("Lost"); toggle(); }
+        label: 'Lost',
+        onClick: () => {
+          setClosedReason('Lost');
+          toggle();
+        }
       },
       {
-        label: "Mistake",
-        onClick: () => { setClosedReason("Mistake"); toggle(); }
+        label: 'Mistake',
+        onClick: () => {
+          setClosedReason('Mistake');
+          toggle();
+        }
       },
       {
-        label: "Duplicated",
-        onClick: () => { setClosedReason("Duplicated"); toggle(); }
+        label: 'Duplicated',
+        onClick: () => {
+          setClosedReason('Duplicated');
+          toggle();
+        }
       },
       {
-        label: "Test",
-        onClick: () => { setClosedReason("Test"); toggle(); }
+        label: 'Test',
+        onClick: () => {
+          setClosedReason('Test');
+          toggle();
+        }
       }
     ];
   };
 
   const onSelectionChange = useCallback(({ selected, data }) => {
     if (selected === true) {
-      data.forEach(booking => setSelected(prev => ({...prev, [booking._id]: booking})));
+      data.forEach((booking) => setSelected((prev) => ({ ...prev, [booking._id]: booking })));
     } else {
       setSelected(selected);
     }
   }, []);
 
-  const toArray = selected => Object.keys(selected);
+  const toArray = (selected) => Object.keys(selected);
 
   const selectedBookingsIds = toArray(selected);
 
@@ -832,6 +943,7 @@ const AllBookingsTable = () => {
         handleModal={handleEditModal}
         currentElement={currentElement}
         allCoordinators={coordinators}
+        allInstructors={instructors}
         allClasses={classes}
         handleClose={() => setCurrentElement({})}
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}

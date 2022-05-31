@@ -159,7 +159,13 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'balance',
     'customerTags',
     'gclid',
-    'instantBooking'
+    'instantBooking',
+    'utm_campaign',
+    'utm_source',
+    'utm_medium',
+    'utm_content',
+    'utm_term',
+    'bookingTags'
   ];
 
   bookingsArray.push(headers);
@@ -202,7 +208,13 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.balance,
       (isNotEmptyArray(element.customerTags) ? element.customerTags.join(", ") : ""),
       element.gclid,
-      element.instantBooking
+      element.instantBooking,
+      element.utm_campaign,
+      element.utm_source,
+      element.utm_medium,
+      element.utm_content,
+      element.utm_term,
+      (isNotEmptyArray(element.bookingTags) ? element.bookingTags.join(", ") : "")
     ];
     bookingsArray.push(row);
   });

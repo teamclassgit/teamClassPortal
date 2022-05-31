@@ -54,7 +54,17 @@ import {
 // @styles
 import './EditBookingModal.scss';
 
-const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted }) => {
+const EditBookingModal = ({
+  currentElement,
+  allClasses,
+  allCoordinators,
+  editMode,
+  handleClose,
+  handleModal,
+  open,
+  onEditCompleted,
+  allInstructors
+}) => {
   const [active, setActive] = useState('1');
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [bookingNotes, setBookingNotes] = useState([]);
@@ -67,6 +77,9 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [closedBookingReason, setClosedBookingReason] = useState(null);
   const [coordinatorId, setCoordinatorId] = useState(null);
   const [coordinatorName, setCoordinatorName] = useState(null);
+  const [instructorId, setInstructorId] = useState(null);
+  const [instructorName, setInstructorName] = useState(null);
+  const [instructorAndAdditionals, setInstructorAndAdditionals] = useState([]);
   const [customerCompany, setCustomerCompany] = useState(null);
   const [customerEmail, setCustomerEmail] = useState(null);
   const [customerName, setCustomerName] = useState(null);
@@ -93,6 +106,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [individualTag, setIndividualTag] = useState('');
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
   const [isTrackingLink, setIsTrackingLink] = useState(false);
+  const [bookingTags, setBookingTags] = useState([]);
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -108,6 +122,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
 
     const teamClass = allClasses.find((element) => element._id === currentElement.teamClassId);
     const coordinator = allCoordinators.find((element) => element._id === currentElement.eventCoordinatorId);
+    const instructor = allInstructors.find((element) => element._id === currentElement.instructorId);
     const customer = currentElement.customer;
     const filteredClass = allClasses.find((element) => element._id === teamClass?._id);
 
@@ -119,6 +134,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setClosedBookingReason(currentElement.closedReason);
     setCoordinatorId(coordinator?._id);
     setCoordinatorName(coordinator?.name);
+    setInstructorId(instructor?._id);
+    setInstructorName(instructor?.name);
     setCustomerCompany(customer?.company);
     setCustomerEmail(customer?.email);
     setCustomerName(customer?.name);
@@ -136,6 +153,12 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     setClassVariantsOptions(filteredClass?.variants);
     setDistributorId(currentElement?.distributorId);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
+
+    if (teamClass && teamClass?.additionalInstructors) {
+      setInstructorAndAdditionals([...teamClass?.additionalInstructors, teamClass?.instructorId]);
+    } else {
+      setInstructorAndAdditionals([teamClass?.instructorId]);
+    }
   }, [currentElement]);
 
   useEffect(() => {
@@ -238,6 +261,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
           customerName,
+          instructorId,
+          instructorName,
           eventDate: new Date(),
           eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
@@ -262,7 +287,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
           distributorId_unset: distributorId ? false : true,
-          additionalClassOptions: classOptionsTags
+          additionalClassOptions: classOptionsTags,
+          tags: bookingTags
         }
       });
 
@@ -369,6 +395,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           customerId: currentElement.customerId,
           customerName,
           eventDate: new Date(),
+          instructorId,
+          instructorName,
           eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
           attendees: groupSize,
@@ -390,7 +418,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
           distributorId_unset: distributorId ? false : true,
-          additionalClassOptions: classOptionsTags
+          additionalClassOptions: classOptionsTags,
+          tags: bookingTags
         }
       });
 
@@ -476,6 +505,25 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
     })
   };
 
+  const selectStylesTags = {
+    control: (base) => ({
+      ...base,
+      fontSize: 12
+    }),
+    option: (provided) => ({
+      ...provided,
+      borderBottom: '1px dotted',
+      padding: 10,
+      fontSize: 12
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      padding: 0,
+      paddingTop: 7,
+      fontSize: 12
+    })
+  };
+
   const handleAddition = (e) => {
     if (e.key === 'Enter') {
       setIndividualTag('');
@@ -490,6 +538,13 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const handleDelete = (i) => {
     setClassOptionsTags(classOptionsTags.filter((_, index) => index !== i));
   };
+
+  const tagsList = [
+    { value: 'manual', label: 'Manual' },
+    { value: 'spam', label: 'Spam' },
+    { value: 'drift', label: 'Drift' },
+    { value: 'referral', label: 'Referral' }
+  ];
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
@@ -604,6 +659,37 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   onChange={(e) => setCustomerCompany(e.target.value)}
                 />
               </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <Label>Event Instructor*</Label>
+              <Select
+                theme={selectThemeColors}
+                styles={selectStyles}
+                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                className="react-select edit-booking-select-instructor"
+                classNamePrefix="select"
+                placeholder="Select..."
+                value={{
+                  label: instructorName,
+                  value: instructorId
+                }}
+                options={
+                  allInstructors &&
+                  allInstructors
+                    .filter((instructor) => instructorAndAdditionals?.includes(instructor._id))
+                    .map((instructor) => {
+                      return {
+                        value: instructor._id,
+                        label: instructor.name
+                      };
+                    })
+                }
+                onChange={(option) => {
+                  setInstructorId(option.value);
+                  setInstructorName(option.label);
+                }}
+                isClearable={false}
+              />
             </FormGroup>
             <FormGroup>
               <Label for="full-name">Event Coordinator*</Label>
@@ -1074,17 +1160,33 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
               </InputGroup>
             </FormGroup>
 
-            <div className="pb-2">
-              {classOptionsTags &&
-                classOptionsTags.map((tag, index) => (
+            {classOptionsTags &&
+              classOptionsTags.map((tag, index) => (
+                <div className="pb-2">
                   <span className="tags mb-1">
                     {tag.text}
                     <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
                       x
                     </a>
                   </span>
-                ))}
-            </div>
+                </div>
+              ))}
+
+            <FormGroup>
+              <Label for="selectedtags">Tags</Label>
+              <Select
+                theme={selectThemeColors}
+                className="react-select"
+                classNamePrefix="select"
+                placeholder="Booking tags"
+                options={tagsList}
+                isMulti
+                closeMenuOnSelect={false}
+                styles={selectStylesTags}
+                defaultValue={tagsList.map((tag) => currentElement?.tags?.includes(tag.value) && tag)}
+                onChange={(element) => setBookingTags(element.map((tag) => tag.value))}
+              />
+            </FormGroup>
 
             {editMode && (
               <div align="center">
