@@ -36,7 +36,7 @@ import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
 import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
-import sendEmailConferenceLinkChangedByInstructorMutation from '../graphql/email/sendEmailConferenceLinkChangedByInstructor';
+import sendEmailConferenceLinkChangedByCoordinatorMutation from '../graphql/email/sendEmailConferenceLinkChangedByCoordinator';
 import sendEmailTrackingLinkChangedMutation from '../graphql/email/sendEmailTrackingLinkChanged';
 import { getUserData, isValidEmail, isUrlValid } from '../utility/Utils';
 import { selectThemeColors } from '@utils';
@@ -100,7 +100,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
-  const [sendEmailConferenceLinkChangedByInstructor] = useMutation(sendEmailConferenceLinkChangedByInstructorMutation, {});
+  const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
   const [sendEmailTrackingLinkChanged] = useMutation(sendEmailTrackingLinkChangedMutation, {});
 
   useEffect(() => {
@@ -394,18 +394,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
         }
       });
 
-      if (isTrackingLink) {
-        const resultTrackingEmail = await sendEmailTrackingLinkChanged({
-          variables: {
-            bookingId: currentElement._id,
-            isDistributor: false
-          }
-        });
-        console.log('Sending Tracking Email to instructor', resultTrackingEmail);
-      }
-
       if (isChangingJoinLink) {
-        const resultConferenceEmail = await sendEmailConferenceLinkChangedByInstructor({
+        const resultConferenceEmail = await sendEmailConferenceLinkChangedByCoordinator({
           variables: {
             bookingId: currentElement._id
           }
