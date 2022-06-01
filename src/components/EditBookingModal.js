@@ -36,6 +36,8 @@ import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
 import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
+import sendEmailConferenceLinkChangedByCoordinatorMutation from '../graphql/email/sendEmailConferenceLinkChangedByCoordinator';
+import sendEmailTrackingLinkChangedMutation from '../graphql/email/sendEmailTrackingLinkChanged';
 import { getUserData, isValidEmail, isUrlValid } from '../utility/Utils';
 import { selectThemeColors } from '@utils';
 import {
@@ -52,7 +54,17 @@ import {
 // @styles
 import './EditBookingModal.scss';
 
-const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMode, handleClose, handleModal, open, onEditCompleted, allInstructors }) => {
+const EditBookingModal = ({
+  currentElement,
+  allClasses,
+  allCoordinators,
+  editMode,
+  handleClose,
+  handleModal,
+  open,
+  onEditCompleted,
+  allInstructors
+}) => {
   const [active, setActive] = useState('1');
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [bookingNotes, setBookingNotes] = useState([]);
@@ -92,6 +104,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   });
   const [classOptionsTags, setClassOptionsTags] = useState([]);
   const [individualTag, setIndividualTag] = useState('');
+  const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
+  const [isTrackingLink, setIsTrackingLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
@@ -100,6 +114,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
+  const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
+  const [sendEmailTrackingLinkChanged] = useMutation(sendEmailTrackingLinkChangedMutation, {});
 
   useEffect(() => {
     if (!currentElement?._id) return;
@@ -162,6 +178,11 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
       setIsGroupVariant(false);
     }
   }, [classVariant]);
+
+  useEffect(() => {
+    setIsChangingJoinLink(false);
+    setIsTrackingLink(false);
+  }, [currentElement]);
 
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
@@ -401,6 +422,15 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
           tags: bookingTags
         }
       });
+
+      if (isChangingJoinLink) {
+        const resultConferenceEmail = await sendEmailConferenceLinkChangedByCoordinator({
+          variables: {
+            bookingId: currentElement._id
+          }
+        });
+        console.log('Sending Tracking Email to Instructor', resultConferenceEmail);
+      }
 
       if (!resultUpdateBooking || !resultUpdateBooking.data) {
         setProcessing(false);
@@ -645,13 +675,14 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 }}
                 options={
                   allInstructors &&
-                  allInstructors.filter(instructor => (instructorAndAdditionals?.includes(instructor._id)))
-                  .map((instructor) => {
-                    return {
-                      value: instructor._id,
-                      label: instructor.name
-                    };
-                  })
+                  allInstructors
+                    .filter((instructor) => instructorAndAdditionals?.includes(instructor._id))
+                    .map((instructor) => {
+                      return {
+                        value: instructor._id,
+                        label: instructor.name
+                      };
+                    })
                 }
                 onChange={(option) => {
                   setInstructorId(option.value);
@@ -1057,7 +1088,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   name="joinUrl"
                   placeholder="Event link"
                   value={joinLink}
-                  onChange={(e) => setJoinLink(e.target.value)}
+                  onChange={(e) => {
+                    setJoinLink(e.target.value);
+                    setIsChangingJoinLink(true);
+                  }}
                   onBlur={(e) => urlValidation(e)}
                 />
               </InputGroup>
@@ -1075,7 +1109,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   name="key"
                   placeholder="Event password"
                   value={passwordLink}
-                  onChange={(e) => setPasswordLink(e.target.value)}
+                  onChange={(e) => {
+                    setPasswordLink(e.target.value);
+                    setIsChangingJoinLink(true);
+                  }}
                 />
               </InputGroup>
             </FormGroup>
@@ -1093,7 +1130,10 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                   name="trackingLink"
                   placeholder="Tracking doc link"
                   value={trackingLink}
-                  onChange={(e) => setTrackingLink(e.target.value)}
+                  onChange={(e) => {
+                    setTrackingLink(e.target.value);
+                    setIsTrackingLink(true);
+                  }}
                   onBlur={(e) => urlValidation(e)}
                 />
               </InputGroup>
@@ -1130,8 +1170,7 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                     </a>
                   </span>
                 </div>
-              )
-            )}
+              ))}
 
             <FormGroup>
               <Label for="selectedtags">Tags</Label>
@@ -1144,8 +1183,8 @@ const EditBookingModal = ({ currentElement, allClasses, allCoordinators, editMod
                 isMulti
                 closeMenuOnSelect={false}
                 styles={selectStylesTags}
-                defaultValue={tagsList.map(tag => currentElement?.tags?.includes(tag.value) && tag)}
-                onChange={(element) => setBookingTags(element.map(tag => tag.value))}
+                defaultValue={tagsList.map((tag) => currentElement?.tags?.includes(tag.value) && tag)}
+                onChange={(element) => setBookingTags(element.map((tag) => tag.value))}
               />
             </FormGroup>
 
