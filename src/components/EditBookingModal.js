@@ -1091,7 +1091,6 @@ const EditBookingModal = ({
                   onChange={(e) => {
                     setJoinLink(e.target.value);
                     if (currentElement?.joinInfo?.joinUrl?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
-                      console.log('Enviando correo');
                       setIsChangingJoinLink(true);
                     } else {
                       setIsChangingJoinLink(false);
@@ -1143,7 +1142,11 @@ const EditBookingModal = ({
                   value={trackingLink}
                   onChange={(e) => {
                     setTrackingLink(e.target.value);
-                    setIsTrackingLink(true);
+                    if (currentElement?.shippingTrackingLink?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
+                      setIsTrackingLink(true);
+                    } else {
+                      setIsTrackingLink(false);
+                    }
                   }}
                   onBlur={(e) => urlValidation(e)}
                 />
