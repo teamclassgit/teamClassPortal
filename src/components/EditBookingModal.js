@@ -105,7 +105,6 @@ const EditBookingModal = ({
   const [classOptionsTags, setClassOptionsTags] = useState([]);
   const [individualTag, setIndividualTag] = useState('');
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
-  const [isTrackingLink, setIsTrackingLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
@@ -181,7 +180,6 @@ const EditBookingModal = ({
 
   useEffect(() => {
     setIsChangingJoinLink(false);
-    setIsTrackingLink(false);
   }, [currentElement]);
 
   const emailValidation = (email) => {
@@ -1140,14 +1138,7 @@ const EditBookingModal = ({
                   name="trackingLink"
                   placeholder="Tracking doc link"
                   value={trackingLink}
-                  onChange={(e) => {
-                    setTrackingLink(e.target.value);
-                    if (currentElement?.shippingTrackingLink?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
-                      setIsTrackingLink(true);
-                    } else {
-                      setIsTrackingLink(false);
-                    }
-                  }}
+                  onChange={(e) => setTrackingLink(e.target.value)}
                   onBlur={(e) => urlValidation(e)}
                 />
               </InputGroup>
