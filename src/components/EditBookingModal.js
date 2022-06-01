@@ -105,7 +105,6 @@ const EditBookingModal = ({
   const [classOptionsTags, setClassOptionsTags] = useState([]);
   const [individualTag, setIndividualTag] = useState('');
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
-  const [isTrackingLink, setIsTrackingLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
 
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
@@ -181,7 +180,6 @@ const EditBookingModal = ({
 
   useEffect(() => {
     setIsChangingJoinLink(false);
-    setIsTrackingLink(false);
   }, [currentElement]);
 
   const emailValidation = (email) => {
@@ -429,7 +427,7 @@ const EditBookingModal = ({
             bookingId: currentElement._id
           }
         });
-        console.log('Sending Tracking Email to Instructor', resultConferenceEmail);
+        console.log('Sending join info Email', resultConferenceEmail);
       }
 
       if (!resultUpdateBooking || !resultUpdateBooking.data) {
@@ -1090,9 +1088,15 @@ const EditBookingModal = ({
                   value={joinLink}
                   onChange={(e) => {
                     setJoinLink(e.target.value);
-                    setIsChangingJoinLink(true);
+                    if (currentElement?.joinInfo?.joinUrl?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
+                      setIsChangingJoinLink(true);
+                    } else {
+                      setIsChangingJoinLink(false);
+                    }
                   }}
-                  onBlur={(e) => urlValidation(e)}
+                  onBlur={(e) => {
+                    urlValidation(e);
+                  }}
                 />
               </InputGroup>
             </FormGroup>
@@ -1111,7 +1115,11 @@ const EditBookingModal = ({
                   value={passwordLink}
                   onChange={(e) => {
                     setPasswordLink(e.target.value);
-                    setIsChangingJoinLink(true);
+                    if (currentElement?.joinInfo?.password?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
+                      setIsChangingJoinLink(true);
+                    } else {
+                      setIsChangingJoinLink(false);
+                    }
                   }}
                 />
               </InputGroup>
@@ -1130,10 +1138,7 @@ const EditBookingModal = ({
                   name="trackingLink"
                   placeholder="Tracking doc link"
                   value={trackingLink}
-                  onChange={(e) => {
-                    setTrackingLink(e.target.value);
-                    setIsTrackingLink(true);
-                  }}
+                  onChange={(e) => setTrackingLink(e.target.value)}
                   onBlur={(e) => urlValidation(e)}
                 />
               </InputGroup>
