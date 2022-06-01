@@ -429,7 +429,7 @@ const EditBookingModal = ({
             bookingId: currentElement._id
           }
         });
-        console.log('Sending Tracking Email to Instructor', resultConferenceEmail);
+        console.log('Sending join info Email', resultConferenceEmail);
       }
 
       if (!resultUpdateBooking || !resultUpdateBooking.data) {
@@ -1090,9 +1090,16 @@ const EditBookingModal = ({
                   value={joinLink}
                   onChange={(e) => {
                     setJoinLink(e.target.value);
-                    setIsChangingJoinLink(true);
+                    if (currentElement?.joinInfo?.joinUrl?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
+                      console.log('Enviando correo');
+                      setIsChangingJoinLink(true);
+                    } else {
+                      setIsChangingJoinLink(false);
+                    }
                   }}
-                  onBlur={(e) => urlValidation(e)}
+                  onBlur={(e) => {
+                    urlValidation(e);
+                  }}
                 />
               </InputGroup>
             </FormGroup>
@@ -1111,7 +1118,11 @@ const EditBookingModal = ({
                   value={passwordLink}
                   onChange={(e) => {
                     setPasswordLink(e.target.value);
-                    setIsChangingJoinLink(true);
+                    if (currentElement?.joinInfo?.password?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
+                      setIsChangingJoinLink(true);
+                    } else {
+                      setIsChangingJoinLink(false);
+                    }
                   }}
                 />
               </InputGroup>
