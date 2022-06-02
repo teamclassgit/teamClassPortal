@@ -541,7 +541,8 @@ const EditBookingModal = ({
     { value: 'manual', label: 'Manual' },
     { value: 'spam', label: 'Spam' },
     { value: 'drift', label: 'Drift' },
-    { value: 'referral', label: 'Referral' }
+    { value: 'referral', label: 'Referral' },
+    { value: "repeat", label: "Repeat" }
   ];
 
   return (

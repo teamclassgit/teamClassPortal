@@ -372,10 +372,10 @@ const FunnelTable = () => {
       filterDelay: 1500,
       render: ({data}) => {
 
-        if (isNotEmptyArray(data.customerTags)) {
+        if (isNotEmptyArray(data.bookingTags) && data.bookingTags.includes('repeat')) {
           return (<div>
             {data.customerName}{" "}
-              <span className="card-tags text-warning">{data.customerTags.join(", ")}</span>
+              <span className="card-tags text-warning">{"Repeat"}</span>
           </div>);  
         }
         return data.customerName;
