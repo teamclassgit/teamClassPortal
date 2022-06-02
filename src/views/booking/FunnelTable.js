@@ -539,6 +539,19 @@ const FunnelTable = () => {
       }
     },
     {
+      name: 'bookingTags',
+      header: 'Bookings Tags',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value.join(", ")}</span>;
+        }
+      }
+    },
+    {
       name: 'customerTags',
       header: 'Customer Tags',
       type: 'string',
@@ -646,19 +659,6 @@ const FunnelTable = () => {
       render: ({ value }) => {
         if (value) {
           return <span className="float-left">{value}</span>;
-        }
-      }
-    },
-    {
-      name: 'bookingTags',
-      header: 'Bookings Tags',
-      type: 'string',
-      filterEditor: StringFilter,
-      filterDelay: 1500,
-      defaultWidth: 200,
-      render: ({ value }) => {
-        if (value) {
-          return <span className="float-left">{value.join(", ")}</span>;
         }
       }
     }
