@@ -49,7 +49,8 @@ const BoardCard = ({
     totalInvoice,
     shippingTrackingLink,
     joinInfo,
-    customerTags
+    customerTags,
+    bookingTags
   }
 }) => {
   const [date, setDate] = useState(null);
@@ -292,10 +293,10 @@ const BoardCard = ({
       <Card className="card-board">
         <CardHeader className="p-0 m-0">
           
-          {isNotEmptyArray(customerTags) && (
+          {isNotEmptyArray(bookingTags) && bookingTags.includes("repeat") && (
             <span className="card-tags text-warning">
               <Tag size="10"></Tag>
-              {" "}{customerTags.join(", ")}
+              {" Repeat"}
             </span>
           )}
 
