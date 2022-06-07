@@ -50,11 +50,15 @@ const PrivateRequestsList = () => {
         const startsWith =
           (item.name && item.name.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.email && item.email.toLowerCase().startsWith(value.toLowerCase())) ||
+          (item.eventType && item.eventType.toLowerCase().startsWith(value.toLowerCase())) ||
+          (item.timeFrame && item.timeFrame.toLowerCase().startsWith(value.toLowerCase())) ||
           (item.eventCoordinatorId && getCoordinatorName(item.eventCoordinatorId, coordinators).toLowerCase().startsWith(value.toLowerCase()));
 
         const includes =
           (item.name && item.name.toLowerCase().includes(value.toLowerCase())) ||
           (item.email && item.email.toLowerCase().includes(value.toLowerCase())) ||
+          (item.eventType && item.eventType.toLowerCase().includes(value.toLowerCase())) ||
+          (item.timeFrame && item.timeFrame.toLowerCase().includes(value.toLowerCase())) ||
           (item.eventCoordinatorId && getCoordinatorName(item.eventCoordinatorId, coordinators).toLowerCase().includes(value.toLowerCase()));
 
         return startsWith || includes;
