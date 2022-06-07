@@ -74,7 +74,7 @@ const BookingsHeader = ({
   useEffect(() => {
     if (privateRequests) {
       const privateClassRequestsArray = [];
-      const headers = ['Created', 'Name', 'Email', 'Phone', 'Coordinator', 'Attendees', 'Date Option 1', 'Date Option 2'];
+      const headers = ['Created', 'Name', 'Email', 'Phone', 'Coordinator', 'Attendees', 'Date Option 1', "Event Type", "Time Frame"];
 
       privateClassRequestsArray.push(headers);
 
@@ -87,7 +87,8 @@ const BookingsHeader = ({
           getCoordinatorName(privateRequests[i].eventCoordinatorId, coordinators),
           privateRequests[i].attendees,
           privateRequests[i].dateOption1,
-          privateRequests[i].dateOption2
+          privateRequests[i].eventType,
+          privateRequests[i].timeFrame
         ];
 
         privateClassRequestsArray.push(row);

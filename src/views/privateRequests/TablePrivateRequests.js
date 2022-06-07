@@ -114,19 +114,28 @@ const TablePrivateRequests = ({ filteredData, coordinators }) => {
       )
     },
     {
-      name: 'Date option 2',
-      selector: 'dateOption2',
+      name: 'Event type',
+      selector: 'eventType',
       sortable: true,
-      maxWidth: '170px',
+      maxWidth: '120px',
       cell: (row) => (
         <small>
-          {row.dateOption2 &&
-            moment(row.dateOption2).calendar(null, {
-              lastDay: '[Yesterday]',
-              sameDay: 'LT',
-              lastWeek: 'dddd',
-              sameElse: 'MMMM Do, YYYY'
-            })}
+          <div className="d-flex align-items-center">
+            <span className="d-block font-weight-bold">{row.eventType}</span>
+          </div>
+        </small>
+      )
+    },
+    {
+      name: 'Time Frame',
+      selector: 'timeFrame',
+      sortable: true,
+      maxWidth: '120px',
+      cell: (row) => (
+        <small>
+          <div className="d-flex align-items-center">
+            <span className="d-block font-weight-bold">{row.timeFrame}</span>
+          </div>
         </small>
       )
     }
@@ -142,9 +151,7 @@ const TablePrivateRequests = ({ filteredData, coordinators }) => {
     <ReactPaginate
       activeClassName="active"
       breakClassName="page-item"
-      breakClassName="page-item"
       breakLabel="..."
-      breakLinkClassName="page-link"
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
       forcePage={currentPage}

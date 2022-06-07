@@ -12,6 +12,8 @@ export default gql`
       dateOption2
       attendees
       eventCoordinatorId
+      eventType
+      timeFrame
     }
   }
 `;
