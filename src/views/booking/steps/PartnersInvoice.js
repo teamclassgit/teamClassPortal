@@ -2,11 +2,13 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Alert, Button, Card, CardBody, Col, Input, FormGroup, Label, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
 import { Icon } from '@iconify/react';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import moment from 'moment';
 
 // @scripts
 import mutationUpdateBookingInvoiceInstructor from '../../../graphql/MutationUpdateBookingInvoiceInstructor';
+import mutationPayEventToInstructor from '../../../graphql/MutationPayEventToInstructor';
+import queryInstructorById from '../../../graphql/QueryInstructorById';
 import DropZone from '../../../@core/components/drop-zone';
 import { getEventFullDate, uploadFile } from '../../../utility/Utils';
 
@@ -15,24 +17,37 @@ import './partners-invoice.scss';
 
 const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [totalInvoice, setTotalInvoice] = useState(0);
-  const [isRejected, setIsRejected] = useState(booking.instructorInvoice && booking.instructorInvoice.status === 'rejected' ? true : false);
-  const [isPaid, setIsPaid] = useState(booking.instructorInvoice && booking.instructorInvoice.status === 'paid' ? true : false);
-  const [invoiceInstructorStatus, setInvoiceInstructorStatus] = useState(booking.instructorInvoice && booking.instructorInvoice.status);
+  const [isRejected, setIsRejected] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+  const [invoiceInstructorStatus, setInvoiceInstructorStatus] = useState(null);
   const [rejectedReasons, setRejectedReasons] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
   const [error, setError] = useState(null);
-  const [showPayInvoiceButton, setShowPayInvoiceButton] = useState(
-    booking.instructorInvoice && booking.instructorInvoice.status === 'approved' ? true : false
-  );
+  const [showPayInvoiceButton, setShowPayInvoiceButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isStripeOption, setIsStripeOption] = useState(true);
   const [isOtherOption, setIsOtherOption] = useState(false);
   const [attachedFile, setAttachedFile] = useState([]);
   const [fileUrl, setFileUrl] = useState(null);
   const [isApprovedInvoice, setIsApprovedInvoice] = useState(false);
-  const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
+  const [isPaidWithStripe, setIsPaidWithStripe] = useState(false);
+  const [instructorData, setInstructorData] = useState(null);
 
+  const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
+  const [payEventToInstructor] = useMutation(mutationPayEventToInstructor, {});
+  const { data } = useQuery(queryInstructorById, {
+    fetchPolicy: 'network-only',
+    pollInterval: 10000,
+    variables: {
+      instructorId: booking?.instructorId
+    }
+  });
   const calendarEventDate = moment(getEventFullDate(calendarEvent)).format('LL');
+
+  useEffect(() => {
+    setInstructorData(data?.instructor);
+  }, [data]);
 
   useEffect(() => {
     if (booking.instructorInvoice) {
@@ -44,6 +59,34 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
           return acc;
         }, 0)
       );
+      setInvoiceInstructorStatus(booking.instructorInvoice.status);
+
+      if (booking?.instructorInvoice?.payment !== null) {
+        setIsPaidWithStripe(true);
+      } else {
+        setIsPaidWithStripe(false);
+      }
+
+      if (booking?.instructorInvoice?.status === 'approved') {
+        setShowPayInvoiceButton(true);
+        setIsPaid(true);
+      } else {
+        setShowPayInvoiceButton(false);
+      }
+
+      if (booking?.instructorInvoice?.status === 'rejected') {
+        setRejectedReasons(booking.instructorInvoice.rejectedReasons);
+        setIsRejected(true);
+      } else {
+        setIsRejected(false);
+      }
+
+      if (booking?.instructorInvoice?.status === 'paid') {
+        setRejectedReasons(booking.instructorInvoice.rejectedReasons);
+        setIsPaid(true);
+      } else {
+        setIsPaid(false);
+      }
     }
   }, [booking]);
 
@@ -78,6 +121,29 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
       setError(ex);
     }
     setProcessing(false);
+  };
+
+  const handleStripePayment = async () => {
+    setProcessingPayment(true);
+    if (distributorData.stripeConnect) {
+      try {
+        await payEventToInstructor({
+          variables: {
+            bookingId: booking._id
+          }
+        });
+        console.log('PAGANDO INSTRUCTOR');
+        setIsPaidWithStripe(true);
+        setIsPaid(true);
+        setInvoiceInstructorStatus('paid');
+        setShowModal(!showModal);
+        setShowPayInvoiceButton(false);
+      } catch (ex) {
+        console.log('ex', ex);
+      }
+    } else {
+      setError('Instructor does not have a stripe account.');
+    }
   };
 
   const updateAttachedFile = async () => {
@@ -270,15 +336,17 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
                 {invoiceInstructorStatus === 'paid' && (
                   <Col lg={12}>
-                    <div className="d-flex justify-content-end mt-2">
+                    <div className="d-flex justify-content-end">
                       <Alert>This invoice has been paid!</Alert>
                     </div>
                     <div className="d-flex justify-content-end">
-                      <small>
-                        <a href={fileUrl || booking.instructorInvoice.paymentReceipt} target="_blank" className="pop-up-payment-link">
-                          Payment receipt
-                        </a>
-                      </small>
+                      {!isPaidWithStripe && (
+                        <small>
+                          <a href={fileUrl || booking.instructorInvoice.paymentReceipt} target="_blank" className="pop-up-payment-link">
+                            Payment receipt
+                          </a>
+                        </small>
+                      )}
                     </div>
                   </Col>
                 )}
@@ -320,19 +388,10 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 </Row>
               )}
 
-              {isRejected && invoiceInstructorStatus === 'rejected' && (
-                <Row className="mt-2">
-                  <Col lg={12} className="">
-                    <span>Rejected Reason: </span>
-                    <span className="text-justify">{rejectedReasons}</span>
-                  </Col>
-                </Row>
-              )}
-
               {showPayInvoiceButton && invoiceInstructorStatus === 'approved' && (
                 <Row>
                   <Col lg={12}>
-                    <div className="d-flex justify-content-end mt-2">
+                    <div className="d-flex justify-content-end">
                       <Button
                         color="primary"
                         onClick={(e) => {
@@ -347,17 +406,27 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 </Row>
               )}
 
-              <Row className="">
-                <Col lg={12} className="">
+              <Row>
+                <Col lg={8} className="d-flex justify-content-end">
                   {invoiceInstructorStatus === 'approved' && !isPaid && (
                     <Alert color="primary" className="mt-2">
                       This invoice has been approved
                     </Alert>
                   )}
                   {invoiceInstructorStatus === 'rejected' && (
-                    <Alert color="warning" className="mt-2">
-                      This invoice has been rejected
-                    </Alert>
+                    <Row>
+                      <Col lg={12} className="">
+                        <Alert color="warning" className="mt-2 px-3 py-1">
+                          This invoice has been rejected.
+                          {invoiceDistributorStatus === 'rejected' && (
+                            <p>
+                              <span>Rejected Reason: </span>
+                              <span className="text-justify">{rejectedReasons}</span>
+                            </p>
+                          )}
+                        </Alert>
+                      </Col>
+                    </Row>
                   )}
                 </Col>
               </Row>
@@ -407,20 +476,21 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 </FormGroup>
                 {isStripeOption && (
                   <div>
-                    <small className="stripe-option-message">
-                      Stripe payments are not available yet. This feature will be available in the near future.
-                    </small>
                     <div className="d-flex justify-content-center">
                       <Button
                         onClick={(e) => {
-                          setShowModal(!showModal);
-                          setShowPayInvoiceButton(false);
-                          handleSaveInfo();
+                          handleStripePayment();
                         }}
-                        disabled={isStripeOption}
                       >
-                        Submit Payment
+                        {processingPayment ? 'Submitting' : 'Submit Payment'}
                       </Button>
+                      {error && (
+                        <Row className="mt-2 d-flex justify-content-center">
+                          <Col lg={9}>
+                            <Alert color="danger">{error}</Alert>
+                          </Col>
+                        </Row>
+                      )}
                     </div>
                   </div>
                 )}
@@ -440,7 +510,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                           }}
                           disabled={(attachedFile && attachedFile.length === 0) || (attachedFile && attachedFile.length > 1)}
                         >
-                          Submit Payment
+                          {processing ? 'Submitting' : 'Submit Payment'}
                         </Button>
                       )}
                     </div>
