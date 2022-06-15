@@ -6,7 +6,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import moment from 'moment';
 
 // @scripts
-import mutationUpdateBookingDistributorInvoice from '../../../graphql/MutationUpdateBookingDistributorInvoice';
+import mutationUpdateBookingDistributorInvoice from '../../../graphql/fMutationUpdateBookingDistributorInvoice';
 import mutationPayEventToDistributor from '../../../graphql/MutationPayEventToDistributor';
 import queryDistributorById from '../../../graphql/QueryDistributorById';
 import DropZone from '../../../@core/components/drop-zone';
@@ -63,7 +63,7 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
       setInvoiceDistributorStatus(booking.distributorInvoice.status);
     }
 
-    if (booking?.distributorInvoice?.payment !== null) {
+    if (booking?.distributorInvoice?.payment) {
       setIsPaidWithStripe(true);
     } else {
       setIsPaidWithStripe(false);
@@ -492,7 +492,9 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
                     {error && (
                       <Row className="mt-2 d-flex justify-content-center">
                         <Col lg={9}>
-                          <Alert className="text-center" color="danger">{error}</Alert>
+                          <Alert className="text-center" color="danger">
+                            {error}
+                          </Alert>
                         </Col>
                       </Row>
                     )}
