@@ -6,7 +6,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import moment from 'moment';
 
 // @scripts
-import mutationUpdateBookingDistributorInvoice from '../../../graphql/fMutationUpdateBookingDistributorInvoice';
+import mutationUpdateBookingDistributorInvoice from '../../../graphql/MutationUpdateBookingDistributorInvoice';
 import mutationPayEventToDistributor from '../../../graphql/MutationPayEventToDistributor';
 import queryDistributorById from '../../../graphql/QueryDistributorById';
 import DropZone from '../../../@core/components/drop-zone';
