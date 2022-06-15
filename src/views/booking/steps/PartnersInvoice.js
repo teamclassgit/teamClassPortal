@@ -420,7 +420,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                       <Col lg={12} className="">
                         <Alert color="warning" className="mt-2 px-3 py-1">
                           This invoice has been rejected.
-                          {invoiceDistributorStatus === 'rejected' && (
+                          {invoiceInstructorStatus === 'rejected' && (
                             <p>
                               <span>Rejected Reason: </span>
                               <span className="text-justify">{rejectedReasons}</span>
