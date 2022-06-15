@@ -118,6 +118,7 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
           paymentReceipt: fileUrl
         }
       });
+      setIsPaidWithStripe(false);
     } catch (ex) {
       setError(ex);
     }
@@ -126,7 +127,7 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
 
   const handleStripePayment = async () => {
     setProcessingPayment(true);
-    if (distributorData.stripeConnect) {
+    if (distributorData?.stripeConnect?.status === 'connected') {
       try {
         await payEventToDistributor({
           variables: {
@@ -141,8 +142,10 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
       } catch (ex) {
         console.log('ex', ex);
       }
-    } else {
-      setError('Distributor does not have a stripe account.');
+    } else if (distributorData?.stripeConnect?.status === 'pending') {
+      setError('Distributor without stripe connect setup.');
+    } else if (!distributorData?.stripeConnect) {
+      setError('Distributor without stripe account');
     }
     setProcessingPayment(false);
   };
@@ -179,10 +182,6 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
     setRejectedReasons('');
     setIsApprovedInvoice(true);
   };
-
-  console.log('booking', booking);
-  console.log('error', error);
-  console.log('distributorData', distributorData);
 
   return (
     <Fragment>

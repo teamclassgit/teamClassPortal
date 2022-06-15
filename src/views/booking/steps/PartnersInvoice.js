@@ -61,7 +61,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
       );
       setInvoiceInstructorStatus(booking.instructorInvoice.status);
 
-      if (booking?.instructorInvoice?.payment !== null) {
+      if (booking?.instructorInvoice?.payment) {
         setIsPaidWithStripe(true);
       } else {
         setIsPaidWithStripe(false);
@@ -117,6 +117,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
           paymentReceipt: fileUrl
         }
       });
+      setIsPaidWithStripe(false);
     } catch (ex) {
       setError(ex);
     }
@@ -125,14 +126,13 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
   const handleStripePayment = async () => {
     setProcessingPayment(true);
-    if (distributorData.stripeConnect) {
+    if (instructorData?.stripeConnect?.status === 'connected') {
       try {
         await payEventToInstructor({
           variables: {
             bookingId: booking._id
           }
         });
-        console.log('PAGANDO INSTRUCTOR');
         setIsPaidWithStripe(true);
         setIsPaid(true);
         setInvoiceInstructorStatus('paid');
@@ -141,8 +141,10 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
       } catch (ex) {
         console.log('ex', ex);
       }
-    } else {
-      setError('Instructor does not have a stripe account.');
+    } else if (instructorData?.stripeConnect?.status === 'pending') {
+      setError('Instructor without stripe connect setup.');
+    } else if (!instructorData?.stripeConnect) {
+      setError('Instructorwithout stripe account');
     }
   };
 
@@ -407,7 +409,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
               )}
 
               <Row>
-                <Col lg={8} className="d-flex justify-content-end">
+                <Col lg={12} className="d-flex justify-content-end">
                   {invoiceInstructorStatus === 'approved' && !isPaid && (
                     <Alert color="primary" className="mt-2">
                       This invoice has been approved
