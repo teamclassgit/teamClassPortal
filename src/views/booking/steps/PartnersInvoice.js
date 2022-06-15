@@ -489,7 +489,9 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                       {error && (
                         <Row className="mt-2 d-flex justify-content-center">
                           <Col lg={9}>
-                            <Alert color="danger">{error}</Alert>
+                            <Alert className="text-center" color="danger">
+                              {error}
+                            </Alert>
                           </Col>
                         </Row>
                       )}
