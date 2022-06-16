@@ -63,10 +63,10 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
       setInvoiceDistributorStatus(booking.distributorInvoice.status);
     }
 
-    if (booking?.distributorInvoice?.payment) {
-      setIsPaidWithStripe(true);
-    } else {
+    if (booking?.distributorInvoice?.paymentReceipt && booking?.distributorInvoice?.paymentReceipt !== '') {
       setIsPaidWithStripe(false);
+    } else {
+      setIsPaidWithStripe(true);
     }
 
     if (booking?.distributorInvoice?.status === 'approved') {
@@ -182,6 +182,9 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
     setRejectedReasons('');
     setIsApprovedInvoice(true);
   };
+
+  console.log('isPaidWithStripe', isPaidWithStripe);
+  console.log('booking', booking);
 
   return (
     <Fragment>

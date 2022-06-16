@@ -50,7 +50,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   }, [data]);
 
   useEffect(() => {
-    if (booking.instructorInvoice) {
+    if (booking?.instructorInvoice) {
       setTotalInvoice(
         booking.instructorInvoice.invoiceItems.reduce((acc, curr) => {
           if (curr.price !== undefined && curr.units !== undefined) {
@@ -61,10 +61,10 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
       );
       setInvoiceInstructorStatus(booking.instructorInvoice.status);
 
-      if (booking?.instructorInvoice?.payment) {
-        setIsPaidWithStripe(true);
-      } else {
+      if (booking?.instructorInvoice?.paymentReceipt && booking?.instructorInvoice?.paymentReceipt !== '') {
         setIsPaidWithStripe(false);
+      } else {
+        setIsPaidWithStripe(true);
       }
 
       if (booking?.instructorInvoice?.status === 'approved') {
