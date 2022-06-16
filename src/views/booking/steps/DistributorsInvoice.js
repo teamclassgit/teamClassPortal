@@ -392,7 +392,7 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
                 </Row>
               )}
 
-              {showPayDistributorButton && invoiceDistributorStatus === 'approved' && (
+              {showPayDistributorButton && invoiceDistributorStatus === 'approved' && totalInvoice !== 0 && (
                 <Row>
                   <Col lg={12}>
                     <div className="d-flex justify-content-end">
