@@ -30,7 +30,7 @@ const StartConversation = ({ client, info }) => {
       const bookingId = info?._id;
       try {
         await createConversation({ variables: { bookingId } });
-        updateConversations();
+        //updateConversations();
       } catch (error) {
         console.log(error);
       }
