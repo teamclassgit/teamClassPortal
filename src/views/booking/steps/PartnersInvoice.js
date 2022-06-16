@@ -146,6 +146,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
     } else if (!instructorData?.stripeConnect) {
       setError('Instructorwithout stripe account');
     }
+    setProcessingPayment(false);
   };
 
   const updateAttachedFile = async () => {
