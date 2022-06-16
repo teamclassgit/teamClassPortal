@@ -486,16 +486,16 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                       >
                         {processingPayment ? 'Submitting' : 'Submit Payment'}
                       </Button>
-                      {error && (
-                        <Row className="mt-2 d-flex justify-content-center">
-                          <Col lg={9}>
-                            <Alert className="text-center" color="danger">
-                              {error}
-                            </Alert>
-                          </Col>
-                        </Row>
-                      )}
                     </div>
+                    {error && (
+                      <Row className="mt-2 d-flex justify-content-center">
+                        <Col lg={9}>
+                          <Alert className="text-center" color="danger">
+                            {error}
+                          </Alert>
+                        </Col>
+                      </Row>
+                    )}
                   </div>
                 )}
 
