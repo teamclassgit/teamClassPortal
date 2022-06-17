@@ -156,8 +156,8 @@ const ConversationView = (props) => {
           <div style={{ color: muted ? 'gray' : 'black' }}>
             <ListGroup tag="div">
               {customer &&
-                customer?.bookings?.map((booking) => {
-                  return <RenderList booking={booking} setSelectedBooking={setSelectedBooking} isActive={booking._id === selectedBooking} />;
+                customer?.bookings?.map((booking, index) => {
+                  return <RenderList key={`${booking._id}${index}`} booking={booking} setSelectedBooking={setSelectedBooking} isActive={booking._id === selectedBooking} />;
                 })}
             </ListGroup>
           </div>

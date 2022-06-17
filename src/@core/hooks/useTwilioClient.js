@@ -1,5 +1,5 @@
 // @packages
-import { Client } from '@twilio/conversations';
+import { Client, Conversation } from '@twilio/conversations';
 import { isUserLoggedIn } from '@utils';
 import { useQuery, useMutation } from '@apollo/client';
 import { useState, useEffect } from 'react';
@@ -16,6 +16,7 @@ import {
   endTyping,
   informationId,
   listConversations,
+  addConversation,
   removeConversation,
   removeMessages,
   startTyping,
@@ -34,7 +35,6 @@ const useTwilioClient = () => {
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
   const [userDataEmail, setUserDataEmail] = useState('');
-
   const [updateTokenConversations] = useMutation(mutationTokenConversations);
   const conversations = useSelector((state) => state.reducer.convo);
   const dispatch = useDispatch();
@@ -68,7 +68,6 @@ const useTwilioClient = () => {
             //dispatch(updateLoadingState(true));
 
             if (state === 'initialized') {
-              updateConversations(newClient);
               //dispatch(updateLoadingState(false));
 
               newClient.addListener('conversationRemoved', (conversation) => {
@@ -201,21 +200,11 @@ const useTwilioClient = () => {
 
     console.log('conversationAdded', conversation.status);
 
-    if (conversation.status === 'joined') {
-      const messages = await conversation.getMessages();
-      dispatch(addMessages(conversation.sid, messages.items));
-    } else {
-      dispatch(addMessages(conversation.sid, []));
-    }
+    const messages = await conversation.getMessages(1);
+    dispatch(addMessages(conversation.sid, messages?.items || []));
 
     loadUnreadMessagesCount(conversation, updateUnreadMessages);
-
-    console.log(conversations, conversation);
-    if (conversations?.indexOf((element) => element.sid === conversation.sid) === -1) {
-      console.log('new conversation. Conversations list would be updated.');
-      //const subscribedConversations = await client.getSubscribedConversations();
-      //dispatch(listConversations(subscribedConversations.items));
-    }
+    dispatch(addConversation(conversation));
   };
 
   const updateConversations = async (client) => {

@@ -8,6 +8,7 @@ import ConversationView from './ConversationsView';
 import {
   informationId,
   setLastReadIndex,
+  addMessages,
   updateCurrentConversation,
   updateParticipants,
   updateUnreadMessages,
@@ -33,7 +34,10 @@ const ConversationsList = ({ client, info, userData, notifications, setSelectedB
     if (convo) {
       try {
         const participants = await convo.getParticipants();
-        dispatch(updateParticipants(participants, convo?.sid));
+        dispatch(updateParticipants(participants, convo.sid));
+
+        const messages = await convo.getMessages();
+        dispatch(addMessages(convo.sid, messages?.items || []));
       } catch (e) {
         return Promise.reject(e);
       }
@@ -153,13 +157,14 @@ const ConversationsList = ({ client, info, userData, notifications, setSelectedB
                   updateParticipants,
                   convo._id
                 );
-                if (convo?.sid) dispatch(updateUnreadMessages(convo.sid, 0));
+                if (convo?.sid) {
+                  dispatch(updateUnreadMessages(convo.sid, 0));
+                }
 
                 const selected = customer?.bookings?.find((element) => element._id === selectedBooking);
                 console.log('selected ', selectedBooking, selected);
                 if (!selected) {
                   console.log(selectedBooking, customer.bookings);
-                  //setSelectedBooking(null);
                 }
               } catch (e) {
                 console.log(e);

@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { useMutation } from '@apollo/client';
 
 // @scripts
-import { updateCurrentConversation, informationId, listConversations } from '../../redux/actions/chat';
 import mutationCreateTwilioConversation from '../../graphql/conversations/createConversation';
 import { Spinner } from 'reactstrap';
 
@@ -15,22 +14,12 @@ const StartConversation = ({ client, info }) => {
   const [createConversation] = useMutation(mutationCreateTwilioConversation);
   const [inProcess, setInProcess] = useState(false);
 
-  const updateConversations = async () => {
-    if (client) {
-      const conversations = await client?.getSubscribedConversations();
-      dispatch(listConversations(conversations?.items ?? []));
-      dispatch(updateCurrentConversation(null));
-      dispatch(informationId(null));
-    }
-  };
-
   const onCreateNewConversation = async () => {
     if (client && info?._id) {
       setInProcess(true);
       const bookingId = info?._id;
       try {
         await createConversation({ variables: { bookingId } });
-        //updateConversations();
       } catch (error) {
         console.log(error);
       }

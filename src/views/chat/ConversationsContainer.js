@@ -81,7 +81,7 @@ ConversationContainer.propTypes = {
   conversation: PropTypes.object,
   openedConversationInfo: PropTypes.object,
   openedNotConversations: PropTypes.object,
-  status: PropTypes.string.isRequired,
+  status: PropTypes.string,
   userData: PropTypes.object.isRequired
 };
 
