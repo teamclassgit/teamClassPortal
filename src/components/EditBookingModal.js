@@ -542,7 +542,7 @@ const EditBookingModal = ({
     { value: 'spam', label: 'Spam' },
     { value: 'drift', label: 'Drift' },
     { value: 'referral', label: 'Referral' },
-    { value: "repeat", label: "Repeat" }
+    { value: 'repeat', label: 'Repeat' }
   ];
 
   return (
@@ -1146,37 +1146,12 @@ const EditBookingModal = ({
             </FormGroup>
 
             <FormGroup>
-              <Label for="classOptions">Additional class options</Label>
-              <InputGroup size="sm">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <List size={15} />
-                  </InputGroupText>
-                </InputGroupAddon>
-                <Input
-                  type="text"
-                  id="classOptions"
-                  name="classOptions"
-                  placeholder="New options"
-                  disabled={classOptionsTags.length >= 20 ? true : false}
-                  onChange={(e) => setIndividualTag(e.target.value)}
-                  value={individualTag}
-                  onKeyDown={handleAddition}
-                />
-              </InputGroup>
+              <Label for="classOptions">Pre Event Survey and Options:</Label>{' '}
+              <a target="_blank" href={`http://teamclass.com/booking/pre-event/${currentElement?._id}`}>
+                <small>Click to see survey's answer, and selected options</small>
+              </a>
+              {!currentElement?.preEventSurvey?.submittedAt && <p className="pre-event-small-note">(Pre event survey is yet to be completed.)</p>}
             </FormGroup>
-
-            {classOptionsTags &&
-              classOptionsTags.map((tag, index) => (
-                <div className="pb-2">
-                  <span className="tags mb-1">
-                    {tag.text}
-                    <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
-                      x
-                    </a>
-                  </span>
-                </div>
-              ))}
 
             <FormGroup>
               <Label for="selectedtags">Tags</Label>

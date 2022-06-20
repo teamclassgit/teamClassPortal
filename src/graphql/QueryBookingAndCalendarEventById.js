@@ -66,6 +66,9 @@ export default gql`
         order
         active
       }
+      preEventSurvey {
+        submittedAt
+      }
       payments {
         addressLine1
         addressLine2
@@ -114,7 +117,7 @@ export default gql`
       ccFeeExempt
       capRegistration
       additionalClassOptions {
-        id
+        groupId
         text
       }
       tags

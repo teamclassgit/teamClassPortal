@@ -108,6 +108,20 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      preEventSurvey {
+        aboutTeam
+        conferenceLink
+        engagement
+        eventDuration
+        eventPurpose
+        eventSpeed
+        eventType
+        formality
+        hostName
+        introOutro
+        ownLink
+        submittedAt
+      }
       signUpPageSettings {
         invitationFrom
         additionalCopyToShow

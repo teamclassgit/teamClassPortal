@@ -68,6 +68,9 @@ export default gql`
           paymentName
           status
         }
+        preEventSurvey {
+          submittedAt
+        }
         classVariant {
           active
           duration
