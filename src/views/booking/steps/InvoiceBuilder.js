@@ -6,6 +6,7 @@ import { Alert, Input, Button, Card, Col, Row, Table, CardLink, CustomInput, Car
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
 import Avatar from '@components/avatar';
+import moment from 'moment';
 
 const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking, calendarEvent }) => {
   const defaultInvoiceItems = [
