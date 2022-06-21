@@ -526,7 +526,7 @@ const EditBookingModal = ({
     if (e.key === 'Enter') {
       setIndividualTag('');
       const tag = {
-        id: e.target.value,
+        groupId: e.target.value,
         text: e.target.value
       };
       setClassOptionsTags([...classOptionsTags, tag]);
@@ -1144,6 +1144,39 @@ const EditBookingModal = ({
                 />
               </InputGroup>
             </FormGroup>
+
+            <FormGroup>
+              <Label for="classOptions">Additional class options</Label>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <List size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  type="text"
+                  id="classOptions"
+                  name="classOptions"
+                  placeholder="New options"
+                  disabled={classOptionsTags.length >= 20 ? true : false}
+                  onChange={(e) => setIndividualTag(e.target.value)}
+                  value={individualTag}
+                  onKeyDown={handleAddition}
+                />
+              </InputGroup>
+            </FormGroup>
+
+            {classOptionsTags &&
+              classOptionsTags.map((tag, index) => (
+                <div className="pb-1">
+                  <span className="tags">
+                    {tag.text}
+                    <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
+                      x
+                    </a>
+                  </span>
+                </div>
+              ))}
 
             <FormGroup>
               <Label for="classOptions">Pre Event Survey and Options:</Label>{' '}
