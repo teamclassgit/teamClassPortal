@@ -35,6 +35,7 @@ import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
 import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
+import { DEFAULT_TIME_ZONE_LABEL } from '../../utility/Constants';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -76,7 +77,7 @@ const FunnelTable = () => {
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
   const [selected, setSelected] = useState({});
-  const [closedReason, setClosedReason] = useState("");
+  const [closedReason, setClosedReason] = useState('');
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
@@ -364,19 +365,19 @@ const FunnelTable = () => {
       },
       width: 200
     },
-    { 
-      name: 'customerName', 
-      header: 'Customer ', 
-      type: 'string', 
-      filterEditor: StringFilter, 
+    {
+      name: 'customerName',
+      header: 'Customer ',
+      type: 'string',
+      filterEditor: StringFilter,
       filterDelay: 1500,
-      render: ({data}) => {
-
+      render: ({ data }) => {
         if (isNotEmptyArray(data.bookingTags) && data.bookingTags.includes('repeat')) {
-          return (<div>
-            {data.customerName}{" "}
-              <span className="card-tags text-warning">{"Repeat"}</span>
-          </div>);  
+          return (
+            <div>
+              {data.customerName} <span className="card-tags text-warning">{'Repeat'}</span>
+            </div>
+          );
         }
         return data.customerName;
       }
@@ -419,7 +420,7 @@ const FunnelTable = () => {
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
         if (value) {
-          return `${moment(value)?.tz(cellProps.data.timezone)?.format('LLL')} CT`;
+          return `${moment(value)?.tz(cellProps.data.timezone)?.format('LLL')} ${cellProps.data.timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`;
         }
       }
     },
@@ -547,7 +548,7 @@ const FunnelTable = () => {
       defaultWidth: 200,
       render: ({ value }) => {
         if (value) {
-          return <span className="float-left">{value.join(", ")}</span>;
+          return <span className="float-left">{value.join(', ')}</span>;
         }
       }
     },
@@ -567,7 +568,7 @@ const FunnelTable = () => {
       defaultWidth: 200,
       render: ({ value, cellProps }) => {
         if (isNotEmptyArray(value)) {
-          return <span className="float-left">{value.join(",")}</span>;
+          return <span className="float-left">{value.join(',')}</span>;
         }
       }
     },
@@ -593,7 +594,7 @@ const FunnelTable = () => {
       defaultWidth: 200,
       render: ({ value }) => {
         if (value) {
-          return <span className="float-left">{value ? "Yes" : "No"}</span>;
+          return <span className="float-left">{value ? 'Yes' : 'No'}</span>;
         }
       }
     },
@@ -743,7 +744,7 @@ const FunnelTable = () => {
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
         { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined},
+        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined },
         { name: 'utm_campaign', type: 'string', operator: 'contains', value: '' },
         { name: 'utm_source', type: 'string', operator: 'contains', value: '' },
         { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
@@ -820,39 +821,55 @@ const FunnelTable = () => {
     menuProps.autoDismiss = true;
     menuProps.items = [
       {
-        label: "Close with reason:", disabled: true
+        label: 'Close with reason:',
+        disabled: true
       },
       {
-        label: "Won",
-        onClick: () => { setClosedReason("Won"); toggle(); }
+        label: 'Won',
+        onClick: () => {
+          setClosedReason('Won');
+          toggle();
+        }
       },
       {
-        label: "Lost",
-        onClick: () => { setClosedReason("Lost"); toggle(); }
+        label: 'Lost',
+        onClick: () => {
+          setClosedReason('Lost');
+          toggle();
+        }
       },
       {
-        label: "Mistake",
-        onClick: () => { setClosedReason("Mistake"); toggle(); }
+        label: 'Mistake',
+        onClick: () => {
+          setClosedReason('Mistake');
+          toggle();
+        }
       },
       {
-        label: "Duplicated",
-        onClick: () => { setClosedReason("Duplicated"); toggle(); }
+        label: 'Duplicated',
+        onClick: () => {
+          setClosedReason('Duplicated');
+          toggle();
+        }
       },
       {
-        label: "Test",
-        onClick: () => { setClosedReason("Test"); toggle(); }
+        label: 'Test',
+        onClick: () => {
+          setClosedReason('Test');
+          toggle();
+        }
       }
     ];
   };
 
   const onSelectionChange = useCallback(({ selected, data }) => {
     if (selected === true) {
-      data.forEach(booking => setSelected(prev => ({...prev, [booking._id]: booking})));
+      data.forEach((booking) => setSelected((prev) => ({ ...prev, [booking._id]: booking })));
     } else {
       setSelected(selected);
     }
   }, []);
-  const toArray = selected => Object.keys(selected);
+  const toArray = (selected) => Object.keys(selected);
 
   const selectedBookingsIds = toArray(selected);
 

@@ -2,11 +2,11 @@
 import { Client, Conversation } from '@twilio/conversations';
 import { isUserLoggedIn } from '@utils';
 import { useQuery, useMutation } from '@apollo/client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // @scripts
 import mutationTokenConversations from '../../graphql/MutationTokenConversations';
-import queryConversationsDetail from '../../graphql/QueryConversationsDetail';
+import queryAllBookings from '../../graphql/QueryGetBookingsWithCriteria';
 import { getUserData } from '../../utility/Utils';
 import { handlePromiseRejection } from '../../views/chat/helpers';
 import { getConversationParticipants } from '../../views/chat/Apis';
@@ -27,6 +27,35 @@ import {
 } from '../../redux/actions/chat';
 
 const useTwilioClient = () => {
+  const defaultFilter = [
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Duplicated'
+    },
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Mistake'
+    },
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Test'
+    },
+    {
+      name: 'eventCoordinatorId',
+      type: 'string',
+      operator: 'contains',
+      value: getUserData()?.customData?.coordinatorId
+    }
+  ];
+
+  const defaultSort = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+
   const [conversationsClient, setConversationsClient] = useState(null);
   const [data, setData] = useState(null);
   const [infoDetails, setInfoDetails] = useState(null);
@@ -35,9 +64,57 @@ const useTwilioClient = () => {
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
   const [userDataEmail, setUserDataEmail] = useState('');
+  const [mainFilter, setMainFilter] = useState([...defaultFilter]);
+  const [searchFilter, setSearchFilter] = useState([]);
+  const [limit, setLimit] = useState(30);
   const [updateTokenConversations] = useMutation(mutationTokenConversations);
   const conversations = useSelector((state) => state.reducer.convo);
   const dispatch = useDispatch();
+
+  useQuery(queryAllBookings, {
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 120000,
+    variables: {
+      filterBy: mainFilter,
+      filterByOr: searchFilter,
+      limit,
+      offset: 0,
+      sortBy: defaultSort
+    },
+    onCompleted: (data) => {
+      console.log(data);
+      if (data) setInfoDetails(
+          data.getBookingsWithCriteria.rows.map((element) => {
+            return {
+              _id: element._id,
+              createdAt: element.createdAt,
+              status: element.status,
+              customer: {
+                _id: element.customerId,
+                name: element.customerName,
+                email: element.customerEmail,
+                phone: element.customerPhone,
+                company: element.customerCompany
+              },
+              classTitle: element.className,
+              classOption: element.classVariant.title,
+              attendees: element.attendees,
+              coordinator: {
+                name: element.eventCoordinatorName,
+                email: element.eventCoordinatorName
+              },
+              instructor: {
+                name: element.instructorName
+              },
+              eventDateTime: element.eventDateTime,
+              timezone: element.timezone,
+              timezoneLabel: element.timezoneLabel,
+              updatedAt: element.updatedAt
+            };
+          })
+        );
+    }
+  });
 
   useEffect(() => {
     if (isUserLoggedIn() !== null) {
@@ -155,63 +232,17 @@ const useTwilioClient = () => {
     }
   };
 
-  useQuery(queryConversationsDetail, {
-    fetchPolicy: 'cache-and-network',
-    variables: {
-      bookingIds: conversations?.map((convo) => convo?.friendlyName),
-      userId: userData?._id,
-      searchText: inputValue,
-      limit: !conversationsClient || conversationsClient?.connectionState === 'connecting' ? 0 : 50
-    },
-    onCompleted: (conversationDetails) => {
-      setInfoDetails(conversationDetails?.getConversationsDetails);
-    }
-  });
-
   const newConversation = (item) => conversations?.find((convo) => item?._id === convo?.channelState?.friendlyName || item?.customer?._id === convo?.channelState?.friendlyName);
-
-  useEffect(() => {
-    console.log('infoDetails', infoDetails);
-
-    if (conversations !== undefined && conversations !== null) {
-      const dataWithConversations = infoDetails?.map((item) => {
-        const newConv = newConversation(item);
-        if (newConv !== undefined) {
-          return {
-            ...item,
-            ...newConv
-          };
-        } else {
-          return item;
-        }
-      });
-      const dataSorted = dataWithConversations?.sort((a, b) => {
-        return (b.channelState?.lastMessage?.dateCreated || b.dateUpdated) - (a.channelState?.lastMessage?.dateCreated || a.dateUpdated);
-      });
-      setData(dataSorted);
-      setTimeout(() => {
-        setIsInfoReady(true);
-      }, 2000);
-    }
-  }, [infoDetails]);
 
   const updateConvoList = async (client, conversation, listConversations, addMessages, updateUnreadMessages) => {
     if (!client) return;
-
-    console.log('conversationAdded', conversation.status);
 
     const messages = await conversation.getMessages(1);
     dispatch(addMessages(conversation.sid, messages?.items || []));
 
     loadUnreadMessagesCount(conversation, updateUnreadMessages);
-    dispatch(addConversation(conversation));
-  };
 
-  const updateConversations = async (client) => {
-    if (client) {
-      const conversations = await client.getSubscribedConversations();
-      dispatch(listConversations(conversations?.items ?? []));
-    }
+    dispatch(addConversation(conversation));
   };
 
   const updateTypingIndicator = (participant, sid, callback) => {
@@ -249,18 +280,85 @@ const useTwilioClient = () => {
     dispatch(updateParticipants(result, participant.conversation.sid));
   };
 
-  return {
-    client: conversationsClient,
-    conversations,
-    data,
-    infoDetails,
-    isInfoReady,
-    inputValue,
-    setInputValue,
-    token,
-    userData,
-    userDataEmail
-  };
+  useEffect(() => {
+    if (conversations !== undefined && conversations !== null) {
+      setTimeout(() => {
+        setIsInfoReady(false);
+      }, 2000);
+
+      const dataWithConversations = infoDetails?.map((item) => {
+        const newConv = newConversation(item);
+        if (newConv !== undefined) {
+          return {
+            ...item,
+            ...newConv
+          };
+        } else {
+          return item;
+        }
+      });
+      const dataSorted = dataWithConversations?.sort((a, b) => {
+        return (b.channelState?.lastMessage?.dateCreated || b.dateUpdated) - (a.channelState?.lastMessage?.dateCreated || a.dateUpdated);
+      });
+      setData(dataSorted);
+      setTimeout(() => {
+        setIsInfoReady(true);
+      }, 2000);
+    }
+  }, [infoDetails, conversations]);
+
+  useEffect(() => {
+    if (!inputValue) setSearchFilter([]);
+    else setSearchFilter([
+        {
+          name: '_id',
+          type: 'string',
+          operator: 'eq',
+          value: inputValue
+        },
+        {
+          name: 'customerName',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        },
+        {
+          name: 'customerEmail',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        },
+        {
+          name: 'customerPhone',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        },
+        {
+          name: 'customerCompany',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        }
+      ]);
+  }, [inputValue]);
+
+  return useMemo(() => {
+    if (userData?.coordinatorId) {
+      return {
+        client: conversationsClient,
+        conversations,
+        data,
+        infoDetails,
+        isInfoReady,
+        inputValue,
+        setInputValue,
+        token,
+        userData,
+        userDataEmail
+      };
+    } else return {};
+  }, [userData, conversationsClient, data, token]);
 };
 
 export default useTwilioClient;

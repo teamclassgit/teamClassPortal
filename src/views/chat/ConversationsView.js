@@ -1,7 +1,8 @@
 // @packages
 import { AlertTriangle, Check, Send } from 'react-feather';
-import { Badge, ListGroup } from 'reactstrap';
+import { ListGroup } from 'reactstrap';
 import React, { useEffect, useState } from 'react';
+import Avatar from '@components/avatar';
 
 //  @scripts
 import RenderList from './RenderList';
@@ -87,7 +88,7 @@ const getLastMessageTime = (messages) => {
 };
 
 const ConversationView = (props) => {
-  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount, notifications, customer, selectedBooking, setSelectedBooking } = props;
+  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount, customer, selectedBooking, setSelectedBooking } = props;
   const [backgroundColor, setBackgroundColor] = useState();
   const [lastMsgStatus, setLastMsgStatus] = useState('');
 
@@ -96,6 +97,7 @@ const ConversationView = (props) => {
   const textColor = unreadMessagesCount > 0 ? 'white' : 'black';
   const muted = props?.otherConvo?.notificationLevel === NOTIFICATION_LEVEL.MUTED;
   const time = getLastMessageTime(props?.messages);
+  const [seeBookings, setSeeBookings] = useState(false);
 
   useEffect(() => {
     if (props?.infoId === convo?._id) {
@@ -131,79 +133,84 @@ const ConversationView = (props) => {
   }, [convo, myMessage, lastMessage, props.participants, props.typingInfo]);
 
   return (
-    <>
-      {!notifications && (
-        <div className="conversation-view-container" onClick={props.onClick} style={{ backgroundColor }}>
-          <span className="d-flex">
-            <span className="render-list-span render-list">
-              <a title={capitalizeString(customer?.name)}>
-                {`${capitalizeString(customer?.name)}`}
-              </a>
-            </span>
-              <strong className='render-list'>
-                <a title={capitalizeString(customer?.company)}>
-                  {customer?.company && ` (${capitalizeString(customer?.company)})`}
-                </a>
-              </strong>
-            {unreadMessagesCount > 0 && (
-              <div className="unread-message-count">
-                <Badge pill color="danger">
-                  {unreadMessagesCount}
-                </Badge>
+    <li onClick={props.onClick} style={{ backgroundColor }} className="conversation-view-container">
+      <Avatar
+        size="lg"
+        className="avatar-border"
+        badgeUp={unreadMessagesCount > 0}
+        badgeText={`${unreadMessagesCount}`}
+        contentStyles={{ fontSize: '1rem', width: '44px', height: '44px' }}
+        color={`light-success`}
+        content={customer?.name}
+        initials
+      />
+      <div className="pl-1 text-truncate">
+        <span className="d-flex">
+          <span className="render-list-span render-list">
+            <a title={capitalizeString(customer?.name)}>{`${capitalizeString(customer?.name.split(' ')[0])} (${capitalizeString(
+              customer?.company
+            )})`}</a>
+          </span>
+        </span>
+        <div className={!unreadMessagesCount ? 'typing-info-container p-0' : 'typing-info-container-hidden p-0'} style={{ color: textColor }}>
+          <div className="typing-info">
+            {!props?.typingInfo?.length && (
+              <div>
+                {lastMsgStatus === MessageStatus.Sending && props.myMessage && (
+                  <div className="message-status">
+                    <Send size={20} />
+                  </div>
+                )}
+                {lastMsgStatus === MessageStatus.Delivered && props.myMessage && (
+                  <div className="message-status">
+                    <Check size={20} />
+                  </div>
+                )}
+                {lastMsgStatus === MessageStatus.Failed && props.myMessage && (
+                  <div className="message-status">
+                    <AlertTriangle size={20} />
+                  </div>
+                )}
+                {lastMsgStatus === MessageStatus.Read && props.myMessage && (
+                  <div className="message-status">
+                    <div
+                      style={{
+                        marginLeft: '-5px',
+                        left: '5px',
+                        top: '-1px',
+                        position: 'relative'
+                      }}
+                    >
+                      <Check size={20} color="black" />
+                    </div>
+                    <Check size={20} color="black" />
+                  </div>
+                )}
               </div>
             )}
-          </span>
-          <div style={{ color: muted ? 'gray' : 'black' }}>
+            <div className="last-message">{lastMessage}</div>
+          </div>
+          <div className="time">{time}</div>
+        </div>
+        <div style={{ color: muted ? 'gray' : 'black' }}>
+          {seeBookings && (
             <ListGroup tag="div">
               {customer &&
                 customer?.bookings?.map((booking, index) => {
-                  return <RenderList key={`${booking._id}${index}`} booking={booking} setSelectedBooking={setSelectedBooking} isActive={booking._id === selectedBooking} />;
+                  return (
+                    <RenderList
+                      key={`${booking._id}${index}`}
+                      booking={booking}
+                      setSelectedBooking={setSelectedBooking}
+                      isActive={booking._id === selectedBooking}
+                    />
+                  );
                 })}
             </ListGroup>
-          </div>
-          <div className={!unreadMessagesCount ? 'typing-info-container' : 'typing-info-container-hidden'} style={{ color: textColor }}>
-            <div className="typing-info">
-              {!props?.typingInfo?.length && (
-                <div>
-                  {lastMsgStatus === MessageStatus.Sending && props.myMessage && (
-                    <div className="message-status">
-                      <Send size={20} />
-                    </div>
-                  )}
-                  {lastMsgStatus === MessageStatus.Delivered && props.myMessage && (
-                    <div className="message-status">
-                      <Check size={20} />
-                    </div>
-                  )}
-                  {lastMsgStatus === MessageStatus.Failed && props.myMessage && (
-                    <div className="message-status">
-                      <AlertTriangle size={20} />
-                    </div>
-                  )}
-                  {lastMsgStatus === MessageStatus.Read && props.myMessage && (
-                    <div className="message-status">
-                      <div
-                        style={{
-                          marginLeft: '-5px',
-                          left: '5px',
-                          top: '-1px',
-                          position: 'relative'
-                        }}
-                      >
-                        <Check size={20} color="black" />
-                      </div>
-                      <Check size={20} color="black" />
-                    </div>
-                  )}
-                </div>
-              )}
-              <div className="last-message">{lastMessage}</div>
-            </div>
-            <div className="time">{time}</div>
-          </div>
+          )}
         </div>
-      )}
-    </>
+      </div>
+    </li>
   );
 };
 export default ConversationView;

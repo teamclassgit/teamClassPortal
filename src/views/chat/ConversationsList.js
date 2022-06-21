@@ -118,62 +118,61 @@ const ConversationsList = ({ client, info, userData, notifications, setSelectedB
   }
 
   return (
-    <div id="conversation-list">
-      {infoByCustomers?.map((customer) => {
-        const convo = customer?.bookings?.length > 0 ? customer.bookings[0] : undefined;
-        return (
-          <ConversationView
-            client={client}
-            customer={customer}
-            convoId={convo?.sid || convo?._id}
-            selectedBooking={selectedBooking}
-            setSelectedBooking={setSelectedBooking}
-            convoClass={convo?.classTitle}
-            currentConvoSid={sid}
-            info={info}
-            conversationUnread={conversationUnread}
-            notifications={notifications}
-            infoId={infoId}
-            key={convo?._id}
-            longInfo={convo?._id}
-            setSid={updateCurrentConversation}
-            userData={userData}
-            lastMessage={getLastMessage(messages[convo?.sid] ?? [], typingData[convo?.sid] ?? [])}
-            messages={messages[convo.sid]}
-            myMessage={isMyMessage(messages[convo.sid])}
-            typingInfo={typingData[convo.sid] ?? []}
-            unreadMessagesCount={setUnreadMessagesCount(sid, convo?.sid, unreadMessages, updateUnreadMessages)}
-            updateUnreadMessages={updateUnreadMessages}
-            updateTotalUnreadCount={setTotalUnreadMessagesCount(unreadMessages, setTotalUnreadMessagesCountAction)}
-            participants={participants[convo.sid] ?? []}
-            convo={convo}
-            otherConvo={conversations.find((item) => item?.sid === convo?.sid)}
-            onClick={async () => {
-              try {
-                dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));
-                await updateCurrentConvo(
-                  updateCurrentConversation,
-                  conversations.find((item) => item?.sid === convo?.sid),
-                  updateParticipants,
-                  convo._id
-                );
-                if (convo?.sid) {
-                  dispatch(updateUnreadMessages(convo.sid, 0));
-                }
-
-                const selected = customer?.bookings?.find((element) => element._id === selectedBooking);
-                console.log('selected ', selectedBooking, selected);
-                if (!selected) {
-                  console.log(selectedBooking, customer.bookings);
-                }
-              } catch (e) {
-                console.log(e);
-              }
-            }}
-          />
-        );
-      })}
-    </div>
+    <>
+      {!notifications && (
+        <div id="conversation-list">
+          <ul>
+            {infoByCustomers?.map((customer) => {
+              const convo = customer?.bookings?.length > 0 ? customer.bookings[0] : undefined;
+              return (
+                <ConversationView
+                  client={client}
+                  customer={customer}
+                  convoId={convo?.sid || convo?._id}
+                  selectedBooking={selectedBooking}
+                  setSelectedBooking={setSelectedBooking}
+                  convoClass={convo?.classTitle}
+                  currentConvoSid={sid}
+                  info={info}
+                  conversationUnread={conversationUnread}
+                  infoId={infoId}
+                  key={convo?._id}
+                  longInfo={convo?._id}
+                  setSid={updateCurrentConversation}
+                  userData={userData}
+                  lastMessage={getLastMessage(messages[convo?.sid] ?? [], typingData[convo?.sid] ?? [])}
+                  messages={messages[convo.sid]}
+                  myMessage={isMyMessage(messages[convo.sid])}
+                  typingInfo={typingData[convo.sid] ?? []}
+                  unreadMessagesCount={setUnreadMessagesCount(sid, convo?.sid, unreadMessages, updateUnreadMessages)}
+                  updateUnreadMessages={updateUnreadMessages}
+                  updateTotalUnreadCount={setTotalUnreadMessagesCount(unreadMessages, setTotalUnreadMessagesCountAction)}
+                  participants={participants[convo.sid] ?? []}
+                  convo={convo}
+                  otherConvo={conversations.find((item) => item?.sid === convo?.sid)}
+                  onClick={async () => {
+                    try {
+                      dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));
+                      await updateCurrentConvo(
+                        updateCurrentConversation,
+                        conversations.find((item) => item?.sid === convo?.sid),
+                        updateParticipants,
+                        convo._id
+                      );
+                      if (convo?.sid) {
+                        dispatch(updateUnreadMessages(convo.sid, 0));
+                      }
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }}
+                />
+              );
+            })}
+          </ul>
+        </div>
+      )}
+    </>
   );
 };
 

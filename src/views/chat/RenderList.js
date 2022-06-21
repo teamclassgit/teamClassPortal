@@ -2,12 +2,11 @@
 import Proptypes from 'prop-types';
 import React, { useState } from 'react';
 import { ListGroupItem, Tooltip } from 'reactstrap';
-
-// @scripts
-import { getEventFullDate } from '../../services/CalendarEventService';
+import moment from 'moment-timezone';
 
 // @styles
 import './RenderList.scss';
+import { DEFAULT_TIME_ZONE_LABEL } from '../../utility/Constants';
 
 const RenderList = ({ booking, setSelectedBooking, isActive }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -25,18 +24,20 @@ const RenderList = ({ booking, setSelectedBooking, isActive }) => {
       active={isActive}
     >
       <small>
-        <span className='render-list-overflow'>{`Booking Id: ${booking?._id}`}</span>
+        <span className="render-list-overflow">{`Booking Id: ${booking?._id}`}</span>
         <br></br>
-        <span id={`Tooltip-${booking?._id}`} className={!isActive ? "text-secondary" : ""}>
+        <span id={`Tooltip-${booking?._id}`} className={!isActive ? 'text-secondary' : ''}>
           <Tooltip isOpen={tooltipOpen} placement="right" target={`Tooltip-${booking?._id}`} toggle={toggle} delay={{ show: 50, hide: 50 }}>
             {booking?.classTitle}
           </Tooltip>
           <span style={{ fontWeight: 'normal' }}>{`ClassName: ${booking?.classTitle}`}</span>
         </span>
-        {booking?.calendarEvent?.status && (
-          <span className={!isActive ? "text-secondary" : ""}>
+        {booking?.eventDateTime && (
+          <span className={!isActive ? 'text-secondary' : ''}>
             <br></br>
-            <span>{`EventDate: ${getEventFullDate(booking.calendarEvent).format('LLL')}`}</span>
+            <span>{`EventDate: ${moment(booking?.eventDateTime)?.tz(booking?.timezone)?.format('MM/DD/YYYY hh:mm A')} ${
+              booking?.timezoneLabel || DEFAULT_TIME_ZONE_LABEL
+            }`}</span>
           </span>
         )}
       </small>
