@@ -1168,15 +1168,11 @@ const EditBookingModal = ({
 
             {classOptionsTags &&
               classOptionsTags.map((tag, index) => (
-                <div className="pb-1">
-                  <span className="tags">
-                    {tag.text}
-                    <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
-                      x
-                    </a>
-                  </span>
-                </div>
-              ))}
+                <span className="tags">
+                 {tag.text}
+                   <a href="#" className="pl-1" onClick={() => handleDelete(index)}>x</a>
+                </span>
+             ))}
 
             <FormGroup>
               <a target="_blank" href={`https://teamclass.com/booking/pre-event/${currentElement?._id}`}>
