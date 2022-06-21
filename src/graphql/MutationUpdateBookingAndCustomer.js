@@ -159,7 +159,7 @@ export default gql`
       updatedAt
       signUpDeadline
       additionalClassOptions {
-        id
+        groupId
         text
       }
       shippingTrackingLink

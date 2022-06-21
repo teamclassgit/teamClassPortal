@@ -526,7 +526,7 @@ const EditBookingModal = ({
     if (e.key === 'Enter') {
       setIndividualTag('');
       const tag = {
-        id: e.target.value,
+        groupId: e.target.value,
         text: e.target.value
       };
       setClassOptionsTags([...classOptionsTags, tag]);
@@ -542,7 +542,7 @@ const EditBookingModal = ({
     { value: 'spam', label: 'Spam' },
     { value: 'drift', label: 'Drift' },
     { value: 'referral', label: 'Referral' },
-    { value: "repeat", label: "Repeat" }
+    { value: 'repeat', label: 'Repeat' }
   ];
 
   return (
@@ -1168,15 +1168,18 @@ const EditBookingModal = ({
 
             {classOptionsTags &&
               classOptionsTags.map((tag, index) => (
-                <div className="pb-2">
-                  <span className="tags mb-1">
-                    {tag.text}
-                    <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
-                      x
-                    </a>
-                  </span>
-                </div>
-              ))}
+                <span className="tags">
+                 {tag.text}
+                   <a href="#" className="pl-1" onClick={() => handleDelete(index)}>x</a>
+                </span>
+             ))}
+
+            <FormGroup>
+              <a target="_blank" href={`https://teamclass.com/booking/pre-event/${currentElement?._id}`}>
+                <small>Click to see survey's answer, and selected options.</small>
+              </a>
+              {!currentElement?.preEventSurvey?.submittedAt && <p className="pre-event-small-note">(Pre event survey is yet to be completed.)</p>}
+            </FormGroup>
 
             <FormGroup>
               <Label for="selectedtags">Tags</Label>
