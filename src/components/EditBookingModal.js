@@ -1179,9 +1179,8 @@ const EditBookingModal = ({
               ))}
 
             <FormGroup>
-              <Label for="classOptions">Pre Event Survey and Options:</Label>{' '}
-              <a target="_blank" href={`http://teamclass.com/booking/pre-event/${currentElement?._id}`}>
-                <small>Click to see survey's answer, and selected options</small>
+              <a target="_blank" href={`https://teamclass.com/booking/pre-event/${currentElement?._id}`}>
+                <small>Click to see survey's answer, and selected options.</small>
               </a>
               {!currentElement?.preEventSurvey?.submittedAt && <p className="pre-event-small-note">(Pre event survey is yet to be completed.)</p>}
             </FormGroup>
