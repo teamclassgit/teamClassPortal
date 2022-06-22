@@ -52,12 +52,24 @@ export default gql`
         discount
         bookingStage
         closedReason
+        bookingTags
+        customerTags
+        gclid
+        instantBooking
+        utm_campaign
+        utm_source
+        utm_medium
+        utm_content
+        utm_term
         payments {
           amount
           createdAt
           paymentId
           paymentName
           status
+        }
+        preEventSurvey {
+          submittedAt
         }
         classVariant {
           active
@@ -72,32 +84,6 @@ export default gql`
           order
           pricePerson
           title
-        }
-        instructorInvoice {
-          createdAt
-          invoiceItems {
-            description
-            price
-            units
-          }
-          notes
-          rejectedReasons
-          status
-          updatedAt
-          paymentReceipt
-        }
-        distributorInvoice {
-          createdAt
-          invoiceItems {
-            description
-            price
-            units
-          }
-          notes
-          rejectedReasons
-          status
-          updatedAt
-          paymentReceipt
         }
         shippingTrackingLink
         joinInfo {

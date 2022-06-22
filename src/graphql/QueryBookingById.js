@@ -21,6 +21,16 @@ export default gql`
         active
         groupEvent
         kitHasAlcohol
+        instructorFlatFee
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       notes {
         note
@@ -85,6 +95,7 @@ export default gql`
       taxExempt
       ccFeeExempt
       capRegistration
+      distributorId
       invoiceDetails {
         item
         unitPrice
@@ -124,6 +135,33 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      preEventSurvey {
+        aboutTeam
+        conferenceLink
+        engagement
+        eventDuration
+        eventPurpose
+        eventSpeed
+        eventType
+        formality
+        hostName
+        introOutro
+        ownLink
+        submittedAt
+      }
+      signUpPageSettings {
+        invitationFrom
+        additionalCopyToShow
+        additionalRegistrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
+      }
     }
   }
 `;

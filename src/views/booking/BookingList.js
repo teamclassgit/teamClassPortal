@@ -16,6 +16,7 @@ import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
 import { getAllDataToExport } from '../../services/BookingService';
+import QueryAllInstructors from '../../graphql/QueryAllInstructors';
 
 const BookingList = () => {
   const defaultFilter = [];
@@ -27,6 +28,7 @@ const BookingList = () => {
   const [limit, setLimit] = useState(50);
   const [customers, setCustomers] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
+  const [instructors, setInstructors] = useState([]);
   const [classes, setClasses] = useState([]);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -186,6 +188,14 @@ const BookingList = () => {
     },
     onCompleted: (data) => {
       if (data) setCustomers(data.customers);
+    },
+    pollInterval: 200000
+  });
+
+  useQuery(QueryAllInstructors, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      if (data) setInstructors(data.instructors);
     },
     pollInterval: 200000
   });
@@ -352,6 +362,7 @@ const BookingList = () => {
             open={editModal}
             handleModal={handleEditModal}
             currentElement={currentElement}
+            allInstructors={instructors}
             allCoordinators={coordinators}
             allClasses={classes}
             handleClose={() => setCurrentElement({})}

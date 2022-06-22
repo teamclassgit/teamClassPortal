@@ -2,10 +2,11 @@ import React, { Fragment } from 'react';
 import NumberInput from '@components/number-input';
 import { DollarSign, MinusCircle, PlusCircle } from 'react-feather';
 import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, RUSH_FEE, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
-import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText, InputGroup } from 'reactstrap';
+import { Alert, Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText, InputGroup } from 'reactstrap';
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
 import Avatar from '@components/avatar';
+import moment from 'moment';
 
 const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking, calendarEvent }) => {
   const defaultInvoiceItems = [
@@ -22,7 +23,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       item: 'Class / Attendees',
       unitPrice: 0,
       units: 1,
-      priceEditable: false,
+      priceEditable: true,
       unitsEditable: true,
       taxable: true,
       readOnly: true
@@ -130,7 +131,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           ccFeeExempt,
           rushFee,
           classMinimum,
-          rushFeeValue : RUSH_FEE,
+          rushFeeValue: RUSH_FEE,
           classVariant: classVariantChanges,
           salesTax: taxExempt ? 0 : booking.salesTax > 0 ? booking.salesTax : SALES_TAX,
           salesTaxState: taxExempt ? '' : booking.salesTax > 0 && booking.salesTaxState ? booking.salesTaxState : SALES_TAX_STATE,
@@ -180,7 +181,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
               name="taxExempt"
               inline
             />
-             <CustomInput
+            <CustomInput
               type="switch"
               id="ccFeeExempt"
               onClick={(e) => {
@@ -364,21 +365,23 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       </Row>
 
       {booking && booking.status !== BOOKING_CLOSED_STATUS && (
-        <div className="d-flex justify-content-between">
-          <span>
-            <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
-              <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
-            </CardLink>
-          </span>
-          <Button.Ripple
-            size="sm"
-            disabled={booking.status === BOOKING_PAID_STATUS || !formValid || hasFinalPayment}
-            color="primary"
-            className="btn-next"
-            onClick={() => saveInvoiceDetails()}
-          >
-            <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
-          </Button.Ripple>
+        <div>
+          <div className="d-flex justify-content-between">
+            <span>
+              <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
+                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
+              </CardLink>
+            </span>
+            <Button.Ripple
+              size="sm"
+              disabled={booking.status === BOOKING_PAID_STATUS || !formValid || hasFinalPayment}
+              color="primary"
+              className="btn-next"
+              onClick={() => saveInvoiceDetails()}
+            >
+              <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
+            </Button.Ripple>
+          </div>
         </div>
       )}
     </Fragment>

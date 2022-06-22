@@ -10,7 +10,8 @@ import mutationUpdateBookingDistributorInvoice from '../../../graphql/MutationUp
 import mutationPayEventToDistributor from '../../../graphql/MutationPayEventToDistributor';
 import queryDistributorById from '../../../graphql/QueryDistributorById';
 import DropZone from '../../../@core/components/drop-zone';
-import { getEventFullDate, uploadFile } from '../../../utility/Utils';
+import { uploadFile } from '../../../utility/Utils';
+import { getEventFullDate } from '../../../services/CalendarEventService';
 
 // @styles
 import './partners-invoice.scss';

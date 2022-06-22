@@ -1,36 +1,15 @@
-// ** React Imports
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-
-// ** Custom Components
+// @packages
+import React from 'react';
+import Proptypes from 'prop-types';
 import Avatar from '@components/avatar';
-
-// ** Utils
-import { isUserLoggedIn } from '@utils';
-
-// ** Store & Actions
-import { useDispatch } from 'react-redux';
-import { handleLogout } from '@store/actions/auth';
-
-// ** Third Party Components
+import { Link } from 'react-router-dom';
+import { Power } from 'react-feather';
 import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
-import { User, Mail, CheckSquare, MessageSquare, Settings, CreditCard, HelpCircle, Power } from 'react-feather';
 
-// ** Default Avatar Image
-import defaultAvatar from '@src/assets/images/portrait/small/avatar-s-11.jpg';
-import { getUserData } from '../../../../utility/Utils';
+// @scripts
 import { logoutUser } from '../../../../utility/RealmApolloClient';
 
-const UserDropdown = () => {
-  const dispatch = useDispatch();
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    if (isUserLoggedIn() !== null) {
-      setUserData(getUserData());
-    }
-  }, []);
-
+const UserDropdown = ({ userData }) => {
   return (
     <UncontrolledDropdown tag="li" className="dropdown-user nav-item">
       <DropdownToggle href="/" tag="a" className="nav-link dropdown-user-link" onClick={(e) => e.preventDefault()}>
@@ -41,22 +20,6 @@ const UserDropdown = () => {
         <Avatar color={`light-dark`} content={(userData && userData.customData && userData.customData['name']) || 'Unknown'} initials />
       </DropdownToggle>
       <DropdownMenu right>
-        {/**<DropdownItem tag={Link} to="#" onClick={(e) => e.preventDefault()}>
-          <User size={14} className="mr-75" />
-          <span className="align-middle">Profile</span>
-        </DropdownItem>
-        <DropdownItem tag={Link} to="#" onClick={(e) => e.preventDefault()}>
-          <Mail size={14} className="mr-75" />
-          <span className="align-middle">Inbox</span>
-        </DropdownItem>
-        <DropdownItem tag={Link} to="#" onClick={(e) => e.preventDefault()}>
-          <CheckSquare size={14} className="mr-75" />
-          <span className="align-middle">Tasks</span>
-        </DropdownItem>
-        <DropdownItem tag={Link} to="#" onClick={(e) => e.preventDefault()}>
-          <MessageSquare size={14} className="mr-75" />
-          <span className="align-middle">Chats</span>
-        </DropdownItem>**/}
         <DropdownItem tag={Link} to="/login" onClick={() => logoutUser()}>
           <Power size={14} className="mr-75" />
           <span className="align-middle">Logout</span>
@@ -64,6 +27,10 @@ const UserDropdown = () => {
       </DropdownMenu>
     </UncontrolledDropdown>
   );
+};
+
+UserDropdown.Proptypes = {
+  userData: Proptypes.object
 };
 
 export default UserDropdown;

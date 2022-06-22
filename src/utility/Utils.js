@@ -100,7 +100,7 @@ export const isPhoneValid = (phone) => {
 };
 
 export const isUrlValid = (url) => {
-  const reg = /https?:\/\/.+/;
+  const reg = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
   return !url || reg.test(url);
 };
 
@@ -132,15 +132,6 @@ export const absoluteUrl = (req, setLocalhost) => {
     host,
     origin: `${protocol}//${host}`
   };
-};
-
-export const getEventFullDate = (calendarEvent) => {
-  if (!calendarEvent) return;
-
-  const eventDate = new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day);
-  const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}`;
-
-  return moment(`${moment(eventDate).format('DD/MM/YYYY')} ${eventTime}`, 'DD/MM/YYYY HH:mm');
 };
 
 export const getQueryFiltersFromFilterArray = (filterValue) => {
@@ -183,3 +174,4 @@ export const uploadFile = async (file) => {
 
   return result;
 };
+export const isNotEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;

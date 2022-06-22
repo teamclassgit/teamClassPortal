@@ -20,6 +20,12 @@ const Routes = [
     component: lazy(() => import('../../views/booking/FunnelTable'))
   },
   {
+    appLayout: true,
+    className: 'chat-application',
+    component: lazy(() => import('../../views/chat')),
+    path: '/chat'
+  },
+  {
     path: '/allbookings',
     component: lazy(() => import('../../views/booking/AllBookingsTable'))
   },
@@ -42,6 +48,10 @@ const Routes = [
   {
     path: '/giftBaskets',
     component: lazy(() => import('../../views/giftBaskets/GiftBasketsList'))
+  },
+  {
+    path: '/listingPrices',
+    component: lazy(() => import('../../views/listingPrices/ListingPricesList'))
   },
   {
     path: '/login',

@@ -23,15 +23,17 @@ export default gql`
     $createdAt: DateTime!
     $updatedAt: DateTime!
     $signUpDeadline: DateTime
-    $status: String!
     $phone: String!
     $email: String!
     $company: String
-    $closedReason: String
     $capRegistration: Boolean
     $joinInfo: BookingJoinInfoUpdateInput
     $joinInfo_unset: Boolean
     $shippingTrackingLink: String
+    $distributorId: String
+    $distributorId_unset: Boolean
+    $additionalClassOptions: [BookingAdditionalClassOptionUpdateInput]
+    $tags: [String]
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -89,15 +91,17 @@ export default gql`
         serviceFee: $serviceFee
         salesTax: $salesTax
         discount: $discount
-        status: $status
         createdAt: $createdAt
         updatedAt: $updatedAt
         signUpDeadline: $signUpDeadline
-        closedReason: $closedReason
         capRegistration: $capRegistration
         joinInfo: $joinInfo
         joinInfo_unset: $joinInfo_unset
         shippingTrackingLink: $shippingTrackingLink
+        distributorId: $distributorId
+        distributorId_unset: $distributorId_unset
+        additionalClassOptions: $additionalClassOptions
+        tags: $tags
       }
     ) {
       _id
@@ -120,6 +124,8 @@ export default gql`
       signUpStatusLink
       checkoutLink
       taxExempt
+      distributorId
+      tags
       payments {
         amount
         paymentId
@@ -138,10 +144,24 @@ export default gql`
         pricePerson
         hasKit
         groupEvent
+        instructorFlatFee
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       createdAt
       updatedAt
       signUpDeadline
+      additionalClassOptions {
+        groupId
+        text
+      }
       shippingTrackingLink
       joinInfo {
         eventId

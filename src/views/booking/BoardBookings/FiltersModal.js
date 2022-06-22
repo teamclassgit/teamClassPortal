@@ -152,7 +152,6 @@ const FiltersModal = ({
               className="react-select"
               defaultValue={getClosedReasonFilterDefaultValue()}
               options={closedReasonOptions}
-              classNamePrefix="select"
               onChange={(e) => {
                 setFilterByClosedReason({ type: 'closedReason', value: e.value, label: e.label });
               }}

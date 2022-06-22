@@ -1,0 +1,50 @@
+.input-field-container {
+  background-color:  white;
+  display: flex;
+  flex-basis:  30px;
+  flex-direction: column;
+  flex-grow: 2;
+  width: calc(100% - 50px);
+}
+
+.input-field-sub {
+  border-top: 1px solid #ebe9f1;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  padding-top: 10px;
+}
+
+.input-field {
+  align-items: start;
+  cursor: pointer;
+  display: flex;
+  position: relative;
+  bottom: 2px;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.message-input-field {
+  flex-grow: 10;
+  padding-right: 10px;
+}
+
+.message-button-input-field {
+  align-items: flex-start;
+  flex-grow: 1;
+  position: relative;
+  margin-left: 10px;
+  bottom: 2px;
+  justify-content: flex-end;
+}
+
+.dark-layout {
+  .input-field-container {
+    background-color:  #283046;
+  }
+
+  .input-field-sub {
+    border-top: 1px solid #3b4253;
+  }
+}

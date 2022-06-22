@@ -39,6 +39,16 @@ export default gql`
         active
         groupEvent
         kitHasAlcohol
+        instructorFlatFee
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       notes {
         note
@@ -55,6 +65,9 @@ export default gql`
         unit
         order
         active
+      }
+      preEventSurvey {
+        submittedAt
       }
       payments {
         addressLine1
@@ -84,6 +97,7 @@ export default gql`
       instructorName
       customerId
       customerName
+      distributorId
       eventDate
       eventDurationHours
       attendees
@@ -102,6 +116,11 @@ export default gql`
       taxExempt
       ccFeeExempt
       capRegistration
+      additionalClassOptions {
+        groupId
+        text
+      }
+      tags
       invoiceDetails {
         item
         unitPrice

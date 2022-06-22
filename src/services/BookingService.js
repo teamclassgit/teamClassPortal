@@ -6,14 +6,14 @@ import mutationUpdateManyBookings from '../graphql/MutationUpdateManyBookings';
 import queryCustomerById from '../graphql/QueryCustomerById';
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from '../utility/Constants';
 import { apolloClient } from '../utility/RealmApolloClient';
-import { getQueryFiltersFromFilterArray } from '../utility/Utils';
+import { getQueryFiltersFromFilterArray, isNotEmptyArray } from '../utility/Utils';
 
 //get totals associated to a booking
 const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false) => {
   const minimum = bookingInfo.classVariant ? bookingInfo.classVariant.minimum : bookingInfo.classMinimum;
 
   //pricePerson is currently in use for group based pricing too
-  const price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
+  let price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
 
   const discount = bookingInfo.discount;
   let totalTaxableAdditionalItems = 0;
@@ -24,6 +24,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
     customDeposit = bookingInfo.invoiceDetails[0].unitPrice;
     customAttendees = bookingInfo.invoiceDetails[1].units;
+    price = bookingInfo.invoiceDetails[1].unitPrice;
 
     const items = bookingInfo.invoiceDetails.slice(2);
 
@@ -58,11 +59,13 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   let cardFee = 0;
   const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
+  const instructorFlatFee = bookingInfo.classVariant?.instructorFlatFee ? bookingInfo.classVariant.instructorFlatFee : 0;
+
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
   const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * SERVICE_FEE;
   const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
-  const tax = (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
-  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + tax - totalDiscount;
+  const tax = (withoutFee + fee + rushFee + instructorFlatFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
+  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + instructorFlatFee + tax - totalDiscount;
 
   if (isCardFeeIncluded && !bookingInfo.ccFeeExempt) {
     cardFee = finalValue * CREDIT_CARD_FEE;
@@ -82,6 +85,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
     initialDeposit,
     customDeposit,
     customAttendees,
+    customPrice: price,
     totalTaxableAdditionalItems,
     totalNoTaxableAdditionalItems,
     cardFee,
@@ -152,7 +156,16 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'serviceFeeAmount',
     'cardFeeAmount',
     'totalInvoice',
-    'balance'
+    'balance',
+    'customerTags',
+    'gclid',
+    'instantBooking',
+    'utm_campaign',
+    'utm_source',
+    'utm_medium',
+    'utm_content',
+    'utm_term',
+    'bookingTags'
   ];
 
   bookingsArray.push(headers);
@@ -192,7 +205,16 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.serviceFeeAmount,
       element.cardFeeAmount,
       element.totalInvoice,
-      element.balance
+      element.balance,
+      (isNotEmptyArray(element.customerTags) ? element.customerTags.join(", ") : ""),
+      element.gclid,
+      element.instantBooking,
+      element.utm_campaign,
+      element.utm_source,
+      element.utm_medium,
+      element.utm_content,
+      element.utm_term,
+      (isNotEmptyArray(element.bookingTags) ? element.bookingTags.join(", ") : "")
     ];
     bookingsArray.push(row);
   });

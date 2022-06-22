@@ -1,6 +1,6 @@
 // @packages
 import React, { useState, useEffect, useCallback } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { apolloClient } from '../../utility/RealmApolloClient';
@@ -8,7 +8,7 @@ import { Calendar, Check, DollarSign, Edit2, User, Users } from 'react-feather';
 import Avatar from '@components/avatar';
 import moment from 'moment-timezone';
 window.moment = moment;
-import { getQueryFiltersFromFilterArray, getUserData } from '../../utility/Utils';
+import { getQueryFiltersFromFilterArray, getUserData, isNotEmptyArray } from '../../utility/Utils';
 import { Modal } from 'reactstrap';
 
 //@reactdatagrid packages
@@ -27,11 +27,12 @@ import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCrit
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
+import queryAllInstructors from '../../graphql/QueryAllInstructors';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
-import { getAllDataToExport, getBookingAndCalendarEventById, closeManyBookingsOneReason } from '../../services/BookingService';
+import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
 
 const renderRowDetails = ({ data }) => {
@@ -62,6 +63,7 @@ const AllBookingsTable = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [elementToAdd, setElementToAdd] = useState({});
   const [customers, setCustomers] = useState([]);
+  const [instructors, setInstructors] = useState([]);
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
@@ -72,7 +74,7 @@ const AllBookingsTable = () => {
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
   const [selected, setSelected] = useState({});
-  const [closedReason, setClosedReason] = useState("");
+  const [closedReason, setClosedReason] = useState('');
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
@@ -88,7 +90,9 @@ const AllBookingsTable = () => {
   };
 
   const toggle = () => {
-    setOrFilters([]);
+    if (isOpenModal) {
+      setSortInfo({ dir: 1, id: 'createdAt', name: 'createdAt', type: 'date' });
+    }
     setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
     setIsOpenModal(!isOpenModal);
   };
@@ -372,7 +376,23 @@ const AllBookingsTable = () => {
       defaultVisible: false
     },
 
-    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    {
+      name: 'customerName',
+      header: 'Customer ',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      render: ({ data }) => {
+        if (isNotEmptyArray(data.bookingTags) && data.bookingTags.includes('repeat')) {
+          return (
+            <div>
+              {data.customerName} <span className="card-tags text-warning">{"Repeat"}</span>
+            </div>
+          );
+        }
+        return data.customerName;
+      }
+    },
     { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
     { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
     { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
@@ -424,7 +444,7 @@ const AllBookingsTable = () => {
       filterDelay: 1500,
       defaultVisible: false,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -436,7 +456,7 @@ const AllBookingsTable = () => {
       filterDelay: 1500,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -448,7 +468,7 @@ const AllBookingsTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -459,7 +479,7 @@ const AllBookingsTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -470,7 +490,7 @@ const AllBookingsTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -492,7 +512,7 @@ const AllBookingsTable = () => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -515,7 +535,7 @@ const AllBookingsTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -526,6 +546,130 @@ const AllBookingsTable = () => {
       filterDelay: 1500,
       defaultWidth: 200,
       render: ({ value, cellProps }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'bookingTags',
+      header: 'Bookings Tags',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value.join(", ")}</span>;
+        }
+      }
+    },
+    {
+      name: 'customerTags',
+      header: 'Customer Tags',
+      type: 'string',
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: ['repeat'].map((tag) => {
+          return { id: tag, label: tag };
+        })
+      },
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (isNotEmptyArray(value)) {
+          return <span className="float-left">{value.join(',')}</span>;
+        }
+      }
+    },
+    {
+      name: 'gclid',
+      header: 'Gclid',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'instantBooking',
+      header: 'Instant Booking',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value ? 'Yes' : 'No'}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_campaign',
+      header: 'Utm Compaign',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_source',
+      header: 'Utm Source',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_medium',
+      header: 'Utm Medium',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_content',
+      header: 'Utm Content',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_term',
+      header: 'Utm Term',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
         if (value) {
           return <span className="float-left">{value}</span>;
         }
@@ -566,6 +710,14 @@ const AllBookingsTable = () => {
     pollInterval: 200000
   });
 
+  useQuery(queryAllInstructors, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      if (data) setInstructors(data.instructors);
+    },
+    pollInterval: 200000
+  });
+
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
   const applyFilters = () => {
@@ -586,6 +738,7 @@ const AllBookingsTable = () => {
         { name: 'customerName', type: 'string', operator: 'contains', value: '' },
         { name: 'bookingStage', type: 'select', operator: 'inlist', value: undefined },
         { name: 'closedReason', type: 'string', operator: 'contains', value: '' },
+        { name: 'gclid', type: 'string', operator: 'contains', value: '' },
         { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
         { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
         { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
@@ -602,7 +755,14 @@ const AllBookingsTable = () => {
         { name: 'finalPaymentPaidDate', type: 'date', operator: 'inrange', value: undefined },
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined }
+        { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined },
+        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined },
+        { name: 'utm_campaign', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_source', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_content', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_term', type: 'string', operator: 'contains', value: '' },
+        { name: 'bookingTags', type: 'string', operator: 'contains', value: '' }
       ];
     }
 
@@ -636,7 +796,6 @@ const AllBookingsTable = () => {
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
-    console.log('filters', filters);
     const response = await apolloClient.query({
       query: queryGetBookingsWithCriteria,
       fetchPolicy: 'network-only',
@@ -672,39 +831,59 @@ const AllBookingsTable = () => {
     menuProps.autoDismiss = true;
     menuProps.items = [
       {
-        label: "Close with reason:", disabled: true
+        label: 'Close with reason:',
+        disabled: true
       },
       {
-        label: "Won",
-        onClick: () => { setClosedReason("Won"); toggle(); }
+        label: 'Won',
+        onClick: () => {
+          setClosedReason('Won');
+          toggle();
+        }
       },
       {
-        label: "Lost",
-        onClick: () => { setClosedReason("Lost"); toggle(); }
+        label: 'Lost',
+        onClick: () => {
+          setClosedReason('Lost');
+          toggle();
+        }
       },
       {
-        label: "Mistake",
-        onClick: () => { setClosedReason("Mistake"); toggle(); }
+        label: 'Mistake',
+        onClick: () => {
+          setClosedReason('Mistake');
+          toggle();
+        }
       },
       {
-        label: "Duplicated",
-        onClick: () => { setClosedReason("Duplicated"); toggle(); }
+        label: 'Duplicated',
+        onClick: () => {
+          setClosedReason('Duplicated');
+          toggle();
+        }
       },
       {
-        label: "Test",
-        onClick: () => { setClosedReason("Test"); toggle(); }
+        label: 'Test',
+        onClick: () => {
+          setClosedReason('Test');
+          toggle();
+        }
       }
     ];
   };
 
-  const onSelectionChange = useCallback(({ selected }) => {
-    setSelected(selected);
+  const onSelectionChange = useCallback(({ selected, data }) => {
+    if (selected === true) {
+      data.forEach((booking) => setSelected((prev) => ({ ...prev, [booking._id]: booking })));
+    } else {
+      setSelected(selected);
+    }
   }, []);
-  const toArray = selected => Object.keys(selected);
+
+  const toArray = (selected) => Object.keys(selected);
 
   const selectedBookingsIds = toArray(selected);
 
-  console.log("all book", isOpenModal);
   return (
     <div>
       <TasksBar
@@ -764,6 +943,7 @@ const AllBookingsTable = () => {
         handleModal={handleEditModal}
         currentElement={currentElement}
         allCoordinators={coordinators}
+        allInstructors={instructors}
         allClasses={classes}
         handleClose={() => setCurrentElement({})}
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}

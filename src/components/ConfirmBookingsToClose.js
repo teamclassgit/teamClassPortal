@@ -21,10 +21,12 @@ const ConfirmBookingsToClose = ({toggle, closedReason, selectedBookingsIds, onEd
     try {
       setClosingBookingsInProcess(true);
       await closeBookingsWithReason(selectedBookingsIds, closedReason);
-      onEditCompleted(selectedBookingsIds[0]);
-      setSelected({});
-      toggle();
-      closingBookingsInProcess(false);
+      setTimeout(() => {
+        onEditCompleted(selectedBookingsIds[0]);
+        toggle();
+        setSelected({});
+        setClosingBookingsInProcess(false);
+      }, 3000);
     } catch {
       setIsCatchError(true);
       setClosingBookingsInProcess(false);

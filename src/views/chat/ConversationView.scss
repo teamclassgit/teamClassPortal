@@ -1,0 +1,59 @@
+.conversation-view-container {
+  cursor: pointer;
+  padding-bottom: 14px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 16px;
+  width: 360px;
+}
+
+.conversation-view-sub-container {
+  display: flex;
+  font-size: 12px;
+  width: 300px;
+}
+
+.message-status {
+  padding-right: 6px;
+  display: flex;
+}
+
+.typing-info-container {
+  display: flex;
+  flex-direction: row;
+  font-weight: 300;
+  justify-content: space-between;
+  padding-top: 4px;
+}
+
+.typing-info-container-hidden {
+  display: none;
+}
+
+.typing-info {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.last-message {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.time {
+  padding-left: 4px;
+  white-space: nowrap; 
+}
+
+.unread-message-count {
+  display: flex;
+  position: relative;
+  left: 10px;
+  height: fit-content;
+  margin: auto;
+  width: fit-content;
+}

@@ -3,12 +3,12 @@ import Avatar from '@components/avatar';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment-timezone';
-import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video } from 'react-feather';
+import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video, Tag } from 'react-feather';
 import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
 import { useHistory } from 'react-router';
 // @scripts
 import CopyClipboard from '../../../../components/CopyClipboard';
-import { capitalizeString } from '../../../../utility/Utils';
+import { capitalizeString, isNotEmptyArray } from '../../../../utility/Utils';
 // @styles
 import './BoardCard.scss';
 import {
@@ -48,7 +48,9 @@ const BoardCard = ({
     closedReason,
     totalInvoice,
     shippingTrackingLink,
-    joinInfo
+    joinInfo,
+    customerTags,
+    bookingTags
   }
 }) => {
   const [date, setDate] = useState(null);
@@ -61,7 +63,7 @@ const BoardCard = ({
   const [showAlertEventPayment, setShowAlertEventPayment] = useState(null);
 
   const history = useHistory();
-
+  
   useEffect(() => {
     const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
     const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
@@ -114,7 +116,6 @@ const BoardCard = ({
     if (!signUpDeadlineToShow) return;
 
     const daysToRegistration = Math.abs(moment().diff(signUpDeadlineToShow, 'days'));
-    console.log(daysToRegistration);
     if (daysToRegistration >= 0 && daysToRegistration <= 1) {
       setSignUpRegistrationClass(true);
     } else {
@@ -291,6 +292,14 @@ const BoardCard = ({
     <>
       <Card className="card-board">
         <CardHeader className="p-0 m-0">
+          
+          {isNotEmptyArray(bookingTags) && bookingTags.includes("repeat") && (
+            <span className="card-tags text-warning">
+              <Tag size="10"></Tag>
+              {" Repeat"}
+            </span>
+          )}
+
           <Button
             color="link"
             className="flip-button text-muted"
@@ -425,14 +434,12 @@ const BoardCard = ({
 
         {showFinalPaymentLabel && (
           <CardFooter 
-            className={`card-board-footer pr-1 ${shippingTrackingLink || joinInfo?.joinUrl ? 
-              "justify-content-between" : 
-                "justify-content-end"}`}
+            className={"card-board-footer pr-1 justify-content-between"}
           >
             <div className="ml-1">
-              {shippingTrackingLink && (
+              {classVariant && classVariant?.hasKit && (shippingTrackingLink ? (
                 <a
-                className="mr-1"
+                  className="mr-1"
                   href={shippingTrackingLink}
                   target={'_blank'}
                   rel="noopener noreferrer"
@@ -440,8 +447,17 @@ const BoardCard = ({
                 >
                   <Avatar color="light-primary" size="sm" icon={<Truck size={18} />} />
                 </a>
-              )}
-              {joinInfo && joinInfo?.joinUrl && (
+              ) : (
+                <a
+                  className="mr-1"
+                  href="#"
+                  title={'Tracking link has not been provided'}
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <Avatar color="light-danger" size="sm" icon={<Truck size={18} />} />
+                </a>
+              ))}
+              {joinInfo && joinInfo?.joinUrl ? (
                 <a
                   href={joinInfo?.joinUrl}
                   target={'_blank'}
@@ -449,6 +465,14 @@ const BoardCard = ({
                   title={`password: ${joinInfo.password}`}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Video size={18} />} />
+                </a>
+              ) : (
+                <a
+                  href="#"
+                  title={"Conference link has not been provided"}
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <Avatar color="light-danger" size="sm" icon={<Video size={18} />} />
                 </a>
               )}
             </div>

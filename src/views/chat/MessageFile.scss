@@ -1,0 +1,60 @@
+.message-file-container {
+  min-height: 200px;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 4px;
+}
+
+.message-file-sub {
+  cursor: pointer;
+  position: absolute;
+  z-index: 1;
+}
+
+.message-image-url {
+  border-radius: 4px;
+  max-height: 300px;
+  max-width: 400px;
+  width: 100%;
+  z-index: 0;
+}
+
+.message-download-url {
+  align-items: center;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #CACDD8;
+  box-sizing: border-box;
+  display: flex;
+  margin: 6px 6px 0 6px;
+  min-width: 150px;
+  padding: 12px 16px;
+}
+
+.message-file {
+  align-items: start;
+  margin-right: 16px;
+}
+
+.message-text-container {
+  max-width: calc(100% - 42px);
+}
+
+.message-text {
+  font-weight: bold;
+}
+
+.message-remove {
+  border-radius: 300px;
+  height: 30;
+  position: relative;
+  top: -40px;
+  width: 10;
+}
+
+.message-remove-icon {
+  margin-top: -2px;
+}

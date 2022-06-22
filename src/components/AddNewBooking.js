@@ -38,6 +38,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
   const [warning, setWarning] = useState({ open: false, message: '' });
   const [isGroupVariant, setIsGroupVariant] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [distributorId, setDistributorId] = useState(null);
 
   const options = { phone: true, phoneRegionCode: 'US' };
 
@@ -60,7 +61,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
   useEffect(() => {
     if (selectedClass) {
       const filteredClass = classes.find((element) => element._id === selectedClass);
-      if (filteredClass) setClassVariantsOptions(filteredClass.variants);
+      if (filteredClass) {
+        setClassVariantsOptions(filteredClass.variants);
+        setDistributorId(filteredClass?.distributorId);
+      }
     }
   }, [selectedClass]);
 
@@ -125,7 +129,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           email: customer ? customer.email : newEmail,
           phone: customer ? customer.phone : newPhone,
           billingAddress: customer ? customer.billingAddress : null,
-          company: customer ? customer.company : newCompany
+          company: customer ? customer.company : newCompany,
+          distributorId
         }
       });
 
@@ -348,7 +353,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
               value: selectedClass || '',
               label: getClassName(selectedClass)
             }}
-            onChange={(option) => setSelectedClass(option.value)}
+            onChange={(option) => {
+              setIsGroupVariant(false);
+              setSelectedClass(option.value);
+            }}
             isClearable={false}
             styles={selectStyles}
           />
@@ -363,7 +371,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
               placeholder="Select..."
               options={
                 classVariantsOptions &&
-                classVariantsOptions.map((element) => {
+                classVariantsOptions.map((element, index) => {
                   const variant = {
                     title: element.title,
                     notes: element.notes,
@@ -373,8 +381,11 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     hasKit: element.hasKit,
                     order: element.order,
                     active: element.active,
-                    groupEvent: element.groupEvent
+                    groupEvent: element.groupEvent,
+                    instructorFlatFee: element.instructorFlatFee,
+                    registrationFields: element.registrationFields
                   };
+
                   return {
                     value: variant,
                     label: element.groupEvent
@@ -384,13 +395,19 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                 })
               }
               onChange={(option) => {
+                // eslint-disable-next-line no-unused-expressions
+                classVariantsOptions &&
+                  classVariantsOptions.map((item, index) => {
+                    if (item.title === option.value.title) {
+                      setSelectedVariant(index);
+                    }
+                  });
                 if (!option.value.groupEvent) {
-                  setClassVariant(option.value);
                   setIsGroupVariant(false);
                 } else {
                   setIsGroupVariant(true);
                 }
-                setSelectedVariant(option.value.order);
+                setClassVariant(option.value);
               }}
               isClearable={false}
               styles={selectStyles}
@@ -405,24 +422,29 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
               className="react-select"
               classNamePrefix="select"
               placeholder="Select..."
-              options={classVariantsOptions[selectedVariant].priceTiers.map((item) => {
-                const variant = {
-                  title: classVariantsOptions[selectedVariant].title,
-                  notes: classVariantsOptions[selectedVariant].notes,
-                  minimum: item.minimum,
-                  maximum: item.maximum,
-                  duration: classVariantsOptions[selectedVariant].duration,
-                  pricePerson: item.price,
-                  hasKit: classVariantsOptions[selectedVariant].hasKit,
-                  order: classVariantsOptions[selectedVariant].order,
-                  active: classVariantsOptions[selectedVariant].active,
-                  groupEvent: classVariantsOptions[selectedVariant].groupEvent
-                };
-                return {
-                  value: variant,
-                  label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
-                };
-              })}
+              options={
+                classVariantsOptions[selectedVariant] &&
+                classVariantsOptions[selectedVariant].priceTiers.map((item) => {
+                  const variant = {
+                    title: classVariantsOptions[selectedVariant].title,
+                    notes: classVariantsOptions[selectedVariant].notes,
+                    minimum: item.minimum,
+                    maximum: item.maximum,
+                    duration: classVariantsOptions[selectedVariant].duration,
+                    pricePerson: item.price,
+                    hasKit: classVariantsOptions[selectedVariant].hasKit,
+                    order: classVariantsOptions[selectedVariant].order,
+                    active: classVariantsOptions[selectedVariant].active,
+                    groupEvent: classVariantsOptions[selectedVariant].groupEvent,
+                    instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee,
+                    registrationFields: classVariantsOptions[selectedVariant].registrationFields
+                  };
+                  return {
+                    value: variant,
+                    label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
+                  };
+                })
+              }
               onChange={(option) => {
                 setClassVariant(option.value);
                 setNewAttendees(option.value.maximum);

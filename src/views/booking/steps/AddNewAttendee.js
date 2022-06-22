@@ -86,6 +86,8 @@ const AddNewAttendee = ({
   const [isDeliverKit, setIsDeliverKit] = useState(true);
   const [deliverKitReason, setDeliverKitReason] = useState('');
   const [messageAlert, setMessageAlert] = useState(null);
+  const [registrationFields, setRegistrationFields] = useState([]);
+  const [validationValues, setValidationValues] = useState(true);
 
   const options = { phone: true, phoneRegionCode: 'US' };
 
@@ -99,7 +101,6 @@ const AddNewAttendee = ({
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
   };
-
   useEffect(() => {
     if (newState || newCountry) {
       const alcoholVariant = teamClassInfo.variants.map((item) => item.kitHasAlcohol);
@@ -113,6 +114,46 @@ const AddNewAttendee = ({
     }
   }, [newState, newCountry]);
 
+  useEffect(() => {
+    let validationFields = true;
+
+    if (newName && newEmail && newPhone) {
+      validationFields = !newName || !newEmail || !newPhone;
+    }
+
+    if (booking && booking.classVariant) {
+      const haskitValidation = booking.classVariant && booking.classVariant.hasKit;
+      validationFields =
+        validationFields ||
+        (haskitValidation && !newAddress1) ||
+        (haskitValidation && !newCity) ||
+        (haskitValidation && !newState) ||
+        (haskitValidation && !newZip) ||
+        (haskitValidation && !newCountry);
+    }
+
+    const requiredAdditionalFields = [
+      ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
+      ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
+    ].filter((element) => element.active === true && element.required === true);
+
+    requiredAdditionalFields?.map((field) => {
+      const filteredField = dynamicValues?.find((item) => item.name === field.label);
+      validationFields = validationFields || !filteredField?.value;
+    });
+
+    setValidationValues(validationFields);
+  }, [newName, newEmail, newPhone, newAddress1, newCity, newState, newZip, newCountry, dynamicValues]);
+
+  useEffect(() => {
+    const fields = [
+      ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
+      ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
+    ];
+    // const fields = [...(teamClassInfo?.registrationFields || []), ...(bookingInfo?.signUpPageSettings?.additionalRegistrationFields || [])];
+    setRegistrationFields(fields.filter((element) => element.active === true));
+  }, [teamClassInfo, booking]);
+
   const canDeliverKitToAddress = (state, country, kitHasAlcohol) => {
     let isShippingAlcohol = false;
     isShippingAlcohol = noShippingAlcoholStates.find(
@@ -120,7 +161,11 @@ const AddNewAttendee = ({
     )
       ? true
       : false;
-    if (isShippingAlcohol || (country && country !== 'United States of America')) {
+    const countryLC = country.toLowerCase();
+    if (
+      isShippingAlcohol ||
+      !(countryLC === 'united states of america' || countryLC === 'usa' || countryLC === 'us' || countryLC === 'united states')
+    ) {
       setMessageAlert("Notice: kit contains alcohol and can't be delivered to your address due to shipping restrictions.");
       return { canDeliverKit: false, canDeliverKitReason: 'Alcohol can not be delivery to shipping address' };
     } else {
@@ -133,9 +178,10 @@ const AddNewAttendee = ({
     setProcessing(true);
 
     try {
-      let additionalFields =
-        (teamClassInfo.registrationFields && teamClassInfo.registrationFields.filter((element) => element.active === true)) || [];
-
+      let additionalFields = [
+        ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
+        ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
+      ].filter((element) => element.active === true);
       additionalFields = dynamicValues
         ? additionalFields &&
           additionalFields.map((item) => {
@@ -187,7 +233,7 @@ const AddNewAttendee = ({
 
   useEffect(() => {
     if (currentElement) {
-      setDynamicValues(currentElement.additionalFields);
+      setDynamicValues(currentElement?.additionalFields);
       setNewAddress1(currentElement.addressLine1);
       setNewAddress2(currentElement.addressLine2);
       setNewCity(currentElement.city);
@@ -343,20 +389,18 @@ const AddNewAttendee = ({
             {messageAlert}
           </Alert>
         )}
-        {teamClassInfo.registrationFields && teamClassInfo.registrationFields.length > 0 ? (
+        {registrationFields && registrationFields.length > 0 ? (
           <Label className="mb-1" for="full-name">
             Additional information
           </Label>
         ) : (
           ''
         )}
-        {teamClassInfo.registrationFields &&
-          teamClassInfo.registrationFields
-            .filter((element) => element.active === true)
+        {registrationFields &&
+          registrationFields
             .sort((field1, field2) => field1.order < field2.order)
             .map((field, index) => {
               const additionalField = dynamicValues && dynamicValues.find((item) => item.name === field.label);
-
               return (
                 <FormGroup className="ml-0 pl-0">
                   <Label for={field.label}>{field.label}</Label>
@@ -438,7 +482,7 @@ const AddNewAttendee = ({
                 </FormGroup>
               );
             })}
-        <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || !newName || !emailValid}>
+        <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || validationValues}>
           {processing ? 'Saving...' : 'Save'}
         </Button>
         <Button className="mt-1" color="secondary" onClick={cancel} outline>

@@ -9,7 +9,7 @@ import { Modal } from 'reactstrap';
 import Avatar from '@components/avatar';
 import moment from 'moment-timezone';
 window.moment = moment;
-import { getQueryFiltersFromFilterArray, getUserData } from '../../utility/Utils';
+import { getQueryFiltersFromFilterArray, getUserData, isNotEmptyArray } from '../../utility/Utils';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
@@ -27,6 +27,7 @@ import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCrit
 import queryAllClasses from '../../graphql/QueryAllClasses';
 import queryAllCustomers from '../../graphql/QueryAllCustomers';
 import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
+import queryAllInstructors from '../../graphql/QueryAllInstructors';
 import EditBookingModal from '../../components/EditBookingModal';
 import AddNewBooking from '../../components/AddNewBooking';
 import BookingsTableStatusCards from './BookingsTableStatusCards';
@@ -34,7 +35,6 @@ import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
 import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
-
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -67,6 +67,7 @@ const FunnelTable = () => {
   const [customers, setCustomers] = useState([]);
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
+  const [instructors, setInstructors] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
   const [orFilters, setOrFilters] = useState([]);
   const [sortInfo, setSortInfo] = useState({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
@@ -363,7 +364,23 @@ const FunnelTable = () => {
       },
       width: 200
     },
-    { name: 'customerName', header: 'Customer ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { 
+      name: 'customerName', 
+      header: 'Customer ', 
+      type: 'string', 
+      filterEditor: StringFilter, 
+      filterDelay: 1500,
+      render: ({data}) => {
+
+        if (isNotEmptyArray(data.bookingTags) && data.bookingTags.includes('repeat')) {
+          return (<div>
+            {data.customerName}{" "}
+              <span className="card-tags text-warning">{"Repeat"}</span>
+          </div>);  
+        }
+        return data.customerName;
+      }
+    },
     { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
     { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
     { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
@@ -427,7 +444,7 @@ const FunnelTable = () => {
       filterDelay: 1500,
       defaultVisible: false,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -439,7 +456,7 @@ const FunnelTable = () => {
       filterDelay: 1500,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -451,7 +468,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -462,7 +479,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -473,7 +490,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -495,7 +512,7 @@ const FunnelTable = () => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
     {
@@ -518,7 +535,131 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">${value.toFixed(2)}</span>;
+        return <span className="float-right">{value.toFixed(2)}</span>;
+      }
+    },
+    {
+      name: 'bookingTags',
+      header: 'Bookings Tags',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value.join(", ")}</span>;
+        }
+      }
+    },
+    {
+      name: 'customerTags',
+      header: 'Customer Tags',
+      type: 'string',
+      filterEditor: SelectFilter,
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: ['repeat'].map((tag) => {
+          return { id: tag, label: tag };
+        })
+      },
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value, cellProps }) => {
+        if (isNotEmptyArray(value)) {
+          return <span className="float-left">{value.join(",")}</span>;
+        }
+      }
+    },
+    {
+      name: 'gclid',
+      header: 'Gclid',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'instantBooking',
+      header: 'Instant Booking',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value ? "Yes" : "No"}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_campaign',
+      header: 'Utm Compaign',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_source',
+      header: 'Utm Source',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_medium',
+      header: 'Utm Medium',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_content',
+      header: 'Utm Content',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'utm_term',
+      header: 'Utm Term',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
       }
     }
   ];
@@ -556,6 +697,14 @@ const FunnelTable = () => {
     pollInterval: 200000
   });
 
+  useQuery(queryAllInstructors, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      if (data) setInstructors(data.instructors);
+    },
+    pollInterval: 200000
+  });
+
   const gridStyle = { minHeight: 600, marginTop: 10 };
 
   useEffect(() => {
@@ -579,6 +728,7 @@ const FunnelTable = () => {
         { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
         { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
         { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
+        { name: 'gclid', type: 'string', operator: 'contains', value: '' },
         { name: 'eventCoordinatorEmail', type: 'select', operator: 'inlist', value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
         { name: 'className', type: 'select', operator: 'inlist', value: undefined },
         { name: 'attendees', type: 'number', operator: 'gte', value: undefined },
@@ -592,7 +742,14 @@ const FunnelTable = () => {
         { name: 'finalPaymentPaidDate', type: 'date', operator: 'inrange', value: undefined },
         { name: 'balance', type: 'number', operator: 'gte', value: undefined },
         { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined }
+        { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined },
+        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined},
+        { name: 'utm_campaign', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_source', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_content', type: 'string', operator: 'contains', value: '' },
+        { name: 'utm_term', type: 'string', operator: 'contains', value: '' },
+        { name: 'bookingTags', type: 'string', operator: 'contains', value: '' }
       ];
     }
 
@@ -688,8 +845,12 @@ const FunnelTable = () => {
     ];
   };
 
-  const onSelectionChange = useCallback(({ selected }) => {
-    setSelected(selected);
+  const onSelectionChange = useCallback(({ selected, data }) => {
+    if (selected === true) {
+      data.forEach(booking => setSelected(prev => ({...prev, [booking._id]: booking})));
+    } else {
+      setSelected(selected);
+    }
   }, []);
   const toArray = selected => Object.keys(selected);
 
@@ -757,6 +918,7 @@ const FunnelTable = () => {
         handleModal={handleEditModal}
         currentElement={currentElement}
         allCoordinators={coordinators}
+        allInstructors={instructors}
         allClasses={classes}
         handleClose={() => setCurrentElement({})}
         editMode={currentElement && currentElement.status !== 'closed' ? true : false}

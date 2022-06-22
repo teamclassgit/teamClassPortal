@@ -7,10 +7,12 @@ export default gql`
       title
       instructorId
       instructorName
+      additionalInstructors
       duration
       pricePerson
       hasKit
       minimum
+      distributorId
       variants {
         title
         notes
@@ -22,10 +24,20 @@ export default gql`
         order
         active
         groupEvent
+        instructorFlatFee
         priceTiers {
           maximum
           minimum
           price
+        }
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
         }
       }
       category

@@ -28,6 +28,7 @@ import './wizard-class-booking.scss';
 const WizardClassBooking = () => {
   const [attendees, setAttendees] = useState([]);
   const [attendeesToInvoice, setAttendeesToInvoice] = useState(null);
+  const [priceToInvoice, setPriceToInvoice] = useState(null);
   const [availableEvents, setAvailableEvents] = useState(null);
   const [bookingInfo, setBookingInfo] = useState(null);
   const [calendarEvent, setCalendarEvent] = useState(null);
@@ -123,6 +124,7 @@ const WizardClassBooking = () => {
     setTotalAddons(bookingTotals.addons.toFixed(2));
     setTotalCardFee(bookingTotals.cardFee.toFixed(2));
     setAttendeesToInvoice(bookingTotals.customAttendees);
+    setPriceToInvoice(bookingTotals.customPrice);
     setDiscount(bookingTotals.discount * 100);
     setTotalDiscount(bookingTotals.totalDiscount.toFixed(2));
 
@@ -267,7 +269,7 @@ const WizardClassBooking = () => {
     if (bookingInfo) getTotals();
   }, [bookingInfo, calendarEvent, tax]);
 
-  return bookingInfo && customer && teamClass ? (
+  return bookingInfo && teamClass ? (
     <Row>
       <Col xs={12}>
         <Breadcrumbs breadCrumbActive={id} breadCrumbParent="Bookings" breadCrumbTitle="" noHome removeRightOptions />
@@ -310,6 +312,7 @@ const WizardClassBooking = () => {
               isRushDate={() => isRushDate()}
               totalRushFee={totalRushFee}
               attendeesToInvoice={attendeesToInvoice || bookingInfo.attendees}
+              priceToInvoice={priceToInvoice || bookingInfo.classVariant.pricePerson}
             />
           )}
         </div>
