@@ -240,10 +240,10 @@ const WizardClassBooking = () => {
     }
   ];
 
-  const newSteps = [...steps];
+  const invoiceSteps = [...steps];
 
   if (bookingInfo && bookingInfo.instructorInvoice) {
-    newSteps.push({
+    invoiceSteps.push({
       id: 'partner-invoice',
       title: 'Partner Invoice',
       icon: <DollarSign size={18} />,
@@ -251,7 +251,7 @@ const WizardClassBooking = () => {
     });
   }
   if (bookingInfo && bookingInfo.distributorInvoice) {
-    newSteps.push({
+    invoiceSteps.push({
       id: 'distributor-invoice',
       title: 'Distributor Invoice',
       icon: <DollarSign size={18} />,
@@ -277,7 +277,7 @@ const WizardClassBooking = () => {
           <Wizard
             type="modern-horizontal"
             ref={ref}
-            steps={newSteps}
+            steps={invoiceSteps}
             options={{
               linear: false
             }}
