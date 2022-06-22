@@ -366,31 +366,22 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
 
       {booking && booking.status !== BOOKING_CLOSED_STATUS && (
         <div>
-          {!moment(booking.signUpDeadline).isAfter(moment()) ? (
-            <div className="d-flex justify-content-between">
-              <span>
-                <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
-                  <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
-                </CardLink>
-              </span>
-              <Button.Ripple
-                size="sm"
-                disabled={booking.status === BOOKING_PAID_STATUS || !formValid || hasFinalPayment}
-                color="primary"
-                className="btn-next"
-                onClick={() => saveInvoiceDetails()}
-              >
-                <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
-              </Button.Ripple>
-            </div>
-          ) : (
-            <Col lg={12}>
-              <Alert className="text-center">
-                Final headcount is yet to be confirmed. You would be able to save a final invoice to charge the customer after{' '}
-                {moment(booking.signUpDeadline).format('LLL')}.
-              </Alert>
-            </Col>
-          )}
+          <div className="d-flex justify-content-between">
+            <span>
+              <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
+                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
+              </CardLink>
+            </span>
+            <Button.Ripple
+              size="sm"
+              disabled={booking.status === BOOKING_PAID_STATUS || !formValid || hasFinalPayment}
+              color="primary"
+              className="btn-next"
+              onClick={() => saveInvoiceDetails()}
+            >
+              <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
+            </Button.Ripple>
+          </div>
         </div>
       )}
     </Fragment>
