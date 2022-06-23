@@ -1,14 +1,35 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query GetBooking($bookingId: String!) {
-    booking(query: { _id: $bookingId }) {
+  mutation updateBooking(
+    $bookingId: String!
+    $status: String
+    $rejectedReasons: String
+    $createdAt: DateTime
+    $updatedAt: DateTime
+    $invoiceItems: [BookingDistributorInvoiceInvoiceItemUpdateInput]
+    $notes: String
+    $paymentReceipt: String
+  ) {
+    updateOneBooking(
+      query: { _id: $bookingId }
+      set: {
+        distributorInvoice: {
+          status: $status
+          rejectedReasons: $rejectedReasons
+          createdAt: $createdAt
+          invoiceItems: $invoiceItems
+          notes: $notes
+          updatedAt: $updatedAt
+          paymentReceipt: $paymentReceipt
+        }
+      }
+    ) {
       _id
       date
       expirationHours
       teamClassId
       eventCoordinatorId
-      hasInternationalAttendees
       classVariant {
         title
         notes
@@ -20,22 +41,6 @@ export default gql`
         order
         active
         groupEvent
-        kitHasAlcohol
-        instructorFlatFee
-        registrationFields {
-          label
-          placeholder
-          type
-          listItems
-          required
-          active
-          order
-        }
-      }
-      notes {
-        note
-        author
-        date
       }
       addons {
         icon
@@ -73,7 +78,6 @@ export default gql`
         status
       }
       instructorId
-      distributorId
       instructorName
       customerId
       customerName
@@ -88,14 +92,11 @@ export default gql`
       salesTaxState
       discount
       status
-      closedReason
       eventLink
       signUpStatusLink
       checkoutLink
       taxExempt
       ccFeeExempt
-      capRegistration
-      distributorId
       invoiceDetails {
         item
         unitPrice
@@ -134,34 +135,6 @@ export default gql`
       createdAt
       createdAt
       updatedAt
-      signUpDeadline
-      preEventSurvey {
-        aboutTeam
-        conferenceLink
-        engagement
-        eventDuration
-        eventPurpose
-        eventSpeed
-        eventType
-        formality
-        hostName
-        introOutro
-        ownLink
-        submittedAt
-      }
-      signUpPageSettings {
-        invitationFrom
-        additionalCopyToShow
-        additionalRegistrationFields {
-          label
-          placeholder
-          type
-          listItems
-          required
-          active
-          order
-        }
-      }
     }
   }
 `;
