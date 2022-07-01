@@ -783,9 +783,7 @@ const EditBookingModal = ({
                 options={
                   allInstructors &&
                   allInstructors
-                    .filter((instructor) =>
-                      instructorAndAdditionals?.includes(instructor._id)
-                    )
+                    .filter((instructor) => instructorAndAdditionals?.includes(instructor._id))
                     .map((instructor) => {
                       return {
                         value: instructor._id,
