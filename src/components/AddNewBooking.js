@@ -17,7 +17,7 @@ import {
   Label,
   Modal,
   ModalBody,
-  ModalHeader,
+  ModalHeader
 } from "reactstrap";
 
 // @styles
@@ -30,7 +30,7 @@ import {
   BOOKING_QUOTE_STATUS,
   SALES_TAX,
   SALES_TAX_STATE,
-  SERVICE_FEE,
+  SERVICE_FEE
 } from "../utility/Constants";
 import { isValidEmail, getUserData } from "../utility/Utils";
 
@@ -41,7 +41,7 @@ const AddNewBooking = ({
   customers,
   handleModal,
   open,
-  onAddCompleted,
+  onAddCompleted
 }) => {
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [classVariant, setClassVariant] = useState(null);
@@ -135,7 +135,7 @@ const AddNewBooking = ({
       ) {
         setWarning({
           open: true,
-          message: "A customer with the same email already exist.",
+          message: "A customer with the same email already exist."
         });
         setProcessing(false);
         return;
@@ -175,8 +175,8 @@ const AddNewBooking = ({
           phone: customer ? customer.phone : newPhone,
           billingAddress: customer ? customer.billingAddress : null,
           company: customer ? customer.company : newCompany,
-          distributorId,
-        },
+          distributorId
+        }
       });
 
       if (!resultCreateBooking || !resultCreateBooking.data) {
@@ -214,19 +214,19 @@ const AddNewBooking = ({
       ...base,
       height: 30,
       minHeight: 30,
-      fontSize: 12,
+      fontSize: 12
     }),
     option: (provided) => ({
       ...provided,
       borderBottom: "1px dotted",
       padding: 10,
-      fontSize: 12,
+      fontSize: 12
     }),
     singleValue: (provided) => ({
       ...provided,
       padding: 0,
-      fontSize: 12,
-    }),
+      fontSize: 12
+    })
   };
 
   return (
@@ -362,7 +362,7 @@ const AddNewBooking = ({
                 customers.map((element) => {
                   return {
                     value: element._id,
-                    label: `${element.name.split(" ")[0]} <${element.email}>`,
+                    label: `${element.name.split(" ")[0]} <${element.email}>`
                   };
                 })
               }
@@ -382,14 +382,14 @@ const AddNewBooking = ({
             placeholder="Select..."
             defaultValue={{
               value: defaultCoordinatorOption._id,
-              label: defaultCoordinatorOption.name,
+              label: defaultCoordinatorOption.name
             }}
             options={
               coordinators &&
               coordinators.map((item) => {
                 return {
                   value: item._id,
-                  label: item.name,
+                  label: item.name
                 };
               })
             }
@@ -410,13 +410,13 @@ const AddNewBooking = ({
               classes.map((element) => {
                 return {
                   value: element._id,
-                  label: element.title,
+                  label: element.title
                 };
               })
             }
             value={{
               value: selectedClass || "",
-              label: getClassName(selectedClass),
+              label: getClassName(selectedClass)
             }}
             onChange={(option) => {
               setIsGroupVariant(false);
@@ -449,7 +449,7 @@ const AddNewBooking = ({
                     active: element.active,
                     groupEvent: element.groupEvent,
                     instructorFlatFee: element.instructorFlatFee,
-                    registrationFields: element.registrationFields,
+                    registrationFields: element.registrationFields
                   };
 
                   return {
@@ -460,7 +460,7 @@ const AddNewBooking = ({
                         }`
                       : `${element.title} $${element.pricePerson}${
                           element.groupEvent ? "/group" : "/person"
-                        }`,
+                        }`
                   };
                 })
               }
@@ -513,11 +513,11 @@ const AddNewBooking = ({
                     instructorFlatFee:
                       classVariantsOptions[selectedVariant].instructorFlatFee,
                     registrationFields:
-                      classVariantsOptions[selectedVariant].registrationFields,
+                      classVariantsOptions[selectedVariant].registrationFields
                   };
                   return {
                     value: variant,
-                    label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`,
+                    label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
                   };
                 })
               }

@@ -18,7 +18,7 @@ import {
   NavItem,
   NavLink,
   TabContent,
-  TabPane,
+  TabPane
 } from "reactstrap";
 import Cleave from "cleave.js/react";
 import Flatpickr from "react-flatpickr";
@@ -38,7 +38,7 @@ import {
   Video,
   Key,
   Truck,
-  List,
+  List
 } from "react-feather";
 
 // @scripts
@@ -61,7 +61,7 @@ import {
   BOOKING_QUOTE_STATUS,
   DATE_AND_TIME_CANCELED_STATUS,
   DATE_AND_TIME_CONFIRMATION_STATUS,
-  DATE_AND_TIME_RESERVED_STATUS,
+  DATE_AND_TIME_RESERVED_STATUS
 } from "../utility/Constants";
 
 // @styles
@@ -76,7 +76,7 @@ const EditBookingModal = ({
   handleModal,
   open,
   onEditCompleted,
-  allInstructors,
+  allInstructors
 }) => {
   const [active, setActive] = useState("1");
   const [attendeesValid, setAttendeesValid] = useState(true);
@@ -113,7 +113,7 @@ const EditBookingModal = ({
   const [trackingLink, setTrackingLink] = useState("");
   const [isValidUrl, setIsValidUrl] = useState({
     trackingLink: true,
-    joinUrl: true,
+    joinUrl: true
   });
   const [classOptionsTags, setClassOptionsTags] = useState([]);
   const [individualTag, setIndividualTag] = useState("");
@@ -201,7 +201,7 @@ const EditBookingModal = ({
     if (teamClass && teamClass?.additionalInstructors) {
       setInstructorAndAdditionals([
         ...teamClass?.additionalInstructors,
-        teamClass?.instructorId,
+        teamClass?.instructorId
       ]);
     } else {
       setInstructorAndAdditionals([teamClass?.instructorId]);
@@ -244,7 +244,7 @@ const EditBookingModal = ({
     setClosedBookingReason(null);
     setIsValidUrl({
       trackingLink: true,
-      joinUrl: true,
+      joinUrl: true
     });
     handleModal({});
   };
@@ -262,14 +262,12 @@ const EditBookingModal = ({
       const depositPayment =
         currentPayments &&
         currentPayments.find(
-          (element) =>
-            element.paymentName === "deposit" && element.status === "succeeded"
+          (element) => element.paymentName === "deposit" && element.status === "succeeded"
         );
       const finalPayment =
         currentPayments &&
         currentPayments.find(
-          (element) =>
-            element.paymentName === "final" && element.status === "succeeded"
+          (element) => element.paymentName === "final" && element.status === "succeeded"
         );
       if (finalPayment) {
         return BOOKING_PAID_STATUS;
@@ -306,7 +304,7 @@ const EditBookingModal = ({
     } else {
       joinInfo = {
         joinUrl: joinLink,
-        password: passwordLink,
+        password: passwordLink
       };
     }
     try {
@@ -352,8 +350,8 @@ const EditBookingModal = ({
           distributorId,
           distributorId_unset: distributorId ? false : true,
           additionalClassOptions: classOptionsTags,
-          tags: bookingTags,
-        },
+          tags: bookingTags
+        }
       });
 
       if (!resultCloseBooking || !resultCloseBooking.data) {
@@ -363,7 +361,7 @@ const EditBookingModal = ({
 
       if (closedBookingReason) {
         const resultEmail = await removeCampaignRequestQuote({
-          variables: { customerEmail: customerEmail.toLowerCase() },
+          variables: { customerEmail: customerEmail.toLowerCase() }
         });
         console.log("Remove campaign before redirecting:", resultEmail);
       }
@@ -378,8 +376,8 @@ const EditBookingModal = ({
           const resultStatusUpdated = await updateCalendarEventStatus({
             variables: {
               calendarEventId: calendarEvent._id,
-              status: DATE_AND_TIME_CANCELED_STATUS,
-            },
+              status: DATE_AND_TIME_CANCELED_STATUS
+            }
           });
           console.log("Changing calendar event status", resultStatusUpdated);
         }
@@ -402,8 +400,8 @@ const EditBookingModal = ({
         variables: {
           bookingId: currentElement._id,
           updatedAt: new Date(),
-          status: reOpenBookingStatus,
-        },
+          status: reOpenBookingStatus
+        }
       });
 
       if (!resultUpdateBooking || !resultUpdateBooking.data) {
@@ -421,8 +419,8 @@ const EditBookingModal = ({
         const resultStatusUpdated = await updateCalendarEventStatus({
           variables: {
             calendarEventId: calendarEvent._id,
-            status: calendarEventStatus,
-          },
+            status: calendarEventStatus
+          }
         });
         console.log("Changing calendar event status", resultStatusUpdated);
       }
@@ -452,7 +450,7 @@ const EditBookingModal = ({
       } else {
         joinInfo = {
           joinUrl: joinLink,
-          password: passwordLink,
+          password: passwordLink
         };
       }
       const resultUpdateBooking = await updateBooking({
@@ -495,16 +493,16 @@ const EditBookingModal = ({
           distributorId,
           distributorId_unset: distributorId ? false : true,
           additionalClassOptions: classOptionsTags,
-          tags: bookingTags,
-        },
+          tags: bookingTags
+        }
       });
 
       if (isChangingJoinLink) {
         const resultConferenceEmail =
           await sendEmailConferenceLinkChangedByCoordinator({
             variables: {
-              bookingId: currentElement._id,
-            },
+              bookingId: currentElement._id
+            }
           });
         console.log("Sending join info Email", resultConferenceEmail);
       }
@@ -532,7 +530,7 @@ const EditBookingModal = ({
       author:
         (userData && userData.customData && userData.customData["name"]) ||
         "Unknown",
-      date: new Date(),
+      date: new Date()
     });
 
     try {
@@ -540,8 +538,8 @@ const EditBookingModal = ({
         variables: {
           id: currentElement._id,
           notes: newArray,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       });
       setBookingNotes(newArray.sort((a, b) => (a.date > b.date ? -1 : 1)));
     } catch (ex) {
@@ -568,39 +566,39 @@ const EditBookingModal = ({
       ...base,
       height: 30,
       minHeight: 30,
-      fontSize: 12,
+      fontSize: 12
     }),
     option: (provided) => ({
       ...provided,
       borderBottom: "1px dotted",
       padding: 10,
-      fontSize: 12,
+      fontSize: 12
     }),
     singleValue: (provided) => ({
       ...provided,
       padding: 0,
       paddingBottom: 7,
-      fontSize: 12,
-    }),
+      fontSize: 12
+    })
   };
 
   const selectStylesTags = {
     control: (base) => ({
       ...base,
-      fontSize: 12,
+      fontSize: 12
     }),
     option: (provided) => ({
       ...provided,
       borderBottom: "1px dotted",
       padding: 10,
-      fontSize: 12,
+      fontSize: 12
     }),
     singleValue: (provided) => ({
       ...provided,
       padding: 0,
       paddingTop: 7,
-      fontSize: 12,
-    }),
+      fontSize: 12
+    })
   };
 
   const handleAddition = (e) => {
@@ -608,7 +606,7 @@ const EditBookingModal = ({
       setIndividualTag("");
       const tag = {
         groupId: e.target.value,
-        text: e.target.value,
+        text: e.target.value
       };
       setClassOptionsTags([...classOptionsTags, tag]);
     }
@@ -623,7 +621,7 @@ const EditBookingModal = ({
     { value: "spam", label: "Spam" },
     { value: "drift", label: "Drift" },
     { value: "referral", label: "Referral" },
-    { value: "repeat", label: "Repeat" },
+    { value: "repeat", label: "Repeat" }
   ];
 
   return (
@@ -780,7 +778,7 @@ const EditBookingModal = ({
                 placeholder="Select..."
                 value={{
                   label: instructorName,
-                  value: instructorId,
+                  value: instructorId
                 }}
                 options={
                   allInstructors &&
@@ -791,7 +789,7 @@ const EditBookingModal = ({
                     .map((instructor) => {
                       return {
                         value: instructor._id,
-                        label: instructor.name,
+                        label: instructor.name
                       };
                     })
                 }
@@ -815,14 +813,14 @@ const EditBookingModal = ({
                 placeholder="Select..."
                 value={{
                   label: coordinatorName,
-                  value: coordinatorId,
+                  value: coordinatorId
                 }}
                 options={
                   allCoordinators &&
                   allCoordinators.map((item) => {
                     return {
                       value: item._id,
-                      label: item.name,
+                      label: item.name
                     };
                   })
                 }
@@ -851,13 +849,13 @@ const EditBookingModal = ({
                   allClasses.map((element) => {
                     return {
                       value: element._id,
-                      label: element.title,
+                      label: element.title
                     };
                   })
                 }
                 value={{
                   value: bookingTeamClassId || "",
-                  label: bookingTeamClassName,
+                  label: bookingTeamClassName
                 }}
                 onChange={(option) => {
                   const filteredClass = allClasses.find(
@@ -910,7 +908,7 @@ const EditBookingModal = ({
                             ? "/group"
                             : "/person"
                         }`,
-                  value: classVariant,
+                  value: classVariant
                 }}
                 options={
                   classVariantsOptions &&
@@ -926,7 +924,7 @@ const EditBookingModal = ({
                       order: element.order,
                       active: element.active,
                       groupEvent: element.groupEvent,
-                      instructorFlatFee: element.instructorFlatFee,
+                      instructorFlatFee: element.instructorFlatFee
                     };
                     return {
                       value: variant,
@@ -936,7 +934,7 @@ const EditBookingModal = ({
                           }`
                         : `${element.title} $${element.pricePerson}${
                             element.groupEvent ? "/group" : "/person"
-                          }`,
+                          }`
                     };
                   })
                 }
@@ -980,7 +978,7 @@ const EditBookingModal = ({
                     } attendees / $ ${
                       selectedPriceTier ? selectedPriceTier : ""
                     }`,
-                    value: classVariant,
+                    value: classVariant
                   }}
                   options={
                     classVariantsOptions[selectedVariant] &&
@@ -1003,11 +1001,11 @@ const EditBookingModal = ({
                             classVariantsOptions[selectedVariant].groupEvent,
                           instructorFlatFee:
                             classVariantsOptions[selectedVariant]
-                              .instructorFlatFee,
+                              .instructorFlatFee
                         };
                         return {
                           value: variant,
-                          label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`,
+                          label: `${item.minimum} - ${item.maximum} attendees / $ ${item.price}`
                         };
                       }
                     )
@@ -1106,7 +1104,7 @@ const EditBookingModal = ({
                     styles={selectStyles}
                     value={{
                       label: closedBookingReason,
-                      value: closedBookingReason,
+                      value: closedBookingReason
                     }}
                     theme={selectThemeColors}
                     className="react-select"
@@ -1115,7 +1113,7 @@ const EditBookingModal = ({
                     options={closeBookingOptions.map((item) => {
                       return {
                         label: item.label,
-                        value: item.value,
+                        value: item.value
                       };
                     })}
                     onChange={(option) => setClosedBookingReason(option.value)}
@@ -1226,7 +1224,7 @@ const EditBookingModal = ({
                             className={classnames({
                               "mb-0":
                                 index === bookingNotes.length - 1 &&
-                                !item.customContent,
+                                !item.customContent
                             })}
                           >
                             <small>{item.note}</small>
@@ -1415,9 +1413,7 @@ const EditBookingModal = ({
                 defaultValue={tagsList.map(
                   (tag) => currentElement?.tags?.includes(tag.value) && tag
                 )}
-                onChange={(element) =>
-                  setBookingTags(element.map((tag) => tag.value))
-                }
+                onChange={(element) => setBookingTags(element.map((tag) => tag.value))}
               />
             </FormGroup>
 
