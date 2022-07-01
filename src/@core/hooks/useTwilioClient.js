@@ -27,7 +27,7 @@ import {
 } from '../../redux/actions/chat';
 
 const useTwilioClient = () => {
-  const defaultFilter = [
+  /*  const defaultFilter = [
     {
       name: 'closedReason',
       type: 'string',
@@ -54,24 +54,23 @@ const useTwilioClient = () => {
     }
   ];
 
-  const defaultSort = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+  const defaultSort = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' }; */
 
-  const [conversationsClient, setConversationsClient] = useState(null);
+  const [client, setClient] = useState(null);
   const [data, setData] = useState(null);
-  const [infoDetails, setInfoDetails] = useState(null);
+  //const [infoDetails, setInfoDetails] = useState(null);
   const [inputValue, setInputValue] = useState('');
-  const [isInfoReady, setIsInfoReady] = useState(false);
+  const [isInfoReady, setIsInfoReady] = useState(true);
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [userDataEmail, setUserDataEmail] = useState('');
-  const [mainFilter, setMainFilter] = useState([...defaultFilter]);
-  const [searchFilter, setSearchFilter] = useState([]);
-  const [limit, setLimit] = useState(30);
+  //const [mainFilter, setMainFilter] = useState([...defaultFilter]);
+  //const [searchFilter, setSearchFilter] = useState([]);
+  //const [limit, setLimit] = useState(30);
   const [updateTokenConversations] = useMutation(mutationTokenConversations);
   const conversations = useSelector((state) => state.reducer.convo);
   const dispatch = useDispatch();
 
-  useQuery(queryAllBookings, {
+  /*  useQuery(queryAllBookings, {
     fetchPolicy: 'cache-and-network',
     pollInterval: 120000,
     variables: {
@@ -114,15 +113,14 @@ const useTwilioClient = () => {
           })
         );
     }
-  });
+  });*/
 
   useEffect(() => {
-    if (isUserLoggedIn() !== null) {
-      setUserData(getUserData()?.customData);
-      setUserDataEmail(getUserData()?.customData?.email);
-      localStorage.setItem('username', getUserData()?.customData?.email);
-      updateToken();
-    }
+    setUserData(getUserData()?.customData);
+    updateToken();
+    return () => {
+      client?.removeAllListeners();
+    };
   }, []);
 
   const updateToken = async () => {
@@ -136,103 +134,101 @@ const useTwilioClient = () => {
       const newToken = tokenInfo?.data?.creatingAccessTokenTwilio?.token;
 
       if (newToken) {
-        if (conversationsClient) conversationsClient.updateToken(newToken);
+        if (client) client.updateToken(newToken);
         else {
-          const clientOptions = {}; //{ logLevel: 'debug' };
-          const newClient = new Client(newToken, clientOptions);
-          newClient.onWithReplay('stateChanged', (state) => {
+          const clientOptions = { logLevel: 'debug' };
+          const client = new Client(newToken, clientOptions);
+          setClient(client);
+
+          client.on('stateChanged', (state) => {
             console.log(state);
-            //dispatch(updateLoadingState(true));
+          });
+          //dispatch(updateLoadingState(true));
+          client.on('conversationAdded', async (conversation) => {
+            conversation.on('typingStarted', (participant) => {
+              handlePromiseRejection(() => updateTypingIndicator(participant, conversation.sid, startTyping), addNotifications);
+            });
 
-            if (state === 'initialized') {
-              //dispatch(updateLoadingState(false));
+            conversation.on('typingEnded', (participant) => {
+              handlePromiseRejection(() => updateTypingIndicator(participant, conversation.sid, endTyping), addNotifications);
+            });
 
-              newClient.addListener('conversationRemoved', (conversation) => {
-                dispatch(updateCurrentConversation(''));
-                dispatch(informationId(''));
-                handlePromiseRejection(() => {
-                  dispatch(removeConversation(conversation.sid));
-                  dispatch(updateParticipants([], conversation.sid));
-                }, dispatch(addNotifications));
-              });
+            handlePromiseRejection(async () => {
+              if (conversation.status === 'joined') {
+                const result = await getConversationParticipants();
+                dispatch(updateParticipants(result, conversation.sid));
+              }
 
-              newClient.addListener('conversationUpdated', async ({ conversation }) => {
-                handlePromiseRejection(
-                  () => updateConvoList(newClient, conversation, listConversations, addMessages, updateUnreadMessages),
-                  addNotifications
-                );
-              });
-
-              newClient.addListener('messageAdded', (event) => {
-                addMessage(event, addMessages, updateUnreadMessages);
-              });
-
-              newClient.addListener('participantLeft', (participant) => {
-                handlePromiseRejection(() => handleParticipantsUpdate(participant, updateParticipants), addNotifications);
-              });
-
-              newClient.addListener('participantUpdated', (event) => {
-                handlePromiseRejection(() => handleParticipantsUpdate(event.participant, updateParticipants), addNotifications);
-              });
-
-              newClient.addListener('participantJoined', (participant) => {
-                handlePromiseRejection(() => handleParticipantsUpdate(participant, updateParticipants), addNotifications);
-              });
-
-              newClient.addListener('messageUpdated', ({ message }) => {
-                handlePromiseRejection(
-                  () => updateConvoList(newClient, message.conversation, listConversations, addMessages, updateUnreadMessages),
-                  addNotifications
-                );
-              });
-
-              newClient.addListener('messageRemoved', (message) => {
-                handlePromiseRejection(() => removeMessagesUpdate(message.conversation.sid, message, dispatch, removeMessages), addNotifications);
-              });
-
-              newClient.addListener('tokenExpired', () => {
-                updateToken();
-              });
-
-              newClient.addListener('tokenAboutToExpire', () => {
-                updateToken();
-              });
-
-              newClient.addListener('conversationAdded', async (conversation) => {
-                conversation.addListener('typingStarted', (participant) => {
-                  handlePromiseRejection(() => updateTypingIndicator(participant, conversation.sid, startTyping), addNotifications);
-                });
-
-                conversation.addListener('typingEnded', (participant) => {
-                  handlePromiseRejection(() => updateTypingIndicator(participant, conversation.sid, endTyping), addNotifications);
-                });
-
-                handlePromiseRejection(async () => {
-                  if (conversation.status === 'joined') {
-                    const result = await getConversationParticipants();
-                    dispatch(updateParticipants(result, conversation.sid));
-                  }
-
-                  updateConvoList(newClient, conversation, listConversations, addMessages, updateUnreadMessages);
-                }, dispatch(addNotifications));
-              });
-            }
-            if (state === 'failed') {
-              dispatch(updateLoadingState(false));
-            }
+              updateConvoList(client, conversation, listConversations, addMessages, updateUnreadMessages);
+            }, dispatch(addNotifications));
           });
 
-          setConversationsClient(newClient);
+          client.on('conversationRemoved', (conversation) => {
+            dispatch(updateCurrentConversation(''));
+            dispatch(informationId(''));
+            handlePromiseRejection(() => {
+              dispatch(removeConversation(conversation.sid));
+              dispatch(updateParticipants([], conversation.sid));
+            }, dispatch(addNotifications));
+          });
+
+          client.on('conversationUpdated', async ({ conversation }) => {
+            handlePromiseRejection(
+              () => updateConvoList(client, conversation, listConversations, addMessages, updateUnreadMessages),
+              addNotifications
+            );
+          });
+
+          client.on('messageAdded', (event) => {
+            addMessage(event, addMessages, updateUnreadMessages);
+          });
+
+          client.on('participantLeft', (participant) => {
+            handlePromiseRejection(() => handleParticipantsUpdate(participant, updateParticipants), addNotifications);
+          });
+
+          client.on('participantUpdated', (event) => {
+            handlePromiseRejection(() => handleParticipantsUpdate(event.participant, updateParticipants), addNotifications);
+          });
+
+          client.on('participantJoined', (participant) => {
+            handlePromiseRejection(() => handleParticipantsUpdate(participant, updateParticipants), addNotifications);
+          });
+
+          client.on('messageUpdated', ({ message }) => {
+            handlePromiseRejection(
+              () => updateConvoList(client, message.conversation, listConversations, addMessages, updateUnreadMessages),
+              addNotifications
+            );
+          });
+
+          client.on('messageRemoved', (message) => {
+            handlePromiseRejection(() => removeMessagesUpdate(message.conversation.sid, message, dispatch, removeMessages), addNotifications);
+          });
+
+          client.on('tokenExpired', () => {
+            updateToken();
+          });
+
+          client.on('tokenAboutToExpire', () => {
+            updateToken();
+          });
+
+          /*    if (state === 'initialized') {
+            }
+            if (state === 'failed') {
+            }
+          }); */
+
+          dispatch(updateLoadingState(false));
         }
         setToken(newToken);
-        localStorage.setItem('token', token);
+        //localStorage.setItem('token', token);
       } else console.log("Token can't be created/updated ", error);
     } catch (error) {
       console.log("Token can't be created/updated ", error);
     }
   };
-
-  const newConversation = (item) => conversations?.find((convo) => item?._id === convo?.channelState?.friendlyName || item?.customer?._id === convo?.channelState?.friendlyName);
 
   const updateConvoList = async (client, conversation, listConversations, addMessages, updateUnreadMessages) => {
     if (!client) return;
@@ -242,7 +238,10 @@ const useTwilioClient = () => {
 
     loadUnreadMessagesCount(conversation, updateUnreadMessages);
 
-    dispatch(addConversation(conversation));
+    //dispatch(addConversation(conversation));
+
+    const subscribedConversations = await client.getSubscribedConversations();
+    dispatch(listConversations(subscribedConversations.items));
   };
 
   const updateTypingIndicator = (participant, sid, callback) => {
@@ -250,7 +249,7 @@ const useTwilioClient = () => {
       attributes: { friendlyName },
       identity
     } = participant;
-    if (identity === localStorage.getItem('username')) {
+    if (identity === getUserData()?.customData?.email) {
       return;
     }
     callback(sid, identity || friendlyName || '');
@@ -280,8 +279,8 @@ const useTwilioClient = () => {
     dispatch(updateParticipants(result, participant.conversation.sid));
   };
 
-  useEffect(() => {
-    if (conversations !== undefined && conversations !== null) {
+  /* useEffect(() => {
+    if (infoDetails) {
       setTimeout(() => {
         setIsInfoReady(false);
       }, 2000);
@@ -305,9 +304,9 @@ const useTwilioClient = () => {
         setIsInfoReady(true);
       }, 2000);
     }
-  }, [infoDetails, conversations]);
+  }, [infoDetails]);*/
 
-  useEffect(() => {
+  /*  useEffect(() => {
     if (!inputValue) setSearchFilter([]);
     else setSearchFilter([
         {
@@ -341,24 +340,16 @@ const useTwilioClient = () => {
           value: inputValue
         }
       ]);
-  }, [inputValue]);
+  }, [inputValue]); */
 
-  return useMemo(() => {
-    if (userData?.coordinatorId) {
-      return {
-        client: conversationsClient,
-        conversations,
-        data,
-        infoDetails,
-        isInfoReady,
-        inputValue,
-        setInputValue,
-        token,
-        userData,
-        userDataEmail
-      };
-    } else return {};
-  }, [userData, conversationsClient, data, token]);
+  return {
+    client,
+    data,
+    isInfoReady,
+    inputValue,
+    setInputValue,
+    userData
+  };
 };
 
 export default useTwilioClient;

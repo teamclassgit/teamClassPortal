@@ -8,9 +8,7 @@ import Router from './router/Router';
 const App = (props) => {
   return (
     <ApolloProvider client={apolloClient}>
-      <Router>
-        {props.children}
-      </Router>
+      <Router>{props.children}</Router>
     </ApolloProvider>
   );
 };

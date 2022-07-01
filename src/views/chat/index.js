@@ -15,11 +15,12 @@ const AppChat = () => {
   const [sidebar, setSidebar] = useState(false);
   const [status, setStatus] = useState('online');
   const [userSidebarLeft, setUserSidebarLeft] = useState(false);
-  const { client, data, conversations, inputValue, setInputValue, isInfoReady, userData } = useTwilioClient();
+  const { client, data, inputValue, setInputValue, isInfoReady, userData } = useTwilioClient();
   const [selectedBooking, setSelectedBooking] = useState(null);
 
   const id = useSelector((state) => state.reducer.information.info);
   const sid = useSelector((state) => state.reducer.sid.sid);
+  const conversations = useSelector((state) => state.reducer.convo);
   const sidRef = useRef('');
   const IdRef = useRef('');
   sidRef.current = sid;
@@ -45,10 +46,8 @@ const AppChat = () => {
   return (
     <>
       <SidebarLeft
-        client={client}
         handleSidebar={handleSidebar}
         handleUserSidebarLeft={handleUserSidebarLeft}
-        infoDetails={data}
         isInfoReady={isInfoReady}
         status={status}
         setStatus={setStatus}
@@ -75,7 +74,7 @@ const AppChat = () => {
           </div>
         </div>
       </div>
-      {selectedBooking && client && <SidebarRight client={client} id={selectedBooking} />}
+      {/*selectedBooking && client && <SidebarRight client={client} id={selectedBooking} />*/}
     </>
   );
 };

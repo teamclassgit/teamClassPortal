@@ -16,10 +16,8 @@ import SidebarInfo from './SidebarInfo';
 import './SidebarLeft.scss';
 
 const SidebarLeft = ({
-  client,
   handleSidebar,
   handleUserSidebarLeft,
-  infoDetails,
   setInputValue,
   setStatus,
   sidebar,
@@ -84,15 +82,8 @@ const SidebarLeft = ({
             style={{ height: 'calc(100% - 110px)' }}
           >
             <h4 className="chat-list-title">Chats</h4>
-            {isInfoReady ? (
-              <ConversationsList
-                client={client}
-                info={infoDetails}
-                userData={userData}
-                selectedBooking={selectedBooking}
-                setSelectedBooking={setSelectedBooking}
-              />
-            ) : (<Spinner className="spinner" color="primary" />)}
+            {!isInfoReady && <Spinner className="spinner" color="primary" />}
+            <ConversationsList selectedBooking={selectedBooking} setSelectedBooking={setSelectedBooking} />
           </PerfectScrollbar>
         </div>
       </div>
@@ -101,10 +92,8 @@ const SidebarLeft = ({
 };
 
 SidebarLeft.propTypes = {
-  client: Proptypes.object,
   handleSidebar: Proptypes.func,
   handleUserSidebarLeft: Proptypes.func,
-  infoDetails: Proptypes.array,
   inputValue: Proptypes.string,
   setInputValue: Proptypes.func,
   setStatus: Proptypes.func,

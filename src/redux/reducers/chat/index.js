@@ -1,23 +1,21 @@
 // @packages
-import attachmentsReducer from "./attachmentsReducer";
-import convoReducer from "./convoReducer";
-import infoReducer from "./infoReducer";
-import lastReadIndexReducer from "./lastReadIndexReducer";
-import loadingReducer from "./loadingReducer";
-import messageReducer from "./messageListReducer";
-import notificationsReducer from "./notificationsReducer";
-import participantReducer from "./participantsReducer";
-import sidReducer from "./currentConvoReducer";
-import tokenReducer from "./tokenReducer";
-import totalUnreadCountReducer from "./totalUnreadCountReducer";
-import typingDataReducer from "./typingDataReducer";
-import unreadMessagesReducer from "./unreadMessagesReducer";
-import { combineReducers } from "redux";
+import attachmentsReducer from './attachmentsReducer';
+import convoReducer from './convoReducer';
+import infoReducer from './infoReducer';
+import lastReadIndexReducer from './lastReadIndexReducer';
+import loadingReducer from './loadingReducer';
+import messageReducer from './messageListReducer';
+import notificationsReducer from './notificationsReducer';
+import participantReducer from './participantsReducer';
+import sidReducer from './currentConvoReducer';
+import tokenReducer from './tokenReducer';
+import totalUnreadCountReducer from './totalUnreadCountReducer';
+import typingDataReducer from './typingDataReducer';
+import unreadMessagesReducer from './unreadMessagesReducer';
+import { combineReducers } from 'redux';
 
 const reducers = (state, action) => {
   if (action.type === 'LOGOUT') {
-    localStorage.removeItem("username");
-    localStorage.removeItem("password");
     return appReducer(initialState, action);
   }
 

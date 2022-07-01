@@ -1,6 +1,7 @@
 // @scripts
 import { CONVERSATION_PAGE_SIZE } from "./Constants";
 import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
+import { getUserData } from "../../utility/Utils";
 
 export const getConversationParticipants = async (conversation) => await conversation.getParticipants();
 
@@ -66,7 +67,7 @@ export async function getMessageStatus (
 
   channelParticipants.forEach((participant) => {
     if (
-      participant.identity === localStorage.getItem("username") ||
+      participant.identity === getUserData()?.customData?.email ||
       participant.type !== "chat"
     ) {
       return;

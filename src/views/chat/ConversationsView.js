@@ -88,8 +88,7 @@ const getLastMessageTime = (messages) => {
 };
 
 const ConversationView = (props) => {
-  const { convo, convoId, myMessage, lastMessage, unreadMessagesCount, customer, selectedBooking, setSelectedBooking } = props;
-  const [backgroundColor, setBackgroundColor] = useState();
+  const { convo, myMessage, lastMessage, unreadMessagesCount, customer, selectedBooking, setSelectedBooking } = props;
   const [lastMsgStatus, setLastMsgStatus] = useState('');
 
   truncateMiddle(convo?.friendlyName ?? convo?.sid, calculateUnreadMessagesWidth(unreadMessagesCount));
@@ -99,15 +98,7 @@ const ConversationView = (props) => {
   const time = getLastMessageTime(props?.messages);
   const [seeBookings, setSeeBookings] = useState(false);
 
-  useEffect(() => {
-    if (props?.infoId === convo?._id) {
-      setBackgroundColor('aliceblue');
-      return;
-    }
-    setBackgroundColor('transparent');
-  }, [props]);
-
-  useEffect(() => {
+  /* useEffect(() => {
     if (myMessage && !props?.typingInfo?.length) {
       getMessageStatus(convo, myMessage, props.participants).then((statuses) => {
         if (statuses[MessageStatus.Read]) {
@@ -131,9 +122,9 @@ const ConversationView = (props) => {
       setLastMsgStatus('');
     };
   }, [convo, myMessage, lastMessage, props.participants, props.typingInfo]);
-
+ */
   return (
-    <li onClick={props.onClick} style={{ backgroundColor }} className="conversation-view-container">
+    <>
       <Avatar
         size="lg"
         className="avatar-border"
@@ -210,7 +201,7 @@ const ConversationView = (props) => {
           )}
         </div>
       </div>
-    </li>
+    </>
   );
 };
 export default ConversationView;

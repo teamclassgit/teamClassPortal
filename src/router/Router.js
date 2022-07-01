@@ -39,7 +39,7 @@ const Router = () => {
   const DefaultLayout = layout === 'horizontal' ? 'HorizontalLayout' : 'VerticalLayout';
 
   // ** All of the available layouts
-  const Layouts = { 
+  const Layouts = {
     BlankLayout,
     VerticalLayout,
     HorizontalLayout,

@@ -1,28 +1,19 @@
 // @packages
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Spinner } from "reactstrap";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { Spinner } from 'reactstrap';
 
 // @scripts
-import MessageList from "./MessageList";
-import { CONVERSATION_PAGE_SIZE } from "./Constants";
-import { getMessages } from "./Apis";
-import { useDispatch } from "react-redux";
+import MessageList from './MessageList';
+import { CONVERSATION_PAGE_SIZE } from './Constants';
+import { getMessages } from './Apis';
+import { useDispatch } from 'react-redux';
 
 // @styles
-import "./MessagesBox.scss";
+import './MessagesBox.scss';
+import { getUserData } from '../../utility/Utils';
 
-export async function loadMessages (
-  conversation,
-  currentMessages = [],
-  addMessage
-) {
+export async function loadMessages (conversation, currentMessages = [], addMessage) {
   const convoSid = conversation?.sid;
   if (!(convoSid in currentMessages)) {
     const paginator = await getMessages(conversation);
@@ -33,9 +24,7 @@ export async function loadMessages (
 
 const MessagesBox = (props) => {
   const { messages, convo, loadingState, lastReadIndex, addMessage } = props;
-  const [hasMore, setHasMore] = useState(
-    messages?.length === CONVERSATION_PAGE_SIZE
-  );
+  const [hasMore, setHasMore] = useState(messages?.length === CONVERSATION_PAGE_SIZE);
   const [loading, setLoading] = useState(false);
   const [height, setHeight] = useState(0);
   const [paginator, setPaginator] = useState(null);
@@ -72,10 +61,7 @@ const MessagesBox = (props) => {
   }, [messages, convo]);
 
   const lastConversationReadIndex = useMemo(
-    () => (messages?.length &&
-      messages[messages.length - 1].author !== localStorage.getItem("username")
-      ? lastReadIndex
-      : -1),
+    () => (messages?.length && messages[messages.length - 1].author !== getUserData()?.customData?.email ? lastReadIndex : -1),
     [lastReadIndex, messages]
   );
 
@@ -97,25 +83,18 @@ const MessagesBox = (props) => {
   };
 
   return (
-    <div
-      className="messages-box"
-      id="scrollable"
-      key={convo.sid}
-    >
+    <div className="messages-box" id="scrollable" key={convo.sid}>
       <InfiniteScroll
         className="scroll-container"
         dataLength={messages?.length ?? 0}
         hasMore={!loading && hasMore}
         inverse={true}
-        loader={<Spinner size='12' title="Loading" />}
+        loader={<Spinner size="12" title="Loading" />}
         next={fetchMore}
         scrollThreshold="20px"
         scrollableTarget="scrollable"
       >
-        <div 
-          className="scroll-list"
-          ref={listRef} 
-        >
+        <div className="scroll-list" ref={listRef}>
           <MessageList
             userData={props.userData}
             messages={messages}

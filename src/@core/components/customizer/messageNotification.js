@@ -1,11 +1,9 @@
 // @packages
-import ConversationsList from '@src/views/chat/ConversationsList';
 import Proptypes from 'prop-types';
 import React from 'react';
 import { Badge } from 'reactstrap';
 import { MessageSquare } from 'react-feather';
 import { useSelector } from 'react-redux';
-
 // @scripts
 import useTwilioClient from '../../hooks/useTwilioClient';
 
@@ -13,7 +11,8 @@ import useTwilioClient from '../../hooks/useTwilioClient';
 import './messageNotification.scss';
 
 const MessageNotifications = () => {
-  const { client, infoDetails, userData } = useTwilioClient();
+  // Twillio Chat
+  useTwilioClient();
   const totalUnread = useSelector((state) => state.reducer.totalUnreadCount);
 
   return (
@@ -24,7 +23,6 @@ const MessageNotifications = () => {
           {totalUnread}
         </Badge>
       )}
-      <ConversationsList client={client} info={infoDetails} userData={userData} notifications={true} />
     </>
   );
 };
