@@ -34,6 +34,7 @@ export default gql`
         maximum
         duration
         pricePerson
+        pricePersonInstructor
         hasKit
         order
         active
