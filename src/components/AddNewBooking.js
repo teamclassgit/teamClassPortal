@@ -1,48 +1,23 @@
 // @packages
-import Cleave from "cleave.js/react";
-import React, { useEffect, useState } from "react";
-import Select from "react-select";
-import { Mail, Phone, User, X, Briefcase } from "react-feather";
-import { selectThemeColors } from "@utils";
-import { useMutation } from "@apollo/client";
-import { v4 as uuid } from "uuid";
-import {
-  Alert,
-  Button,
-  FormGroup,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Label,
-  Modal,
-  ModalBody,
-  ModalHeader
-} from "reactstrap";
+import Cleave from 'cleave.js/react';
+import React, { useEffect, useState } from 'react';
+import Select from 'react-select';
+import { Mail, Phone, User, X, Briefcase } from 'react-feather';
+import { selectThemeColors } from '@utils';
+import { useMutation } from '@apollo/client';
+import { v4 as uuid } from 'uuid';
+import { Alert, Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
 
 // @styles
-import "@styles/react/libs/flatpickr/flatpickr.scss";
+import '@styles/react/libs/flatpickr/flatpickr.scss';
 
 // @scripts
-import "cleave.js/dist/addons/cleave-phone.us";
-import mutationNewBooking from "../graphql/MutationInsertBookingAndCustomer";
-import {
-  BOOKING_QUOTE_STATUS,
-  SALES_TAX,
-  SALES_TAX_STATE,
-  SERVICE_FEE
-} from "../utility/Constants";
-import { isValidEmail, getUserData } from "../utility/Utils";
+import 'cleave.js/dist/addons/cleave-phone.us';
+import mutationNewBooking from '../graphql/MutationInsertBookingAndCustomer';
+import { BOOKING_QUOTE_STATUS, SALES_TAX, SALES_TAX_STATE, SERVICE_FEE } from '../utility/Constants';
+import { isValidEmail, getUserData } from '../utility/Utils';
 
-const AddNewBooking = ({
-  baseElement,
-  classes,
-  coordinators,
-  customers,
-  handleModal,
-  open,
-  onAddCompleted
-}) => {
+const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleModal, open, onAddCompleted }) => {
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [classVariant, setClassVariant] = useState(null);
   const [classVariantsOptions, setClassVariantsOptions] = useState([]);
@@ -50,22 +25,21 @@ const AddNewBooking = ({
   const [defaultCoordinatorOption, setDefaultCoordinatorOption] = useState([]);
   const [emailValid, setEmailValid] = useState(true);
   const [isOldCustomer, setIsOldCustomer] = useState(false);
-  const [newAttendees, setNewAttendees] = useState("");
-  const [newCompany, setNewCompany] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [newName, setNewName] = useState("");
-  const [newPhone, setNewPhone] = useState("");
+  const [newAttendees, setNewAttendees] = useState('');
+  const [newCompany, setNewCompany] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newPhone, setNewPhone] = useState('');
   const [oneCoordinator, setOneCoordinator] = useState(null);
   const [phoneValid, setPhoneValid] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [warning, setWarning] = useState({ open: false, message: "" });
-  const [isGroupVariant, setIsGroupVariant] = useState(false);
+  const [warning, setWarning] = useState({ open: false, message: '' });
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [distributorId, setDistributorId] = useState(null);
 
-  const options = { phone: true, phoneRegionCode: "US" };
+  const options = { phone: true, phoneRegionCode: 'US' };
 
   const emailValidation = (email) => {
     setEmailValid(isValidEmail(email));
@@ -85,9 +59,7 @@ const AddNewBooking = ({
 
   useEffect(() => {
     if (selectedClass) {
-      const filteredClass = classes.find(
-        (element) => element._id === selectedClass
-      );
+      const filteredClass = classes.find((element) => element._id === selectedClass);
       if (filteredClass) {
         setClassVariantsOptions(filteredClass.variants);
         setDistributorId(filteredClass?.distributorId);
@@ -105,14 +77,10 @@ const AddNewBooking = ({
       setSelectedClass(baseElement.class);
       setSelectedCustomer(null);
       setIsOldCustomer(false);
-      setWarning({ open: false, message: "" });
+      setWarning({ open: false, message: '' });
 
       const userData = getUserData();
-      if (
-        userData &&
-        userData.customData &&
-        userData.customData.coordinatorId
-      ) {
+      if (userData && userData.customData && userData.customData.coordinatorId) {
         setDefaultCoordinatorOption(userData.customData);
         setOneCoordinator(userData.customData.coordinatorId);
       }
@@ -125,25 +93,17 @@ const AddNewBooking = ({
     try {
       let customer = undefined;
       if (isOldCustomer && selectedCustomer) {
-        customer = customers.find(
-          (element) => element._id === selectedCustomer
-        );
-      } else if (
-        customers.find(
-          (element) => element.email.toLowerCase() === newEmail.toLowerCase()
-        )
-      ) {
+        customer = customers.find((element) => element._id === selectedCustomer);
+      } else if (customers.find((element) => element.email.toLowerCase() === newEmail.toLowerCase())) {
         setWarning({
           open: true,
-          message: "A customer with the same email already exist."
+          message: 'A customer with the same email already exist.'
         });
         setProcessing(false);
         return;
       }
 
-      const teamClass = classes.find(
-        (element) => element._id === selectedClass
-      );
+      const teamClass = classes.find((element) => element._id === selectedClass);
       const newId = uuid();
       const resultCreateBooking = await createBooking({
         variables: {
@@ -151,9 +111,7 @@ const AddNewBooking = ({
           date: new Date(),
           teamClassId: selectedClass,
           classVariant,
-          instructorId: teamClass.instructorId
-            ? teamClass.instructorId
-            : teamClass._id,
+          instructorId: teamClass.instructorId ? teamClass.instructorId : teamClass._id,
           instructorName: teamClass.instructorName,
           customerId: customer ? customer._id : uuid(),
           customerName: customer ? customer.name : newName,
@@ -166,8 +124,7 @@ const AddNewBooking = ({
           salesTax: SALES_TAX,
           salesTaxState: SALES_TAX_STATE,
           discount: 0,
-          customerCreatedAt:
-            customer && customer.createdAt ? customer.createdAt : new Date(),
+          customerCreatedAt: customer && customer.createdAt ? customer.createdAt : new Date(),
           createdAt: new Date(),
           updatedAt: new Date(),
           status: BOOKING_QUOTE_STATUS,
@@ -206,7 +163,7 @@ const AddNewBooking = ({
 
   const getClassName = (id) => {
     const res = classes.find((element) => element._id === selectedClass);
-    return res ? res.title : "";
+    return res ? res.title : '';
   };
 
   const selectStyles = {
@@ -218,7 +175,7 @@ const AddNewBooking = ({
     }),
     option: (provided) => ({
       ...provided,
-      borderBottom: "1px dotted",
+      borderBottom: '1px dotted',
       padding: 10,
       fontSize: 12
     }),
@@ -230,14 +187,9 @@ const AddNewBooking = ({
   };
 
   return (
-    <Modal
-      className="sidebar-sm"
-      contentClassName="pt-0"
-      isOpen={open}
-      modalClassName="modal-slide-in"
-    >
+    <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={open} modalClassName="modal-slide-in">
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
-        <h5 className="modal-title">{"New Booking"}</h5>
+        <h5 className="modal-title">{'New Booking'}</h5>
       </ModalHeader>
       <ModalBody className="flex-grow-1">
         <div className="demo-inline-spacing ">
@@ -252,7 +204,7 @@ const AddNewBooking = ({
                   setSelectedCustomer(null);
                 }}
                 defaultChecked
-              />{" "}
+              />{' '}
               New Customer
             </Label>
           </FormGroup>
@@ -264,9 +216,9 @@ const AddNewBooking = ({
                 name="customRadio"
                 onClick={(e) => {
                   setIsOldCustomer(true);
-                  setWarning({ open: false, message: "" });
+                  setWarning({ open: false, message: '' });
                 }}
-              />{" "}
+              />{' '}
               Old Customer
             </Label>
           </FormGroup>
@@ -282,12 +234,7 @@ const AddNewBooking = ({
                     <User size={15} />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input
-                  id="full-name"
-                  placeholder="Full Name *"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                />
+                <Input id="full-name" placeholder="Full Name *" value={newName} onChange={(e) => setNewName(e.target.value)} />
               </InputGroup>
             </FormGroup>
             <FormGroup>
@@ -318,9 +265,7 @@ const AddNewBooking = ({
                   </InputGroupText>
                 </InputGroupAddon>
                 <Cleave
-                  className={`${
-                    phoneValid ? "" : "border-danger"
-                  } form-control`}
+                  className={`${phoneValid ? '' : 'border-danger'} form-control`}
                   placeholder="Phone *"
                   options={options}
                   id="phone"
@@ -339,12 +284,7 @@ const AddNewBooking = ({
                     <Briefcase size={15} />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input
-                  id="company"
-                  placeholder="Company"
-                  value={newCompany}
-                  onChange={(e) => setNewCompany(e.target.value)}
-                />
+                <Input id="company" placeholder="Company" value={newCompany} onChange={(e) => setNewCompany(e.target.value)} />
               </InputGroup>
             </FormGroup>
           </div>
@@ -362,7 +302,7 @@ const AddNewBooking = ({
                 customers.map((element) => {
                   return {
                     value: element._id,
-                    label: `${element.name.split(" ")[0]} <${element.email}>`
+                    label: `${element.name.split(' ')[0]} <${element.email}>`
                   };
                 })
               }
@@ -415,12 +355,13 @@ const AddNewBooking = ({
               })
             }
             value={{
-              value: selectedClass || "",
+              value: selectedClass || '',
               label: getClassName(selectedClass)
             }}
             onChange={(option) => {
-              setIsGroupVariant(false);
               setSelectedClass(option.value);
+              setSelectedVariant(null);
+              setClassVariant(null);
             }}
             isClearable={false}
             styles={selectStyles}
@@ -434,6 +375,16 @@ const AddNewBooking = ({
               className="react-select"
               classNamePrefix="select"
               placeholder="Select..."
+              value={
+                classVariant
+                  ? {
+                      value: classVariant,
+                      label: classVariant.groupEvent
+                        ? `${classVariant.title} ${classVariant.groupEvent ? '/group' : '/person'}`
+                        : `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`
+                    }
+                  : null
+              }
               options={
                 classVariantsOptions &&
                 classVariantsOptions.map((element, index) => {
@@ -445,7 +396,7 @@ const AddNewBooking = ({
                     pricePerson: element.pricePerson,
                     pricePersonInstructor: element.pricePersonInstructor,
                     hasKit: element.hasKit,
-                    order: element.order,
+                    order: index,
                     active: element.active,
                     groupEvent: element.groupEvent,
                     instructorFlatFee: element.instructorFlatFee,
@@ -455,30 +406,13 @@ const AddNewBooking = ({
                   return {
                     value: variant,
                     label: element.groupEvent
-                      ? `${element.title} ${
-                          element.groupEvent ? "/group" : "/person"
-                        }`
-                      : `${element.title} $${element.pricePerson}${
-                          element.groupEvent ? "/group" : "/person"
-                        }`
+                      ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
+                      : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
                   };
                 })
               }
               onChange={(option) => {
-                // eslint-disable-next-line no-unused-expressions
-                const position = classVariantsOptions?.indexOf(
-                  (item) => item.title === option.value.title
-                );
-                if (!(position >= 0)) return;
-
-                setSelectedVariant(position);
-
-                if (!option.value.groupEvent) {
-                  setIsGroupVariant(false);
-                } else {
-                  setIsGroupVariant(true);
-                }
-
+                setSelectedVariant(option?.value?.order);
                 setClassVariant(option.value);
               }}
               isClearable={false}
@@ -486,7 +420,7 @@ const AddNewBooking = ({
             />
           </FormGroup>
         )}
-        {isGroupVariant ? (
+        {classVariant?.groupEvent ? (
           <FormGroup>
             <Label for="full-name">Group Size*</Label>
             <Select
@@ -508,12 +442,9 @@ const AddNewBooking = ({
                     hasKit: classVariantsOptions[selectedVariant].hasKit,
                     order: classVariantsOptions[selectedVariant].order,
                     active: classVariantsOptions[selectedVariant].active,
-                    groupEvent:
-                      classVariantsOptions[selectedVariant].groupEvent,
-                    instructorFlatFee:
-                      classVariantsOptions[selectedVariant].instructorFlatFee,
-                    registrationFields:
-                      classVariantsOptions[selectedVariant].registrationFields
+                    groupEvent: classVariantsOptions[selectedVariant].groupEvent,
+                    instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee,
+                    registrationFields: classVariantsOptions[selectedVariant].registrationFields
                   };
                   return {
                     value: variant,
@@ -553,12 +484,7 @@ const AddNewBooking = ({
             size="sm"
             onClick={saveNewBooking}
             disabled={
-              (!selectedCustomer &&
-                (!newName ||
-                  !newEmail ||
-                  !newPhone ||
-                  !emailValid ||
-                  !phoneValid)) ||
+              (!selectedCustomer && (!newName || !newEmail || !newPhone || !emailValid || !phoneValid)) ||
               !newAttendees ||
               processing ||
               !attendeesValid ||
@@ -567,7 +493,7 @@ const AddNewBooking = ({
               !oneCoordinator
             }
           >
-            {processing ? "Saving..." : "Save"}
+            {processing ? 'Saving...' : 'Save'}
           </Button>
           <Button color="secondary" onClick={cancel} outline size="sm">
             Cancel
