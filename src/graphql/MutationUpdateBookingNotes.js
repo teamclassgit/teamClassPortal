@@ -32,6 +32,7 @@ export default gql`
         note
         author
         date
+        shared
       }
       classVariant {
         title

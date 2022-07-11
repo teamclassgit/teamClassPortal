@@ -26,7 +26,7 @@ import Select from 'react-select';
 import classnames from 'classnames';
 import moment from 'moment';
 import { useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck, List } from 'react-feather';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck, List, CornerUpRight } from 'react-feather';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
@@ -525,6 +525,29 @@ const EditBookingModal = ({
     { value: 'repeat', label: 'Repeat' }
   ];
 
+  const handleUpdateSharedNote = async (index) => {
+    const updateSharedNote = [...bookingNotes];
+    const note = updateSharedNote[index];
+    const shared = !note?.shared;
+    const sharedNote = {
+      ...note,
+      shared
+    };
+    updateSharedNote[index] = sharedNote;
+    try {
+      await updateBookingNotes({
+        variables: {
+          id: currentElement._id,
+          notes: updateSharedNote,
+          updatedAt: new Date()
+        }
+      });
+      setBookingNotes(updateSharedNote);
+    } catch (ex) {
+      console.log(ex);
+    }
+  };
+
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
@@ -1019,6 +1042,25 @@ const EditBookingModal = ({
                           >
                             <small>{item.note}</small>
                           </p>
+                        </div>
+                        <div>
+                          {item?.shared ? (
+                            <a
+                            href="#"
+                            onClick={() => handleUpdateSharedNote(index)}
+                          >
+                            Shared
+                            <X />
+                          </a>
+                          ) : (
+                            <a
+                              href="#"
+                              onClick={() => handleUpdateSharedNote(index)}
+                            >
+                              Share with instructor
+                              <CornerUpRight />
+                            </a>
+                          )}
                         </div>
                       </li>
                     );
