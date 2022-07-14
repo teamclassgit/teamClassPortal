@@ -26,7 +26,7 @@ import Select from 'react-select';
 import classnames from 'classnames';
 import moment from 'moment';
 import { useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck, List, CornerUpRight } from 'react-feather';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Video, Key, Truck, List, CornerUpRight, MessageSquare } from 'react-feather';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
@@ -577,7 +577,7 @@ const EditBookingModal = ({
         </NavItem>
         <NavItem>
           <NavLink title="Notes" active={active === '3'} onClick={() => toggle('3')}>
-            <Edit size="18" />
+            <MessageSquare size="18" />
           </NavLink>
         </NavItem>
       </Nav>
@@ -1034,32 +1034,30 @@ const EditBookingModal = ({
                               <small>{moment(item.date).fromNow()}</small>
                             </span>
                           </div>
-                          <p
-                            className={classnames({
-                              'mb-0': index === bookingNotes.length - 1 && !item.customContent
-                            })}
-                          >
+                          <p className="mb-0">
                             <small>{item.note}</small>
                           </p>
-                        </div>
-                        <div>
                           {userData?.customData?.name === item.author && (
                             item?.shared ? (
-                              <a
-                              href="#"
-                              onClick={() => handleUpdateSharedNote(index)}
-                            >
-                              Shared
-                              <X />
-                            </a>
+                              <small>
+                                <a
+                                  href="#"
+                                  onClick={() => handleUpdateSharedNote(index)}
+                                >
+                                  Shared
+                                  <X width={20}/>
+                                </a>
+                              </small>
                             ) : (
-                              <a
-                                href="#"
-                                onClick={() => handleUpdateSharedNote(index)}
-                              >
-                                Share with instructor
-                                <CornerUpRight />
-                              </a>
+                              <small>
+                                <a
+                                  href="#"
+                                  onClick={() => handleUpdateSharedNote(index)}
+                                >
+                                  Share with instructor
+                                  <CornerUpRight width={20}/>
+                                </a>
+                              </small>
                           ))}
                         </div>
                       </li>
