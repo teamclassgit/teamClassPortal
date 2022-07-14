@@ -104,7 +104,7 @@ const EditBookingModal = ({
   const [individualTag, setIndividualTag] = useState('');
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
-
+  const userData = getUserData();
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
@@ -427,7 +427,6 @@ const EditBookingModal = ({
   const saveNotes = async () => {
     setProcessing(true);
     const newArray = bookingNotes ? [...bookingNotes] : [];
-    const userData = getUserData();
     newArray.unshift({
       note: inputNote,
       author: (userData && userData.customData && userData.customData['name']) || 'Unknown',
@@ -582,7 +581,7 @@ const EditBookingModal = ({
           </NavLink>
         </NavItem>
       </Nav>
-      <TabContent className="py-50" activeTab={active} color="primary">
+      <TabContent className="py-5" activeTab={active} color="primary">
         <TabPane tabId="1">
           <ModalBody className="flex-grow-1">
             <FormGroup>
@@ -1044,23 +1043,24 @@ const EditBookingModal = ({
                           </p>
                         </div>
                         <div>
-                          {item?.shared ? (
-                            <a
-                            href="#"
-                            onClick={() => handleUpdateSharedNote(index)}
-                          >
-                            Shared
-                            <X />
-                          </a>
-                          ) : (
-                            <a
+                          {userData?.customData?.name === item.author && (
+                            item?.shared ? (
+                              <a
                               href="#"
                               onClick={() => handleUpdateSharedNote(index)}
                             >
-                              Share with instructor
-                              <CornerUpRight />
+                              Shared
+                              <X />
                             </a>
-                          )}
+                            ) : (
+                              <a
+                                href="#"
+                                onClick={() => handleUpdateSharedNote(index)}
+                              >
+                                Share with instructor
+                                <CornerUpRight />
+                              </a>
+                          ))}
                         </div>
                       </li>
                     );
