@@ -55,6 +55,7 @@ export default gql`
         note
         author
         date
+        shared
       }
       addons {
         icon
