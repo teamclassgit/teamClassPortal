@@ -92,6 +92,14 @@ export default gql`
           manualLink
           password
         }
+        totalInstructorInvoice
+        instructorInvoiceStatus
+        totalDistributorInvoice
+        distributorInvoiceStatus
+        preEventSurvey {
+          submittedAt
+          source
+        }
       }
     }
   }

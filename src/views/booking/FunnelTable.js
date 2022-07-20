@@ -661,6 +661,79 @@ const FunnelTable = () => {
           return <span className="float-left">{value}</span>;
         }
       }
+    },
+    {
+      name: 'preEventSurvey.submitted',
+      header: 'Pre-Event submitted',
+      type: 'date',
+      width: 250,
+      filterEditor: DateFilter,
+      render: ({ value, cellProps }) => {
+        if (value) {
+          return moment(value).format('LLL');
+        }
+      }
+    },
+    {
+      name: 'preEventSurvey.source',
+      header: 'Pre-Event source',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'totalInstructorInvoice',
+      header: 'Instructor invoice',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">{value}</span>;
+      }
+    },
+    {
+      name: 'instructorInvoiceStatus',
+      header: 'Instructor invoice status',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'totalDistributorInvoice',
+      header: 'Distributor Invoice',
+      type: 'number',
+      defaultWidth: 150,
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      render: ({ value, cellProps }) => {
+        return <span className="float-right">{value}</span>;
+      }
+    },
+    {
+      name: 'distributorInvoiceStatus',
+      header: 'Distributor Invoice Status',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
     }
   ];
 
@@ -749,6 +822,12 @@ const FunnelTable = () => {
         { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
         { name: 'utm_content', type: 'string', operator: 'contains', value: '' },
         { name: 'utm_term', type: 'string', operator: 'contains', value: '' },
+        { name: 'totalInstructorInvoice', type: 'number', operator: 'contains', value: '' },
+        { name: 'instructorInvoiceStatus', type: 'string', operator: 'contains', value: '' },
+        { name: 'totalDistributorInvoice', type: 'number', operator: 'contains', value: '' },
+        { name: 'distributorInvoiceStatus', type: 'string', operator: 'contains', value: '' },
+        { name: 'preEventSurvey.submitted', type: 'date', operator: 'inrange', value: undefined },
+        { name: 'preEventSurvey.source', type: 'string', operator: 'contains', value: '' },
         { name: 'bookingTags', type: 'string', operator: 'contains', value: '' }
       ];
     }
