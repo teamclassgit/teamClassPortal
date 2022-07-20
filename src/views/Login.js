@@ -7,18 +7,22 @@ import '@styles/base/pages/page-auth.scss';
 import { loginWithEmailAndPassword, logoutUser } from '../utility/RealmApolloClient';
 import { FiltersContext } from '../context/FiltersContext/FiltersContext';
 import { getUserData } from '../utility/Utils';
+import { TwilioContext } from '../context/TwilioContext/TwilioContext';
 
 const Login = (props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const { setCoordinatorFilterContext } = useContext(FiltersContext);
+  const { setChatUser } = useContext(TwilioContext);
 
   const setDefaultFilters = (userData) => {
-    if (userData && userData.customData && userData.customData.coordinatorId) setCoordinatorFilterContext({
-      type: 'coordinator',
-      value: [userData.customData.coordinatorId],
-      label: [userData.customData.name]
-    });
+    if (userData && userData.customData && userData.customData.coordinatorId) {
+      setCoordinatorFilterContext({
+        type: 'coordinator',
+        value: [userData.customData.coordinatorId],
+        label: [userData.customData.name]
+      });
+    }
   };
 
   const submitHandler = async (event) => {
@@ -35,6 +39,7 @@ const Login = (props) => {
         } else {
           setDefaultFilters(userData);
           setLoading(false);
+          setChatUser(userData.customData);
           props.history.push('/');
         }
       } catch (ex) {

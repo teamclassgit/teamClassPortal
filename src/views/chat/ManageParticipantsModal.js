@@ -11,6 +11,7 @@ import ConvoModal from './ConvoModal';
 
 // @styles
 import './ManageParticipantsModal.scss';
+import { getUserData } from '../../utility/Utils';
 
 const ManageParticipantsModal = ({ handleClose, isModalOpen, onClick, onParticipantRemove, participantsCount, participantsList, title }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -71,7 +72,7 @@ const ManageParticipantsModal = ({ handleClose, isModalOpen, onClick, onParticip
                             </span>
                           </Td>
                           <Td textAlign="right">
-                            {user.identity !== localStorage.getItem('username') ? (
+                            {user.identity !== getUserData()?.customData?.email ? (
                               <Trash href="#" onClick={() => onParticipantRemove(user)}>
                                 Remove
                               </Trash>

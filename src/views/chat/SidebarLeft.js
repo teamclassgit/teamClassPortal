@@ -1,35 +1,153 @@
 // @packages
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import { useDispatch, useSelector } from 'react-redux';
 import Avatar from '@components/avatar';
-import Proptypes from 'prop-types';
+import PropTypes from 'prop-types';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import classnames from 'classnames';
 import { X, Search } from 'react-feather';
 import { debounce } from 'lodash';
 import { InputGroup, InputGroupAddon, InputGroupText, Input, Spinner } from 'reactstrap';
+import queryGetCustomersForChat from '../../graphql/QueryGetCustomersForChat';
+import queryGetMostRecentInteractions from '../../graphql/conversations/QueryGetMostRecentInteractions';
 
 // @scripts
 import ConversationsList from './ConversationsList';
 import SidebarInfo from './SidebarInfo';
-
+import { informationId, updateCurrentConversation } from '../../redux/actions/chat';
 // @styles
 import './SidebarLeft.scss';
+import { getUserData } from '../../utility/Utils';
 
 const SidebarLeft = ({
   client,
   handleSidebar,
   handleUserSidebarLeft,
-  infoDetails,
-  setInputValue,
   setStatus,
   sidebar,
   status,
-  isInfoReady,
-  userData,
   userSidebarLeft,
   setSelectedBooking,
   selectedBooking
 }) => {
+  const userData = getUserData();
+
+  const defaultFilter = [
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Duplicated'
+    },
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Mistake'
+    },
+    {
+      name: 'closedReason',
+      type: 'string',
+      operator: 'neq',
+      value: 'Test'
+    },
+    {
+      name: 'eventCoordinatorId',
+      type: 'string',
+      operator: 'contains',
+      value: userData?.customData?.coordinatorId
+    }
+  ];
+
+  const defaultSort = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+  const limit = 30;
+
+  const [customersData, setCustomersData] = useState([]);
+  const [isInfoReady, setIsInfoReady] = useState(false);
+  const [inputValue, setInputValue] = useState(null);
+  const [mostRecentOnesFilter, setMostRecentOnesFilter] = useState(null);
+  const [mainFilter, setMainFilter] = useState([...defaultFilter]);
+  const conversations = useSelector((state) => state.reducer.convo);
+  const dispatch = useDispatch();
+
+  const { loadingMainData } = useQuery(queryGetMostRecentInteractions, {
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 15000,
+    variables: {
+      coordinatorId: userData?.customData?.coordinatorId
+    },
+    onCompleted: (data) => {
+      const filter =
+        data?.getMostRecentInteractions?.length > 0
+          ? {
+              name: 'customerId',
+              type: 'select',
+              operator: 'inlist',
+              valueList: data?.getMostRecentInteractions
+            }
+          : null;
+      setMostRecentOnesFilter(filter);
+      getData((filter && [filter]) || mainFilter, []);
+    }
+  });
+
+  const [getCustomersForChat, { ...getCustomersForChatResult }] = useLazyQuery(queryGetCustomersForChat, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      const mostRecentCustomers = {};
+      data.getBookingsWithCriteria.rows.forEach((element) => {
+        mostRecentCustomers[element.customerId] = {
+          _id: element.customerId,
+          name: element.customerName,
+          email: element.customerEmail,
+          phone: element.customerPhone,
+          company: element.customerCompany,
+          updatedAt: element.updatedAt,
+          bookingId: element._id
+        };
+      });
+
+      const values = Object.values(mostRecentCustomers);
+      const customers = values.map((customer) => {
+        return {
+          customer,
+          convo: conversations.find((convo) => convo.friendlyName === customer._id)
+        };
+      });
+
+      setCustomersData(customers);
+    }
+  });
+
+  const getData = (filterBy, filterByOr) => {
+    getCustomersForChat({
+      variables: {
+        filterBy,
+        filterByOr,
+        limit,
+        offset: 0,
+        sortBy: defaultSort
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (!customersData) return;
+
+    const newCustomersData = customersData.map(({ customer, convo }) => {
+      return {
+        customer,
+        convo: convo || conversations.find((convo) => convo.friendlyName === customer._id)
+      };
+    });
+    setCustomersData(newCustomersData);
+  }, [conversations]);
+
+  useEffect(() => {
+    setIsInfoReady(!loadingMainData && !getCustomersForChatResult?.loading);
+  }, [getCustomersForChatResult?.loading, loadingMainData]);
+
   const changeHandler = (event) => {
     setInputValue(event.target.value);
     setSelectedBooking(null);
@@ -41,6 +159,53 @@ const SidebarLeft = ({
       debouncedChangeHandler.cancel();
     };
   }, []);
+
+  useEffect(() => {
+    dispatch(updateCurrentConversation(null));
+    dispatch(informationId(null));
+
+    if (!inputValue) getData((mostRecentOnesFilter && [mostRecentOnesFilter]) || mainFilter, []);
+    else {
+      getData(mainFilter, [
+        {
+          name: '_id',
+          type: 'string',
+          operator: 'eq',
+          value: inputValue
+        },
+        {
+          name: 'customerName',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        },
+        {
+          name: 'customerId',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        },
+        {
+          name: 'customerEmail',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        },
+        {
+          name: 'customerPhone',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        },
+        {
+          name: 'customerCompany',
+          type: 'string',
+          operator: 'contains',
+          value: inputValue
+        }
+      ]);
+    }
+  }, [inputValue]);
 
   return (
     <div className="sidebar-left">
@@ -74,7 +239,7 @@ const SidebarLeft = ({
                     <Search className="text-muted" size={14} />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input className="round" onChange={debouncedChangeHandler} placeholder="Search a booking conversation" type="text" />
+                <Input className="round" onChange={debouncedChangeHandler} placeholder="name, email, booking, etc." type="text" />
               </InputGroup>
             </div>
           </div>
@@ -83,16 +248,13 @@ const SidebarLeft = ({
             options={{ wheelPropagation: false }}
             style={{ height: 'calc(100% - 110px)' }}
           >
-            <h4 className="chat-list-title">Chats</h4>
-            {isInfoReady ? (
-              <ConversationsList
-                client={client}
-                info={infoDetails}
-                userData={userData}
-                selectedBooking={selectedBooking}
-                setSelectedBooking={setSelectedBooking}
-              />
-            ) : (<Spinner className="spinner" color="primary" />)}
+            {!isInfoReady && <Spinner className="spinner" color="primary" />}
+            <ConversationsList
+              client={client}
+              selectedBooking={selectedBooking}
+              setSelectedBooking={setSelectedBooking}
+              customersData={customersData}
+            />
           </PerfectScrollbar>
         </div>
       </div>
@@ -101,17 +263,14 @@ const SidebarLeft = ({
 };
 
 SidebarLeft.propTypes = {
-  client: Proptypes.object,
-  handleSidebar: Proptypes.func,
-  handleUserSidebarLeft: Proptypes.func,
-  infoDetails: Proptypes.array,
-  inputValue: Proptypes.string,
-  setInputValue: Proptypes.func,
-  setStatus: Proptypes.func,
-  sidebar: Proptypes.bool,
-  status: Proptypes.string,
-  userData: Proptypes.object,
-  userSidebarLeft: Proptypes.bool
+  handleSidebar: PropTypes.func,
+  handleUserSidebarLeft: PropTypes.func,
+  inputValue: PropTypes.string,
+  setInputValue: PropTypes.func,
+  setStatus: PropTypes.func,
+  sidebar: PropTypes.bool,
+  status: PropTypes.string,
+  userSidebarLeft: PropTypes.bool
 };
 
 export default SidebarLeft;

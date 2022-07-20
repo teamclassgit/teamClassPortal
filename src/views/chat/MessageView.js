@@ -11,6 +11,7 @@ import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
 
 // @styles
 import "./MessageView.scss";
+import { getUserData } from '../../utility/Utils';
 
 const statusStyle = {
   display: "inline-block",
@@ -49,7 +50,7 @@ const MessageView = ({
 
   return (
     <>
-      {author === localStorage.getItem("username") && (
+      {author === getUserData()?.customData?.email && (
         <>
           <div
             className='message-author-container'
@@ -161,7 +162,7 @@ const MessageView = ({
           </div>
         </>
       )}
-      {author !== localStorage.getItem("username") && (
+      {author !== getUserData()?.customData?.email && (
         <div
           className='message-not-author-container'
           style={{

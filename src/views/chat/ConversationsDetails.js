@@ -8,11 +8,12 @@ import Settings from './Settings';
 
 // @styles
 import './ConversationsDetails.scss';
+import { capitalizeString } from '../../utility/Utils';
 
-const ConversationDetails = ({ conversation, convo, participants }) => (
+const ConversationDetails = ({ convo, participants, customer }) => (
   <div className="conversations-details-container">
     <div className="conversations-details">
-      <div className="conversations-instructor">{conversation?.customer?.name}</div>
+      <div className="conversations-instructor">Your conversation with {capitalizeString(customer.name)}</div>
       <div className="conversations-participants-container">
         <div className="conversations-participants">
           {participants?.length}
@@ -29,6 +30,7 @@ const ConversationDetails = ({ conversation, convo, participants }) => (
 
 ConversationDetails.propTypes = {
   convo: PropTypes.object.isRequired,
+  customer: PropTypes.object.isRequired,
   participants: PropTypes.array.isRequired
 };
 

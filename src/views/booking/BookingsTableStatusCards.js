@@ -335,7 +335,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
 export default BookingsTableStatusCards;
 
 BookingsTableStatusCards.propTypes = {
-  filters: PropTypes.object.isRequired,
+  filters: PropTypes.array.isRequired,
   status: PropTypes.object.isRequired,
   setStatus: PropTypes.func.isRequired
 };

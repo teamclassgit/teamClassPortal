@@ -34,6 +34,7 @@ import RowDetails from '../../components/BookingTableRowDetails';
 import TasksBar from '../../components/TasksBar';
 import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
 import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
+import { DEFAULT_TIME_ZONE_LABEL } from '../../utility/Constants';
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -322,7 +323,7 @@ const AllBookingsTable = () => {
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
         if (value) {
-          return `${moment(value)?.tz(cellProps.data.timezone)?.format('LLL')} CT`;
+          return `${moment(value)?.tz(cellProps.data.timezone)?.format('LLL')} ${cellProps.data.timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`;
         }
       }
     },
@@ -386,7 +387,7 @@ const AllBookingsTable = () => {
         if (isNotEmptyArray(data.bookingTags) && data.bookingTags.includes('repeat')) {
           return (
             <div>
-              {data.customerName} <span className="card-tags text-warning">{"Repeat"}</span>
+              {data.customerName} <span className="card-tags text-warning">{'Repeat'}</span>
             </div>
           );
         }
@@ -560,7 +561,7 @@ const AllBookingsTable = () => {
       defaultWidth: 200,
       render: ({ value }) => {
         if (value) {
-          return <span className="float-left">{value.join(", ")}</span>;
+          return <span className="float-left">{value.join(', ')}</span>;
         }
       }
     },

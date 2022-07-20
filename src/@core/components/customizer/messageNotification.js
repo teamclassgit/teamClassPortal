@@ -1,38 +1,25 @@
 // @packages
-import ConversationsList from '@src/views/chat/ConversationsList';
 import Proptypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Badge } from 'reactstrap';
-import { MessageSquare } from 'react-feather';
-
-// @scripts
-import useTwilioClient from '../../hooks/useTwilioClient';
+import { Inbox } from 'react-feather';
 
 // @styles
 import './messageNotification.scss';
+import { TwilioContext } from '../../../context/TwilioContext/TwilioContext';
 
-const MessageNotifications = ({ totalUnread }) => {
+const MessageNotifications = () => {
+  // Twillio Chat
+  const { totalUnread } = useContext(TwilioContext);
 
-  const { client, infoDetails, userData } = useTwilioClient();
-
-  return ( 
+  return (
     <>
-      <MessageSquare size={16} />
+      <Inbox size={16} />
       {totalUnread > 0 && (
-        <Badge 
-          pill 
-          color='danger' 
-          className='badge-notifications'
-        >
+        <Badge pill color="danger" className="badge-notifications">
           {totalUnread}
         </Badge>
       )}
-      <ConversationsList 
-        client={client}
-        info={infoDetails}
-        userData={userData}
-        notifications={true}
-      />
     </>
   );
 };
@@ -40,5 +27,5 @@ const MessageNotifications = ({ totalUnread }) => {
 MessageNotifications.propTypes = {
   totalUnread: Proptypes.number
 };
- 
+
 export default MessageNotifications;

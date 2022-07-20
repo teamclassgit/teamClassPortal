@@ -1,4 +1,4 @@
-import { Archive, BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Activity, Filter } from 'react-feather';
+import { BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, Inbox } from 'react-feather';
 
 export default [
   {

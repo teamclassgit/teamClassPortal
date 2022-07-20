@@ -36,6 +36,7 @@ const BoardCard = ({
     customerCompany,
     eventDateTime,
     timezone,
+    timezoneLabel,
     rescheduleDateTime,
     customerId,
     eventCoordinatorName,
@@ -94,7 +95,7 @@ const BoardCard = ({
   useEffect(() => {
     if (!eventDateTime) return;
 
-    const timeObject = `${moment(eventDateTime)?.tz(timezone)?.format('hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`;
+    const timeObject = `${moment(eventDateTime)?.tz(timezone)?.format('hh:mm A')} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`;
     setTime(timeObject);
     setDate(eventDateTime);
 
@@ -242,7 +243,7 @@ const BoardCard = ({
             <p className="m-0 p-0">
               <small>
                 <strong>Event: </strong>
-                {`${moment(eventDateTime)?.tz(timezone)?.format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`}
+                {`${moment(eventDateTime)?.tz(timezone)?.format('MM/DD/YYYY hh:mm A')} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`}
               </small>
               {rescheduleDateTime && (
                 <small>
@@ -251,7 +252,7 @@ const BoardCard = ({
                       <br />
                       Change:{' '}
                     </strong>
-                    {`${moment(rescheduleDateTime)?.tz(timezone)?.format('MM/DD/YYYY hh:mm A')} ${DEFAULT_TIME_ZONE_LABEL}`}
+                    {`${moment(rescheduleDateTime)?.tz(timezone)?.format('MM/DD/YYYY hh:mm A')} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`}
                   </span>
                 </small>
               )}
