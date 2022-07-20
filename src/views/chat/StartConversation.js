@@ -4,22 +4,23 @@ import React, { useState } from 'react';
 import { MessageSquare } from 'react-feather';
 import { useDispatch } from 'react-redux';
 import { useMutation } from '@apollo/client';
-
+import { informationId, updateCurrentConversation } from '../../redux/actions/chat';
 // @scripts
-import mutationCreateTwilioConversation from '../../graphql/conversations/createConversation';
+import mutationCreateTwilioConversation from '../../graphql/conversations/MutationCreateConversation';
 import { Spinner } from 'reactstrap';
 
-const StartConversation = ({ client, info }) => {
+const StartConversation = ({ client, customer }) => {
   const dispatch = useDispatch();
   const [createConversation] = useMutation(mutationCreateTwilioConversation);
   const [inProcess, setInProcess] = useState(false);
 
   const onCreateNewConversation = async () => {
-    if (client && info?._id) {
+    if (client && customer) {
       setInProcess(true);
-      const bookingId = info?._id;
       try {
-        await createConversation({ variables: { bookingId } });
+        await createConversation({ variables: { bookingId: customer.bookingId } });
+        dispatch(updateCurrentConversation(null));
+        dispatch(informationId(null));
       } catch (error) {
         console.log(error);
       }
@@ -33,7 +34,7 @@ const StartConversation = ({ client, info }) => {
         <div className="start-chat-icon mb-1">
           <MessageSquare />
         </div>
-        {client && info?._id && !inProcess && (
+        {client && customer && !inProcess && (
           <div onClick={onCreateNewConversation}>
             <h4 className="sidebar-toggle start-chat-text">Start Conversation</h4>
           </div>
@@ -46,7 +47,7 @@ const StartConversation = ({ client, info }) => {
 
 StartConversation.propTypes = {
   client: Proptypes.object,
-  info: Proptypes.object
+  customerId: Proptypes.string
 };
 
 export default StartConversation;

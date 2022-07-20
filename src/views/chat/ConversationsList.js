@@ -1,26 +1,23 @@
 // @packages
-import Proptypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
+import classnames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 
 // @scripts
-import ConversationView from './ConversationsView';
+import ConversationView from './ConversationView';
 import {
   informationId,
   setLastReadIndex,
   addMessages,
   updateCurrentConversation,
   updateParticipants,
-  updateUnreadMessages,
-  setTotalUnreadMessagesCount
+  updateUnreadMessages
 } from '../../redux/actions/chat';
 import { getUserData } from '../../utility/Utils';
 
-const ConversationsList = ({ setSelectedBooking, selectedBooking }) => {
-  //const [conversationUnread, setConversationUnread] = useState(null);
-  const conversations = useSelector((state) => state.reducer.convo);
-  //const [infoByCustomers, setInfoByCustomers] = useState([]);
-  const infoId = useSelector((state) => state.reducer.information.info);
+const ConversationsList = ({ client, setSelectedBooking, selectedBooking, customersData }) => {
+  const selectedCustomer = useSelector((state) => state.reducer.information.info);
   const messages = useSelector((state) => state.reducer.messages);
   const participants = useSelector((state) => state.reducer.participants);
   const sid = useSelector((state) => state.reducer.sid.sid);
@@ -28,42 +25,7 @@ const ConversationsList = ({ setSelectedBooking, selectedBooking }) => {
   const unreadMessages = useSelector((state) => state.reducer.unreadMessages.unreadMessages);
   const dispatch = useDispatch();
 
-  /*const setFilterConversationUnreadMessages = () => {
-    info?.map((convo) => {
-      if (unreadMessages[convo?.sid] > 0) {
-        setConversationUnread(convo);
-      }
-    });
-  };
-
-  useEffect(() => {
-    setFilterConversationUnreadMessages();
-  }, [unreadMessages]);*/
-
-  /*useEffect(() => {
-    const customers =
-      info?.reduce((prev, current) => {
-        const customerFound = prev.find((item) => item._id === current.customer._id);
-        if (!customerFound) {
-          return [...prev, { ...current.customer, sid, bookings: [current] }];
-        } else {
-          customerFound.bookings.push(current);
-          return prev;
-        }
-      }, []) || [];
-
-    setInfoByCustomers(customers);
-  }, [info]);*/
-
-  /*const setTotalUnreadMessagesCount = (unreadMessages, setTotalUnreadMessagesCount) => {
-    let totalUnreadMessages = 0;
-    Object.keys(unreadMessages).forEach((key) => {
-      totalUnreadMessages += unreadMessages[key];
-    });
-    dispatch(setTotalUnreadMessagesCount(totalUnreadMessages));
-  };*/
-
-  const getLastMessage = (messages, typingData) => {
+  const getLastMessage = (messages, typingData, convo) => {
     if (messages === undefined || messages === null) {
       return 'Loading...';
     }
@@ -79,15 +41,17 @@ const ConversationsList = ({ setSelectedBooking, selectedBooking }) => {
     return messages[messages.length - 1].body;
   };
 
-  const updateCurrentConvo = async (updateCurrentConvo, convo, updateParticipants, convoId) => {
-    dispatch(updateCurrentConvo(convo?.sid));
-    dispatch(informationId(convoId ?? null));
+  const updateCurrentConvo = async (convo, customer) => {
+    dispatch(updateCurrentConversation(convo?.sid));
+    dispatch(informationId(customer));
+
     if (!convo) return;
 
     try {
+      dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));
+      dispatch(updateUnreadMessages(convo.sid, 0));
       const participants = await convo.getParticipants();
       dispatch(updateParticipants(participants, convo.sid));
-
       const messages = await convo.getMessages();
       dispatch(addMessages(convo.sid, messages?.items || []));
     } catch (e) {
@@ -117,69 +81,56 @@ const ConversationsList = ({ setSelectedBooking, selectedBooking }) => {
     return <div className="empty" />;
   }
 
-  return (
-    <div id="conversation-list">
-      <ul>
-        {conversations?.map((convo) => {
-          //const convo = customer?.bookings?.length > 0 ? customer.bookings[0] : undefined;
-          const customer = {
-            name: 'Customer name',
-            email: 'Customer email',
-            company: 'Customer company',
-            phone: 'Customer phone'
-          };
+  const renderItem = (customer, convo, index) => (
+    <li
+      onClick={async () => {
+        //localStorage.setItem('recentConvos', [...(localStorage.getItem('recentConvos') || [])]);
+        await updateCurrentConvo(convo, customer);
+      }}
+      key={`${index}_${customer._id}`}
+      style={{ backgroundColor: 'transparent' }}
+      className={classnames({
+        active: customer._id === selectedCustomer?._id
+      })}
+    >
+      <ConversationView
+        customer={customer}
+        convoId={convo?.sid}
+        selectedBooking={selectedBooking}
+        setSelectedBooking={setSelectedBooking}
+        currentConvoSid={sid}
+        key={convo?.sid}
+        setSid={updateCurrentConversation}
+        messages={convo && messages[convo.sid]}
+        typingInfo={(convo && typingData[convo.sid]) ?? []}
+        unreadMessagesCount={(convo && setUnreadMessagesCount(sid, convo?.sid, unreadMessages, updateUnreadMessages)) || 0}
+        participants={(convo && participants[convo?.sid]) ?? []}
+        convo={convo}
+      />
+    </li>
+  );
 
-          return (
-            <li
-              onClick={async () => {
-                try {
-                  dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));
-                  await updateCurrentConvo(
-                    updateCurrentConversation,
-                    convo,
-                    updateParticipants
-                    //convo._id
-                  );
-                  dispatch(updateUnreadMessages(convo.sid, 0));
-                } catch (e) {
-                  console.log(e);
-                }
-              }}
-              key={convo.sid}
-              style={{ backgroundColor: 'transparent' }}
-              className="conversation-view-container"
-            >
-              <ConversationView
-                customer={customer}
-                convoId={convo.sid}
-                selectedBooking={selectedBooking}
-                setSelectedBooking={setSelectedBooking}
-                currentConvoSid={sid}
-                infoId={infoId}
-                key={convo.sid}
-                setSid={updateCurrentConversation}
-                lastMessage={getLastMessage(messages[convo?.sid] ?? [], typingData[convo?.sid] ?? [])}
-                messages={messages[convo.sid]}
-                myMessage={isMyMessage(messages[convo.sid])}
-                typingInfo={typingData[convo.sid] ?? []}
-                unreadMessagesCount={setUnreadMessagesCount(sid, convo?.sid, unreadMessages, updateUnreadMessages)}
-                updateUnreadMessages={updateUnreadMessages}
-                //updateTotalUnreadCount={setTotalUnreadMessagesCount(unreadMessages, setTotalUnreadMessagesCountAction)}
-                participants={participants[convo.sid] ?? []}
-                convo={convo}
-                //otherConvo={conversations.find((item) => item?.sid === convo?.sid)}
-              />
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+  return (
+    <>
+      <h4 className="chat-list-title">Chats</h4>
+      <div id="conversation-list">
+        <ul>
+          {customersData
+            .sort((a, b) => a.customer.name.localeCompare(b.customer.name))
+            .map(({ customer, convo }, index) => {
+              return renderItem(customer, convo, index);
+            })}
+        </ul>
+      </div>
+    </>
   );
 };
 
 ConversationsList.propTypes = {
-  setSelectedBooking: Proptypes.func,
-  selectedBooking: Proptypes.string
+  client: PropTypes.object.isRequired,
+  customersData: PropTypes.array.isRequired,
+  setSelectedBooking: PropTypes.func,
+  selectedBooking: PropTypes.string
 };
 
 export default ConversationsList;

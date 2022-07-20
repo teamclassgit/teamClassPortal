@@ -94,7 +94,7 @@ const MessagesBox = (props) => {
         scrollThreshold="20px"
         scrollableTarget="scrollable"
       >
-        <div className="scroll-list" ref={listRef}>
+        <div className="scroll-list pl-2" ref={listRef}>
           <MessageList
             userData={props.userData}
             messages={messages}

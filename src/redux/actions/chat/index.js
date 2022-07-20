@@ -123,6 +123,15 @@ export const updateUnreadMessages = (channelSid, unreadCount) => {
   };
 };
 
+export const cleanUnreadMessages = () => {
+  return (dispatch) => {
+    dispatch({
+      type: 'CLEAN_UNREAD_MESSAGES',
+      payload: {}
+    });
+  };
+};
+
 export const updateConversation = (channelSid, parameters) => {
   return (dispatch) => {
     dispatch({

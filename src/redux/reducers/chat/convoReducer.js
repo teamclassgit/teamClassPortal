@@ -8,6 +8,9 @@ const reducer = (state = initialState, action) => {
       });
 
     case 'ADD_CONVERSATION': {
+      const target = state.find((convo) => convo.sid === action.payload.sid);
+      if (target) return state;
+
       const stateCopy = [...state];
       stateCopy.push(action.payload);
       return stateCopy.sort((a, b) => {

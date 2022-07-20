@@ -1,8 +1,11 @@
 export const handlePromiseRejection = async (func, addNotifications) => {
+  if (!addNotifications) {
+    return;
+  }
   try {
     await func();
   } catch (e) {
-    console.log(e);
+    console.log(e, func);
     return Promise.reject('Unexpected error');
   }
 };
@@ -15,7 +18,7 @@ export const unexpectedErrorNotification = (addNotifications) => {
     [
       {
         message: 'Unexpected error',
-        variant: "error"
+        variant: 'error'
       }
     ],
     addNotifications
@@ -35,14 +38,11 @@ export const pushNotification = (messages, func) => {
   }
 };
 
-export const getTypingMessage = (typingData) => (typingData.length > 1
-  ? `${`${typingData.length  } participants are typing...`}`
-  : `${`${typingData[0]  } is typing...`}`);
+export const getTypingMessage = (typingData) => {
+  return typingData.length > 1 ? `${`${typingData.length} participants are typing...`}` : `${`${typingData[0]} is typing...`}`;
+};
 
-export const successNotification = ({
-  message,
-  addNotifications
-}) => {
+export const successNotification = ({ message, addNotifications }) => {
   if (!addNotifications) {
     return;
   }
@@ -50,7 +50,7 @@ export const successNotification = ({
     [
       {
         message,
-        variant: "success"
+        variant: 'success'
       }
     ],
     addNotifications

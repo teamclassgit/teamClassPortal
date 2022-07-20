@@ -218,11 +218,7 @@ const Customizer = (props) => {
         open: openCustomizer
       })}
     >
-      <a
-        href="/chat"
-        className="customizer-toggle d-flex align-items-center justify-content-center"
-        onClick={onlyChat ? () => handleChat(e) : handleToggle}
-      >
+      <a href="#" className="customizer-toggle d-flex align-items-center justify-content-center" onClick={handleChat}>
         <MessageNotifications />
       </a>
 

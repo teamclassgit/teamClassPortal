@@ -13,6 +13,7 @@ import { getMessageStatus } from './Apis';
 // @styles
 import './ConversationView.scss';
 import { capitalizeString } from '../../utility/Utils';
+import moment from 'moment';
 
 const calculateUnreadMessagesWidth = (count) => {
   if (count === 0 || !count) {
@@ -88,8 +89,8 @@ const getLastMessageTime = (messages) => {
 };
 
 const ConversationView = (props) => {
-  const { convo, myMessage, lastMessage, unreadMessagesCount, customer, selectedBooking, setSelectedBooking } = props;
-  const [lastMsgStatus, setLastMsgStatus] = useState('');
+  const { convo, unreadMessagesCount, customer, selectedBooking, setSelectedBooking } = props;
+  const conversationDate = convo?.lastMessage?.dateCreated ? `Last message: ${moment(convo?.lastMessage?.dateCreated).fromNow()}` : 'No messsages';
 
   truncateMiddle(convo?.friendlyName ?? convo?.sid, calculateUnreadMessagesWidth(unreadMessagesCount));
 
@@ -98,31 +99,6 @@ const ConversationView = (props) => {
   const time = getLastMessageTime(props?.messages);
   const [seeBookings, setSeeBookings] = useState(false);
 
-  /* useEffect(() => {
-    if (myMessage && !props?.typingInfo?.length) {
-      getMessageStatus(convo, myMessage, props.participants).then((statuses) => {
-        if (statuses[MessageStatus.Read]) {
-          setLastMsgStatus(MessageStatus.Read);
-          return;
-        }
-        if (statuses[MessageStatus.Delivered]) {
-          setLastMsgStatus(MessageStatus.Delivered);
-          return;
-        }
-        if (statuses[MessageStatus.Failed]) {
-          setLastMsgStatus(MessageStatus.Failed);
-          return;
-        }
-        if (statuses[MessageStatus.Sending]) {
-          setLastMsgStatus(MessageStatus.Sending);
-        }
-      });
-    }
-    return () => {
-      setLastMsgStatus('');
-    };
-  }, [convo, myMessage, lastMessage, props.participants, props.typingInfo]);
- */
   return (
     <>
       <Avatar
@@ -137,51 +113,14 @@ const ConversationView = (props) => {
       />
       <div className="pl-1 text-truncate">
         <span className="d-flex">
-          <span className="render-list-span render-list">
+          <span className="render-list-span render-list card-text">
             <a title={capitalizeString(customer?.name)}>{`${capitalizeString(customer?.name.split(' ')[0])} (${capitalizeString(
-              customer?.company
+              customer?.company || customer.email.split('@')[1]
             )})`}</a>
           </span>
         </span>
-        <div className={!unreadMessagesCount ? 'typing-info-container p-0' : 'typing-info-container-hidden p-0'} style={{ color: textColor }}>
-          <div className="typing-info">
-            {!props?.typingInfo?.length && (
-              <div>
-                {lastMsgStatus === MessageStatus.Sending && props.myMessage && (
-                  <div className="message-status">
-                    <Send size={20} />
-                  </div>
-                )}
-                {lastMsgStatus === MessageStatus.Delivered && props.myMessage && (
-                  <div className="message-status">
-                    <Check size={20} />
-                  </div>
-                )}
-                {lastMsgStatus === MessageStatus.Failed && props.myMessage && (
-                  <div className="message-status">
-                    <AlertTriangle size={20} />
-                  </div>
-                )}
-                {lastMsgStatus === MessageStatus.Read && props.myMessage && (
-                  <div className="message-status">
-                    <div
-                      style={{
-                        marginLeft: '-5px',
-                        left: '5px',
-                        top: '-1px',
-                        position: 'relative'
-                      }}
-                    >
-                      <Check size={20} color="black" />
-                    </div>
-                    <Check size={20} color="black" />
-                  </div>
-                )}
-              </div>
-            )}
-            <div className="last-message">{lastMessage}</div>
-          </div>
-          <div className="time">{time}</div>
+        <div className={'typing-info-container p-0'}>
+         <small>{conversationDate}</small>
         </div>
         <div style={{ color: muted ? 'gray' : 'black' }}>
           {seeBookings && (

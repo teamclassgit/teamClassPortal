@@ -1,23 +1,20 @@
 // @packages
 import Proptypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Badge } from 'reactstrap';
-import { MessageSquare } from 'react-feather';
-import { useSelector } from 'react-redux';
-// @scripts
-import useTwilioClient from '../../hooks/useTwilioClient';
+import { Inbox } from 'react-feather';
 
 // @styles
 import './messageNotification.scss';
+import { TwilioContext } from '../../../context/TwilioContext/TwilioContext';
 
 const MessageNotifications = () => {
   // Twillio Chat
-  useTwilioClient();
-  const totalUnread = useSelector((state) => state.reducer.totalUnreadCount);
+  const { totalUnread } = useContext(TwilioContext);
 
   return (
     <>
-      <MessageSquare size={16} />
+      <Inbox size={16} />
       {totalUnread > 0 && (
         <Badge pill color="danger" className="badge-notifications">
           {totalUnread}

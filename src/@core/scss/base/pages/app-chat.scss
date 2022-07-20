@@ -218,7 +218,7 @@ $chat-profile-sidebar-head-height: 200px;
           background: $body-bg;
         }
         &.active {
-          @include gradient-directional(map-get($primary-color, 'base'), map-get($primary-color, 'lighten-2'), 80deg);
+          @include gradient-directional(map-get($secondary-color, 'base'), map-get($primary-color, 'lighten-5'), 80deg);
           h1,
           h2,
           h3,
