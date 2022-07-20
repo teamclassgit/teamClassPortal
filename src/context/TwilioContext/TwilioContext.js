@@ -23,8 +23,7 @@ import {
   updateParticipants,
   updateUnreadMessages,
   setTotalUnreadMessagesCount,
-  cleanUnreadMessages,
-  setLastReadIndex
+  cleanUnreadMessages
 } from '../../redux/actions/chat';
 
 export const TwilioContext = createContext();
@@ -167,13 +166,7 @@ const TwilioClientContextProvider = (props) => {
 
   const loadUnreadMessagesCount = async (convo, updateUnreadMessages) => {
     const count = await convo.getUnreadMessagesCount();
-    //dispatch(updateUnreadMessages(convo.sid, count ?? 0));
-    if (count > 0) {
-      dispatch(setLastReadIndex(convo.lastReadMessageIndex ?? -1));
-      dispatch(updateUnreadMessages(convo.sid, 0));
-    } else {
-      dispatch(updateUnreadMessages(0));
-    }
+    dispatch(updateUnreadMessages(convo.sid, count ?? 0));
   };
 
   const addMessage = async (message, addMessages, updateUnreadMessages) => {
