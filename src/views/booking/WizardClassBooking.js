@@ -3,16 +3,17 @@ import Breadcrumbs from '@components/breadcrumbs';
 import React, { useRef, useState, useEffect } from 'react';
 import Wizard from '@components/wizard';
 import moment from 'moment';
-import { Calendar, CreditCard, Users, DollarSign } from 'react-feather';
+import { Calendar, Users, DollarSign } from 'react-feather';
 import { Col, Row, Spinner } from 'reactstrap';
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { useParams, useHistory } from 'react-router-dom';
 // @scripts
 import Attendees from './steps/Attendees';
-import BillingInfo from './steps/BillingInfo';
 import BookingCheckoutSummary from './steps/BookingCheckoutSummary';
 import DateTimeConfirmation from './steps/DateTimeConfirmation';
+import DistributorsInvoice from './steps/DistributorsInvoice';
 import InvoiceBuilder from './steps/InvoiceBuilder';
+import PartnersInvoice from './steps/PartnersInvoice';
 import Payments from './steps/Payments';
 import queryAttendeesByBookingId from '../../graphql/QueryAttendeesByBookingId';
 import queryBookingById from '../../graphql/QueryBookingById';
@@ -21,6 +22,8 @@ import queryClassById from '../../graphql/QueryClassById';
 import queryCustomerById from '../../graphql/QueryCustomerById';
 import { RUSH_FEE } from '../../utility/Constants';
 import { getBookingTotals } from '../../services/BookingService';
+//@styles
+import './wizard-class-booking.scss';
 
 const WizardClassBooking = () => {
   const [attendees, setAttendees] = useState([]);
@@ -173,7 +176,6 @@ const WizardClassBooking = () => {
     {
       id: 'account-details',
       title: 'Event Date',
-      subtitle: 'Date and time',
       icon: <Calendar size={18} />,
       content: (
         <DateTimeConfirmation
@@ -191,17 +193,8 @@ const WizardClassBooking = () => {
     },
 
     {
-      id: 'personal-info',
-      title: 'Customer',
-      subtitle: 'Basic info',
-      icon: <CreditCard size={18} />,
-      content: <BillingInfo type="wizard-horizontal" calendarEvent={calendarEvent} customer={customer} booking={bookingInfo} />
-    },
-
-    {
       id: 'step-address',
       title: 'Attendees',
-      subtitle: 'Who is coming',
       icon: <Users size={18} />,
       content: (
         <Attendees
@@ -219,7 +212,6 @@ const WizardClassBooking = () => {
     {
       id: 'payments',
       title: 'Payments',
-      subtitle: 'Received payments',
       icon: <DollarSign size={18} />,
       content: (
         <Payments
@@ -235,7 +227,6 @@ const WizardClassBooking = () => {
     {
       id: 'final-invoice',
       title: 'Final Invoice',
-      subtitle: 'Final invoice details',
       icon: <DollarSign size={18} />,
       content: (
         <InvoiceBuilder
@@ -250,6 +241,25 @@ const WizardClassBooking = () => {
       )
     }
   ];
+
+  const invoiceSteps = [...steps];
+
+  if (bookingInfo && bookingInfo.instructorInvoice) {
+    invoiceSteps.push({
+      id: 'partner-invoice',
+      title: 'Partner Invoice',
+      icon: <DollarSign size={18} />,
+      content: <PartnersInvoice booking={bookingInfo} calendarEvent={calendarEvent}></PartnersInvoice>
+    });
+  }
+  if (bookingInfo && bookingInfo.distributorInvoice) {
+    invoiceSteps.push({
+      id: 'distributor-invoice',
+      title: 'Distributor Invoice',
+      icon: <DollarSign size={18} />,
+      content: <DistributorsInvoice booking={bookingInfo} calendarEvent={calendarEvent}></DistributorsInvoice>
+    });
+  }
 
   const isRushDate = () => {
     return calendarEvent && calendarEvent.rushFee;
@@ -269,7 +279,7 @@ const WizardClassBooking = () => {
           <Wizard
             type="modern-horizontal"
             ref={ref}
-            steps={steps}
+            steps={invoiceSteps}
             options={{
               linear: false
             }}

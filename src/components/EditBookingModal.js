@@ -26,7 +26,7 @@ import Select from 'react-select';
 import classnames from 'classnames';
 import moment from 'moment';
 import { useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Edit, Video, Key, Truck, List } from 'react-feather';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Video, Key, Truck, List, CornerUpRight, MessageSquare } from 'react-feather';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
@@ -37,7 +37,6 @@ import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
 import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
 import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
 import sendEmailConferenceLinkChangedByCoordinatorMutation from '../graphql/email/sendEmailConferenceLinkChangedByCoordinator';
-import sendEmailTrackingLinkChangedMutation from '../graphql/email/sendEmailTrackingLinkChanged';
 import { getUserData, isValidEmail, isUrlValid } from '../utility/Utils';
 import { selectThemeColors } from '@utils';
 import {
@@ -89,7 +88,6 @@ const EditBookingModal = ({
   const [inputNote, setInputNote] = useState('');
   const [processing, setProcessing] = useState(false);
   const [isCapRegistration, setIsCapRegistration] = useState(false);
-  const [isGroupVariant, setIsGroupVariant] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedPriceTier, setSelectedPriceTier] = React.useState(null);
   const [selectedMinimumTier, setSelectedMinimumTier] = React.useState(null);
@@ -106,7 +104,7 @@ const EditBookingModal = ({
   const [individualTag, setIndividualTag] = useState('');
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
-
+  const userData = getUserData();
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
@@ -114,7 +112,6 @@ const EditBookingModal = ({
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
   const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
-  const [sendEmailTrackingLinkChanged] = useMutation(sendEmailTrackingLinkChangedMutation, {});
 
   useEffect(() => {
     if (!currentElement?._id) return;
@@ -142,41 +139,24 @@ const EditBookingModal = ({
     setGroupSize(currentElement.attendees);
     setIsCapRegistration(currentElement.capRegistration);
     setCalendarEvent(currentElement.calendarEvent);
-    setSelectedPriceTier(currentElement.classVariant && currentElement.classVariant.pricePerson);
-    setSelectedMinimumTier(currentElement.classVariant && currentElement.classVariant.minimum);
-    setSelectedMaximumTier(currentElement.classVariant && currentElement.classVariant.maximum);
-    setTrackingLink(currentElement.shippingTrackingLink);
-    setJoinLink(currentElement.joinInfo && currentElement.joinInfo.joinUrl);
+    setSelectedPriceTier(currentElement?.classVariant?.pricePerson);
+    setSelectedMinimumTier(currentElement?.classVariant?.minimum);
+    setSelectedMaximumTier(currentElement?.classVariant?.maximum);
+    setTrackingLink(currentElement?.shippingTrackingLink);
+    setJoinLink(currentElement?.joinInfo?.joinUrl);
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
-    setIsGroupVariant(currentElement.classVariant && currentElement.classVariant.groupEvent ? true : false);
     setClassVariantsOptions(filteredClass?.variants);
     setDistributorId(currentElement?.distributorId);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
+    setInstructorAndAdditionals(
+      teamClass?.additionalInstructors ? [...teamClass?.additionalInstructors, teamClass?.instructorId] : [teamClass?.instructorId]
+    );
 
-    if (teamClass && teamClass?.additionalInstructors) {
-      setInstructorAndAdditionals([...teamClass?.additionalInstructors, teamClass?.instructorId]);
-    } else {
-      setInstructorAndAdditionals([teamClass?.instructorId]);
+    if (currentElement.classVariant?.groupEvent) {
+      setSelectedVariant(currentElement.classVariant.order);
+      setSelectedPriceTier(currentElement.classVariant.pricePerson);
     }
   }, [currentElement]);
-
-  useEffect(() => {
-    if (classVariant && classVariant.groupEvent) {
-      // eslint-disable-next-line no-unused-expressions
-      classVariantsOptions &&
-        classVariantsOptions.map((item, index) => {
-          if (item.title === classVariant.title) {
-            setSelectedVariant(index);
-          }
-        });
-      setSelectedPriceTier(classVariant.pricePerson);
-      setSelectedMinimumTier(classVariant.minimum);
-      setSelectedMaximumTier(classVariant.maximum);
-      setIsGroupVariant(true);
-    } else {
-      setIsGroupVariant(false);
-    }
-  }, [classVariant]);
 
   useEffect(() => {
     setIsChangingJoinLink(false);
@@ -447,7 +427,6 @@ const EditBookingModal = ({
   const saveNotes = async () => {
     setProcessing(true);
     const newArray = bookingNotes ? [...bookingNotes] : [];
-    const userData = getUserData();
     newArray.unshift({
       note: inputNote,
       author: (userData && userData.customData && userData.customData['name']) || 'Unknown',
@@ -526,7 +505,7 @@ const EditBookingModal = ({
     if (e.key === 'Enter') {
       setIndividualTag('');
       const tag = {
-        id: e.target.value,
+        groupId: e.target.value,
         text: e.target.value
       };
       setClassOptionsTags([...classOptionsTags, tag]);
@@ -542,8 +521,31 @@ const EditBookingModal = ({
     { value: 'spam', label: 'Spam' },
     { value: 'drift', label: 'Drift' },
     { value: 'referral', label: 'Referral' },
-    { value: "repeat", label: "Repeat" }
+    { value: 'repeat', label: 'Repeat' }
   ];
+
+  const handleUpdateSharedNote = async (index) => {
+    const updateSharedNote = [...bookingNotes];
+    const note = updateSharedNote[index];
+    const shared = !note?.shared;
+    const sharedNote = {
+      ...note,
+      shared
+    };
+    updateSharedNote[index] = sharedNote;
+    try {
+      await updateBookingNotes({
+        variables: {
+          id: currentElement._id,
+          notes: updateSharedNote,
+          updatedAt: new Date()
+        }
+      });
+      setBookingNotes(updateSharedNote);
+    } catch (ex) {
+      console.log(ex);
+    }
+  };
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
@@ -575,11 +577,11 @@ const EditBookingModal = ({
         </NavItem>
         <NavItem>
           <NavLink title="Notes" active={active === '3'} onClick={() => toggle('3')}>
-            <Edit size="18" />
+            <MessageSquare size="18" />
           </NavLink>
         </NavItem>
       </Nav>
-      <TabContent className="py-50" activeTab={active} color="primary">
+      <TabContent className="py-5" activeTab={active} color="primary">
         <TabPane tabId="1">
           <ModalBody className="flex-grow-1">
             <FormGroup>
@@ -746,6 +748,7 @@ const EditBookingModal = ({
                   if (filteredClass) setDistributorId(filteredClass?.distributorId);
                   setClassVariantsOptions(filteredClass.variants);
                   setClassVariant(null);
+                  setSelectedVariant(option?.value?.order);
                   setBookingTeamClassId(option.value);
                   setBookingTeamClassName(option.label);
                 }}
@@ -762,28 +765,28 @@ const EditBookingModal = ({
                 className="react-select edit-booking-select-variant"
                 classNamePrefix="select"
                 placeholder="Select..."
-                value={{
-                  label:
-                    classVariant && classVariant.groupEvent
-                      ? `${classVariant && classVariant.title ? classVariant.title : ''} ${
-                          classVariant && classVariant.groupEvent ? '/group' : '/person'
-                        }`
-                      : `${classVariant && classVariant.title ? classVariant.title : ''} $${
-                          classVariant && classVariant.pricePerson ? classVariant.pricePerson : ''
-                        }${classVariant && classVariant.groupEvent ? '/group' : '/person'}`,
-                  value: classVariant
-                }}
+                value={
+                  classVariant
+                    ? {
+                        value: classVariant,
+                        label: classVariant.groupEvent
+                          ? `${classVariant.title} ${classVariant.groupEvent ? '/group' : '/person'}`
+                          : `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`
+                      }
+                    : null
+                }
                 options={
                   classVariantsOptions &&
-                  classVariantsOptions.map((element) => {
+                  classVariantsOptions.map((element, index) => {
                     const variant = {
                       title: element.title,
                       notes: element.notes,
                       minimum: element.minimum,
                       duration: element.duration,
                       pricePerson: element.pricePerson,
+                      pricePersonInstructor: element.pricePersonInstructor,
                       hasKit: element.hasKit,
-                      order: element.order,
+                      order: index,
                       active: element.active,
                       groupEvent: element.groupEvent,
                       instructorFlatFee: element.instructorFlatFee
@@ -797,26 +800,14 @@ const EditBookingModal = ({
                   })
                 }
                 onChange={(option) => {
-                  // eslint-disable-next-line no-unused-expressions
-                  classVariantsOptions &&
-                    classVariantsOptions.map((item, index) => {
-                      if (item.title === option.value.title) {
-                        setSelectedVariant(index);
-                      }
-                    });
-
-                  if (!option.value.groupEvent) {
-                    setIsGroupVariant(false);
-                  } else {
-                    setIsGroupVariant(true);
-                  }
+                  setSelectedVariant(option?.value?.order);
                   setClassVariant(option.value);
                   setGroupSize('');
                 }}
                 isClearable={false}
               />
             </FormGroup>
-            {classVariant && classVariant.groupEvent ? (
+            {classVariant?.groupEvent ? (
               <FormGroup className="mt-1">
                 <Label for="full-name">Group Size*</Label>
                 <Select
@@ -825,12 +816,14 @@ const EditBookingModal = ({
                   classNamePrefix="select"
                   placeholder="Select..."
                   isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                  value={{
-                    label: `${selectedMinimumTier ? selectedMinimumTier : ''} - ${selectedMaximumTier ? selectedMaximumTier : ''} attendees / $ ${
-                      selectedPriceTier ? selectedPriceTier : ''
-                    }`,
-                    value: classVariant
-                  }}
+                  value={
+                    classVariant.pricePerson
+                      ? {
+                          value: classVariant,
+                          label: `${classVariant.minimum} - ${classVariant.maximum} attendees / $ ${classVariant.pricePerson}`
+                        }
+                      : null
+                  }
                   options={
                     classVariantsOptions[selectedVariant] &&
                     classVariantsOptions[selectedVariant].priceTiers &&
@@ -842,6 +835,7 @@ const EditBookingModal = ({
                         maximum: item.maximum,
                         duration: classVariantsOptions[selectedVariant].duration,
                         pricePerson: item.price,
+                        pricePersonInstructor: item.priceInstructor,
                         hasKit: classVariantsOptions[selectedVariant].hasKit,
                         order: classVariantsOptions[selectedVariant].order,
                         active: classVariantsOptions[selectedVariant].active,
@@ -1040,13 +1034,31 @@ const EditBookingModal = ({
                               <small>{moment(item.date).fromNow()}</small>
                             </span>
                           </div>
-                          <p
-                            className={classnames({
-                              'mb-0': index === bookingNotes.length - 1 && !item.customContent
-                            })}
-                          >
+                          <p className="mb-0">
                             <small>{item.note}</small>
                           </p>
+                          {userData?.customData?.name === item.author && (
+                            item?.shared ? (
+                              <small>
+                                <a
+                                  href="#"
+                                  onClick={() => handleUpdateSharedNote(index)}
+                                >
+                                  Shared
+                                  <X width={20}/>
+                                </a>
+                              </small>
+                            ) : (
+                              <small>
+                                <a
+                                  href="#"
+                                  onClick={() => handleUpdateSharedNote(index)}
+                                >
+                                  Share with instructor
+                                  <CornerUpRight width={20}/>
+                                </a>
+                              </small>
+                          ))}
                         </div>
                       </li>
                     );
@@ -1168,15 +1180,20 @@ const EditBookingModal = ({
 
             {classOptionsTags &&
               classOptionsTags.map((tag, index) => (
-                <div className="pb-2">
-                  <span className="tags mb-1">
-                    {tag.text}
-                    <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
-                      x
-                    </a>
-                  </span>
-                </div>
+                <span className="tags">
+                  {tag.text}
+                  <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
+                    x
+                  </a>
+                </span>
               ))}
+
+            <FormGroup>
+              <a target="_blank" href={`https://teamclass.com/booking/pre-event/${currentElement?._id}`}>
+                <small>Click to see survey's answer, and selected options.</small>
+              </a>
+              {!currentElement?.preEventSurvey?.submittedAt && <p className="pre-event-small-note">(Pre event survey is yet to be completed.)</p>}
+            </FormGroup>
 
             <FormGroup>
               <Label for="selectedtags">Tags</Label>

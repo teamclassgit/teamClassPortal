@@ -1,32 +1,35 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query GetBookingAndCalendarEvent($bookingId: String!) {
-    calendarEvent(query: { bookingId: $bookingId }) {
-      _id
-      classId
-      bookingId
-      status
-      toHour
-      toMinutes
-      year
-      day
-      fromHour
-      fromMinutes
-      month
-      rushFee
-      timezone
-      timezoneLabel
-      displayTimezone
-      displayTimezoneLabel
-    }
-    booking(query: { _id: $bookingId }) {
+  mutation updateBooking(
+    $bookingId: String!
+    $status: String
+    $rejectedReasons: String
+    $createdAt: DateTime
+    $updatedAt: DateTime
+    $invoiceItems: [BookingInstructorInvoiceInvoiceItemUpdateInput]
+    $notes: String
+    $paymentReceipt: String
+  ) {
+    updateOneBooking(
+      query: { _id: $bookingId }
+      set: {
+        instructorInvoice: {
+          status: $status
+          rejectedReasons: $rejectedReasons
+          createdAt: $createdAt
+          invoiceItems: $invoiceItems
+          notes: $notes
+          updatedAt: $updatedAt
+          paymentReceipt: $paymentReceipt
+        }
+      }
+    ) {
       _id
       date
       expirationHours
       teamClassId
       eventCoordinatorId
-      hasInternationalAttendees
       classVariant {
         title
         notes
@@ -34,28 +37,10 @@ export default gql`
         maximum
         duration
         pricePerson
-        pricePersonInstructor
         hasKit
         order
         active
         groupEvent
-        kitHasAlcohol
-        instructorFlatFee
-        registrationFields {
-          label
-          placeholder
-          type
-          listItems
-          required
-          active
-          order
-        }
-      }
-      notes {
-        note
-        author
-        date
-        shared
       }
       addons {
         icon
@@ -67,9 +52,6 @@ export default gql`
         unit
         order
         active
-      }
-      preEventSurvey {
-        submittedAt
       }
       payments {
         addressLine1
@@ -99,7 +81,6 @@ export default gql`
       instructorName
       customerId
       customerName
-      distributorId
       eventDate
       eventDurationHours
       attendees
@@ -111,18 +92,11 @@ export default gql`
       salesTaxState
       discount
       status
-      closedReason
       eventLink
       signUpStatusLink
       checkoutLink
       taxExempt
       ccFeeExempt
-      capRegistration
-      additionalClassOptions {
-        groupId
-        text
-      }
-      tags
       invoiceDetails {
         item
         unitPrice
@@ -132,17 +106,22 @@ export default gql`
         taxable
         readOnly
       }
+      instructorInvoice {
+        createdAt
+        invoiceItems {
+          description
+          price
+          units
+        }
+        notes
+        rejectedReasons
+        status
+        updatedAt
+        paymentReceipt
+      }
       createdAt
       createdAt
       updatedAt
-      signUpDeadline
-      shippingTrackingLink
-      joinInfo {
-        eventId
-        joinUrl
-        manualLink
-        password
-      }
     }
   }
 `;

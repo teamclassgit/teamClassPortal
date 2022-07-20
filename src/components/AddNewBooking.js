@@ -36,7 +36,6 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [warning, setWarning] = useState({ open: false, message: '' });
-  const [isGroupVariant, setIsGroupVariant] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [distributorId, setDistributorId] = useState(null);
 
@@ -96,7 +95,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
       if (isOldCustomer && selectedCustomer) {
         customer = customers.find((element) => element._id === selectedCustomer);
       } else if (customers.find((element) => element.email.toLowerCase() === newEmail.toLowerCase())) {
-        setWarning({ open: true, message: 'A customer with the same email already exist.' });
+        setWarning({
+          open: true,
+          message: 'A customer with the same email already exist.'
+        });
         setProcessing(false);
         return;
       }
@@ -318,7 +320,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
             className="react-select"
             classNamePrefix="select"
             placeholder="Select..."
-            defaultValue={{ value: defaultCoordinatorOption._id, label: defaultCoordinatorOption.name }}
+            defaultValue={{
+              value: defaultCoordinatorOption._id,
+              label: defaultCoordinatorOption.name
+            }}
             options={
               coordinators &&
               coordinators.map((item) => {
@@ -354,8 +359,9 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
               label: getClassName(selectedClass)
             }}
             onChange={(option) => {
-              setIsGroupVariant(false);
               setSelectedClass(option.value);
+              setSelectedVariant(null);
+              setClassVariant(null);
             }}
             isClearable={false}
             styles={selectStyles}
@@ -369,6 +375,16 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
               className="react-select"
               classNamePrefix="select"
               placeholder="Select..."
+              value={
+                classVariant
+                  ? {
+                      value: classVariant,
+                      label: classVariant.groupEvent
+                        ? `${classVariant.title} ${classVariant.groupEvent ? '/group' : '/person'}`
+                        : `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`
+                    }
+                  : null
+              }
               options={
                 classVariantsOptions &&
                 classVariantsOptions.map((element, index) => {
@@ -378,8 +394,9 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     minimum: element.minimum,
                     duration: element.duration,
                     pricePerson: element.pricePerson,
+                    pricePersonInstructor: element.pricePersonInstructor,
                     hasKit: element.hasKit,
-                    order: element.order,
+                    order: index,
                     active: element.active,
                     groupEvent: element.groupEvent,
                     instructorFlatFee: element.instructorFlatFee,
@@ -395,18 +412,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                 })
               }
               onChange={(option) => {
-                // eslint-disable-next-line no-unused-expressions
-                classVariantsOptions &&
-                  classVariantsOptions.map((item, index) => {
-                    if (item.title === option.value.title) {
-                      setSelectedVariant(index);
-                    }
-                  });
-                if (!option.value.groupEvent) {
-                  setIsGroupVariant(false);
-                } else {
-                  setIsGroupVariant(true);
-                }
+                setSelectedVariant(option?.value?.order);
                 setClassVariant(option.value);
               }}
               isClearable={false}
@@ -414,7 +420,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
             />
           </FormGroup>
         )}
-        {isGroupVariant ? (
+        {classVariant?.groupEvent ? (
           <FormGroup>
             <Label for="full-name">Group Size*</Label>
             <Select
@@ -432,6 +438,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     maximum: item.maximum,
                     duration: classVariantsOptions[selectedVariant].duration,
                     pricePerson: item.price,
+                    pricePersonInstructor: item.priceInstructor,
                     hasKit: classVariantsOptions[selectedVariant].hasKit,
                     order: classVariantsOptions[selectedVariant].order,
                     active: classVariantsOptions[selectedVariant].active,

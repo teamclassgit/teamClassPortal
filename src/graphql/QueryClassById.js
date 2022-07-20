@@ -70,6 +70,7 @@ export default gql`
         maximum
         duration
         pricePerson
+        pricePersonInstructor
         hasKit
         order
         active
@@ -80,6 +81,7 @@ export default gql`
           maximum
           minimum
           price
+          priceInstructor
         }
         registrationFields {
           label

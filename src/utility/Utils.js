@@ -1,4 +1,9 @@
+// @packages
 import moment from 'moment';
+import { v4 as uuid } from 'uuid';
+import { Storage } from 'aws-amplify';
+
+// @scripts
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from './Constants';
 import { isAnon, userData } from './RealmApolloClient';
 
@@ -152,4 +157,21 @@ export const getQueryFiltersFromFilterArray = (filterValue) => {
   return filters;
 };
 
-export const isNotEmptyArray = arr => Array.isArray(arr) && arr.length > 0;
+//Files
+export const uploadFile = async (file) => {
+  const { type: mimeType } = file;
+  const key = `images/${uuid()}${file.name}`;
+  const url = `${process.env.REACT_APP_PUBLIC_S3_BASEURL}/${key}`;
+  const result = { url: '', error: '' };
+  try {
+    await Storage.put(key, file, {
+      contentType: mimeType
+    });
+    result.url = url;
+  } catch (err) {
+    result.error = err;
+  }
+
+  return result;
+};
+export const isNotEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;

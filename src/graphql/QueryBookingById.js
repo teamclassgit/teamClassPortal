@@ -36,6 +36,7 @@ export default gql`
         note
         author
         date
+        shared
       }
       addons {
         icon
@@ -73,6 +74,7 @@ export default gql`
         status
       }
       instructorId
+      distributorId
       instructorName
       customerId
       customerName
@@ -104,10 +106,50 @@ export default gql`
         taxable
         readOnly
       }
+      instructorInvoice {
+        createdAt
+        invoiceItems {
+          description
+          price
+          units
+        }
+        notes
+        rejectedReasons
+        status
+        updatedAt
+        paymentReceipt
+      }
+      distributorInvoice {
+        createdAt
+        invoiceItems {
+          description
+          price
+          units
+        }
+        notes
+        rejectedReasons
+        status
+        updatedAt
+        paymentReceipt
+      }
       createdAt
       createdAt
       updatedAt
       signUpDeadline
+      preEventSurvey {
+        aboutTeam
+        conferenceLink
+        engagement
+        eventDuration
+        eventPurpose
+        eventSpeed
+        eventType
+        formality
+        hostName
+        introOutro
+        ownLink
+        submittedAt
+      }
       signUpPageSettings {
         invitationFrom
         additionalCopyToShow
