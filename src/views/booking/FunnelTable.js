@@ -663,28 +663,26 @@ const FunnelTable = () => {
       }
     },
     {
-      name: 'preEventSurvey.submitted',
-      header: 'Pre-Event submitted',
+      name: 'preEventSurvey.submittedAt',
+      header: 'Pre-event submitted',
       type: 'date',
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
-        if (value) {
-          return moment(value).format('LLL');
+      render: ({ cellProps }) => {
+        if (cellProps?.data?.preEventSurvey?.submittedAt) {
+          return `${moment(cellProps.data.preEventSurvey.submittedAt)?.format('LLL')}`;
         }
       }
     },
     {
       name: 'preEventSurvey.source',
-      header: 'Pre-Event source',
+      header: 'Pre-event source',
       type: 'string',
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
-      render: ({ value }) => {
-        if (value) {
-          return <span className="float-left">{value}</span>;
-        }
+      render: ({ cellProps }) => {
+        return <span className="float-left">{cellProps?.data?.preEventSurvey?.source}</span>;
       }
     },
     {
@@ -694,8 +692,10 @@ const FunnelTable = () => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">{value}</span>;
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-right">{value.toFixed(2)}</span>;
+        }
       }
     },
     {
@@ -718,8 +718,10 @@ const FunnelTable = () => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
-        return <span className="float-right">{value}</span>;
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-right">{value.toFixed(2)}</span>;
+        }
       }
     },
     {
@@ -826,7 +828,7 @@ const FunnelTable = () => {
         { name: 'instructorInvoiceStatus', type: 'string', operator: 'contains', value: '' },
         { name: 'totalDistributorInvoice', type: 'number', operator: 'contains', value: '' },
         { name: 'distributorInvoiceStatus', type: 'string', operator: 'contains', value: '' },
-        { name: 'preEventSurvey.submitted', type: 'date', operator: 'inrange', value: undefined },
+        { name: 'preEventSurvey.submittedAt', type: 'date', operator: 'inrange', value: undefined },
         { name: 'preEventSurvey.source', type: 'string', operator: 'contains', value: '' },
         { name: 'bookingTags', type: 'string', operator: 'contains', value: '' }
       ];
