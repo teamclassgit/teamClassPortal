@@ -165,7 +165,13 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'utm_medium',
     'utm_content',
     'utm_term',
-    'bookingTags'
+    'bookingTags',
+    'Pre-vent Survey submitted',
+    'Pre-vent Survey source',
+    'distributorInvoiceStatus',
+    'instructorInvoiceStatus',
+    'totalDistributorInvoice',
+    'totalInstructorInvoice'
   ];
 
   bookingsArray.push(headers);
@@ -214,7 +220,13 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.utm_medium,
       element.utm_content,
       element.utm_term,
-      (isNotEmptyArray(element.bookingTags) ? element.bookingTags.join(", ") : "")
+      (isNotEmptyArray(element.bookingTags) ? element.bookingTags.join(", ") : ""),
+      element.preEventSurvey?.submittedAt,
+      element.preEventSurvey?.source,
+      element.distributorInvoiceStatus,
+      element.instructorInvoiceStatus,
+      element.totalDistributorInvoice,
+      element.totalInstructorInvoice
     ];
     bookingsArray.push(row);
   });
