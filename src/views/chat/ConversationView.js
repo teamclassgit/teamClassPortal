@@ -114,13 +114,13 @@ const ConversationView = (props) => {
       <div className="pl-1 text-truncate">
         <span className="d-flex">
           <span className="render-list-span render-list card-text">
-            <a title={capitalizeString(customer?.name)}>{`${capitalizeString(customer?.name.split(' ')[0])} (${capitalizeString(
+            <a title={capitalizeString(customer?.name)}>{`${capitalizeString(customer?.name)} (${capitalizeString(
               customer?.company || customer.email.split('@')[1]
             )})`}</a>
           </span>
         </span>
         <div className={'typing-info-container p-0'}>
-         <small>{conversationDate}</small>
+          <small>{conversationDate}</small>
         </div>
         <div style={{ color: muted ? 'gray' : 'black' }}>
           {seeBookings && (

@@ -23,6 +23,7 @@ const ConversationsList = ({ client, setSelectedBooking, selectedBooking, custom
   const sid = useSelector((state) => state.reducer.sid.sid);
   const typingData = useSelector((state) => state.reducer.typingData);
   const unreadMessages = useSelector((state) => state.reducer.unreadMessages.unreadMessages);
+  const conversations = useSelector((state) => state.reducer.convo);
   const dispatch = useDispatch();
 
   const getLastMessage = (messages, typingData, convo) => {
@@ -70,6 +71,25 @@ const ConversationsList = ({ client, setSelectedBooking, selectedBooking, custom
     return unreadMessages[convoSid];
   };
 
+  const renderUnreadConversations = () => {
+    Object.keys(unreadMessages).map((key) => {
+      if (unreadMessages[key] > 0) {
+        const unreadConvo = conversations.find((convo) => convo.sid === key);
+        return renderItem(
+          {
+            _id: 'convo.sid',
+            name: 'nn',
+            email: `${unreadConvo.sid}@conversations.com`,
+            company: 'nn',
+            createdAt: new Date(),
+            updateddAt: new Date()
+          },
+          unreadConvo
+        );
+      }
+    });
+  };
+
   const isMyMessage = (messages) => {
     if (messages === undefined || messages === null || messages.length === 0) {
       return false;
@@ -84,7 +104,6 @@ const ConversationsList = ({ client, setSelectedBooking, selectedBooking, custom
   const renderItem = (customer, convo, index) => (
     <li
       onClick={async () => {
-        //localStorage.setItem('recentConvos', [...(localStorage.getItem('recentConvos') || [])]);
         await updateCurrentConvo(convo, customer);
       }}
       key={`${index}_${customer._id}`}
