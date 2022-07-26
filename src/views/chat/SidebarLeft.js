@@ -61,7 +61,7 @@ const SidebarLeft = ({
   ];
 
   const defaultSort = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
-  const limit = 30;
+  const limit = 40;
 
   const [customersData, setCustomersData] = useState([]);
   const [isInfoReady, setIsInfoReady] = useState(false);
