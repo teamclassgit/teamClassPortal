@@ -173,8 +173,7 @@ const ListingPricesList = () => {
   ];
 
   const { ...allTeamClasses } = useQuery(queryAllClassesForListingPrice, {
-    fetchPolicy: 'no-cache',
-    pollInterval: 200000,
+    fetchPolicy: 'cache-and-network',
     variables: {
       filter: genericFilter
     },
@@ -186,8 +185,7 @@ const ListingPricesList = () => {
   });
 
   const { ...allInstructors } = useQuery(queryAllInstructors, {
-    fetchPolicy: 'no-cache',
-    pollInterval: 200000,
+    fetchPolicy: 'cache-and-network',
     variables: {
       filter: genericFilter
     },
