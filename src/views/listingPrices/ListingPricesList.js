@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown, Spinner } from 'reactstrap';
 import { FileText, Share } from 'react-feather';
-
 import { useQuery, useMutation } from '@apollo/client';
 
 //@reactdatagrid packages
@@ -179,6 +178,7 @@ const ListingPricesList = () => {
     },
     onCompleted: (data) => {
       if (data) {
+        // console.log(data);
         setTeamClass(data.teamClasses);
       }
     }
@@ -310,34 +310,31 @@ const ListingPricesList = () => {
     }
   };
 
-  const onEditComplete = useCallback(
-    ({ value, columnId, rowId }) => {
-      const data = [...dataSource];
-      const filterData = data.find((item) => item.tableId === rowId);
+  const onEditComplete = useCallback(({ value, columnId, rowId }) => {
+    const data = [...dataSource];
+    const filterData = data.find((item) => item.tableId === rowId);
 
-      if (columnId === 'pricePerson') {
-        if (filterData && filterData.variant.groupEvent) {
-          filterData.priceTier.price = value;
-        } else {
-          filterData.variant.pricePerson = value;
-        }
+    if (columnId === 'pricePerson') {
+      if (filterData && filterData.variant.groupEvent) {
+        filterData.priceTier.price = value;
+      } else {
+        filterData.variant.pricePerson = value;
       }
-      if (columnId === 'pricePersonInstructor') {
-        if (filterData && filterData.variant.groupEvent) {
-          filterData.priceTier.priceInstructor = value;
-        } else {
-          filterData.variant.pricePersonInstructor = value;
-        }
+    }
+    if (columnId === 'pricePersonInstructor') {
+      if (filterData && filterData.variant.groupEvent) {
+        filterData.priceTier.priceInstructor = value;
+      } else {
+        filterData.variant.pricePersonInstructor = value;
       }
-      if (columnId === 'instructorFlatFee') {
-        filterData.variant.instructorFlatFee = value;
-      }
+    }
+    if (columnId === 'instructorFlatFee') {
+      filterData.variant.instructorFlatFee = value;
+    }
 
-      setDataSource(data);
-      updatePrices(filterData);
-    },
-    [dataSource]
-  );
+    setDataSource(data);
+    updatePrices(filterData);
+  }, [dataSource]);
 
   return (
     <div>
