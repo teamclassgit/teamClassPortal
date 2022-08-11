@@ -334,7 +334,7 @@ const ListingPricesList = () => {
 
     setDataSource(data);
     updatePrices(filterData);
-  }, [dataSource]);
+  }, [dataSource, filterValue]);
 
   return (
     <div>
