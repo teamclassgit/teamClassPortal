@@ -340,10 +340,6 @@ const ListingPricesList = () => {
     [dataSource]
   );
 
-  useEffect(() => {
-    window.location.reload(true);
-  }, [teamClass]);
-
   return (
     <div>
       <div className="d-flex justify-content-between mb-2">
