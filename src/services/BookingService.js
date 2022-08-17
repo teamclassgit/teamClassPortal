@@ -47,8 +47,8 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
 
   const addons = bookingInfo.addons
     ? bookingInfo.addons.reduce((previous, current) => {
-        return previous + (current.unit === 'Attendee' ? current.unitPrice * attendees : current.unitPrice);
-      }, 0)
+      return previous + (current.unit === 'Attendee' ? current.unitPrice * attendees : current.unitPrice);
+    }, 0)
     : 0;
 
   const withoutFee =
@@ -62,7 +62,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   const instructorFlatFee = bookingInfo.classVariant?.instructorFlatFee ? bookingInfo.classVariant.instructorFlatFee : 0;
 
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
-  const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * SERVICE_FEE;
+  const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * bookingInfo.serviceFee;
   const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
   const tax = (withoutFee + fee + rushFee + instructorFlatFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
   let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + instructorFlatFee + tax - totalDiscount;

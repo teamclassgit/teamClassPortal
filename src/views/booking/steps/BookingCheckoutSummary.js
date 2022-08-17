@@ -52,7 +52,7 @@ const BookingCheckoutSummary = ({
                 <br />
                 <br />
                 <Badge className="booking-checkout-summary-priceBadge">
-                   ${bookingInfo.classVariant?.pricePerson} / {bookingInfo.classVariant?.groupEvent ? 'group' : 'person'}
+                  ${bookingInfo.classVariant?.pricePerson} / {bookingInfo.classVariant?.groupEvent ? 'group' : 'person'}
                 </Badge>
               </>
             )}
@@ -188,10 +188,12 @@ const BookingCheckoutSummary = ({
                   <td className="text-right pt-1 text-sm text-danger">-${totalDiscount}</td>
                 </tr>
               )}
-              <tr>
-                <th className="font-weight-normal text-sm pt-1">Booking fee ({bookingInfo.serviceFee * 100}%)</th>
-                <td className="text-right pt-1 text-sm">${totalServiceFee}</td>
-              </tr>
+              {totalServiceFee > 0 && (
+                <tr>
+                  <th className="font-weight-normal text-sm pt-1">Booking fee ({bookingInfo.serviceFee * 100}%)</th>
+                  <td className="text-right pt-1 text-sm">${totalServiceFee}</td>
+                </tr>
+              )}
               {totalRushFee > 0 && (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">
