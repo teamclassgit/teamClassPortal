@@ -173,8 +173,7 @@ const ListingPricesList = () => {
   ];
 
   const { ...allTeamClasses } = useQuery(queryAllClassesForListingPrice, {
-    fetchPolicy: 'no-cache',
-    pollInterval: 200000,
+    fetchPolicy: 'cache-and-network',
     variables: {
       filter: genericFilter
     },
@@ -340,6 +339,10 @@ const ListingPricesList = () => {
     },
     [dataSource]
   );
+
+  useEffect(() => {
+    window.location.reload(true);
+  }, [teamClass]);
 
   return (
     <div>
