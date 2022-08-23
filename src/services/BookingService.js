@@ -7,6 +7,7 @@ import queryCustomerById from '../graphql/QueryCustomerById';
 import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from '../utility/Constants';
 import { apolloClient } from '../utility/RealmApolloClient';
 import { getQueryFiltersFromFilterArray, isNotEmptyArray } from '../utility/Utils';
+import QueryAllClassesForListingPrice from '../graphql/QueryAllClassesForListingPrice';
 
 //get totals associated to a booking
 const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false) => {
@@ -272,4 +273,27 @@ const closeBookingsWithReason = async (bookingsId, closedReason) => {
   });
 };
 
-export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason };
+const getAllTeamClasses = async (filterValue) => {
+  console.log(filterValue[1].value.toLowerCase());
+  try {
+    const { data } = await apolloClient.query({
+      query: QueryAllClassesForListingPrice,
+      fetchPolicy: "network-only",
+      variables: {
+        filter: {}
+      }
+    });
+
+    const resolvedData = data?.teamClasses;
+    const resolvedDataWithFilter = resolvedData.filter(({ title, variants }) => (
+      // title.toLowerCase().includes(filterValue[0].value.toLowerCase()) && 
+      variants.filter((variant) => console.log(variant.title.toLowerCase().includes(filterValue[1].value.toLowerCase())))
+    ));
+    console.log(resolvedDataWithFilter);
+    return { data: resolvedDataWithFilter };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason, getAllTeamClasses };

@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown, Spinner } from 'reactstrap';
 import { FileText, Share } from 'react-feather';
 import { useQuery, useMutation } from '@apollo/client';
+import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
@@ -18,6 +19,7 @@ import ExportToExcelLegacy from '../../components/ExportToExcelLegacy';
 import mutationUpdateClassListingPrices from '../../graphql/MutationUpdateClassListingPrices';
 import queryAllClassesForListingPrice from '../../graphql/QueryAllClassesForListingPrice';
 import queryAllInstructors from '../../graphql/QueryAllInstructors';
+import { getAllTeamClasses } from '../../services/BookingService';
 
 import '../booking/BookingsTable.scss';
 
@@ -30,15 +32,14 @@ const ListingPricesList = () => {
   const [dataSource, setDataSource] = useState(null);
   const [classVariantsExcelTable, setClassVariantsExcelTable] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [filterValue, setFilterValue] = useState([
+    { name: 'title', operator: 'contains', type: 'string', value: '' },
+    { name: 'variantTitle', operator: 'contains', type: 'string', value: '' }
+  ]);
 
   const genericFilter = {};
 
   const [updateClassListingPrices] = useMutation(mutationUpdateClassListingPrices, {});
-
-  const filterValue = [
-    { name: 'title', operator: 'contains', type: 'string', value: '' },
-    { name: 'variantTitle', operator: 'contains', type: 'string', value: '' }
-  ];
 
   const columns = [
     {
@@ -55,6 +56,7 @@ const ListingPricesList = () => {
       name: 'title',
       header: 'Listing \nClass',
       type: 'string',
+      filterEditor: StringFilter,
       defaultWidth: 250,
       editable: false,
       render: ({ value }) => {
@@ -66,6 +68,7 @@ const ListingPricesList = () => {
       header: 'Variant',
       defaultWidth: 180,
       type: 'string',
+      filterEditor: StringFilter,
       editable: false,
       render: ({ cellProps }) => {
         return <span className="">{cellProps.data.variant.title}</span>;
@@ -171,18 +174,25 @@ const ListingPricesList = () => {
     }
   ];
 
-  const { ...allTeamClasses } = useQuery(queryAllClassesForListingPrice, {
-    fetchPolicy: 'cache-and-network',
-    variables: {
-      filter: genericFilter
-    },
-    onCompleted: (data) => {
-      if (data) {
-        // console.log(data);
-        setTeamClass(data.teamClasses);
-      }
-    }
-  });
+  // const { ...allTeamClasses } = useQuery(queryAllClassesForListingPrice, {
+  //   fetchPolicy: 'cache-and-network',
+  //   variables: {
+  //     filter: genericFilter
+  //   },
+  //   onCompleted: (data) => {
+  //     if (data) {
+  //       setTeamClass(data.teamClasses);
+  //     }
+  //   },
+  //   onError: (error) => {
+  //     console.log(error);
+  //   }
+  // });
+
+  useEffect(async () => {
+    const { data } = await getAllTeamClasses(filterValue);
+    setTeamClass(data);
+  }, [filterValue]);
 
   const { ...allInstructors } = useQuery(queryAllInstructors, {
     fetchPolicy: 'cache-and-network',
@@ -241,6 +251,18 @@ const ListingPricesList = () => {
       });
     setDataSource(newTeamClass);
   }, [teamClass]);
+
+  // useEffect(() => {
+
+  //   if (dataSource) {
+  //     const ApplyFilter = [...dataSource];
+  //     setDataSource(ApplyFilter.filter(({title}) => (title.toLowerCase().includes(filterValue[0].value.toLowerCase()))));
+  //   };
+
+  // }, [filterValue]);
+
+  // console.log("dataSource", dataSource);
+  // console.log("teamClass", teamClass);
 
   useEffect(() => {
     if (dataSource) {
@@ -334,7 +356,9 @@ const ListingPricesList = () => {
 
     setDataSource(data);
     updatePrices(filterData);
-  }, [dataSource, filterValue]);
+  }, [dataSource]);
+
+  // console.log("filterValue", filterValue);
 
   return (
     <div>
@@ -360,7 +384,7 @@ const ListingPricesList = () => {
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
-      {allTeamClasses.loading || allInstructors.loading ? (
+      {allInstructors.loading ? (
         <div>
           <div>
             <Spinner className="mr-25" />
@@ -372,10 +396,12 @@ const ListingPricesList = () => {
           idProperty="tableId"
           style={gridStyle}
           columns={columns}
+          // defaultFilterValue={filterValue}
+          filterValue={filterValue}
           onEditComplete={onEditComplete}
+          onFilterValueChange={setFilterValue}
           editable={userData?.customData?.role === 'Admin' ? true : false}
           dataSource={dataSource}
-          defaultFilterValue={filterValue}
           licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
           theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
         />
