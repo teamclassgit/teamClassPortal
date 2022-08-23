@@ -356,6 +356,32 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 )}
               </Row>
 
+              {showPayInvoiceButton && invoiceInstructorStatus === 'approved' && (
+                <Row className="justify-content-end">
+                  <Col className="d-flex justify-content-end">
+                    <Button
+                      color="primary"
+                      className="mr-2"
+                      onClick={(e) => {
+                        setIsRejected(true);
+                      }}
+                    >
+                      {'Reject'}
+                    </Button>
+                    <Button
+                      color="primary"
+                      onClick={(e) => {
+                        setShowModal(!showModal);
+                        setIsPaid(true);
+                      }}
+                    >
+                      Pay Invoice
+                    </Button>
+                  </Col>
+                </Row>
+              )}
+
+
               {isRejected && invoiceInstructorStatus !== 'rejected' && (
                 <Row className="mt-2">
                   <Col lg={12} className="mb-2">
@@ -386,24 +412,6 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                       </Button>
                       <Button className="small" onClick={(e) => setIsRejected(false)}>
                         Cancel
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
-              )}
-
-              {showPayInvoiceButton && invoiceInstructorStatus === 'approved' && (
-                <Row>
-                  <Col lg={12}>
-                    <div className="d-flex justify-content-end">
-                      <Button
-                        color="primary"
-                        onClick={(e) => {
-                          setShowModal(!showModal);
-                          setIsPaid(true);
-                        }}
-                      >
-                        Pay Invoice
                       </Button>
                     </div>
                   </Col>
