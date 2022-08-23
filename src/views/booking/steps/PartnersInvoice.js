@@ -357,7 +357,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
               </Row>
 
               {showPayInvoiceButton && invoiceInstructorStatus === 'approved' && (
-                <Row className="justify-content-end">
+                <Row>
                   <Col className="d-flex justify-content-end">
                     <Button
                       color="primary"
