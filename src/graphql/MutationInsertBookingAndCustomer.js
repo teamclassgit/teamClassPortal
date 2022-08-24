@@ -127,6 +127,7 @@ export default gql`
         minimum
         maximum
         pricePerson
+        pricePersonInstructor
         hasKit
         groupEvent
         instructorFlatFee

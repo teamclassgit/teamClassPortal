@@ -33,6 +33,7 @@ export default gql`
     $joinInfo_unset: Boolean
     $shippingTrackingLink: String
     $distributorId: String
+    $distributorId_unset: Boolean
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -100,6 +101,7 @@ export default gql`
         joinInfo_unset: $joinInfo_unset
         shippingTrackingLink: $shippingTrackingLink
         distributorId: $distributorId
+        distributorId_unset: $distributorId_unset
       }
     ) {
       _id
@@ -139,6 +141,7 @@ export default gql`
         minimum
         maximum
         pricePerson
+        pricePersonInstructor
         hasKit
         groupEvent
         instructorFlatFee
