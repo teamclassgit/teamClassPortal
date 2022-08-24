@@ -10,7 +10,7 @@ import { getQueryFiltersFromFilterArray, isNotEmptyArray } from '../utility/Util
 import QueryAllClassesForListingPrice from '../graphql/QueryAllClassesForListingPrice';
 
 //get totals associated to a booking
-const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false) => {
+const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false, includeInstructorFlatFee = false) => {
   const minimum = bookingInfo.classVariant ? bookingInfo.classVariant.minimum : bookingInfo.classMinimum;
 
   //pricePerson is currently in use for group based pricing too
@@ -60,7 +60,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   let cardFee = 0;
   const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
-  const instructorFlatFee = bookingInfo.classVariant?.instructorFlatFee ? bookingInfo.classVariant.instructorFlatFee : 0;
+  const instructorFlatFee = includeInstructorFlatFee && bookingInfo.classVariant?.instructorFlatFee ? bookingInfo.classVariant.instructorFlatFee : 0;
 
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
   const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * bookingInfo.serviceFee;
