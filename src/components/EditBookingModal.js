@@ -146,11 +146,13 @@ const EditBookingModal = ({
     setJoinLink(currentElement?.joinInfo?.joinUrl);
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
     setClassVariantsOptions(filteredClass?.variants);
-    setDistributorId(currentElement?.distributorId);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
     setInstructorAndAdditionals(
       teamClass?.additionalInstructors ? [...teamClass?.additionalInstructors, teamClass?.instructorId] : [teamClass?.instructorId]
     );
+    if (currentElement?.distributorId !== "") {
+      setDistributorId(currentElement?.distributorId);
+    }
 
     if (currentElement.classVariant?.groupEvent) {
       setSelectedVariant(currentElement.classVariant.order);
@@ -745,7 +747,7 @@ const EditBookingModal = ({
                 }}
                 onChange={(option) => {
                   const filteredClass = allClasses.find((element) => element._id === option.value);
-                  if (filteredClass) setDistributorId(filteredClass?.distributorId);
+                  if (filteredClass && filteredClass?.distributorId !== "") setDistributorId(filteredClass?.distributorId);
                   setClassVariantsOptions(filteredClass.variants);
                   setClassVariant(null);
                   setSelectedVariant(option?.value?.order);
