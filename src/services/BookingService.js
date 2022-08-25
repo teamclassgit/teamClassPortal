@@ -285,11 +285,14 @@ const getAllTeamClasses = async (filterValue) => {
     });
 
     const resolvedData = data?.teamClasses;
-    const resolvedDataWithFilter = resolvedData.filter(({ title, variants }) => (
-      // title.toLowerCase().includes(filterValue[0].value.toLowerCase()) && 
-      variants.filter((variant) => console.log(variant.title.toLowerCase().includes(filterValue[1].value.toLowerCase())))
+    const resolvedDataWithFilter = resolvedData.filter(({ title }) => (
+      title.toLowerCase().includes(filterValue[0].value.toLowerCase())
+    )).map(({variants}) => (
+      variants.filter((variant) => (variant.title.toLowerCase().includes(filterValue[1].value.toLowerCase())))
     ));
+
     console.log(resolvedDataWithFilter);
+
     return { data: resolvedDataWithFilter };
   } catch (error) {
     console.log(error);
