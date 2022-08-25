@@ -148,13 +148,11 @@ const EditBookingModal = ({
     setJoinLink(currentElement?.joinInfo?.joinUrl);
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
     setClassVariantsOptions(filteredClass?.variants);
+    setDistributorId(currentElement?.distributorId);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
     setInstructorAndAdditionals(
       teamClass?.additionalInstructors ? [...teamClass?.additionalInstructors, teamClass?.instructorId] : [teamClass?.instructorId]
       );
-    if (currentElement?.distributorId !== "") {
-      setDistributorId(currentElement?.distributorId);
-    }
     if (currentElement.classVariant?.groupEvent) {
       setSelectedVariant(currentElement.classVariant.order);
       setSelectedPriceTier(currentElement.classVariant.pricePerson);
@@ -601,80 +599,80 @@ const EditBookingModal = ({
                 <strong>Id:</strong> <span className="text-primary">{`${currentElement?._id}`}</span>
               </Label>
             </FormGroup>
+            <FormGroup>
+              <Label for="full-name">Customer Information</Label>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <User size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  id="full-name"
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  placeholder="Full Name *"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Mail size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  type="email"
+                  id="email"
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  placeholder="Email *"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  invalid={!emailValid}
+                  onBlur={(e) => {
+                    emailValidation(e.target.value);
+                  }}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Phone size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Cleave
+                  className="form-control"
+                  placeholder="Phone *"
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  options={options}
+                  id="phone"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <Briefcase size={15} />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input
+                  id="company"
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  placeholder="Company"
+                  value={customerCompany}
+                  onChange={(e) => setCustomerCompany(e.target.value)}
+                />
+              </InputGroup>
+            </FormGroup>
             {!(currentElement.status === BOOKING_CLOSED_STATUS) && (
               <>
-              <FormGroup>
-                <Label for="full-name">Customer Information</Label>
-                <InputGroup size="sm">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <User size={15} />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    id="full-name"
-                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                    placeholder="Full Name *"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup size="sm">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <Mail size={15} />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    type="email"
-                    id="email"
-                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                    placeholder="Email *"
-                    value={customerEmail}
-                    onChange={(e) => setCustomerEmail(e.target.value)}
-                    invalid={!emailValid}
-                    onBlur={(e) => {
-                      emailValidation(e.target.value);
-                    }}
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup size="sm">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <Phone size={15} />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Cleave
-                    className="form-control"
-                    placeholder="Phone *"
-                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                    options={options}
-                    id="phone"
-                    value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup size="sm">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <Briefcase size={15} />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    id="company"
-                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                    placeholder="Company"
-                    value={customerCompany}
-                    onChange={(e) => setCustomerCompany(e.target.value)}
-                  />
-                </InputGroup>
-              </FormGroup>
                 <FormGroup>
                   <Label>Event Instructor*</Label>
                   <Select
@@ -706,35 +704,35 @@ const EditBookingModal = ({
                     isClearable={false}
                   />
                 </FormGroup>
-              <FormGroup>
-                <Label for="full-name">Event Coordinator*</Label>
-                <Select
-                  theme={selectThemeColors}
-                  styles={selectStyles}
-                  isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                  className="react-select edit-booking-select-coordinator"
-                  classNamePrefix="select"
-                  placeholder="Select..."
-                  value={{
-                    label: coordinatorName,
-                    value: coordinatorId
-                  }}
-                  options={
-                    allCoordinators &&
-                    allCoordinators.map((item) => {
-                      return {
-                        value: item._id,
-                        label: item.name
-                      };
-                    })
-                  }
-                  onChange={(option) => {
-                    setCoordinatorId(option.value);
-                    setCoordinatorName(option.label);
-                  }}
-                  isClearable={false}
-                />
-              </FormGroup>
+                <FormGroup>
+                  <Label for="full-name">Event Coordinator*</Label>
+                  <Select
+                    theme={selectThemeColors}
+                    styles={selectStyles}
+                    isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                    className="react-select edit-booking-select-coordinator"
+                    classNamePrefix="select"
+                    placeholder="Select..."
+                    value={{
+                      label: coordinatorName,
+                      value: coordinatorId
+                    }}
+                    options={
+                      allCoordinators &&
+                      allCoordinators.map((item) => {
+                        return {
+                          value: item._id,
+                          label: item.name
+                        };
+                      })
+                    }
+                    onChange={(option) => {
+                      setCoordinatorId(option.value);
+                      setCoordinatorName(option.label);
+                    }}
+                    isClearable={false}
+                  />
+                </FormGroup>
               </>
             )}
             <FormGroup>
@@ -764,7 +762,7 @@ const EditBookingModal = ({
                 }}
                 onChange={(option) => {
                   const filteredClass = allClasses.find((element) => element._id === option.value);
-                  if (filteredClass && filteredClass?.distributorId !== "") setDistributorId(filteredClass?.distributorId);
+                  if (filteredClass) setDistributorId(filteredClass?.distributorId);
                   setClassVariantsOptions(filteredClass.variants);
                   setClassVariant(null);
                   setSelectedVariant(option?.value?.order);
@@ -973,7 +971,7 @@ const EditBookingModal = ({
             {isOpenBookingRequested && (
               <Alert color="danger">
                 <p className='mx-1'>
-                  Please confirm events details and class variants
+                  Please confirm event details and class variants
                 </p>
               </Alert>
             )}
@@ -1020,7 +1018,7 @@ const EditBookingModal = ({
                 <Button
                   className="mr-1"
                   size="sm"
-                  color={'danger'}
+                  color={(isOpenBookingRequested || processing) ? 'primary' : 'danger'}
                   onClick={() => {
                     if (!isOpenBookingRequested) {
                       setIsOpenBookingRequested(true);
@@ -1040,7 +1038,7 @@ const EditBookingModal = ({
                     !groupSize
                   }
                 >
-                  {processing ? 'Opening...' : isOpenBookingRequested ? 'Back to open' : 'Back to open status'}
+                  {processing ? 'Opening...' : isOpenBookingRequested ? 'Save' : 'Back to open status'}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel
