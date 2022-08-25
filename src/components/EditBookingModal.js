@@ -264,7 +264,7 @@ const EditBookingModal = ({
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId || distributorId === "" ? false : true,,
+          distributorId_unset: distributorId || distributorId === "" ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags
         }
