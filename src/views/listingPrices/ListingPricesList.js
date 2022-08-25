@@ -174,21 +174,6 @@ const ListingPricesList = () => {
     }
   ];
 
-  // const { ...allTeamClasses } = useQuery(queryAllClassesForListingPrice, {
-  //   fetchPolicy: 'cache-and-network',
-  //   variables: {
-  //     filter: genericFilter
-  //   },
-  //   onCompleted: (data) => {
-  //     if (data) {
-  //       setTeamClass(data.teamClasses);
-  //     }
-  //   },
-  //   onError: (error) => {
-  //     console.log(error);
-  //   }
-  // });
-
   useEffect(async () => {
     const { data } = await getAllTeamClasses(filterValue);
     setTeamClass(data);
@@ -249,20 +234,13 @@ const ListingPricesList = () => {
             }
           });
       });
-    setDataSource(newTeamClass);
+      setDataSource(
+        newTeamClass.filter(
+          ({ variant }) => (
+            variant.title.toLowerCase().includes(filterValue[1].value.toLowerCase()))
+          )
+      );
   }, [teamClass]);
-
-  // useEffect(() => {
-
-  //   if (dataSource) {
-  //     const ApplyFilter = [...dataSource];
-  //     setDataSource(ApplyFilter.filter(({title}) => (title.toLowerCase().includes(filterValue[0].value.toLowerCase()))));
-  //   };
-
-  // }, [filterValue]);
-
-  // console.log("dataSource", dataSource);
-  // console.log("teamClass", teamClass);
 
   useEffect(() => {
     if (dataSource) {
@@ -357,8 +335,6 @@ const ListingPricesList = () => {
     setDataSource(data);
     updatePrices(filterData);
   }, [dataSource]);
-
-  // console.log("filterValue", filterValue);
 
   return (
     <div>

@@ -274,7 +274,6 @@ const closeBookingsWithReason = async (bookingsId, closedReason) => {
 };
 
 const getAllTeamClasses = async (filterValue) => {
-  console.log(filterValue[1].value.toLowerCase());
   try {
     const { data } = await apolloClient.query({
       query: QueryAllClassesForListingPrice,
@@ -287,15 +286,11 @@ const getAllTeamClasses = async (filterValue) => {
     const resolvedData = data?.teamClasses;
     const resolvedDataWithFilter = resolvedData.filter(({ title }) => (
       title.toLowerCase().includes(filterValue[0].value.toLowerCase())
-    )).map(({variants}) => (
-      variants.filter((variant) => (variant.title.toLowerCase().includes(filterValue[1].value.toLowerCase())))
     ));
-
-    console.log(resolvedDataWithFilter);
 
     return { data: resolvedDataWithFilter };
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
