@@ -19,7 +19,7 @@ import ExportToExcelLegacy from '../../components/ExportToExcelLegacy';
 import mutationUpdateClassListingPrices from '../../graphql/MutationUpdateClassListingPrices';
 import queryAllClassesForListingPrice from '../../graphql/QueryAllClassesForListingPrice';
 import queryAllInstructors from '../../graphql/QueryAllInstructors';
-import { getAllTeamClasses } from '../../services/BookingService';
+// import { getAllTeamClasses } from '../../services/BookingService';
 
 import '../booking/BookingsTable.scss';
 
@@ -28,6 +28,7 @@ const gridStyle = { minHeight: 600 };
 const ListingPricesList = () => {
   const skin = useSelector((state) => state.bookingsBackground);
   const [teamClass, setTeamClass] = useState(null);
+  const [allDataClasses, setAllDataClasses] = useState([]);
   const [instructors, setInstructors] = useState(null);
   const [dataSource, setDataSource] = useState(null);
   const [classVariantsExcelTable, setClassVariantsExcelTable] = useState([]);
@@ -174,10 +175,26 @@ const ListingPricesList = () => {
     }
   ];
 
-  useEffect(async () => {
-    const { data } = await getAllTeamClasses(filterValue);
-    setTeamClass(data);
-  }, [filterValue]);
+  useQuery(queryAllClassesForListingPrice, {
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 200000,
+    variables: {
+      filter: genericFilter
+    },
+    onCompleted: (data) => {
+      if (data) {
+        setAllDataClasses(data.teamClasses);
+      }
+    }
+  });
+
+  useEffect(() => {
+    const allData = [...allDataClasses];
+    setTeamClass(allData?.filter(({ title }) => (
+        title.toLowerCase().includes(filterValue[0].value.toLowerCase())
+      ))
+    );
+  }, [filterValue, allDataClasses]);
 
   const { ...allInstructors } = useQuery(queryAllInstructors, {
     fetchPolicy: 'cache-and-network',
@@ -372,7 +389,6 @@ const ListingPricesList = () => {
           idProperty="tableId"
           style={gridStyle}
           columns={columns}
-          // defaultFilterValue={filterValue}
           filterValue={filterValue}
           onEditComplete={onEditComplete}
           onFilterValueChange={setFilterValue}
