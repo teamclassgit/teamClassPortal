@@ -114,8 +114,6 @@ const EditBookingModal = ({
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
   const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
 
-  console.log(currentElement);
-
   useEffect(() => {
     if (!currentElement?._id) return;
 
