@@ -104,6 +104,7 @@ const EditBookingModal = ({
   const [individualTag, setIndividualTag] = useState('');
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
+  const [upgrades, setUpgrades] = useState([]);
   const userData = getUserData();
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -112,6 +113,8 @@ const EditBookingModal = ({
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
   const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
+
+  console.log(currentElement);
 
   useEffect(() => {
     if (!currentElement?._id) return;
@@ -156,6 +159,7 @@ const EditBookingModal = ({
       setSelectedVariant(currentElement.classVariant.order);
       setSelectedPriceTier(currentElement.classVariant.pricePerson);
     }
+    setUpgrades(currentElement?.addons || []);
   }, [currentElement]);
 
   useEffect(() => {
@@ -755,6 +759,19 @@ const EditBookingModal = ({
                 isClearable={false}
               />
             </FormGroup>
+
+            {upgrades.length > 0 &&
+              <FormGroup>
+                <Label for="full-name mb-2">Upgrades</Label>
+                <div>
+                  {upgrades.map((upgrade) => (
+                    <span className="tags ml-0 mb-1">
+                      {upgrade.name}
+                    </span>
+                  ))}
+                </div>
+              </FormGroup>
+            }
 
             <FormGroup>
               <Label for="full-name">Class Variant*</Label>
