@@ -105,6 +105,7 @@ const EditBookingModal = ({
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
   const [upgrades, setUpgrades] = useState([]);
+  const [classUpgrades, setClassUpgrades] = useState([]);
   const userData = getUserData();
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
@@ -158,6 +159,7 @@ const EditBookingModal = ({
       setSelectedPriceTier(currentElement.classVariant.pricePerson);
     }
     setUpgrades(currentElement?.addons || []);
+    setClassUpgrades(currentElement?.addons || []);
   }, [currentElement]);
 
   useEffect(() => {
@@ -237,6 +239,7 @@ const EditBookingModal = ({
           date: new Date(),
           teamClassId: bookingTeamClassId,
           classVariant,
+          addons: upgrades,
           instructorId: teamClass.instructorId,
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
@@ -370,6 +373,7 @@ const EditBookingModal = ({
           date: new Date(),
           teamClassId: bookingTeamClassId,
           classVariant,
+          addons: upgrades,
           instructorId: teamClass.instructorId,
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
@@ -750,6 +754,8 @@ const EditBookingModal = ({
                   if (filteredClass) setDistributorId(filteredClass?.distributorId);
                   setClassVariantsOptions(filteredClass.variants);
                   setClassVariant(null);
+                  setClassUpgrades(filteredClass?.addons || []);
+                  setUpgrades([]);
                   setSelectedVariant(option?.value?.order);
                   setBookingTeamClassId(option.value);
                   setBookingTeamClassName(option.label);
@@ -758,18 +764,33 @@ const EditBookingModal = ({
               />
             </FormGroup>
 
-            {upgrades.length > 0 &&
-              <FormGroup>
-                <Label for="full-name mb-2">Upgrades</Label>
-                <div>
-                  {upgrades.map((upgrade) => (
-                    <span className="tags ml-0 mb-1">
-                      {upgrade.name}
-                    </span>
-                  ))}
-                </div>
-              </FormGroup>
-            }
+            <FormGroup>
+              <Label for="full-name mb-2">Upgrades</Label>
+              <Select
+                 theme={selectThemeColors}
+                 className="react-select edit-booking-select-upgrade"
+                 classNamePrefix="select"
+                 placeholder="Select upgrades"
+                 value={
+                  upgrades && upgrades.map(upgrade => (
+                    { value: upgrade, label: upgrade.name }
+                  ))
+                 }
+                 isMulti
+                 closeMenuOnSelect={false}
+                 styles={selectStylesTags}
+                 options={
+                  classUpgrades && classUpgrades.map(upgrade => {
+                    if (upgrade.unit === "Attendee" && upgrade.active) {
+                      return (
+                        { value: upgrade, label: upgrade.name }
+                      );
+                    }
+                 })
+                }
+                 onChange={(upgrade) => setUpgrades(upgrade.map(({value}) => value))}
+              />
+            </FormGroup>
 
             <FormGroup>
               <Label for="full-name">Class Variant*</Label>
