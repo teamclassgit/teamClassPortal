@@ -159,7 +159,7 @@ const EditBookingModal = ({
       setSelectedPriceTier(currentElement.classVariant.pricePerson);
     }
     setUpgrades(currentElement?.addons || []);
-    setClassUpgrades(currentElement?.addons || []);
+    setClassUpgrades(filteredClass?.addons || []);
   }, [currentElement]);
 
   useEffect(() => {
