@@ -26,7 +26,7 @@ import Select from 'react-select';
 import classnames from 'classnames';
 import moment from 'moment';
 import { useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Video, Key, Truck, List, CornerUpRight, MessageSquare } from 'react-feather';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Video, Key, Truck, List, CornerUpRight, MessageSquare, Users } from 'react-feather';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
@@ -266,7 +266,7 @@ const EditBookingModal = ({
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId || distributorId === "" ? false : true,
+          distributorId_unset: distributorId || distributorId === '' ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags
         }
@@ -397,7 +397,7 @@ const EditBookingModal = ({
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId || distributorId === "" ? false : true,
+          distributorId_unset: distributorId || distributorId === '' ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags
         }
@@ -578,7 +578,12 @@ const EditBookingModal = ({
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink title="Notes" active={active === '3'} onClick={() => toggle('3')}>
+          <NavLink title="Team member" active={active === '3'} onClick={() => toggle('3')}>
+            <Users size="18" />
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink title="Notes" active={active === '4'} onClick={() => toggle('4')}>
             <MessageSquare size="18" />
           </NavLink>
         </NavItem>
@@ -758,18 +763,16 @@ const EditBookingModal = ({
               />
             </FormGroup>
 
-            {upgrades.length > 0 &&
+            {upgrades.length > 0 && (
               <FormGroup>
                 <Label for="full-name mb-2">Upgrades</Label>
                 <div>
                   {upgrades.map((upgrade) => (
-                    <span className="tags ml-0 mb-1">
-                      {upgrade.name}
-                    </span>
+                    <span className="tags ml-0 mb-1">{upgrade.name}</span>
                   ))}
                 </div>
               </FormGroup>
-            }
+            )}
 
             <FormGroup>
               <Label for="full-name">Class Variant*</Label>
@@ -1028,7 +1031,43 @@ const EditBookingModal = ({
             )}
           </ModalBody>
         </TabPane>
-        <TabPane tabId="3">
+        <TabPane tabId="3" className="px-2">
+          <FormGroup>
+            <Label for="full-name">
+              <strong>Id:</strong> <span className="text-primary">{`${currentElement?._id}`}</span>
+            </Label>
+          </FormGroup>
+          <FormGroup>
+            <Label className="">Instructor in charge of this class</Label>
+          </FormGroup>
+          <FormGroup>
+            <InputGroup size="sm">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <User size={15} />
+                </InputGroupText>
+              </InputGroupAddon>
+              <Input id="full-name" placeholder="Full Name *" />
+            </InputGroup>
+            <InputGroup size="sm" className="mt-2">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <Mail size={15} />
+                </InputGroupText>
+              </InputGroupAddon>
+              <Input type="email" id="email" placeholder="Email *" />
+            </InputGroup>
+            <InputGroup size="sm" className="mt-2">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <Phone size={15} />
+                </InputGroupText>
+              </InputGroupAddon>
+              <Input type="phone" id="phone" placeholder="Phone" />
+            </InputGroup>
+          </FormGroup>
+        </TabPane>
+        <TabPane tabId="4">
           <b className="text-primary ml-2">Notes</b>
           <Card className="notes-card mt-1">
             <CardBody>
@@ -1052,28 +1091,22 @@ const EditBookingModal = ({
                           <p className="mb-0">
                             <small>{item.note}</small>
                           </p>
-                          {userData?.customData?.name === item.author && (
-                            item?.shared ? (
+                          {userData?.customData?.name === item.author &&
+                            (item?.shared ? (
                               <small>
-                                <a
-                                  href="#"
-                                  onClick={() => handleUpdateSharedNote(index)}
-                                >
+                                <a href="#" onClick={() => handleUpdateSharedNote(index)}>
                                   Shared
-                                  <X width={20}/>
+                                  <X width={20} />
                                 </a>
                               </small>
                             ) : (
                               <small>
-                                <a
-                                  href="#"
-                                  onClick={() => handleUpdateSharedNote(index)}
-                                >
+                                <a href="#" onClick={() => handleUpdateSharedNote(index)}>
                                   Share with instructor
-                                  <CornerUpRight width={20}/>
+                                  <CornerUpRight width={20} />
                                 </a>
                               </small>
-                          ))}
+                            ))}
                         </div>
                       </li>
                     );
