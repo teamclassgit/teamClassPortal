@@ -16,10 +16,14 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   let price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
 
   const discount = bookingInfo.discount;
+  
+  const membershipDiscount = bookingInfo.membershipDiscount || 0;
+  
   let totalTaxableAdditionalItems = 0;
+  
   let totalNoTaxableAdditionalItems = 0;
-  let customDeposit = 0,
-    customAttendees = undefined;
+  
+  let customDeposit = 0, customAttendees = undefined;
 
   if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
     customDeposit = bookingInfo.invoiceDetails[0].unitPrice;
@@ -57,15 +61,51 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   const underGroupFee = attendees > minimum || (bookingInfo.classVariant && bookingInfo.classVariant.groupEvent) ? 0 : price * (minimum - attendees);
 
   let cardFee = 0;
+  
   const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
+  
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
+  
   const instructorFlatFee = includeInstructorFlatFee && bookingInfo.classVariant?.instructorFlatFee ? bookingInfo.classVariant.instructorFlatFee : 0;
 
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
-  const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * bookingInfo.serviceFee;
+  
+  const totalMembershipDiscount =
+    membershipDiscount > 0
+      ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * membershipDiscount
+      : 0;
+
+  const fee =
+    (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount - totalMembershipDiscount) *
+    bookingInfo.serviceFee;
+
   const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
-  const tax = (withoutFee + fee + rushFee + instructorFlatFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
-  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + instructorFlatFee + tax - totalDiscount;
+
+  const totalMembershipDiscountTaxableItems =
+    membershipDiscount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons - totalDiscountTaxableItems) * membershipDiscount : 0;
+
+  const tax =
+    (withoutFee +
+      fee +
+      rushFee +
+      instructorFlatFee +
+      addons +
+      totalTaxableAdditionalItems -
+      totalDiscountTaxableItems -
+      totalMembershipDiscountTaxableItems) *
+    salesTax;
+
+  let finalValue =
+    withoutFee +
+    totalTaxableAdditionalItems +
+    totalNoTaxableAdditionalItems +
+    fee +
+    rushFee +
+    instructorFlatFee +
+    addons +
+    tax -
+    totalDiscount -
+    totalMembershipDiscount;
 
   if (isCardFeeIncluded && !bookingInfo.ccFeeExempt) {
     cardFee = finalValue * CREDIT_CARD_FEE;
@@ -90,7 +130,9 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
     totalNoTaxableAdditionalItems,
     cardFee,
     discount,
-    totalDiscount
+    totalDiscount,
+    membershipDiscount,
+    totalMembershipDiscount
   };
 };
 
