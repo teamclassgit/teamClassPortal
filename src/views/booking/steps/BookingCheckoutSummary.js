@@ -33,6 +33,8 @@ const BookingCheckoutSummary = ({
   totalTax,
   discount = 0,
   totalDiscount = 0,
+  membershipDiscount = 0,
+  totalMembershipDiscount = 0,
   total,
   deposit,
   finalPayment,
@@ -186,6 +188,12 @@ const BookingCheckoutSummary = ({
                 <tr>
                   <th className="font-weight-normal text-sm pt-1 text-danger">Discount ({discount}%)</th>
                   <td className="text-right pt-1 text-sm text-danger">-${totalDiscount}</td>
+                </tr>
+              )}
+              {membershipDiscount > 0 && totalMembershipDiscount > 0 && (
+                <tr>
+                  <th className="font-weight-normal text-sm pt-1 text-danger">Membership discount ({membershipDiscount}%)</th>
+                  <td className="text-right pt-1 text-sm text-danger">-${totalMembershipDiscount}</td>
                 </tr>
               )}
               {totalServiceFee > 0 && (
