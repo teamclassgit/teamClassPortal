@@ -26,6 +26,7 @@ export default gql`
       expirationHours
       teamClassId
       eventCoordinatorId
+      instructorTeamMemberId
       hasInternationalAttendees
       classVariant {
         title

@@ -61,6 +61,11 @@ export default gql`
         utm_medium
         utm_content
         utm_term
+        instructorId
+        instructorTeamMemberEmail
+        instructorTeamMemberId
+        instructorTeamMemberName
+        instructorTeamMemberPhone
         payments {
           amount
           createdAt
