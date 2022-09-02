@@ -132,7 +132,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           phone: customer ? customer.phone : newPhone,
           billingAddress: customer ? customer.billingAddress : null,
           company: customer ? customer.company : newCompany,
-          distributorId
+          distributorId,
+          utm_source: 'opsPortal'
         }
       });
 
