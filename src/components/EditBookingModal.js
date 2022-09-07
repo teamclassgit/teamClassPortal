@@ -149,6 +149,7 @@ const EditBookingModal = ({
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
     setClassVariantsOptions(filteredClass?.variants);
     setDistributorId(currentElement?.distributorId);
+    setIsOpenBookingRequested(false);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
     setInstructorAndAdditionals(
       teamClass?.additionalInstructors ? [...teamClass?.additionalInstructors, teamClass?.instructorId] : [teamClass?.instructorId]
@@ -971,7 +972,7 @@ const EditBookingModal = ({
             {isOpenBookingRequested && (
               <Alert color="danger">
                 <p className='mx-1'>
-                  Please confirm event details and class variants
+                  Please confirm event details and class variant
                 </p>
               </Alert>
             )}
