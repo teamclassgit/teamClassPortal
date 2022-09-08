@@ -4,8 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown, Spinner } from 'reactstrap';
 import { FileText, Share } from 'react-feather';
-
 import { useQuery, useMutation } from '@apollo/client';
+import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
@@ -19,6 +19,7 @@ import ExportToExcelLegacy from '../../components/ExportToExcelLegacy';
 import mutationUpdateClassListingPrices from '../../graphql/MutationUpdateClassListingPrices';
 import queryAllClassesForListingPrice from '../../graphql/QueryAllClassesForListingPrice';
 import queryAllInstructors from '../../graphql/QueryAllInstructors';
+// import { getAllTeamClasses } from '../../services/BookingService';
 
 import '../booking/BookingsTable.scss';
 
@@ -27,19 +28,19 @@ const gridStyle = { minHeight: 600 };
 const ListingPricesList = () => {
   const skin = useSelector((state) => state.bookingsBackground);
   const [teamClass, setTeamClass] = useState(null);
+  const [allDataClasses, setAllDataClasses] = useState([]);
   const [instructors, setInstructors] = useState(null);
   const [dataSource, setDataSource] = useState(null);
   const [classVariantsExcelTable, setClassVariantsExcelTable] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [filterValue, setFilterValue] = useState([
+    { name: 'title', operator: 'contains', type: 'string', value: '' },
+    { name: 'variantTitle', operator: 'contains', type: 'string', value: '' }
+  ]);
 
   const genericFilter = {};
 
   const [updateClassListingPrices] = useMutation(mutationUpdateClassListingPrices, {});
-
-  const filterValue = [
-    { name: 'title', operator: 'contains', type: 'string', value: '' },
-    { name: 'variantTitle', operator: 'contains', type: 'string', value: '' }
-  ];
 
   const columns = [
     {
@@ -56,6 +57,7 @@ const ListingPricesList = () => {
       name: 'title',
       header: 'Listing \nClass',
       type: 'string',
+      filterEditor: StringFilter,
       defaultWidth: 250,
       editable: false,
       render: ({ value }) => {
@@ -67,6 +69,7 @@ const ListingPricesList = () => {
       header: 'Variant',
       defaultWidth: 180,
       type: 'string',
+      filterEditor: StringFilter,
       editable: false,
       render: ({ cellProps }) => {
         return <span className="">{cellProps.data.variant.title}</span>;
@@ -172,22 +175,29 @@ const ListingPricesList = () => {
     }
   ];
 
-  const { ...allTeamClasses } = useQuery(queryAllClassesForListingPrice, {
-    fetchPolicy: 'no-cache',
+  useQuery(queryAllClassesForListingPrice, {
+    fetchPolicy: 'cache-and-network',
     pollInterval: 200000,
     variables: {
       filter: genericFilter
     },
     onCompleted: (data) => {
       if (data) {
-        setTeamClass(data.teamClasses);
+        setAllDataClasses(data.teamClasses);
       }
     }
   });
 
+  useEffect(() => {
+    const allData = [...allDataClasses];
+    setTeamClass(allData?.filter(({ title }) => (
+        title.toLowerCase().includes(filterValue[0].value.toLowerCase())
+      ))
+    );
+  }, [filterValue, allDataClasses]);
+
   const { ...allInstructors } = useQuery(queryAllInstructors, {
-    fetchPolicy: 'no-cache',
-    pollInterval: 200000,
+    fetchPolicy: 'cache-and-network',
     variables: {
       filter: genericFilter
     },
@@ -241,7 +251,12 @@ const ListingPricesList = () => {
             }
           });
       });
-    setDataSource(newTeamClass);
+      setDataSource(
+        newTeamClass.filter(
+          ({ variant }) => (
+            variant.title.toLowerCase().includes(filterValue[1].value.toLowerCase()))
+          )
+      );
   }, [teamClass]);
 
   useEffect(() => {
@@ -312,34 +327,31 @@ const ListingPricesList = () => {
     }
   };
 
-  const onEditComplete = useCallback(
-    ({ value, columnId, rowId }) => {
-      const data = [...dataSource];
-      const filterData = data.find((item) => item.tableId === rowId);
+  const onEditComplete = useCallback(({ value, columnId, rowId }) => {
+    const data = [...dataSource];
+    const filterData = data.find((item) => item.tableId === rowId);
 
-      if (columnId === 'pricePerson') {
-        if (filterData && filterData.variant.groupEvent) {
-          filterData.priceTier.price = value;
-        } else {
-          filterData.variant.pricePerson = value;
-        }
+    if (columnId === 'pricePerson') {
+      if (filterData && filterData.variant.groupEvent) {
+        filterData.priceTier.price = value;
+      } else {
+        filterData.variant.pricePerson = value;
       }
-      if (columnId === 'pricePersonInstructor') {
-        if (filterData && filterData.variant.groupEvent) {
-          filterData.priceTier.priceInstructor = value;
-        } else {
-          filterData.variant.pricePersonInstructor = value;
-        }
+    }
+    if (columnId === 'pricePersonInstructor') {
+      if (filterData && filterData.variant.groupEvent) {
+        filterData.priceTier.priceInstructor = value;
+      } else {
+        filterData.variant.pricePersonInstructor = value;
       }
-      if (columnId === 'instructorFlatFee') {
-        filterData.variant.instructorFlatFee = value;
-      }
+    }
+    if (columnId === 'instructorFlatFee') {
+      filterData.variant.instructorFlatFee = value;
+    }
 
-      setDataSource(data);
-      updatePrices(filterData);
-    },
-    [dataSource]
-  );
+    setDataSource(data);
+    updatePrices(filterData);
+  }, [dataSource]);
 
   return (
     <div>
@@ -365,7 +377,7 @@ const ListingPricesList = () => {
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
-      {allTeamClasses.loading || allInstructors.loading ? (
+      {allInstructors.loading ? (
         <div>
           <div>
             <Spinner className="mr-25" />
@@ -377,10 +389,11 @@ const ListingPricesList = () => {
           idProperty="tableId"
           style={gridStyle}
           columns={columns}
+          filterValue={filterValue}
           onEditComplete={onEditComplete}
+          onFilterValueChange={setFilterValue}
           editable={userData?.customData?.role === 'Admin' ? true : false}
           dataSource={dataSource}
-          defaultFilterValue={filterValue}
           licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
           theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
         />

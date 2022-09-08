@@ -4,22 +4,41 @@ import queryGetBookingsWithCriteria from '../graphql/QueryGetBookingsWithCriteri
 import queryBookingAndCalendarEventById from '../graphql/QueryBookingAndCalendarEventById';
 import mutationUpdateManyBookings from '../graphql/MutationUpdateManyBookings';
 import queryCustomerById from '../graphql/QueryCustomerById';
-import { CREDIT_CARD_FEE, DEPOSIT, RUSH_FEE, SALES_TAX, SERVICE_FEE } from '../utility/Constants';
+import { CREDIT_CARD_FEE, DEPOSIT, EXPECTED_MARGIN, RUSH_FEE, SALES_TAX } from '../utility/Constants';
 import { apolloClient } from '../utility/RealmApolloClient';
 import { getQueryFiltersFromFilterArray, isNotEmptyArray } from '../utility/Utils';
 
+
+const calculateVariantPrice = (classVariant, attendees) => {
+  if (!classVariant.groupEvent) {
+    const headcount = attendees < classVariant.minimum ? classVariant.minimum : attendees;
+    let temp = headcount * (classVariant.pricePersonInstructor || 0) + (classVariant.instructorFlatFee || 0);
+    const expectedMargin = temp * EXPECTED_MARGIN;
+    temp += expectedMargin;
+    const price = Number((temp / headcount).toFixed(2));
+    const estimatedUnitPrice = Number((temp / attendees).toFixed(2));
+    return { price, estimatedUnitPrice };
+  }
+
+  return { price: classVariant.pricePerson, estimatedUnitPrice: classVariant.pricePerson };
+};
+
 //get totals associated to a booking
-const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false, includeInstructorFlatFee = false) => {
+const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false) => {
   const minimum = bookingInfo.classVariant ? bookingInfo.classVariant.minimum : bookingInfo.classMinimum;
 
   //pricePerson is currently in use for group based pricing too
   let price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
 
   const discount = bookingInfo.discount;
+  
+  const membershipDiscount = bookingInfo.membershipDiscount || 0;
+  
   let totalTaxableAdditionalItems = 0;
+  
   let totalNoTaxableAdditionalItems = 0;
-  let customDeposit = 0,
-    customAttendees = undefined;
+  
+  let customDeposit = 0, customAttendees = undefined;
 
   if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
     customDeposit = bookingInfo.invoiceDetails[0].unitPrice;
@@ -57,15 +76,47 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   const underGroupFee = attendees > minimum || (bookingInfo.classVariant && bookingInfo.classVariant.groupEvent) ? 0 : price * (minimum - attendees);
 
   let cardFee = 0;
+  
   const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
+  
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
-  const instructorFlatFee = includeInstructorFlatFee && bookingInfo.classVariant?.instructorFlatFee ? bookingInfo.classVariant.instructorFlatFee : 0;
 
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
-  const fee = (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * bookingInfo.serviceFee;
+  
+  const totalMembershipDiscount =
+    membershipDiscount > 0
+      ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * membershipDiscount
+      : 0;
+
+  const fee =
+    (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount - totalMembershipDiscount) *
+    bookingInfo.serviceFee;
+
   const totalDiscountTaxableItems = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons) * discount : 0;
-  const tax = (withoutFee + fee + rushFee + instructorFlatFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems) * salesTax;
-  let finalValue = withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + addons + fee + rushFee + instructorFlatFee + tax - totalDiscount;
+
+  const totalMembershipDiscountTaxableItems =
+    membershipDiscount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons - totalDiscountTaxableItems) * membershipDiscount : 0;
+
+  const tax =
+    (withoutFee +
+      fee +
+      rushFee +
+      addons +
+      totalTaxableAdditionalItems -
+      totalDiscountTaxableItems -
+      totalMembershipDiscountTaxableItems) *
+    salesTax;
+
+  let finalValue =
+    withoutFee +
+    totalTaxableAdditionalItems +
+    totalNoTaxableAdditionalItems +
+    fee +
+    rushFee +
+    addons +
+    tax -
+    totalDiscount -
+    totalMembershipDiscount;
 
   if (isCardFeeIncluded && !bookingInfo.ccFeeExempt) {
     cardFee = finalValue * CREDIT_CARD_FEE;
@@ -90,7 +141,9 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
     totalNoTaxableAdditionalItems,
     cardFee,
     discount,
-    totalDiscount
+    totalDiscount,
+    membershipDiscount,
+    totalMembershipDiscount
   };
 };
 
@@ -272,4 +325,4 @@ const closeBookingsWithReason = async (bookingsId, closedReason) => {
   });
 };
 
-export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason };
+export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason, calculateVariantPrice };
