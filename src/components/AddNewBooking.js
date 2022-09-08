@@ -16,6 +16,7 @@ import 'cleave.js/dist/addons/cleave-phone.us';
 import mutationNewBooking from '../graphql/MutationInsertBookingAndCustomer';
 import { BOOKING_QUOTE_STATUS, SALES_TAX, SALES_TAX_STATE, SERVICE_FEE } from '../utility/Constants';
 import { isValidEmail, getUserData } from '../utility/Utils';
+import { calculateVariantPrice } from '../services/BookingService';
 
 const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleModal, open, onAddCompleted }) => {
   const [attendeesValid, setAttendeesValid] = useState(true);
@@ -103,6 +104,13 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
         return;
       }
 
+      const bookingVariant = {...classVariant};
+
+      if (!bookingVariant.groupEvent) {
+        const byPersonPrices = calculateVariantPrice(bookingVariant, newAttendees);
+        bookingVariant.pricePerson = byPersonPrices.price;
+      }
+
       const teamClass = classes.find((element) => element._id === selectedClass);
       const newId = uuid();
       const resultCreateBooking = await createBooking({
@@ -110,16 +118,16 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           bookingId: newId,
           date: new Date(),
           teamClassId: selectedClass,
-          classVariant,
+          classVariant: bookingVariant,
           instructorId: teamClass.instructorId ? teamClass.instructorId : teamClass._id,
           instructorName: teamClass.instructorName,
           customerId: customer ? customer._id : uuid(),
           customerName: customer ? customer.name : newName,
-          eventDurationHours: classVariant.duration,
+          eventDurationHours: bookingVariant.duration,
           eventCoordinatorId: oneCoordinator,
           attendees: newAttendees,
-          classMinimum: classVariant.minimum,
-          pricePerson: classVariant.pricePerson,
+          classMinimum: bookingVariant.minimum,
+          pricePerson: bookingVariant.pricePerson,
           serviceFee: SERVICE_FEE,
           salesTax: SALES_TAX,
           salesTaxState: SALES_TAX_STATE,

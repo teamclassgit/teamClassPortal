@@ -7,6 +7,7 @@ import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
 import Avatar from '@components/avatar';
 import moment from 'moment';
+import { calculateVariantPrice } from '../../../services/BookingService';
 
 const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking, calendarEvent }) => {
   const defaultInvoiceItems = [
@@ -63,9 +64,9 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
 
       const minimum = booking.classVariant ? booking.classVariant.minimum : booking.classMinimum;
       //pricePerson is currently in use for group based pricing too
-      const price = booking.classVariant ? booking.classVariant.pricePerson : booking.pricePerson;
       const attendees = realCountAttendees > 0 ? realCountAttendees : booking.attendees;
-
+      const byPersonPrices = calculateVariantPrice(booking.classVariant, attendees);
+      const price = byPersonPrices.price;
       defaultInvoiceItems[1].unitPrice = price;
       defaultInvoiceItems[1].units = attendees > minimum ? attendees : minimum;
 

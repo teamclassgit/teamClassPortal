@@ -52,6 +52,7 @@ import {
 
 // @styles
 import './EditBookingModal.scss';
+import { calculateVariantPrice } from '../services/BookingService';
 
 const EditBookingModal = ({
   currentElement,
@@ -364,12 +365,20 @@ const EditBookingModal = ({
           password: passwordLink
         };
       }
+
+      const bookingVariant = {...classVariant};
+
+      if (!bookingVariant.groupEvent) {
+        const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
+        bookingVariant.pricePerson = byPersonPrices.price;
+      }
+
       const resultUpdateBooking = await updateBooking({
         variables: {
           bookingId: currentElement._id,
           date: new Date(),
           teamClassId: bookingTeamClassId,
-          classVariant,
+          classVariant: bookingVariant,
           instructorId: teamClass.instructorId,
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
@@ -377,11 +386,11 @@ const EditBookingModal = ({
           eventDate: new Date(),
           instructorId,
           instructorName,
-          eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
+          eventDurationHours: bookingVariant.duration ? bookingVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
           attendees: groupSize,
-          classMinimum: classVariant.minimum,
-          pricePerson: classVariant.pricePerson,
+          classMinimum: bookingVariant.minimum,
+          pricePerson: bookingVariant.pricePerson,
           serviceFee: currentElement.serviceFee,
           salesTax: currentElement.salesTax,
           discount: currentElement.discount,
