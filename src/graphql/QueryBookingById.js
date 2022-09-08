@@ -74,6 +74,7 @@ export default gql`
         status
       }
       instructorId
+      instructorTeamMemberId
       distributorId
       instructorName
       customerId
