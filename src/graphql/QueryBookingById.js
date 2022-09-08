@@ -89,6 +89,7 @@ export default gql`
       salesTax
       salesTaxState
       discount
+      membershipDiscount
       status
       closedReason
       eventLink

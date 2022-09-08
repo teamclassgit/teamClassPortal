@@ -50,7 +50,8 @@ const WizardClassBooking = () => {
   const [totalTax, setTotalTax] = useState(0);
   const [totalUnderGroupFee, setTotalUnderGroupFee] = useState(0);
   const [totalWithoutFee, setTotalWithoutFee] = useState(0);
-
+  const [membershipDiscount, setMembershipDiscount] = useState(0);
+  const [totalMembershipDiscount, setTotalMembershipDiscount] = useState(0);
   const [getTeamClass, { ...classResult }] = useLazyQuery(queryClassById);
   const [getCustomer, { ...customerResult }] = useLazyQuery(queryCustomerById);
   const [getClassEvents, { ...calendarEventsByClassResult }] = useLazyQuery(queryCalendarEventsByClassId);
@@ -127,6 +128,8 @@ const WizardClassBooking = () => {
     setPriceToInvoice(bookingTotals.customPrice);
     setDiscount(bookingTotals.discount * 100);
     setTotalDiscount(bookingTotals.totalDiscount.toFixed(2));
+    setMembershipDiscount(bookingTotals.membershipDiscount * 100);
+    setTotalMembershipDiscount(bookingTotals.totalMembershipDiscount.toFixed(2));
 
     const depositsPaid =
       bookingInfo &&
@@ -313,6 +316,8 @@ const WizardClassBooking = () => {
               totalRushFee={totalRushFee}
               attendeesToInvoice={attendeesToInvoice || bookingInfo.attendees}
               priceToInvoice={priceToInvoice || bookingInfo.classVariant.pricePerson}
+              membershipDiscount={membershipDiscount}
+              totalMembershipDiscount={totalMembershipDiscount}
             />
           )}
         </div>

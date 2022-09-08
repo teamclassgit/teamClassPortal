@@ -31,6 +31,7 @@ export default gql`
     $company: String
     $closedReason: String
     $distributorId: String
+    $utm_source: String
   ) {
     upsertOneCustomer(
       query: { _id: $customerId }
@@ -88,6 +89,7 @@ export default gql`
         signUpDeadline: $signUpDeadline
         closedReason: $closedReason
         distributorId: $distributorId
+        utm_source: $utm_source
       }
     ) {
       _id
