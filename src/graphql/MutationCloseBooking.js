@@ -7,6 +7,7 @@ export default gql`
     $teamClassId: String!
     $classVariant: BookingClassVariantUpdateInput!
     $notes: [BookingNoteUpdateInput!]
+    $addons: [BookingAddonUpdateInput]
     $instructorId: String
     $instructorName: String
     $customerId: String!
@@ -100,6 +101,7 @@ export default gql`
         joinInfo_unset: $joinInfo_unset
         shippingTrackingLink: $shippingTrackingLink
         distributorId: $distributorId
+        addons: $addons
       }
     ) {
       _id
@@ -161,6 +163,17 @@ export default gql`
         joinUrl
         manualLink
         password
+      }
+      addons {
+        active
+        color
+        description
+        icon
+        multipleUnits
+        order
+        name
+        unit
+        unitPrice
       }
     }
   }
