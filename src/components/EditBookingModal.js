@@ -368,7 +368,7 @@ const EditBookingModal = ({
 
       const bookingVariant = {...classVariant};
 
-      if (!bookingVariant.groupEvent) {
+      if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees != groupSize)) {
         const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
         bookingVariant.pricePerson = byPersonPrices.price;
       }
@@ -818,8 +818,8 @@ const EditBookingModal = ({
                     return {
                       value: variant,
                       label: element.groupEvent
-                        ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
-                        : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                        ? `${element.title} /group`
+                        : `${element.title} /person`
                     };
                   })
                 }

@@ -415,8 +415,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                   return {
                     value: variant,
                     label: element.groupEvent
-                      ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
-                      : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                      ? `${element.title} /group`
+                      : `${element.title} /person`
                   };
                 })
               }
