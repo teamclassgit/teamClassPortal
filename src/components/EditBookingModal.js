@@ -52,6 +52,7 @@ import {
 
 // @styles
 import './EditBookingModal.scss';
+import { calculateVariantPrice } from '../services/BookingService';
 
 const EditBookingModal = ({
   currentElement,
@@ -364,12 +365,20 @@ const EditBookingModal = ({
           password: passwordLink
         };
       }
+
+      const bookingVariant = {...classVariant};
+
+      if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)) {
+        const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
+        bookingVariant.pricePerson = byPersonPrices.price;
+      }
+
       const resultUpdateBooking = await updateBooking({
         variables: {
           bookingId: currentElement._id,
           date: new Date(),
           teamClassId: bookingTeamClassId,
-          classVariant,
+          classVariant: bookingVariant,
           instructorId: teamClass.instructorId,
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
@@ -377,11 +386,11 @@ const EditBookingModal = ({
           eventDate: new Date(),
           instructorId,
           instructorName,
-          eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
+          eventDurationHours: bookingVariant.duration ? bookingVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
           attendees: groupSize,
-          classMinimum: classVariant.minimum,
-          pricePerson: classVariant.pricePerson,
+          classMinimum: bookingVariant.minimum,
+          pricePerson: bookingVariant.pricePerson,
           serviceFee: currentElement.serviceFee,
           salesTax: currentElement.salesTax,
           discount: currentElement.discount,
@@ -785,8 +794,8 @@ const EditBookingModal = ({
                     ? {
                         value: classVariant,
                         label: classVariant.groupEvent
-                          ? `${classVariant.title} ${classVariant.groupEvent ? '/group' : '/person'}`
-                          : `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`
+                          ? `${classVariant.title} /group`
+                          : `${classVariant.title} /person`
                       }
                     : null
                 }
@@ -809,8 +818,8 @@ const EditBookingModal = ({
                     return {
                       value: variant,
                       label: element.groupEvent
-                        ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
-                        : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                        ? `${element.title} /group`
+                        : `${element.title} /person`
                     };
                   })
                 }
