@@ -368,7 +368,7 @@ const EditBookingModal = ({
 
       const bookingVariant = {...classVariant};
 
-      if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees != groupSize)) {
+      if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)) {
         const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
         bookingVariant.pricePerson = byPersonPrices.price;
       }
