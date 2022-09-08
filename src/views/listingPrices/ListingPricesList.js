@@ -343,11 +343,11 @@ const ListingPricesList = () => {
       const data = [...dataSource];
       const filterData = { ...data.find((item) => item.tableId === rowId) };
       const newVariant = { ...filterData.variant };
-      let newPriceTiers = [...filterData.variant.priceTiers];
-      let newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
 
       if (columnId === 'pricePerson') {
         if (filterData && filterData.variant.groupEvent) {
+          let newPriceTiers = [...filterData.variant.priceTiers];
+          let newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
           newPriceTierItem.price = value;
           newPriceTiers[filterData.tierIndex] = newPriceTierItem;
           filterData.variant = { ...newVariant, priceTiers: newPriceTiers };
@@ -360,6 +360,7 @@ const ListingPricesList = () => {
       if (columnId === 'pricePersonInstructor') {
         if (filterData && filterData.variant.groupEvent) {
           let newPriceTiers = [...filterData.variant.priceTiers];
+          let newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
           newPriceTierItem.priceInstructor = value;
           newPriceTiers[filterData.tierIndex] = newPriceTierItem;
           filterData.variant = { ...newVariant, priceTiers: newPriceTiers };
