@@ -389,8 +389,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                   ? {
                       value: classVariant,
                       label: classVariant.groupEvent
-                        ? `${classVariant.title} ${classVariant.groupEvent ? '/group' : '/person'}`
-                        : `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`
+                        ? `${classVariant.title} /group`
+                        : `${classVariant.title} /person`
                     }
                   : null
               }

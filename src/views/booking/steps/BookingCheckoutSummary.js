@@ -159,12 +159,6 @@ const BookingCheckoutSummary = ({
                 </th>
                 <td className="text-right pt-1">${totalWithoutFee}</td>
               </tr>
-              {bookingInfo.classVariant.instructorFlatFee > 0 && (
-                <tr>
-                  <th className="font-weight-normal text-sm pt-1">Instructor fee</th>
-                  <td className="text-right pt-1 text-sm">${bookingInfo.classVariant.instructorFlatFee?.toFixed(2)}</td>
-                </tr>
-              )}
               {totalAddons > 0 && (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">Add-ons</th>

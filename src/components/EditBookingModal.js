@@ -794,8 +794,8 @@ const EditBookingModal = ({
                     ? {
                         value: classVariant,
                         label: classVariant.groupEvent
-                          ? `${classVariant.title} ${classVariant.groupEvent ? '/group' : '/person'}`
-                          : `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`
+                          ? `${classVariant.title} /group`
+                          : `${classVariant.title} /person`
                       }
                     : null
                 }
