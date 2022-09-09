@@ -6,10 +6,10 @@ import { useSelector } from 'react-redux';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown, Spinner } from 'reactstrap';
 import { FileText, Share } from 'react-feather';
 import { useQuery, useMutation } from '@apollo/client';
-import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
+import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
 import '@inovua/reactdatagrid-enterprise/index.css';
 import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
 import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
@@ -22,6 +22,7 @@ import mutationUpdateClassListingTitle from '../../graphql/MutationUpdateClassLi
 import queryAllClassesForListingPrice from '../../graphql/QueryAllClassesForListingPrice';
 import queryAllInstructors from '../../graphql/QueryAllInstructors';
 
+// @styles
 import '../booking/BookingsTable.scss';
 
 const gridStyle = { minHeight: 600 };
@@ -62,7 +63,6 @@ const ListingPricesList = () => {
       type: 'string',
       filterEditor: StringFilter,
       defaultWidth: 250,
-      // editable: false,
       render: ({ value }) => {
         return <span className="">{value}</span>;
       }
@@ -73,7 +73,6 @@ const ListingPricesList = () => {
       defaultWidth: 180,
       type: 'string',
       filterEditor: StringFilter,
-      // editable: false,
       render: ({ cellProps }) => {
         return <span className="">{cellProps.data.variant.title}</span>;
       }
