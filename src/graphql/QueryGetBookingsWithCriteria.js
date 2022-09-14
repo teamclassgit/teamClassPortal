@@ -27,6 +27,7 @@ export default gql`
         eventCoordinatorId
         eventCoordinatorName
         eventCoordinatorEmail
+        totalMembershipDiscount
         className
         attendees
         eventDateTime
