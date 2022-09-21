@@ -101,7 +101,7 @@ const DataTableAttendees = ({
       name: 'Phone',
       selector: 'phone',
       sortable: true,
-      maxWidth: '150px'
+      maxWidth: '120px'
     },
     {
       name: 'Email',
@@ -116,9 +116,15 @@ const DataTableAttendees = ({
       maxWidth: '250px'
     },
     {
+      name: 'Status',
+      selector: 'status',
+      sortable: true,
+      maxWidth: '120px'
+    },
+    {
       name: 'Actions',
       allowOverflow: true,
-      maxWidth: '40px',
+      maxWidth: '30px',
       cell: (row) => {
         return (
           <div className="d-flex ">
