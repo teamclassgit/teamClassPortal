@@ -17,7 +17,6 @@ const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountA
   };
 
   const saveAttendee = async (attendee) => {
-    console.log('attendee', attendee);
     const result = await upsertAttendee({
       variables: attendee
     });
