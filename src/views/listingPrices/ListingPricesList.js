@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-unused-expressions */
 // @packages
 import React, { useState, useEffect, useCallback } from 'react';
@@ -5,10 +6,10 @@ import { useSelector } from 'react-redux';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown, Spinner } from 'reactstrap';
 import { FileText, Share } from 'react-feather';
 import { useQuery, useMutation } from '@apollo/client';
-import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
+import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
 import '@inovua/reactdatagrid-enterprise/index.css';
 import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
 import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
@@ -17,10 +18,11 @@ import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
 import { isUserLoggedIn, getUserData } from '@utils';
 import ExportToExcelLegacy from '../../components/ExportToExcelLegacy';
 import mutationUpdateClassListingPrices from '../../graphql/MutationUpdateClassListingPrices';
+import mutationUpdateClassListingTitle from '../../graphql/MutationUpdateClassListingTitle';
 import queryAllClassesForListingPrice from '../../graphql/QueryAllClassesForListingPrice';
 import queryAllInstructors from '../../graphql/QueryAllInstructors';
-// import { getAllTeamClasses } from '../../services/BookingService';
 
+// @styles
 import '../booking/BookingsTable.scss';
 
 const gridStyle = { minHeight: 600 };
@@ -33,6 +35,7 @@ const ListingPricesList = () => {
   const [dataSource, setDataSource] = useState(null);
   const [classVariantsExcelTable, setClassVariantsExcelTable] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [editable, setEditable] = useState(true);
   const [filterValue, setFilterValue] = useState([
     { name: 'title', operator: 'contains', type: 'string', value: '' },
     { name: 'variantTitle', operator: 'contains', type: 'string', value: '' }
@@ -41,6 +44,7 @@ const ListingPricesList = () => {
   const genericFilter = {};
 
   const [updateClassListingPrices] = useMutation(mutationUpdateClassListingPrices, {});
+  const [updateClassListingTitle] = useMutation(mutationUpdateClassListingTitle, {});
 
   const columns = [
     {
@@ -59,7 +63,6 @@ const ListingPricesList = () => {
       type: 'string',
       filterEditor: StringFilter,
       defaultWidth: 250,
-      editable: false,
       render: ({ value }) => {
         return <span className="">{value}</span>;
       }
@@ -70,7 +73,6 @@ const ListingPricesList = () => {
       defaultWidth: 180,
       type: 'string',
       filterEditor: StringFilter,
-      editable: false,
       render: ({ cellProps }) => {
         return <span className="">{cellProps.data.variant.title}</span>;
       }
@@ -101,12 +103,14 @@ const ListingPricesList = () => {
       header: 'Web Price',
       type: 'number',
       defaultWidth: 118,
+      editable,
       render: ({ cellProps }) => {
-        return (
-          <span className="float-right">
-            $ {cellProps.data.variant.groupEvent ? cellProps.data.priceTier.price : cellProps.data.variant.pricePerson}
-          </span>
-        );
+        if (!cellProps.data.variant.groupEvent) {
+          onEditableChange(false);
+        } else {
+          onEditableChange(true);
+          return <span className="float-right">{`$ ${cellProps.data.priceTier.price}`}</span>;
+        }
       }
     },
     {
@@ -190,10 +194,7 @@ const ListingPricesList = () => {
 
   useEffect(() => {
     const allData = [...allDataClasses];
-    setTeamClass(allData?.filter(({ title }) => (
-        title.toLowerCase().includes(filterValue[0].value.toLowerCase())
-      ))
-    );
+    setTeamClass(allData?.filter(({ title }) => title.toLowerCase().includes(filterValue[0].value.toLowerCase())));
   }, [filterValue, allDataClasses]);
 
   const { ...allInstructors } = useQuery(queryAllInstructors, {
@@ -211,7 +212,7 @@ const ListingPricesList = () => {
   useEffect(() => {
     const newTeamClass = [];
     teamClass &&
-      teamClass.map((item) => {
+      teamClass.map((item, classIndex) => {
         item.variants &&
           item.variants.map((item2, index) => {
             if (!item2.groupEvent) {
@@ -235,6 +236,7 @@ const ListingPricesList = () => {
                   variantIndex: index,
                   tierIndex: index2,
                   _id: item._id,
+                  id: classIndex,
                   tableId: item._id + index + index2,
                   title: item.title,
                   isActive: item.isActive,
@@ -251,12 +253,7 @@ const ListingPricesList = () => {
             }
           });
       });
-      setDataSource(
-        newTeamClass.filter(
-          ({ variant }) => (
-            variant.title.toLowerCase().includes(filterValue[1].value.toLowerCase()))
-          )
-      );
+    setDataSource(newTeamClass.filter(({ variant }) => variant.title.toLowerCase().includes(filterValue[1].value.toLowerCase())));
   }, [teamClass]);
 
   useEffect(() => {
@@ -312,7 +309,7 @@ const ListingPricesList = () => {
   }, []);
 
   const updatePrices = async (newData) => {
-    const variantArray = teamClass.find((item) => item._id === newData._id).variants;
+    const variantArray = [...teamClass.find((item) => item._id === newData._id).variants];
     variantArray[newData.variantIndex] = newData.variant;
 
     try {
@@ -327,31 +324,74 @@ const ListingPricesList = () => {
     }
   };
 
-  const onEditComplete = useCallback(({ value, columnId, rowId }) => {
-    const data = [...dataSource];
-    const filterData = data.find((item) => item.tableId === rowId);
+  const updateTitle = async (newData) => {
+    try {
+      const resultUpdateTitle = await updateClassListingTitle({
+        variables: {
+          id: newData._id,
+          title: newData.title
+        }
+      });
+    } catch (ex) {
+      console.log('ex', ex);
+    }
+  };
 
-    if (columnId === 'pricePerson') {
-      if (filterData && filterData.variant.groupEvent) {
-        filterData.priceTier.price = value;
-      } else {
-        filterData.variant.pricePerson = value;
-      }
-    }
-    if (columnId === 'pricePersonInstructor') {
-      if (filterData && filterData.variant.groupEvent) {
-        filterData.priceTier.priceInstructor = value;
-      } else {
-        filterData.variant.pricePersonInstructor = value;
-      }
-    }
-    if (columnId === 'instructorFlatFee') {
-      filterData.variant.instructorFlatFee = value;
-    }
+  const onEditComplete = useCallback(
+    ({ value, columnId, rowId }) => {
+      const data = [...dataSource];
+      const filterData = { ...data.find((item) => item.tableId === rowId) };
+      const newVariant = { ...filterData.variant };
 
-    setDataSource(data);
-    updatePrices(filterData);
-  }, [dataSource]);
+      if (columnId === 'pricePerson') {
+        if (filterData && filterData.variant.groupEvent) {
+          let newPriceTiers = [...filterData.variant.priceTiers];
+          let newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
+          newPriceTierItem.price = value;
+          newPriceTiers[filterData.tierIndex] = newPriceTierItem;
+          filterData.variant = { ...newVariant, priceTiers: newPriceTiers };
+        } else {
+          filterData.variant.pricePerson = value;
+        }
+        updatePrices(filterData);
+      }
+
+      if (columnId === 'pricePersonInstructor') {
+        if (filterData && filterData.variant.groupEvent) {
+          let newPriceTiers = [...filterData.variant.priceTiers];
+          let newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
+          newPriceTierItem.priceInstructor = value;
+          newPriceTiers[filterData.tierIndex] = newPriceTierItem;
+          filterData.variant = { ...newVariant, priceTiers: newPriceTiers };
+        } else {
+          filterData.variant = { ...newVariant, pricePersonInstructor: value };
+        }
+        updatePrices(filterData);
+      }
+
+      if (columnId === 'instructorFlatFee') {
+        filterData.variant = { ...newVariant, instructorFlatFee: value };
+        updatePrices(filterData);
+      }
+
+      if (columnId === 'variantTitle') {
+        filterData.variant = { ...newVariant, title: value };
+        updatePrices(filterData);
+      }
+
+      if (columnId === 'title') {
+        filterData.title = value;
+        updateTitle(filterData);
+      }
+
+      setDataSource(data);
+    },
+    [dataSource]
+  );
+
+  const onEditableChange = useCallback((editable) => {
+    setEditable(editable);
+  }, []);
 
   return (
     <div>
