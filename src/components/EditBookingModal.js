@@ -354,19 +354,14 @@ const EditBookingModal = ({
           bookingId: currentElement._id,
           updatedAt: new Date(),
           status: reOpenBookingStatus,
+          teamClassId: bookingTeamClassId,
           instructorId,
           instructorName,
-          email: customerEmail,
-          phone: customerPhone,
-          company: customerCompany,
-          customerId: currentElement.customerId,
-          customerName,
-          eventCoordinatorId: coordinatorId,
-          eventCoordinatorName: coordinatorName,
           distributorId,
-          teamClassId: bookingTeamClassId,
+          distributorId_unset: distributorId || distributorId === '' ? false : true,
           classVariant,
-          attendees: groupSize
+          attendees: groupSize,
+          addons: upgrades
         }
       });
 
