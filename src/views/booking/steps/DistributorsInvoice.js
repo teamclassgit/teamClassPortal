@@ -184,9 +184,6 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
     setIsApprovedInvoice(true);
   };
 
-  console.log('isPaidWithStripe', isPaidWithStripe);
-  console.log('booking', booking);
-
   return (
     <Fragment>
       <div className="header-container">
@@ -360,6 +357,31 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
                 )}
               </Row>
 
+              {showPayDistributorButton && invoiceDistributorStatus === 'approved' && totalInvoice !== 0 && (
+                <Row>
+                  <Col className="d-flex justify-content-end">
+                  <Button
+                    color="primary"
+                    className="mr-2"
+                    onClick={(e) => {
+                      setIsRejected(true);
+                    }}
+                  >
+                    {'Reject'}
+                  </Button>
+                    <Button
+                      color="primary"
+                      onClick={(e) => {
+                        setShowModal(!showModal);
+                        setIsPaid(true);
+                      }}
+                    >
+                      Pay Invoice
+                    </Button>
+                  </Col>
+                </Row>
+              )}
+
               {isRejected && invoiceDistributorStatus !== 'rejected' && (
                 <Row className="mt-2">
                   <Col lg={12} className="mb-2">
@@ -390,24 +412,6 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
                       </Button>
                       <Button className="small" onClick={(e) => setIsRejected(false)}>
                         Cancel
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
-              )}
-
-              {showPayDistributorButton && invoiceDistributorStatus === 'approved' && totalInvoice !== 0 && (
-                <Row>
-                  <Col lg={12}>
-                    <div className="d-flex justify-content-end">
-                      <Button
-                        color="primary"
-                        onClick={(e) => {
-                          setShowModal(!showModal);
-                          setIsPaid(true);
-                        }}
-                      >
-                        Pay Invoice
                       </Button>
                     </div>
                   </Col>

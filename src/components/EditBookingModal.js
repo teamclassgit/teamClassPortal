@@ -26,11 +26,13 @@ import Flatpickr from 'react-flatpickr';
 import Select from 'react-select';
 import classnames from 'classnames';
 import moment from 'moment';
-import { useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Video, Key, Truck, List, CornerUpRight, MessageSquare } from 'react-feather';
+import { useQuery, useMutation } from '@apollo/client';
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Video, Key, Truck, List, CornerUpRight, MessageSquare, Users } from 'react-feather';
 
 // @scripts
 import closeBookingOptions from './ClosedBookingOptions.json';
+import QueryInstructorTeamMemberById from '../graphql/QueryInstructorTeamMemberById';
+import QueryInstructorById from '../graphql/QueryInstructorById';
 import mutationOpenBooking from '../graphql/MutationOpenBooking';
 import mutationCloseBooking from '../graphql/MutationCloseBooking';
 import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
@@ -53,6 +55,7 @@ import {
 
 // @styles
 import './EditBookingModal.scss';
+import { calculateVariantPrice } from '../services/BookingService';
 
 const EditBookingModal = ({
   currentElement,
@@ -105,6 +108,10 @@ const EditBookingModal = ({
   const [individualTag, setIndividualTag] = useState('');
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
+  const [instructor, setInstructor] = useState(null);
+  const [instructorTeamMember, setInstructorTeamMember] = useState(null);
+  const [upgrades, setUpgrades] = useState([]);
+  const [classUpgrades, setClassUpgrades] = useState([]);
   const userData = getUserData();
   const [isOpenBookingRequested, setIsOpenBookingRequested] = useState(false);
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
@@ -114,6 +121,30 @@ const EditBookingModal = ({
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
   const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
+
+  useQuery(QueryInstructorTeamMemberById, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      instructorTeamMemberId: currentElement?.instructorTeamMemberId
+    },
+    onCompleted: (data) => {
+      if (data?.instructorTeamMember) {
+        setInstructorTeamMember(data.instructorTeamMember);
+      }
+    }
+  });
+
+  useQuery(QueryInstructorById, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      instructorId: currentElement?.instructorId
+    },
+    onCompleted: (data) => {
+      if (data?.instructor) {
+        setInstructor(data?.instructor);
+      }
+    }
+  });
 
   useEffect(() => {
     if (!currentElement?._id) return;
@@ -158,6 +189,8 @@ const EditBookingModal = ({
       setSelectedVariant(currentElement.classVariant.order);
       setSelectedPriceTier(currentElement.classVariant.pricePerson);
     }
+    setUpgrades(currentElement?.addons || []);
+    setClassUpgrades(filteredClass?.addons || []);
   }, [currentElement]);
 
   useEffect(() => {
@@ -181,6 +214,7 @@ const EditBookingModal = ({
       trackingLink: true,
       joinUrl: true
     });
+    setInstructorTeamMember(null);
     handleModal({});
   };
 
@@ -237,6 +271,7 @@ const EditBookingModal = ({
           date: new Date(),
           teamClassId: bookingTeamClassId,
           classVariant,
+          addons: upgrades,
           instructorId: teamClass.instructorId,
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
@@ -266,7 +301,7 @@ const EditBookingModal = ({
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId ? false : true,
+          distributorId_unset: distributorId || distributorId === '' ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags
         }
@@ -377,12 +412,21 @@ const EditBookingModal = ({
           password: passwordLink
         };
       }
+
+      const bookingVariant = {...classVariant};
+
+      if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)) {
+        const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
+        bookingVariant.pricePerson = byPersonPrices.price;
+      }
+
       const resultUpdateBooking = await updateBooking({
         variables: {
           bookingId: currentElement._id,
           date: new Date(),
           teamClassId: bookingTeamClassId,
-          classVariant,
+          classVariant: bookingVariant,
+          addons: upgrades,
           instructorId: teamClass.instructorId,
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
@@ -390,11 +434,11 @@ const EditBookingModal = ({
           eventDate: new Date(),
           instructorId,
           instructorName,
-          eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
+          eventDurationHours: bookingVariant.duration ? bookingVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
           attendees: groupSize,
-          classMinimum: classVariant.minimum,
-          pricePerson: classVariant.pricePerson,
+          classMinimum: bookingVariant.minimum,
+          pricePerson: bookingVariant.pricePerson,
           serviceFee: currentElement.serviceFee,
           salesTax: currentElement.salesTax,
           discount: currentElement.discount,
@@ -410,7 +454,7 @@ const EditBookingModal = ({
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId ? false : true,
+          distributorId_unset: distributorId || distributorId === '' ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags
         }
@@ -561,7 +605,6 @@ const EditBookingModal = ({
       console.log(ex);
     }
   };
-
   return (
     <Modal
       isOpen={open}
@@ -600,7 +643,12 @@ const EditBookingModal = ({
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink title="Notes" active={active === '3'} onClick={() => toggle('3')}>
+          <NavLink title="Team member" active={active === '3'} onClick={() => toggle('3')}>
+            <Users size="18" />
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink title="Notes" active={active === '4'} onClick={() => toggle('4')}>
             <MessageSquare size="18" />
           </NavLink>
         </NavItem>
@@ -779,6 +827,8 @@ const EditBookingModal = ({
                   if (filteredClass) setDistributorId(filteredClass?.distributorId);
                   setClassVariantsOptions(filteredClass.variants);
                   setClassVariant(null);
+                  setClassUpgrades(filteredClass?.addons || []);
+                  setUpgrades([]);
                   setSelectedVariant(option?.value?.order);
                   setBookingTeamClassId(option.value);
                   setBookingTeamClassName(option.label);
@@ -786,7 +836,33 @@ const EditBookingModal = ({
                 isClearable={false}
               />
             </FormGroup>
-
+            <FormGroup>
+              <Label for="full-name mb-2">Upgrades</Label>
+              <Select
+                 theme={selectThemeColors}
+                 className="react-select edit-booking-select-upgrade"
+                 classNamePrefix="select"
+                 placeholder="Select upgrades"
+                 value={
+                  upgrades && upgrades.map(upgrade => (
+                    { value: upgrade, label: upgrade.name }
+                  ))
+                 }
+                 isMulti
+                 closeMenuOnSelect={false}
+                 styles={selectStylesTags}
+                 options={
+                  classUpgrades && classUpgrades.map(upgrade => {
+                    if (upgrade.unit === "Attendee" && upgrade.active) {
+                      return (
+                        { value: upgrade, label: upgrade.name }
+                      );
+                    }
+                 })
+                }
+                 onChange={(upgrade) => setUpgrades(upgrade.map(({value}) => value))}
+              />
+            </FormGroup>
             <FormGroup>
               <Label for="full-name">Class Variant*</Label>
               <Select
@@ -801,8 +877,8 @@ const EditBookingModal = ({
                     ? {
                         value: classVariant,
                         label: classVariant.groupEvent
-                          ? `${classVariant.title} ${classVariant.groupEvent ? '/group' : '/person'}`
-                          : `${classVariant.title} $${classVariant.pricePerson}${classVariant.groupEvent ? '/group' : '/person'}`
+                          ? `${classVariant.title} /group`
+                          : `${classVariant.title} /person`
                       }
                     : null
                 }
@@ -825,8 +901,8 @@ const EditBookingModal = ({
                     return {
                       value: variant,
                       label: element.groupEvent
-                        ? `${element.title} ${element.groupEvent ? '/group' : '/person'}`
-                        : `${element.title} $${element.pricePerson}${element.groupEvent ? '/group' : '/person'}`
+                        ? `${element.title} /group`
+                        : `${element.title} /person`
                     };
                   })
                 }
@@ -1061,7 +1137,43 @@ const EditBookingModal = ({
             )}
           </ModalBody>
         </TabPane>
-        <TabPane tabId="3">
+        <TabPane tabId="3" className="px-2">
+          <FormGroup>
+            <Label for="full-name">
+              <strong>Id:</strong> <span className="text-primary">{`${currentElement?._id}`}</span>
+            </Label>
+          </FormGroup>
+          <FormGroup>
+            <Label className="">Instructor in charge of this class</Label>
+          </FormGroup>
+          <FormGroup>
+            <InputGroup size="sm">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <User size={15} />
+                </InputGroupText>
+              </InputGroupAddon>
+              <Input id="full-name" placeholder="Full Name *" value={instructorTeamMember?.name || instructor?.name} disabled />
+            </InputGroup>
+            <InputGroup size="sm" className="mt-2">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <Mail size={15} />
+                </InputGroupText>
+              </InputGroupAddon>
+              <Input type="email" id="email" placeholder="Email *" value={instructorTeamMember?.email || instructor?.email} disabled />
+            </InputGroup>
+            <InputGroup size="sm" className="mt-2">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <Phone size={15} />
+                </InputGroupText>
+              </InputGroupAddon>
+              <Input type="phone" id="phone" placeholder="Phone" value={instructorTeamMember?.phone || instructor?.phone} disabled />
+            </InputGroup>
+          </FormGroup>
+        </TabPane>
+        <TabPane tabId="4">
           <b className="text-primary ml-2">Notes</b>
           <Card className="notes-card mt-1">
             <CardBody>
@@ -1085,28 +1197,22 @@ const EditBookingModal = ({
                           <p className="mb-0">
                             <small>{item.note}</small>
                           </p>
-                          {userData?.customData?.name === item.author && (
-                            item?.shared ? (
+                          {userData?.customData?.name === item.author &&
+                            (item?.shared ? (
                               <small>
-                                <a
-                                  href="#"
-                                  onClick={() => handleUpdateSharedNote(index)}
-                                >
+                                <a href="#" onClick={() => handleUpdateSharedNote(index)}>
                                   Shared
-                                  <X width={20}/>
+                                  <X width={20} />
                                 </a>
                               </small>
                             ) : (
                               <small>
-                                <a
-                                  href="#"
-                                  onClick={() => handleUpdateSharedNote(index)}
-                                >
+                                <a href="#" onClick={() => handleUpdateSharedNote(index)}>
                                   Share with instructor
-                                  <CornerUpRight width={20}/>
+                                  <CornerUpRight width={20} />
                                 </a>
                               </small>
-                          ))}
+                            ))}
                         </div>
                       </li>
                     );

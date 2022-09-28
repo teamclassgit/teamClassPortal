@@ -43,6 +43,17 @@ export default gql`
         }
       }
       category
+      addons {
+        icon
+        color
+        name
+        description
+        multipleUnits
+        unitPrice
+        unit
+        order
+        active
+      }
     }
   }
 `;

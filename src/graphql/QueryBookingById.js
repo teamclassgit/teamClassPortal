@@ -74,6 +74,7 @@ export default gql`
         status
       }
       instructorId
+      instructorTeamMemberId
       distributorId
       instructorName
       customerId
@@ -88,6 +89,7 @@ export default gql`
       salesTax
       salesTaxState
       discount
+      membershipDiscount
       status
       closedReason
       eventLink

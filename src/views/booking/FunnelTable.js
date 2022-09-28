@@ -737,6 +737,19 @@ const FunnelTable = () => {
           return <span className="float-left">{value}</span>;
         }
       }
+    },
+    {
+      name: 'totalMembershipDiscount',
+      header: 'Total Membership Discount',
+      type: 'number',
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultWidth: 150,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-right">{value.toFixed(2)}</span>;
+        }
+      }
     }
   ];
 
@@ -831,7 +844,8 @@ const FunnelTable = () => {
         { name: 'distributorInvoiceStatus', type: 'string', operator: 'contains', value: '' },
         { name: 'preEventSurvey.submittedAt', type: 'date', operator: 'inrange', value: undefined },
         { name: 'preEventSurvey.source', type: 'string', operator: 'contains', value: '' },
-        { name: 'bookingTags', type: 'string', operator: 'contains', value: '' }
+        { name: 'bookingTags', type: 'string', operator: 'contains', value: '' },
+        { name: 'totalMembershipDiscount', type: 'number', operator: 'contains', value: '' }
       ];
     }
 
