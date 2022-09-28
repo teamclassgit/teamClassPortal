@@ -318,7 +318,20 @@ const EditBookingModal = ({
         variables: {
           bookingId: currentElement._id,
           updatedAt: new Date(),
-          status: reOpenBookingStatus
+          status: reOpenBookingStatus,
+          instructorId,
+          instructorName,
+          email: customerEmail,
+          phone: customerPhone,
+          company: customerCompany,
+          customerId: currentElement.customerId,
+          customerName,
+          eventCoordinatorId: coordinatorId,
+          eventCoordinatorName: coordinatorName,
+          distributorId,
+          teamClassId: bookingTeamClassId,
+          classVariant,
+          attendees: groupSize
         }
       });
 
