@@ -77,7 +77,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
 
   let cardFee = 0;
   
-  const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
+  const rushFeeByAttendee = bookingInfo.rushFee || RUSH_FEE;
   
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
 
