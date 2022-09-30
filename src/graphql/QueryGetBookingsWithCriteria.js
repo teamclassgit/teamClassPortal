@@ -102,6 +102,7 @@ export default gql`
         instructorInvoiceStatus
         totalDistributorInvoice
         distributorInvoiceStatus
+        firstTouchChannel
         preEventSurvey {
           submittedAt
           source
