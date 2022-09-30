@@ -278,7 +278,7 @@ const ListingPricesList = () => {
       classVariantsArray.push(headers);
 
       for (const i in dataSource) {
-        const classInstructor = instructors.find((item) => item._id === dataSource[i].instructorId);
+        const classInstructor = instructors?.find((item) => item._id === dataSource[i].instructorId);
         const row = [
           dataSource[i]._id,
           dataSource[i].title,

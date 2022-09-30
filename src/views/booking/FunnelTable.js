@@ -750,6 +750,19 @@ const FunnelTable = () => {
           return <span className="float-right">{value.toFixed(2)}</span>;
         }
       }
+    },
+    {
+      name: 'firstTouchChannel',
+      header: 'First Touch Channel',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
     }
   ];
 
@@ -845,7 +858,8 @@ const FunnelTable = () => {
         { name: 'preEventSurvey.submittedAt', type: 'date', operator: 'inrange', value: undefined },
         { name: 'preEventSurvey.source', type: 'string', operator: 'contains', value: '' },
         { name: 'bookingTags', type: 'string', operator: 'contains', value: '' },
-        { name: 'totalMembershipDiscount', type: 'number', operator: 'contains', value: '' }
+        { name: 'totalMembershipDiscount', type: 'number', operator: 'contains', value: '' },
+        { name: 'firstTouchChannel', type: 'string', operator: 'contains', value: '' }
       ];
     }
 
