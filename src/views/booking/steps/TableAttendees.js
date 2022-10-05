@@ -119,7 +119,14 @@ const DataTableAttendees = ({
       name: 'Status',
       selector: 'status',
       sortable: true,
-      maxWidth: '120px'
+      maxWidth: '120px',
+      cell : (row) => {
+        if (row.status === null) {
+          return "confirmed";
+        } else {
+          return row.status;
+        }
+      }
     },
     {
       name: 'Actions',
