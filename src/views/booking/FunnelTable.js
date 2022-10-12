@@ -110,7 +110,7 @@ const FunnelTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -128,7 +128,7 @@ const FunnelTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -154,7 +154,7 @@ const FunnelTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -162,7 +162,7 @@ const FunnelTable = () => {
                 </a>
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/event-confirmation/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
                   target={'_blank'}
                   title={'Deposit link'}
                 >
@@ -180,7 +180,7 @@ const FunnelTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -196,7 +196,7 @@ const FunnelTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -205,12 +205,12 @@ const FunnelTable = () => {
                 <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={'_blank'} title={'Sign-up link'}>
                   <Avatar color="light-primary" size="sm" icon={<User />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${cellProps.data._id}`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                   <Avatar color="light-primary" size="sm" icon={<Users />} />
                 </a>
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/payment/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
                   target={'_blank'}
                   title={'Final payment link'}
                 >
@@ -227,7 +227,7 @@ const FunnelTable = () => {
                 <div className="d-flex">
                   <a
                     className="mr-1"
-                    href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                    href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                     target={'_blank'}
                     title={'Select date and time link'}
                   >
@@ -238,7 +238,7 @@ const FunnelTable = () => {
                   </a>
                   <a
                     className="mr-1"
-                    href={`https://www.teamclass.com/signUpStatus/${cellProps.data._id}`}
+                    href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`}
                     target={'_blank'}
                     title={'Sign-up status'}
                   >
@@ -246,7 +246,7 @@ const FunnelTable = () => {
                   </a>
                   <a
                     className="mr-1"
-                    href={`https://www.teamclass.com/booking/payment/${cellProps.data._id}`}
+                    href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
                     target={'_blank'}
                     title={'Final payment link'}
                   >

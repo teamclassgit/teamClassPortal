@@ -218,7 +218,7 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
             <div className="d-flex">
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
@@ -234,7 +234,7 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
             <div className="d-flex">
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
@@ -258,13 +258,13 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
             <div className="d-flex">
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/event-confirmation/${row._id}`} target={'_blank'} title={'Deposit link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={'_blank'} title={'Deposit link'}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
               </a>
               <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
@@ -277,7 +277,7 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
             <div className="d-flex">
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
@@ -293,7 +293,7 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
             <div className="d-flex">
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
@@ -302,10 +302,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
               <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
                 <Avatar color="light-primary" size="sm" icon={<User />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+              <a className="mr-1" href={`https://www.teamclass.com/events/${row._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                 <Avatar color="light-primary" size="sm" icon={<Users />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign />} />
               </a>
               <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
@@ -319,7 +319,7 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${row._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -328,10 +328,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
                 <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
                   <Avatar color="light-primary" size="sm" icon={<User />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${row._id}`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/events/${row._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                   <Avatar color="light-primary" size="sm" icon={<Users />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/booking/payment/${row._id}`} target={'_blank'} title={'Final payment link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
                   <Avatar color="secondary" size="sm" icon={<DollarSign />} />
                 </a>
                 <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
@@ -372,8 +372,6 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       previousClassName="page-item prev"
       previousLinkClassName="page-link"
       pageLinkClassName="page-link"
-      breakClassName="page-item"
-      breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
     />
   );
