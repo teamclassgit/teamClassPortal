@@ -309,7 +309,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 <Col lg={12}>
                   <div className="mt-2 d-flex justify-content-end">
                     <span className="total-title">Total{'  '}</span>
-                    <span className="total-value">{`$ ${totalInvoice}`}</span>
+                    <span className="total-value">{`$ ${totalInvoice.toFixed(2)}`}</span>
                   </div>
                 </Col>
               </Row>
