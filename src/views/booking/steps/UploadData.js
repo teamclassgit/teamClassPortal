@@ -35,8 +35,51 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
           newData = newData.filter((element) => element._id !== result._id);
         } else fileData[i].id = uuid();
 
-        const { id, bookingId, name, addressLine1, addressLine2, city, state, zip, country, email, phone } = fileData[i];
-        const newAttendee = { id, bookingId, name, addressLine1, addressLine2, city, state, zip, country, email, phone, additionalFields: [] };
+        const {
+          id,
+          bookingId,
+          name,
+          addressLine1,
+          addressLine2,
+          city,
+          state,
+          zip,
+          country,
+          email,
+          phone,
+          additionalCost,
+          updatedAt,
+          createdAt,
+          status,
+          instructorId,
+          statusNotes
+        } = fileData[i];
+        const newAttendee = {
+          id,
+          bookingId,
+          name,
+          addressLine1,
+          addressLine2,
+          city,
+          state,
+          zip,
+          country,
+          email,
+          phone,
+          additionalCost,
+          updatedAt,
+          createdAt,
+          status,
+          instructorId,
+          statusNotes,
+          additionalFields: []
+        };
+        newAttendee.additionalCost = 0.0;
+        newAttendee.updatedAt = new Date();
+        newAttendee.createdAt = new Date();
+        newAttendee.status = 'confirmed';
+        newAttendee.instructorId = booking?.instructorId;
+        newAttendee.statusNotes = '';
         for (const dynamicField in teamClassInfo.registrationFields) {
           newAttendee.additionalFields.push({
             name: teamClassInfo.registrationFields[dynamicField].label,

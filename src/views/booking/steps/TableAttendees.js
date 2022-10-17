@@ -101,7 +101,7 @@ const DataTableAttendees = ({
       name: 'Phone',
       selector: 'phone',
       sortable: true,
-      maxWidth: '150px'
+      maxWidth: '120px'
     },
     {
       name: 'Email',
@@ -116,9 +116,22 @@ const DataTableAttendees = ({
       maxWidth: '250px'
     },
     {
+      name: 'Status',
+      selector: 'status',
+      sortable: true,
+      maxWidth: '120px',
+      cell : (row) => {
+        if (row.status === null) {
+          return "confirmed";
+        } else {
+          return row.status;
+        }
+      }
+    },
+    {
       name: 'Actions',
       allowOverflow: true,
-      maxWidth: '40px',
+      maxWidth: '30px',
       cell: (row) => {
         return (
           <div className="d-flex ">
@@ -160,7 +173,7 @@ const DataTableAttendees = ({
         // setRegistrationFields(fields.filter((element) => element.active === true));
 
         const attendeesArray = [];
-        const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country'];
+        const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country', 'Status'];
         fields.forEach((dynamicField) => headers.push(dynamicField.label));
         teamClassInfo.variants.map((item) => {
           if (item.kitHasAlcohol) headers.push('Delivery Restriction');
@@ -178,7 +191,8 @@ const DataTableAttendees = ({
             attendeeInfo.city,
             attendeeInfo.state,
             attendeeInfo.zip,
-            attendeeInfo.country
+            attendeeInfo.country,
+            attendeeInfo.status
           ];
 
           attendeeInfo?.additionalFields?.forEach((dynamicField) => row.push(dynamicField.value));
