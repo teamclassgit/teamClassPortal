@@ -317,7 +317,7 @@ const BoardCard = ({
             <div align="right">
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${_id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
@@ -331,7 +331,7 @@ const BoardCard = ({
             <div align="right">
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${_id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
@@ -353,7 +353,7 @@ const BoardCard = ({
             <div>
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${_id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
@@ -362,10 +362,10 @@ const BoardCard = ({
               <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
                 <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                 <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
               </a>
               <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
@@ -376,7 +376,7 @@ const BoardCard = ({
             <div align="right">
               <a
                 className="mr-1"
-                href={`https://www.teamclass.com/booking/select-date-time/${_id}`}
+                href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
                 target={'_blank'}
                 title={'Select date and time link'}
               >
@@ -388,19 +388,19 @@ const BoardCard = ({
             </div>
           ) : status === 'confirmed' ? (
             <div align="right">
-              <a className="mr-1" href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Reschedule link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/select-date-time/${_id}`} target={'_blank'} title={'Reschedule link'}>
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
               <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
                 <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+              <a className="mr-1" href={`https://www.teamclass.com/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                 <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
               </a>
               <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
@@ -410,19 +410,19 @@ const BoardCard = ({
           ) : (
             status === 'paid' && (
               <div align="right">
-                <a className="mr-1" href={`https://www.teamclass.com/booking/select-date-time/${_id}`} target={'_blank'} title={'Reschedule link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/select-date-time/${_id}`} target={'_blank'} title={'Reschedule link'}>
                   <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
                 </a>
                 <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
                   <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${_id}`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                   <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/booking/event-confirmation/${_id}`} target={'_blank'} title={'Deposit link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
                   <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/booking/payment/${_id}`} target={'_blank'} title={'Final payment link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Final payment link'}>
                   <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
                 </a>
                 <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
