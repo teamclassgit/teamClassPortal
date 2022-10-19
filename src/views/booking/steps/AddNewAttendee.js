@@ -88,6 +88,11 @@ const AddNewAttendee = ({
   const [messageAlert, setMessageAlert] = useState(null);
   const [registrationFields, setRegistrationFields] = useState([]);
   const [validationValues, setValidationValues] = useState(true);
+  const [additionalCost, setAdditionalCost] = useState(0);
+  const [createdAt, setCreatedAt] = useState(null);
+  const [status, setStatus] = useState('');
+  const [instructorId, setInstructorId] = useState('');
+  const [statusNotes, setStatusNotes] = useState('');
 
   const options = { phone: true, phoneRegionCode: 'US' };
 
@@ -208,7 +213,13 @@ const AddNewAttendee = ({
         state: newState,
         canDeliverKit: isDeliverKit,
         canDeliverKitReason: deliverKitReason,
-        additionalFields
+        additionalFields,
+        additionalCost: additionalCost || 0.0,
+        updatedAt: new Date(),
+        createdAt: createdAt || new Date(),
+        status: status || 'confirmed',
+        instructorId: booking?.instructorId,
+        statusNotes: statusNotes || ''
       };
 
       const savedRow = await saveAttendee(newElement);
@@ -243,6 +254,11 @@ const AddNewAttendee = ({
       setNewPhone(currentElement.phone);
       setNewState(currentElement.state);
       setNewZip(currentElement.zip);
+      setAdditionalCost(currentElement.additionalCost);
+      setCreatedAt(currentElement.createdAt);
+      setStatus(currentElement.status);
+      setInstructorId(currentElement.instructorId);
+      setStatusNotes(currentElement.statusNotes);
     }
   }, [currentElement]);
 

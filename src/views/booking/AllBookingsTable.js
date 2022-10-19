@@ -110,7 +110,7 @@ const AllBookingsTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -136,7 +136,7 @@ const AllBookingsTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -162,7 +162,7 @@ const AllBookingsTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -170,7 +170,7 @@ const AllBookingsTable = () => {
                 </a>
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/event-confirmation/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
                   target={'_blank'}
                   title={'Deposit link'}
                 >
@@ -188,7 +188,7 @@ const AllBookingsTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -204,7 +204,7 @@ const AllBookingsTable = () => {
               <div className="d-flex">
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                   target={'_blank'}
                   title={'Select date and time link'}
                 >
@@ -213,12 +213,12 @@ const AllBookingsTable = () => {
                 <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={'_blank'} title={'Sign-up link'}>
                   <Avatar color="light-primary" size="sm" icon={<User />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/signUpStatus/${cellProps.data._id}`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                   <Avatar color="light-primary" size="sm" icon={<Users />} />
                 </a>
                 <a
                   className="mr-1"
-                  href={`https://www.teamclass.com/booking/payment/${cellProps.data._id}`}
+                  href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
                   target={'_blank'}
                   title={'Final payment link'}
                 >
@@ -235,7 +235,7 @@ const AllBookingsTable = () => {
                 <div className="d-flex">
                   <a
                     className="mr-1"
-                    href={`https://www.teamclass.com/booking/select-date-time/${cellProps.data._id}`}
+                    href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
                     target={'_blank'}
                     title={'Select date and time link'}
                   >
@@ -246,7 +246,7 @@ const AllBookingsTable = () => {
                   </a>
                   <a
                     className="mr-1"
-                    href={`https://www.teamclass.com/signUpStatus/${cellProps.data._id}`}
+                    href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`}
                     target={'_blank'}
                     title={'Sign-up status'}
                   >
@@ -254,7 +254,7 @@ const AllBookingsTable = () => {
                   </a>
                   <a
                     className="mr-1"
-                    href={`https://www.teamclass.com/booking/payment/${cellProps.data._id}`}
+                    href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
                     target={'_blank'}
                     title={'Final payment link'}
                   >
@@ -421,6 +421,19 @@ const AllBookingsTable = () => {
       render: ({ value, cellProps }) => {
         if (value) {
           return <span className="float-right">{value}</span>;
+        }
+      }
+    },
+    {
+      name: 'registeredAttendees',
+      header: 'Registered Attendees ',
+      type: 'number',
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultWidth: 112,
+      render: ({ value }) => {
+        if (value >= 0) {
+          return <span className="float-right">{+value}</span>;
         }
       }
     },
@@ -763,6 +776,19 @@ const AllBookingsTable = () => {
           return <span className="float-right">{value.toFixed(2)}</span>;
         }
       }
+    },
+    {
+      name: 'firstTouchChannel',
+      header: 'First Touch Channel',
+      type: 'string',
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
     }
   ];
 
@@ -834,6 +860,7 @@ const AllBookingsTable = () => {
         { name: 'eventCoordinatorEmail', type: 'select', operator: 'inlist', value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
         { name: 'className', type: 'select', operator: 'inlist', value: undefined },
         { name: 'attendees', type: 'number', operator: 'gte', value: undefined },
+        { name: 'registeredAttendees', type: 'number', operator: 'gte', value: undefined },
         { name: 'taxAmount', type: 'number', operator: 'gte', value: undefined },
         { name: 'serviceFeeAmount', type: 'number', operator: 'gte', value: undefined },
         { name: 'cardFeeAmount', type: 'number', operator: 'gte', value: undefined },
@@ -858,7 +885,8 @@ const AllBookingsTable = () => {
         { name: 'distributorInvoiceStatus', type: 'string', operator: 'contains', value: '' },
         { name: 'preEventSurvey.submittedAt', type: 'date', operator: 'inrange', value: undefined },
         { name: 'preEventSurvey.source', type: 'string', operator: 'contains', value: '' },
-        { name: 'totalMembershipDiscount', type: 'number', operator: 'contains', value: '' }
+        { name: 'totalMembershipDiscount', type: 'number', operator: 'contains', value: '' },
+        { name: 'firstTouchChannel', type: 'string', operator: 'contains', value: '' }
       ];
     }
 

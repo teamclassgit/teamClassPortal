@@ -25,6 +25,12 @@ export default gql`
         shipmentTrackingNumber
         carrier
       }
+      additionalCost
+      updatedAt
+      createdAt
+      status
+      instructorId
+      statusNotes
     }
   }
 `;

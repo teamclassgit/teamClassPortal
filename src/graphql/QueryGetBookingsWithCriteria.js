@@ -30,6 +30,7 @@ export default gql`
         totalMembershipDiscount
         className
         attendees
+        registeredAttendees
         eventDateTime
         rescheduleDateTime
         hasInternationalAttendees
@@ -102,6 +103,7 @@ export default gql`
         instructorInvoiceStatus
         totalDistributorInvoice
         distributorInvoiceStatus
+        firstTouchChannel
         preEventSurvey {
           submittedAt
           source

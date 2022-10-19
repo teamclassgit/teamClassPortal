@@ -16,6 +16,12 @@ export default gql`
     $canDeliverKit: Boolean
     $canDeliverKitReason: String
     $additionalFields: [AttendeeAdditionalFieldInsertInput]
+    $additionalCost: Float
+    $updatedAt: DateTime
+    $createdAt: DateTime
+    $status: String
+    $instructorId: String
+    $statusNotes: String
   ) {
     upsertOneAttendee(
       query: { _id: $id }
@@ -34,6 +40,12 @@ export default gql`
         canDeliverKit: $canDeliverKit
         canDeliverKitReason: $canDeliverKitReason
         additionalFields: $additionalFields
+        additionalCost: $additionalCost
+        updatedAt: $updatedAt
+        createdAt: $createdAt
+        status: $status
+        instructorId: $instructorId
+        statusNotes: $statusNotes
       }
     ) {
       _id
@@ -54,6 +66,12 @@ export default gql`
         value
         order
       }
+      additionalCost
+      updatedAt
+      createdAt
+      status
+      instructorId
+      statusNotes
     }
   }
 `;

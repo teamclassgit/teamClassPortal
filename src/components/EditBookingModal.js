@@ -600,6 +600,7 @@ const EditBookingModal = ({
       console.log(ex);
     }
   };
+
   return (
     <Modal
       isOpen={open}
@@ -840,7 +841,7 @@ const EditBookingModal = ({
                  placeholder="Select upgrades"
                  value={
                   upgrades && upgrades.map(upgrade => (
-                    { value: upgrade, label: upgrade.name }
+                    { value: upgrade, label: `${upgrade.name} (by ${upgrade.unit})`}
                   ))
                  }
                  isMulti
@@ -848,9 +849,9 @@ const EditBookingModal = ({
                  styles={selectStylesTags}
                  options={
                   classUpgrades && classUpgrades.map(upgrade => {
-                    if (upgrade.unit === "Attendee" && upgrade.active) {
+                    if (upgrade.active) {
                       return (
-                        { value: upgrade, label: upgrade.name }
+                        { value: upgrade, label: `${upgrade.name} (by ${upgrade.unit})` }
                       );
                     }
                  })

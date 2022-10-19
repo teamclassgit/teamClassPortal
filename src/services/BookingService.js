@@ -77,7 +77,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
 
   let cardFee = 0;
   
-  const rushFeeByAttendee = bookingInfo.rushFee !== null && bookingInfo.rushFee !== undefined ? bookingInfo.rushFee : RUSH_FEE;
+  const rushFeeByAttendee = bookingInfo.rushFee || RUSH_FEE;
   
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
 
@@ -181,6 +181,7 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'updatedAt',
     'className',
     'attendees',
+    'registeredAttendees',
     'eventDateTime',
     'signUpDeadline',
     'classVariant',
@@ -236,6 +237,7 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.updatedAt,
       element.className,
       element.attendees,
+      element.registeredAttendees,
       element.eventDateTime,
       element.signUpDeadline,
       element.classVariant?.title,

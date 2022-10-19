@@ -368,7 +368,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
         <div>
           <div className="d-flex justify-content-between">
             <span>
-              <CardLink href={`https://www.teamclass.com/booking/payment/${booking._id}`} target={'_blank'} title={'Final payment link'}>
+              <CardLink href={`https://www.teamclass.com/customers/events/${booking._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
               </CardLink>
             </span>
