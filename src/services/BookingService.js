@@ -224,7 +224,8 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'distributorInvoiceStatus',
     'instructorInvoiceStatus',
     'totalDistributorInvoice',
-    'totalInstructorInvoice'
+    'totalInstructorInvoice',
+    'firstTouchChannel'
   ];
 
   bookingsArray.push(headers);
@@ -279,7 +280,8 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.distributorInvoiceStatus,
       element.instructorInvoiceStatus,
       element.totalDistributorInvoice,
-      element.totalInstructorInvoice
+      element.totalInstructorInvoice,
+      element.firstTouchChannel
     ];
     bookingsArray.push(row);
   });
