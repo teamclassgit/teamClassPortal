@@ -400,7 +400,7 @@ const BoardCard = ({
               <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Final payment link'}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
               </a>
               <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
