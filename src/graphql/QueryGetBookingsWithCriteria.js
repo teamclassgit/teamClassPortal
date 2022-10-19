@@ -30,6 +30,7 @@ export default gql`
         totalMembershipDiscount
         className
         attendees
+        registeredAttendees
         eventDateTime
         rescheduleDateTime
         hasInternationalAttendees

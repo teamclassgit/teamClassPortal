@@ -425,6 +425,19 @@ const AllBookingsTable = () => {
       }
     },
     {
+      name: 'registeredAttendees',
+      header: 'Registered Attendees ',
+      type: 'number',
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultWidth: 112,
+      render: ({ value }) => {
+        if (value >= 0) {
+          return <span className="float-right">{+value}</span>;
+        }
+      }
+    },
+    {
       name: 'signUpDeadline',
       header: 'Registration',
       type: 'date',
@@ -847,6 +860,7 @@ const AllBookingsTable = () => {
         { name: 'eventCoordinatorEmail', type: 'select', operator: 'inlist', value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
         { name: 'className', type: 'select', operator: 'inlist', value: undefined },
         { name: 'attendees', type: 'number', operator: 'gte', value: undefined },
+        { name: 'registeredAttendees', type: 'number', operator: 'gte', value: undefined },
         { name: 'taxAmount', type: 'number', operator: 'gte', value: undefined },
         { name: 'serviceFeeAmount', type: 'number', operator: 'gte', value: undefined },
         { name: 'cardFeeAmount', type: 'number', operator: 'gte', value: undefined },
