@@ -590,8 +590,6 @@ const EditBookingModal = ({
       console.log(ex);
     }
   };
-  
-  console.log("setClassUpgrades", classUpgrades);
 
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
