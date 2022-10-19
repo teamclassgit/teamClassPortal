@@ -425,6 +425,19 @@ const AllBookingsTable = () => {
       }
     },
     {
+      name: 'registeredAttendees',
+      header: 'Registered Attendees ',
+      type: 'number',
+      filterEditor: NumberFilter,
+      filterDelay: 1500,
+      defaultWidth: 112,
+      render: ({ value }) => {
+        if (value >= 0) {
+          return <span className="float-right">{+value}</span>;
+        }
+      }
+    },
+    {
       name: 'signUpDeadline',
       header: 'Registration',
       type: 'date',
