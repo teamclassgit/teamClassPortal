@@ -302,7 +302,7 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
               <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
                 <Avatar color="light-primary" size="sm" icon={<User />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/events/${row._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                 <Avatar color="light-primary" size="sm" icon={<Users />} />
               </a>
               <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
@@ -328,7 +328,7 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
                 <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
                   <Avatar color="light-primary" size="sm" icon={<User />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/events/${row._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                   <Avatar color="light-primary" size="sm" icon={<Users />} />
                 </a>
                 <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={'_blank'} title={'Final payment link'}>

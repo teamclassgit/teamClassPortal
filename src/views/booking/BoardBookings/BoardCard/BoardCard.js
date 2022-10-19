@@ -394,7 +394,7 @@ const BoardCard = ({
               <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
                 <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                 <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
               </a>
               <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
@@ -416,7 +416,7 @@ const BoardCard = ({
                 <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
                   <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
                   <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
                 </a>
                 <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
