@@ -590,6 +590,9 @@ const EditBookingModal = ({
       console.log(ex);
     }
   };
+  
+  console.log("setClassUpgrades", classUpgrades);
+
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
@@ -814,7 +817,7 @@ const EditBookingModal = ({
                  placeholder="Select upgrades"
                  value={
                   upgrades && upgrades.map(upgrade => (
-                    { value: upgrade, label: upgrade.name }
+                    { value: upgrade, label: `${upgrade.name} (by ${upgrade.unit})`}
                   ))
                  }
                  isMulti
@@ -822,9 +825,9 @@ const EditBookingModal = ({
                  styles={selectStylesTags}
                  options={
                   classUpgrades && classUpgrades.map(upgrade => {
-                    if (upgrade.unit === "Attendee" && upgrade.active) {
+                    if (upgrade.active) {
                       return (
-                        { value: upgrade, label: upgrade.name }
+                        { value: upgrade, label: `${upgrade.name} (by ${upgrade.unit})` }
                       );
                     }
                  })
