@@ -458,7 +458,7 @@ const FunnelTable = () => {
       filterDelay: 1500,
       defaultVisible: false,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">{value.toFixed(2)}</span>;
+        return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
     {
@@ -470,7 +470,7 @@ const FunnelTable = () => {
       filterDelay: 1500,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">{value.toFixed(2)}</span>;
+        return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
     {
@@ -482,7 +482,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">{value.toFixed(2)}</span>;
+        return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
     {
@@ -493,7 +493,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">{value.toFixed(2)}</span>;
+        return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
     {
@@ -504,7 +504,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">{value.toFixed(2)}</span>;
+        return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
     {
@@ -526,7 +526,7 @@ const FunnelTable = () => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">{value.toFixed(2)}</span>;
+        return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
     {
@@ -549,7 +549,7 @@ const FunnelTable = () => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       render: ({ value, cellProps }) => {
-        return <span className="float-right">{value.toFixed(2)}</span>;
+        return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
     {
@@ -734,7 +734,7 @@ const FunnelTable = () => {
       filterDelay: 1500,
       render: ({ value }) => {
         if (value) {
-          return <span className="float-right">{value.toFixed(2)}</span>;
+          return <span className="float-right">{value?.toFixed(2)}</span>;
         }
       }
     },
@@ -760,7 +760,7 @@ const FunnelTable = () => {
       defaultWidth: 150,
       render: ({ value }) => {
         if (value) {
-          return <span className="float-right">{value.toFixed(2)}</span>;
+          return <span className="float-right">{value?.toFixed(2)}</span>;
         }
       }
     },
