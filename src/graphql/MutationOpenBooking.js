@@ -13,12 +13,12 @@ export default gql`
     $distributorId_unset: Boolean
     $instructorId: String
     $instructorName: String
+    $closedReason_unset: Boolean
   ) {
     updateOneBooking(
       query: { _id: $bookingId },
       set: {
         status: $status,
-        closedReason_unset: true,
         updatedAt: $updatedAt,
         classVariant: $classVariant
         teamClassId: $teamClassId
@@ -28,6 +28,7 @@ export default gql`
         distributorId_unset: $distributorId_unset
         addons: $addons
         attendees: $attendees
+        closedReason_unset: $closedReason_unset
       }
     ) {
       _id

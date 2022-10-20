@@ -44,18 +44,16 @@ import { getUserData, isValidEmail, isUrlValid } from '../utility/Utils';
 import { selectThemeColors } from '@utils';
 import {
   BOOKING_CLOSED_STATUS,
-  BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
   BOOKING_PAID_STATUS,
   BOOKING_QUOTE_STATUS,
-  DATE_AND_TIME_CANCELED_STATUS,
-  DATE_AND_TIME_CONFIRMATION_STATUS,
-  DATE_AND_TIME_RESERVED_STATUS
+  DATE_AND_TIME_CANCELED_STATUS
 } from '../utility/Constants';
+import mutationDeleteOneCalendarEventByBookingId from '../graphql/MutationDeleteOneCalendarEventById';
+import { calculateVariantPrice } from '../services/BookingService';
 
 // @styles
 import './EditBookingModal.scss';
-import { calculateVariantPrice } from '../services/BookingService';
 
 const EditBookingModal = ({
   currentElement,
@@ -118,6 +116,7 @@ const EditBookingModal = ({
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
+  const [deleteCalendarEventByBookingId] = useMutation(mutationDeleteOneCalendarEventByBookingId, {});
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
   const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
@@ -225,9 +224,7 @@ const EditBookingModal = ({
   const getStatusToReOpenBooking = () => {
     const currentPayments = currentElement.payments;
 
-    if (!calendarEvent) {
-      return BOOKING_QUOTE_STATUS;
-    } else if (currentPayments && currentPayments.length > 0) {
+    if (currentPayments && currentPayments.length > 0) {
       const depositPayment =
         currentPayments && currentPayments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
       const finalPayment = currentPayments && currentPayments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
@@ -238,15 +235,7 @@ const EditBookingModal = ({
       }
     }
 
-    return BOOKING_DATE_REQUESTED_STATUS;
-  };
-
-  const getStatusToReOpenCalendarEvent = (openBookingStatus) => {
-    let calendarEventStatus = DATE_AND_TIME_RESERVED_STATUS;
-    if (openBookingStatus === BOOKING_PAID_STATUS || openBookingStatus === BOOKING_DEPOSIT_CONFIRMATION_STATUS) {
-      calendarEventStatus = DATE_AND_TIME_CONFIRMATION_STATUS;
-    }
-    return calendarEventStatus;
+    return BOOKING_QUOTE_STATUS;
   };
 
   const closeBooking = async () => {
@@ -347,6 +336,13 @@ const EditBookingModal = ({
   const openBooking = async () => {
     setProcessing(true);
 
+    const bookingVariant = {...classVariant};
+
+    if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)) {
+      const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
+      bookingVariant.pricePerson = byPersonPrices.price;
+    }
+
     try {
       const reOpenBookingStatus = getStatusToReOpenBooking();
       const resultUpdateBooking = await updateOpenBooking({
@@ -359,9 +355,13 @@ const EditBookingModal = ({
           instructorName,
           distributorId,
           distributorId_unset: distributorId || distributorId === '' ? false : true,
-          classVariant,
           attendees: groupSize,
-          addons: upgrades
+          addons: upgrades,
+          closedReason_unset: true,
+          classVariant: bookingVariant,
+          eventDurationHours: bookingVariant.duration ? bookingVariant.duration : currentElement.eventDurationHours,
+          classMinimum: bookingVariant.minimum,
+          pricePerson: bookingVariant.pricePerson
         }
       });
 
@@ -370,15 +370,12 @@ const EditBookingModal = ({
         return;
       }
 
-      if (reOpenBookingStatus !== BOOKING_QUOTE_STATUS && calendarEvent && calendarEvent.status === DATE_AND_TIME_CANCELED_STATUS) {
-        const calendarEventStatus = getStatusToReOpenCalendarEvent(reOpenBookingStatus);
-        const resultStatusUpdated = await updateCalendarEventStatus({
+      if (reOpenBookingStatus === BOOKING_QUOTE_STATUS) {
+        await deleteCalendarEventByBookingId({
           variables: {
-            calendarEventId: calendarEvent._id,
-            status: calendarEventStatus
+            bookingId: currentElement._id
           }
         });
-        console.log('Changing calendar event status', resultStatusUpdated);
       }
 
       onEditCompleted(currentElement._id);
@@ -667,7 +664,7 @@ const EditBookingModal = ({
                 </InputGroupAddon>
                 <Input
                   id="full-name"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS}
                   placeholder="Full Name *"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
@@ -684,7 +681,7 @@ const EditBookingModal = ({
                 <Input
                   type="email"
                   id="email"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS}
                   placeholder="Email *"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
@@ -705,7 +702,7 @@ const EditBookingModal = ({
                 <Cleave
                   className="form-control"
                   placeholder="Phone *"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS}
                   options={options}
                   id="phone"
                   value={customerPhone}
@@ -722,7 +719,7 @@ const EditBookingModal = ({
                 </InputGroupAddon>
                 <Input
                   id="company"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS}
                   placeholder="Company"
                   value={customerCompany}
                   onChange={(e) => setCustomerCompany(e.target.value)}
@@ -736,7 +733,7 @@ const EditBookingModal = ({
                   <Select
                     theme={selectThemeColors}
                     styles={selectStyles}
-                    isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                    isDisabled={currentElement.status === BOOKING_CLOSED_STATUS}
                     className="react-select edit-booking-select-instructor"
                     classNamePrefix="select"
                     placeholder="Select..."
@@ -767,7 +764,7 @@ const EditBookingModal = ({
                   <Select
                     theme={selectThemeColors}
                     styles={selectStyles}
-                    isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                    isDisabled={currentElement.status === BOOKING_CLOSED_STATUS}
                     className="react-select edit-booking-select-coordinator"
                     classNamePrefix="select"
                     placeholder="Select..."
@@ -1057,7 +1054,7 @@ const EditBookingModal = ({
             {isOpenBookingRequested && (
               <Alert color="danger">
                 <p className='mx-1'>
-                  Please confirm event details and class variant
+                  Please confirm event details and class variant.
                 </p>
               </Alert>
             )}
@@ -1106,7 +1103,7 @@ const EditBookingModal = ({
                   size="sm"
                   color={(isOpenBookingRequested || processing) ? 'primary' : 'danger'}
                   onClick={() => {
-                    if (!isOpenBookingRequested) {
+                    if (!isOpenBookingRequested && BOOKING_QUOTE_STATUS === getStatusToReOpenBooking()) {
                       setIsOpenBookingRequested(true);
                     } else {
                       openBooking();
