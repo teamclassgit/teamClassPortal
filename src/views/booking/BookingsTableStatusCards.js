@@ -123,7 +123,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>${requestedTotals.total.toFixed(2)}</strong>
+                    <strong>${requestedTotals.total?.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -168,7 +168,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>${rejectedTotals.total.toFixed(2)}</strong>
+                    <strong>${rejectedTotals.total?.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -214,7 +214,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>${acceptedTotals.total.toFixed(2)}</strong>
+                    <strong>${acceptedTotals.total?.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
@@ -260,7 +260,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                 </div>
                 <div className="pl-1 m-0">
                   <div>
-                    <strong>${depositTotals.total.toFixed(2)}</strong>
+                    <strong>${depositTotals.total?.toFixed(2)}</strong>
                   </div>
                   <div className="font-small-1">Total</div>
                 </div>
