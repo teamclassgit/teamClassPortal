@@ -137,6 +137,17 @@ const ListingPricesList = () => {
       }
     },
     {
+      name: 'expectedProfit',
+      header: 'Margin/profit',
+      type: 'number',
+      editable,
+      render: ({ cellProps }) => {
+        return (
+          <span className="float-right">{cellProps.data.variant.expectedProfit ? `${cellProps.data.variant.expectedProfit * 100} %` : ''} </span>
+        );
+      }
+    },
+    {
       name: 'variantHasKit',
       header: 'Kit Included',
       type: 'string',
