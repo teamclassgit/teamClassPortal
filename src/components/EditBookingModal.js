@@ -1105,6 +1105,11 @@ const EditBookingModal = ({
                   onClick={() => {
                     if (!isOpenBookingRequested && BOOKING_QUOTE_STATUS === getStatusToReOpenBooking()) {
                       setIsOpenBookingRequested(true);
+                      setBookingTeamClassId(null);
+                      setBookingTeamClassName(null);
+                      setClassVariant(null);
+                      setUpgrades([]);
+                      setGroupSize("");
                     } else {
                       openBooking();
                       setIsOpenBookingRequested(false);
