@@ -337,16 +337,8 @@ const ListingPricesList = () => {
         variables: {
           id: newData._id,
           variants: variantArray
-        },
-        optimisticResponse: {
-          updateListingPrices: {
-            id: newData._id,
-            __typename: "TeamClass",
-            variants: variantArray
-          }
         }
       });
-      console.log("data", resultUpdatePrices);
     } catch (ex) {
       console.log('ex', ex);
     }
@@ -423,6 +415,7 @@ const ListingPricesList = () => {
         updatePrices(filterData);
       }
 
+      data[rowId][columnId] = value;
       setDataSource(data);
     },
     [dataSource]
@@ -466,6 +459,7 @@ const ListingPricesList = () => {
         onFilterValueChange={setFilterValue}
         editable={userData?.customData?.role === 'Admin'}
         dataSource={dataSource || []}
+        autoFocusOnEditComplete={false}
         licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
         theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
       />
