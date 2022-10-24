@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown, Spinner } from 'reactstrap';
 import { FileText, Share } from 'react-feather';
 import { useQuery, useMutation } from '@apollo/client';
+import { useHistory, useLocation } from 'react-router-dom';
+import queryString from "query-string";
 
 //@reactdatagrid packages
 import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
@@ -36,9 +38,12 @@ const ListingPricesList = () => {
   const [classVariantsExcelTable, setClassVariantsExcelTable] = useState([]);
   const [userData, setUserData] = useState(null);
   const [editable, setEditable] = useState(true);
+  const location = useLocation();
+  const history = useHistory();
+  const { filterByTitle = "", filterByTitleVariant = ""} = queryString.parse(location.search);
   const [filterValue, setFilterValue] = useState([
-    { name: 'title', operator: 'contains', type: 'string', value: '' },
-    { name: 'variantTitle', operator: 'contains', type: 'string', value: '' }
+    { name: 'title', operator: 'contains', type: 'string', value: filterByTitle },
+    { name: 'variantTitle', operator: 'contains', type: 'string', value: filterByTitleVariant }
   ]);
 
   const genericFilter = {};
@@ -140,10 +145,9 @@ const ListingPricesList = () => {
       name: 'expectedProfit',
       header: 'Margin/profit',
       type: 'number',
-      editable,
       render: ({ cellProps }) => {
         return (
-          <span className="float-right">{cellProps.data.variant.expectedProfit ? `${cellProps.data.variant.expectedProfit * 100} %` : ''} </span>
+          <span className="float-right">{cellProps.data.variant.expectedProfit ? `${cellProps.data.variant.expectedProfit * 100}%` : ''} </span>
         );
       }
     },
@@ -190,7 +194,7 @@ const ListingPricesList = () => {
     }
   ];
 
-  useQuery(queryAllClassesForListingPrice, {
+  const { ...allData } = useQuery(queryAllClassesForListingPrice, {
     fetchPolicy: 'cache-and-network',
     pollInterval: 200000,
     variables: {
@@ -205,10 +209,14 @@ const ListingPricesList = () => {
 
   useEffect(() => {
     const allData = [...allDataClasses];
+    history.replace({
+      pathname: location.pathname,
+      search: `?filterByTitle=${filterValue[0].value}&filterByTitleVariant=${filterValue[1].value}`
+    });
     setTeamClass(allData?.filter(({ title }) => title.toLowerCase().includes(filterValue[0].value.toLowerCase())));
   }, [filterValue, allDataClasses]);
 
-  const { ...allInstructors } = useQuery(queryAllInstructors, {
+  useQuery(queryAllInstructors, {
     fetchPolicy: 'cache-and-network',
     variables: {
       filter: genericFilter
@@ -257,6 +265,7 @@ const ListingPricesList = () => {
                   pricePerson: item3.price,
                   pricePersonInstructor: item3.priceInstructor,
                   instructorFlatFee: item2.instructorFlatFee,
+                  expectedProfit: item2.expectedProfit,
                   variant: item2,
                   priceTier: item3
                 });
@@ -328,8 +337,16 @@ const ListingPricesList = () => {
         variables: {
           id: newData._id,
           variants: variantArray
+        },
+        optimisticResponse: {
+          updateListingPrices: {
+            id: newData._id,
+            __typename: "TeamClass",
+            variants: variantArray
+          }
         }
       });
+      console.log("data", resultUpdatePrices);
     } catch (ex) {
       console.log('ex', ex);
     }
@@ -341,6 +358,13 @@ const ListingPricesList = () => {
         variables: {
           id: newData._id,
           title: newData.title
+        },
+        optimisticResponse: {
+          updateTitle: {
+            id: newData._id,
+            __typename: "TeamClass",
+            variants: newData.title
+          }
         }
       });
     } catch (ex) {
@@ -348,8 +372,7 @@ const ListingPricesList = () => {
     }
   };
 
-  const onEditComplete = useCallback(
-    ({ value, columnId, rowId }) => {
+  const onEditComplete = useCallback(({ value, columnId, rowId }) => {
       const data = [...dataSource];
       const filterData = { ...data.find((item) => item.tableId === rowId) };
       const newVariant = { ...filterData.variant };
@@ -395,6 +418,11 @@ const ListingPricesList = () => {
         updateTitle(filterData);
       }
 
+      if (columnId === "expectedProfit") {
+        filterData.variant = { ...newVariant, expectedProfit: value / 100 };
+        updatePrices(filterData);
+      }
+
       setDataSource(data);
     },
     [dataSource]
@@ -428,27 +456,19 @@ const ListingPricesList = () => {
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
-      {allInstructors.loading ? (
-        <div>
-          <div>
-            <Spinner className="mr-25" />
-            <Spinner type="grow" />
-          </div>
-        </div>
-      ) : (
-        <ReactDataGrid
-          idProperty="tableId"
-          style={gridStyle}
-          columns={columns}
-          filterValue={filterValue}
-          onEditComplete={onEditComplete}
-          onFilterValueChange={setFilterValue}
-          editable={userData?.customData?.role === 'Admin' ? true : false}
-          dataSource={dataSource}
-          licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
-          theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
-        />
-      )}
+      <ReactDataGrid
+        idProperty="tableId"
+        style={gridStyle}
+        columns={columns}
+        loading={allData.loading}
+        filterValue={filterValue}
+        onEditComplete={onEditComplete}
+        onFilterValueChange={setFilterValue}
+        editable={userData?.customData?.role === 'Admin'}
+        dataSource={dataSource || []}
+        licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
+        theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
+      />
     </div>
   );
 };
