@@ -415,7 +415,6 @@ const ListingPricesList = () => {
         updatePrices(filterData);
       }
 
-      data[rowId][columnId] = value;
       setDataSource(data);
     },
     [dataSource]
