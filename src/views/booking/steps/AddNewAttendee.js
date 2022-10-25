@@ -157,8 +157,7 @@ const AddNewAttendee = ({
       ...(addonsRegistrationFields || []),
       ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
     ];
-    // const fields = [...(teamClassInfo?.registrationFields || []), ...(bookingInfo?.signUpPageSettings?.additionalRegistrationFields || [])];
-    setRegistrationFields(fields.filter((element) => element.active === true));
+    setRegistrationFields(fields.filter((element) => element?.active === true) || []);
   }, [teamClassInfo, booking]);
 
   const canDeliverKitToAddress = (state, country, kitHasAlcohol) => {
@@ -191,7 +190,7 @@ const AddNewAttendee = ({
         ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
         ...(addonsRegistrationFields || []),
         ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
-      ].filter((element) => element.active === true);
+      ].filter((element) => element?.active === true);
       additionalFields = dynamicValues
         ? additionalFields &&
           additionalFields.map((item) => {
