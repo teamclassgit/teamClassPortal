@@ -151,8 +151,10 @@ const AddNewAttendee = ({
   }, [newName, newEmail, newPhone, newAddress1, newCity, newState, newZip, newCountry, dynamicValues]);
 
   useEffect(() => {
+    const addonsRegistrationFields = booking?.addons?.reduce((previous, current) => previous.concat(current.registrationFields), []);
     const fields = [
       ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
+      ...(addonsRegistrationFields || []),
       ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
     ];
     // const fields = [...(teamClassInfo?.registrationFields || []), ...(bookingInfo?.signUpPageSettings?.additionalRegistrationFields || [])];
@@ -182,9 +184,12 @@ const AddNewAttendee = ({
   const saveNewAttendee = async () => {
     setProcessing(true);
 
+    const addonsRegistrationFields = booking?.addons?.reduce((previous, current) => previous.concat(current.registrationFields), []);
+
     try {
       let additionalFields = [
         ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
+        ...(addonsRegistrationFields || []),
         ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
       ].filter((element) => element.active === true);
       additionalFields = dynamicValues

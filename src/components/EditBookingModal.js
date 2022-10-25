@@ -591,6 +591,8 @@ const EditBookingModal = ({
     }
   };
 
+  console.log("currentElement", currentElement);
+
   return (
     <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
@@ -830,7 +832,7 @@ const EditBookingModal = ({
                     }
                  })
                 }
-                 onChange={(upgrade) => setUpgrades(upgrade.map(({value}) => value))}
+                 onChange={(upgrade) => { console.log(upgrade); setUpgrades(upgrade.map(({value}) => value)); } }
               />
             </FormGroup>
             <FormGroup>
@@ -866,7 +868,8 @@ const EditBookingModal = ({
                       order: index,
                       active: element.active,
                       groupEvent: element.groupEvent,
-                      instructorFlatFee: element.instructorFlatFee
+                      instructorFlatFee: element.instructorFlatFee,
+                      registrationFields: element.registrationFields
                     };
                     return {
                       value: variant,
@@ -877,6 +880,7 @@ const EditBookingModal = ({
                   })
                 }
                 onChange={(option) => {
+                  console.log("option", option);
                   setSelectedVariant(option?.value?.order);
                   setClassVariant(option.value);
                   setGroupSize('');
