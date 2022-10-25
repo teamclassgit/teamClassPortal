@@ -20,6 +20,7 @@ export default gql`
         active
         groupEvent
         instructorFlatFee
+        expectedProfit
         pricePersonInstructor
         priceTiers {
           maximum
