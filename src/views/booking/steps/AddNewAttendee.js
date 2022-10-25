@@ -140,7 +140,7 @@ const AddNewAttendee = ({
     const requiredAdditionalFields = [
       ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
       ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
-    ].filter((element) => element.active === true && element.required === true);
+    ].filter((element) => element?.active === true && element?.required === true);
 
     requiredAdditionalFields?.map((field) => {
       const filteredField = dynamicValues?.find((item) => item.name === field.label);
