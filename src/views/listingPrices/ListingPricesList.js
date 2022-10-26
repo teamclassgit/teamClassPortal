@@ -145,7 +145,7 @@ const ListingPricesList = () => {
       name: 'expectedProfit',
       header: 'Margin/profit',
       type: 'number',
-      editable: (cellProps) => {
+      editable: (_, cellProps) => {
         return Promise.resolve(!cellProps.data.variant.groupEvent);
       },
       render: ({ cellProps }) => {
@@ -464,6 +464,7 @@ const ListingPricesList = () => {
         onFilterValueChange={setFilterValue}
         editable={userData?.customData?.role === 'Admin'}
         dataSource={dataSource || []}
+        autoFocusOnEditComplete={false}
         licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
         theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
       />
