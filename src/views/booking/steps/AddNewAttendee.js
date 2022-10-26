@@ -140,7 +140,7 @@ const AddNewAttendee = ({
     const requiredAdditionalFields = [
       ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
       ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
-    ].filter((element) => element.active === true && element.required === true);
+    ].filter((element) => element?.active === true && element?.required === true);
 
     requiredAdditionalFields?.map((field) => {
       const filteredField = dynamicValues?.find((item) => item.name === field.label);
@@ -151,12 +151,13 @@ const AddNewAttendee = ({
   }, [newName, newEmail, newPhone, newAddress1, newCity, newState, newZip, newCountry, dynamicValues]);
 
   useEffect(() => {
+    const addonsRegistrationFields = booking?.addons?.reduce((previous, current) => previous.concat(current.registrationFields), []);
     const fields = [
       ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
+      ...(addonsRegistrationFields || []),
       ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
     ];
-    // const fields = [...(teamClassInfo?.registrationFields || []), ...(bookingInfo?.signUpPageSettings?.additionalRegistrationFields || [])];
-    setRegistrationFields(fields.filter((element) => element.active === true));
+    setRegistrationFields(fields.filter((element) => element?.active === true) || []);
   }, [teamClassInfo, booking]);
 
   const canDeliverKitToAddress = (state, country, kitHasAlcohol) => {
@@ -182,11 +183,14 @@ const AddNewAttendee = ({
   const saveNewAttendee = async () => {
     setProcessing(true);
 
+    const addonsRegistrationFields = booking?.addons?.reduce((previous, current) => previous.concat(current.registrationFields), []);
+
     try {
       let additionalFields = [
         ...(booking?.classVariant?.registrationFields || teamClassInfo?.registrationFields || []),
+        ...(addonsRegistrationFields || []),
         ...(booking?.signUpPageSettings?.additionalRegistrationFields || [])
-      ].filter((element) => element.active === true);
+      ].filter((element) => element?.active === true);
       additionalFields = dynamicValues
         ? additionalFields &&
           additionalFields.map((item) => {

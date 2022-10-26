@@ -46,6 +46,15 @@ export default gql`
         unit
         order
         active
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
       gallery {
         img

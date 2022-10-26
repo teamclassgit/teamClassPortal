@@ -830,7 +830,7 @@ const EditBookingModal = ({
                     }
                  })
                 }
-                 onChange={(upgrade) => setUpgrades(upgrade.map(({value}) => value))}
+                 onChange={(upgrade) => { setUpgrades(upgrade.map(({value}) => value)); } }
               />
             </FormGroup>
             <FormGroup>
@@ -866,7 +866,8 @@ const EditBookingModal = ({
                       order: index,
                       active: element.active,
                       groupEvent: element.groupEvent,
-                      instructorFlatFee: element.instructorFlatFee
+                      instructorFlatFee: element.instructorFlatFee,
+                      registrationFields: element.registrationFields
                     };
                     return {
                       value: variant,

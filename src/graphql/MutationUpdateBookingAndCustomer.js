@@ -181,6 +181,15 @@ export default gql`
         name
         unit
         unitPrice
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
       }
     }
   }
