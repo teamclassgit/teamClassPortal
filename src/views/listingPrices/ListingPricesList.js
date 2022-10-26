@@ -145,6 +145,9 @@ const ListingPricesList = () => {
       name: 'expectedProfit',
       header: 'Margin/profit',
       type: 'number',
+      editable: (_, cellProps) => {
+        return Promise.resolve(!cellProps.data.variant.groupEvent);
+      },
       render: ({ cellProps }) => {
         return (
           <span className="float-right">{cellProps.data.variant.expectedProfit ? `${cellProps.data.variant.expectedProfit * 100}%` : ''} </span>
@@ -246,6 +249,7 @@ const ListingPricesList = () => {
                 variantTitle: item2.title,
                 pricePerson: item2.pricePerson,
                 pricePersonInstructor: item2.pricePersonInstructor,
+                expectedProfit: item.expectedProfit,
                 instructorFlatFee: item2.instructorFlatFee,
                 variant: item2
               });
@@ -415,7 +419,9 @@ const ListingPricesList = () => {
         updatePrices(filterData);
       }
 
-      setDataSource(data);
+      if (!!value) {
+        setDataSource(data.map(variant => (variant.tableId !== rowId ? variant : filterData)));
+      }
     },
     [dataSource]
   );

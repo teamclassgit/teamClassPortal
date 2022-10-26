@@ -7,9 +7,11 @@ import { Card } from 'reactstrap';
 import { ChevronDown } from 'react-feather';
 import { getCustomerEmail } from '../../views/booking/common';
 import ExpandableTable from './ExpandableTable';
+import { useSelector } from 'react-redux';
 
 const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const skin = useSelector((state) => state.bookingsBackground);
 
   const columns = [
     {
@@ -160,6 +162,7 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
   return (
     <Card>
       <DataTable
+        theme={skin === 'dark' ? 'dark' : 'default'}
         noHeader
         pagination
         data={giftBasketPurchases}
