@@ -795,7 +795,7 @@ const AllBookingsTable = () => {
   const { ...allClasses } = useQuery(queryAllClasses, {
     fetchPolicy: 'cache-and-network',
     variables: {
-      filter: genericFilter
+      filter: { isActive: true }
     },
     onCompleted: (data) => {
       if (data && data.teamClasses) {

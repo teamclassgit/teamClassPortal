@@ -1,8 +1,36 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  mutation updateBookingStatusToOpen($bookingId: String!, $status: String!, $updatedAt: DateTime!) {
-    updateOneBooking(query: { _id: $bookingId }, set: { status: $status, closedReason_unset: true, updatedAt: $updatedAt }) {
+  mutation updateBookingStatusToOpen(
+    $bookingId: String!,
+    $status: String!,
+    $updatedAt: DateTime!
+    $teamClassId: String!
+    $classVariant: BookingClassVariantUpdateInput!
+    $addons: [BookingAddonUpdateInput]
+    $attendees: Int!
+    $distributorId: String
+    $distributorId_unset: Boolean
+    $instructorId: String
+    $instructorName: String
+    $closedReason_unset: Boolean
+  ) {
+    updateOneBooking(
+      query: { _id: $bookingId },
+      set: {
+        status: $status,
+        updatedAt: $updatedAt,
+        classVariant: $classVariant
+        teamClassId: $teamClassId
+        instructorId: $instructorId
+        instructorName: $instructorName
+        distributorId: $distributorId
+        distributorId_unset: $distributorId_unset
+        addons: $addons
+        attendees: $attendees
+        closedReason_unset: $closedReason_unset
+      }
+    ) {
       _id
       teamClassId
       customerId
@@ -54,6 +82,17 @@ export default gql`
       createdAt
       updatedAt
       signUpDeadline
+      addons {
+        active
+        color
+        description
+        icon
+        multipleUnits
+        order
+        name
+        unit
+        unitPrice
+      }
     }
   }
 `;

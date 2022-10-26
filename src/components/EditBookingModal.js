@@ -1,6 +1,7 @@
 // @packages
 import React, { useState, useEffect } from 'react';
 import {
+  Alert,
   Button,
   Card,
   CardBody,
@@ -43,18 +44,16 @@ import { getUserData, isValidEmail, isUrlValid } from '../utility/Utils';
 import { selectThemeColors } from '@utils';
 import {
   BOOKING_CLOSED_STATUS,
-  BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
   BOOKING_PAID_STATUS,
   BOOKING_QUOTE_STATUS,
-  DATE_AND_TIME_CANCELED_STATUS,
-  DATE_AND_TIME_CONFIRMATION_STATUS,
-  DATE_AND_TIME_RESERVED_STATUS
+  DATE_AND_TIME_CANCELED_STATUS
 } from '../utility/Constants';
+import mutationDeleteOneCalendarEventByBookingId from '../graphql/MutationDeleteOneCalendarEventById';
+import { calculateVariantPrice } from '../services/BookingService';
 
 // @styles
 import './EditBookingModal.scss';
-import { calculateVariantPrice } from '../services/BookingService';
 
 const EditBookingModal = ({
   currentElement,
@@ -112,10 +111,12 @@ const EditBookingModal = ({
   const [upgrades, setUpgrades] = useState([]);
   const [classUpgrades, setClassUpgrades] = useState([]);
   const userData = getUserData();
+  const [isOpenBookingRequested, setIsOpenBookingRequested] = useState(false);
   const [removeCampaignRequestQuote] = useMutation(removeCampaignRequestQuoteMutation, {});
   const [updateBookingNotes] = useMutation(mutationUpdateBookingNotes, {});
   const [updateBooking] = useMutation(mutationUpdateBooking, {});
   const [updateCalendarEventStatus] = useMutation(mutationUpdateCalendarEventByBookindId, {});
+  const [deleteCalendarEventByBookingId] = useMutation(mutationDeleteOneCalendarEventByBookingId, {});
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
   const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
@@ -178,11 +179,11 @@ const EditBookingModal = ({
     setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password);
     setClassVariantsOptions(filteredClass?.variants);
     setDistributorId(currentElement?.distributorId);
+    setIsOpenBookingRequested(false);
     setClassOptionsTags(currentElement?.additionalClassOptions || []);
     setInstructorAndAdditionals(
       teamClass?.additionalInstructors ? [...teamClass?.additionalInstructors, teamClass?.instructorId] : [teamClass?.instructorId]
-    );
-
+      );
     if (currentElement.classVariant?.groupEvent) {
       setSelectedVariant(currentElement.classVariant.order);
       setSelectedPriceTier(currentElement.classVariant.pricePerson);
@@ -223,9 +224,7 @@ const EditBookingModal = ({
   const getStatusToReOpenBooking = () => {
     const currentPayments = currentElement.payments;
 
-    if (!calendarEvent) {
-      return BOOKING_QUOTE_STATUS;
-    } else if (currentPayments && currentPayments.length > 0) {
+    if (currentPayments && currentPayments.length > 0) {
       const depositPayment =
         currentPayments && currentPayments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
       const finalPayment = currentPayments && currentPayments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
@@ -236,15 +235,7 @@ const EditBookingModal = ({
       }
     }
 
-    return BOOKING_DATE_REQUESTED_STATUS;
-  };
-
-  const getStatusToReOpenCalendarEvent = (openBookingStatus) => {
-    let calendarEventStatus = DATE_AND_TIME_RESERVED_STATUS;
-    if (openBookingStatus === BOOKING_PAID_STATUS || openBookingStatus === BOOKING_DEPOSIT_CONFIRMATION_STATUS) {
-      calendarEventStatus = DATE_AND_TIME_CONFIRMATION_STATUS;
-    }
-    return calendarEventStatus;
+    return BOOKING_QUOTE_STATUS;
   };
 
   const closeBooking = async () => {
@@ -345,13 +336,32 @@ const EditBookingModal = ({
   const openBooking = async () => {
     setProcessing(true);
 
+    const bookingVariant = {...classVariant};
+
+    if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)) {
+      const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
+      bookingVariant.pricePerson = byPersonPrices.price;
+    }
+
     try {
       const reOpenBookingStatus = getStatusToReOpenBooking();
       const resultUpdateBooking = await updateOpenBooking({
         variables: {
           bookingId: currentElement._id,
           updatedAt: new Date(),
-          status: reOpenBookingStatus
+          status: reOpenBookingStatus,
+          teamClassId: bookingTeamClassId,
+          instructorId,
+          instructorName,
+          distributorId,
+          distributorId_unset: distributorId || distributorId === '' ? false : true,
+          attendees: groupSize,
+          addons: upgrades,
+          closedReason_unset: true,
+          classVariant: bookingVariant,
+          eventDurationHours: bookingVariant.duration ? bookingVariant.duration : currentElement.eventDurationHours,
+          classMinimum: bookingVariant.minimum,
+          pricePerson: bookingVariant.pricePerson
         }
       });
 
@@ -360,15 +370,12 @@ const EditBookingModal = ({
         return;
       }
 
-      if (reOpenBookingStatus !== BOOKING_QUOTE_STATUS && calendarEvent && calendarEvent.status === DATE_AND_TIME_CANCELED_STATUS) {
-        const calendarEventStatus = getStatusToReOpenCalendarEvent(reOpenBookingStatus);
-        const resultStatusUpdated = await updateCalendarEventStatus({
+      if (reOpenBookingStatus === BOOKING_QUOTE_STATUS) {
+        await deleteCalendarEventByBookingId({
           variables: {
-            calendarEventId: calendarEvent._id,
-            status: calendarEventStatus
+            bookingId: currentElement._id
           }
         });
-        console.log('Changing calendar event status', resultStatusUpdated);
       }
 
       onEditCompleted(currentElement._id);
@@ -592,7 +599,16 @@ const EditBookingModal = ({
   };
 
   return (
-    <Modal isOpen={open} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0" onClosed={() => handleClose()}>
+    <Modal
+      isOpen={open}
+      className="sidebar-sm"
+      modalClassName="modal-slide-in"
+      contentClassName="pt-0"
+      onClosed={() => {
+        handleClose();
+        setDistributorId(null);
+      }}
+    >
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
         <h5 className="modal-title">Edit Booking</h5>
       </ModalHeader>
@@ -648,7 +664,7 @@ const EditBookingModal = ({
                 </InputGroupAddon>
                 <Input
                   id="full-name"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS}
                   placeholder="Full Name *"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
@@ -665,7 +681,7 @@ const EditBookingModal = ({
                 <Input
                   type="email"
                   id="email"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS}
                   placeholder="Email *"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
@@ -686,7 +702,7 @@ const EditBookingModal = ({
                 <Cleave
                   className="form-control"
                   placeholder="Phone *"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS}
                   options={options}
                   id="phone"
                   value={customerPhone}
@@ -703,78 +719,85 @@ const EditBookingModal = ({
                 </InputGroupAddon>
                 <Input
                   id="company"
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                  disabled={currentElement.status === BOOKING_CLOSED_STATUS}
                   placeholder="Company"
                   value={customerCompany}
                   onChange={(e) => setCustomerCompany(e.target.value)}
                 />
               </InputGroup>
             </FormGroup>
-            <FormGroup>
-              <Label>Event Instructor*</Label>
-              <Select
-                theme={selectThemeColors}
-                styles={selectStyles}
-                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                className="react-select edit-booking-select-instructor"
-                classNamePrefix="select"
-                placeholder="Select..."
-                value={{
-                  label: instructorName,
-                  value: instructorId
-                }}
-                options={
-                  allInstructors &&
-                  allInstructors
-                    .filter((instructor) => instructorAndAdditionals?.includes(instructor._id))
-                    .map((instructor) => {
-                      return {
-                        value: instructor._id,
-                        label: instructor.name
-                      };
-                    })
-                }
-                onChange={(option) => {
-                  setInstructorId(option.value);
-                  setInstructorName(option.label);
-                }}
-                isClearable={false}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="full-name">Event Coordinator*</Label>
-              <Select
-                theme={selectThemeColors}
-                styles={selectStyles}
-                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                className="react-select edit-booking-select-coordinator"
-                classNamePrefix="select"
-                placeholder="Select..."
-                value={{
-                  label: coordinatorName,
-                  value: coordinatorId
-                }}
-                options={
-                  allCoordinators &&
-                  allCoordinators.map((item) => {
-                    return {
-                      value: item._id,
-                      label: item.name
-                    };
-                  })
-                }
-                onChange={(option) => {
-                  setCoordinatorId(option.value);
-                  setCoordinatorName(option.label);
-                }}
-                isClearable={false}
-              />
-            </FormGroup>
+            {!(currentElement.status === BOOKING_CLOSED_STATUS) && (
+              <>
+                <FormGroup>
+                  <Label>Event Instructor*</Label>
+                  <Select
+                    theme={selectThemeColors}
+                    styles={selectStyles}
+                    isDisabled={currentElement.status === BOOKING_CLOSED_STATUS}
+                    className="react-select edit-booking-select-instructor"
+                    classNamePrefix="select"
+                    placeholder="Select..."
+                    value={{
+                      label: instructorName,
+                      value: instructorId
+                    }}
+                    options={
+                      allInstructors &&
+                      allInstructors
+                        .filter((instructor) => instructorAndAdditionals?.includes(instructor._id))
+                        .map((instructor) => {
+                          return {
+                            value: instructor._id,
+                            label: instructor.name
+                          };
+                        })
+                    }
+                    onChange={(option) => {
+                      setInstructorId(option.value);
+                      setInstructorName(option.label);
+                    }}
+                    isClearable={false}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label for="full-name">Event Coordinator*</Label>
+                  <Select
+                    theme={selectThemeColors}
+                    styles={selectStyles}
+                    isDisabled={currentElement.status === BOOKING_CLOSED_STATUS}
+                    className="react-select edit-booking-select-coordinator"
+                    classNamePrefix="select"
+                    placeholder="Select..."
+                    value={{
+                      label: coordinatorName,
+                      value: coordinatorId
+                    }}
+                    options={
+                      allCoordinators &&
+                      allCoordinators.map((item) => {
+                        return {
+                          value: item._id,
+                          label: item.name
+                        };
+                      })
+                    }
+                    onChange={(option) => {
+                      setCoordinatorId(option.value);
+                      setCoordinatorName(option.label);
+                    }}
+                    isClearable={false}
+                  />
+                </FormGroup>
+              </>
+            )}
             <FormGroup>
               <Label for="full-name">Event Details*</Label>
               <Select
                 styles={selectStyles}
-                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false || currentElement.status !== BOOKING_QUOTE_STATUS}
+                isDisabled={
+                  (currentElement.status === BOOKING_CLOSED_STATUS ||
+                    currentElement.status !== BOOKING_QUOTE_STATUS)
+                  && !isOpenBookingRequested}
                 theme={selectThemeColors}
                 className="react-select edit-booking-select-class"
                 classNamePrefix="select"
@@ -837,7 +860,7 @@ const EditBookingModal = ({
               <Label for="full-name">Class Variant*</Label>
               <Select
                 theme={selectThemeColors}
-                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                isDisabled={currentElement.status === BOOKING_CLOSED_STATUS && !isOpenBookingRequested}
                 styles={selectStyles}
                 className="react-select edit-booking-select-variant"
                 classNamePrefix="select"
@@ -940,7 +963,7 @@ const EditBookingModal = ({
                 <InputGroup size="sm">
                   <Input
                     id="attendees"
-                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                    disabled={currentElement.status === BOOKING_CLOSED_STATUS && !isOpenBookingRequested}
                     placeholder="Group Size *"
                     value={groupSize}
                     onChange={(e) => setGroupSize(e.target.value)}
@@ -952,48 +975,52 @@ const EditBookingModal = ({
                 </InputGroup>
               </FormGroup>
             )}
-            <FormGroup>
-              <CustomInput
-                type="switch"
-                className="edit-booking-switch"
-                id="exampleCustomSwitch"
-                name="customSwitch"
-                label="Turn on/off registration's cap based on group size"
-                disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                inline
-                value={isCapRegistration}
-                checked={isCapRegistration}
-                onChange={(e) => {
-                  setIsCapRegistration(!isCapRegistration);
-                }}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="date-time-picker">Sign Up Deadline (Custom)</Label>
-              <InputGroup size="sm">
-                <Flatpickr
-                  disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
-                  value={bookingSignUpDeadline}
-                  dateformat="Y-m-d H:i"
-                  data-enable-time={true}
-                  id="signUpDateLine"
-                  className="flatpickr form-control"
-                  placeholder="Select Date..."
-                  onChange={(selectedDates, dateStr, instance) => {
-                    setBookingSignUpDeadline(selectedDates);
-                  }}
-                />
-              </InputGroup>
-              {bookingSignUpDeadline && currentElement.status !== BOOKING_CLOSED_STATUS && (
-                <dt className="text-right">
-                  <small>
-                    <a href="#" onClick={(e) => setBookingSignUpDeadline([])}>
-                      clear
-                    </a>
-                  </small>
-                </dt>
-              )}
-            </FormGroup>
+            {!(currentElement.status === BOOKING_CLOSED_STATUS) && (
+              <>
+                <FormGroup>
+                  <CustomInput
+                    type="switch"
+                    className="edit-booking-switch"
+                    id="exampleCustomSwitch"
+                    name="customSwitch"
+                    label="Turn on/off registration's cap based on group size"
+                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                    inline
+                    value={isCapRegistration}
+                    checked={isCapRegistration}
+                    onChange={(e) => {
+                      setIsCapRegistration(!isCapRegistration);
+                    }}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label for="date-time-picker">Sign Up Deadline (Custom)</Label>
+                  <InputGroup size="sm">
+                    <Flatpickr
+                      disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                      value={bookingSignUpDeadline}
+                      dateformat="Y-m-d H:i"
+                      data-enable-time={true}
+                      id="signUpDateLine"
+                      className="flatpickr form-control"
+                      placeholder="Select Date..."
+                      onChange={(selectedDates, dateStr, instance) => {
+                        setBookingSignUpDeadline(selectedDates);
+                      }}
+                    />
+                  </InputGroup>
+                  {bookingSignUpDeadline && currentElement.status !== BOOKING_CLOSED_STATUS && (
+                    <dt className="text-right">
+                      <small>
+                        <a href="#" onClick={(e) => setBookingSignUpDeadline([])}>
+                          clear
+                        </a>
+                      </small>
+                    </dt>
+                  )}
+                </FormGroup>
+              </>
+            )}
             <FormGroup>
               {currentElement.status === BOOKING_CLOSED_STATUS ? (
                 <span className="text-lg">
@@ -1024,6 +1051,14 @@ const EditBookingModal = ({
                 </>
               )}
             </FormGroup>
+
+            {isOpenBookingRequested && (
+              <Alert color="danger">
+                <p className='mx-1'>
+                  Please confirm event details and class variant.
+                </p>
+              </Alert>
+            )}
 
             {editMode && (
               <div align="center">
@@ -1067,9 +1102,19 @@ const EditBookingModal = ({
                 <Button
                   className="mr-1"
                   size="sm"
-                  color={'danger'}
+                  color={(isOpenBookingRequested || processing) ? 'primary' : 'danger'}
                   onClick={() => {
-                    openBooking();
+                    if (!isOpenBookingRequested && BOOKING_QUOTE_STATUS === getStatusToReOpenBooking()) {
+                      setIsOpenBookingRequested(true);
+                      setBookingTeamClassId(null);
+                      setBookingTeamClassName(null);
+                      setClassVariant(null);
+                      setUpgrades([]);
+                      setGroupSize("");
+                    } else {
+                      openBooking();
+                      setIsOpenBookingRequested(false);
+                    }
                   }}
                   disabled={
                     !customerName ||
@@ -1082,7 +1127,7 @@ const EditBookingModal = ({
                     !groupSize
                   }
                 >
-                  {processing ? 'Opening...' : 'Back to open status'}
+                  {processing ? 'Opening...' : isOpenBookingRequested ? 'Save' : 'Back to open status'}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel
