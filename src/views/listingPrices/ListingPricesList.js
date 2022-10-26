@@ -145,6 +145,10 @@ const ListingPricesList = () => {
       name: 'expectedProfit',
       header: 'Margin/profit',
       type: 'number',
+      editable: (editValue) => {
+        console.log("editValue", editValue);
+        // return Promise.resolve(!cellProps.data.variant.groupEvent);
+      },
       render: ({ cellProps }) => {
         return (
           <span className="float-right">{cellProps.data.variant.expectedProfit ? `${cellProps.data.variant.expectedProfit * 100}%` : ''} </span>
@@ -246,6 +250,7 @@ const ListingPricesList = () => {
                 variantTitle: item2.title,
                 pricePerson: item2.pricePerson,
                 pricePersonInstructor: item2.pricePersonInstructor,
+                expectedProfit: item.expectedProfit,
                 instructorFlatFee: item2.instructorFlatFee,
                 variant: item2
               });
@@ -414,8 +419,7 @@ const ListingPricesList = () => {
         filterData.variant = { ...newVariant, expectedProfit: value / 100 };
         updatePrices(filterData);
       }
-
-      setDataSource(data);
+      setDataSource(data.map(variant => (variant.tableId !== rowId ? variant : filterData)));
     },
     [dataSource]
   );
@@ -458,7 +462,6 @@ const ListingPricesList = () => {
         onFilterValueChange={setFilterValue}
         editable={userData?.customData?.role === 'Admin'}
         dataSource={dataSource || []}
-        autoFocusOnEditComplete={false}
         licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
         theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
       />
