@@ -11,9 +11,10 @@ import { getQueryFiltersFromFilterArray, isNotEmptyArray } from '../utility/Util
 
 const calculateVariantPrice = (classVariant, attendees) => {
   if (!classVariant.groupEvent) {
+    const margin = classVariant.expectedProfit || EXPECTED_MARGIN;
     const headcount = attendees < classVariant.minimum ? classVariant.minimum : attendees;
     let temp = headcount * (classVariant.pricePersonInstructor || 0) + (classVariant.instructorFlatFee || 0);
-    const expectedMargin = temp * EXPECTED_MARGIN;
+    const expectedMargin = temp * margin;
     temp += expectedMargin;
     const price = Number((temp / headcount).toFixed(2));
     const estimatedUnitPrice = Number((temp / attendees).toFixed(2));

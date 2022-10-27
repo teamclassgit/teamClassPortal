@@ -130,6 +130,7 @@ export default gql`
         maximum
         pricePerson
         pricePersonInstructor
+        expectedProfit
         hasKit
         groupEvent
         instructorFlatFee
