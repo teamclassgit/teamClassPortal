@@ -404,6 +404,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     duration: element.duration,
                     pricePerson: element.pricePerson,
                     pricePersonInstructor: element.pricePersonInstructor,
+                    expectedProfit: element.expectedProfit,
                     hasKit: element.hasKit,
                     order: index,
                     active: element.active,
