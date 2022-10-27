@@ -17,6 +17,7 @@ export default gql`
         order
         pricePerson
         pricePersonInstructor
+        expectedProfit
         priceTiers {
           maximum
           minimum

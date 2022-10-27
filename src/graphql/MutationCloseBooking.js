@@ -143,6 +143,7 @@ export default gql`
         minimum
         maximum
         pricePerson
+        expectedProfit
         pricePersonInstructor
         hasKit
         groupEvent

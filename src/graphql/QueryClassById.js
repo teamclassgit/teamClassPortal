@@ -80,6 +80,7 @@ export default gql`
         duration
         pricePerson
         pricePersonInstructor
+        expectedProfit
         hasKit
         order
         active
