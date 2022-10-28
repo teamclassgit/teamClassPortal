@@ -111,9 +111,17 @@ const DataTableAttendees = ({
     },
     {
       name: 'Address',
-      selector: 'addressLine1',
+      selector: 'addressLine',
       sortable: true,
-      maxWidth: '250px'
+      maxWidth: '250px',
+      cell: (row) => {
+        return (
+          <div>
+              {row.addressLine1 ? row.addressLine1 : ""} {row.city ? row?.city.concat(",") : ""}
+              {row?.state ? row?.state : ""} {row?.country ? row?.country : ""}{" "}
+          </div>
+        );
+      }
     },
     {
       name: 'Status',
