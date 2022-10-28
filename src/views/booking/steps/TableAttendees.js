@@ -32,6 +32,7 @@ import ExportToExcel from '../../../components/ExportToExcel';
 import ExportToCsv from '../../../components/ExportToCsv';
 import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
 import ExportToExcelLegacy from '../../../components/ExportToExcelLegacy';
+import "./TableAttendees.scss";
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
   <div className="custom-control custom-checkbox">
@@ -111,9 +112,18 @@ const DataTableAttendees = ({
     },
     {
       name: 'Address',
-      selector: 'addressLine1',
+      selector: 'addressLine',
       sortable: true,
-      maxWidth: '250px'
+      maxWidth: '250px',
+      cell: (row) => {
+        return (
+          <div style={{ color: "#868E96", fontWeight: "400", fontSize: "12px", lineHeight: "18px" }}>
+              {row?.addressLine1 ? row?.addressLine1 : ""} {row?.addressLine2 ? row?.addressLine2 : ""}
+              {row?.city ? row?.city.concat(",") : ""} {row?.state ? row?.state : ""} {row?.country ? row?.country : ""}{" "}
+              {row?.zip ? row?.zip : ""}
+            </div>
+        );
+      }
     },
     {
       name: 'Status',
