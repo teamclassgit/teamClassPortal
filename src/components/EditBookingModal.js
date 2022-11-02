@@ -265,8 +265,6 @@ const EditBookingModal = ({
           instructorName: teamClass.instructorName,
           customerId: currentElement.customerId,
           customerName,
-          instructorId,
-          instructorName,
           eventDate: new Date(),
           eventDurationHours: classVariant.duration ? classVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
@@ -424,8 +422,6 @@ const EditBookingModal = ({
           customerId: currentElement.customerId,
           customerName,
           eventDate: new Date(),
-          instructorId,
-          instructorName,
           eventDurationHours: bookingVariant.duration ? bookingVariant.duration : currentElement.eventDurationHours,
           eventCoordinatorId: coordinatorId,
           attendees: groupSize,
@@ -825,6 +821,7 @@ const EditBookingModal = ({
                   setSelectedVariant(option?.value?.order);
                   setBookingTeamClassId(option.value);
                   setBookingTeamClassName(option.label);
+                  console.log("filteredClass", filteredClass);
                 }}
                 isClearable={false}
               />
