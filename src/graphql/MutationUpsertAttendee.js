@@ -20,7 +20,7 @@ export default gql`
     $updatedAt: DateTime
     $createdAt: DateTime
     $status: String
-    $instructorId: String
+    $instructorOrDistributorId: String
     $statusNotes: String
   ) {
     upsertOneAttendee(
@@ -44,7 +44,7 @@ export default gql`
         updatedAt: $updatedAt
         createdAt: $createdAt
         status: $status
-        instructorId: $instructorId
+        instructorOrDistributorId: $instructorOrDistributorId
         statusNotes: $statusNotes
       }
     ) {
@@ -70,7 +70,7 @@ export default gql`
       updatedAt
       createdAt
       status
-      instructorId
+      instructorOrDistributorId
       statusNotes
     }
   }

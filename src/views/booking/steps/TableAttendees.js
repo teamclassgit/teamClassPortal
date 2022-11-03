@@ -184,6 +184,7 @@ const DataTableAttendees = ({
 
         const attendeesArray = [];
         const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country', 'Status'];
+        const templateHeaders = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country'];
         fields.forEach((dynamicField) => headers.push(dynamicField.label));
         teamClassInfo.variants.map((item) => {
           if (item.kitHasAlcohol) headers.push('Delivery Restriction');
@@ -212,7 +213,7 @@ const DataTableAttendees = ({
           attendeesArray.push(row);
         }
 
-        setExcelHeadersTemplate([headers]);
+        setExcelHeadersTemplate([templateHeaders]);
         setAttendeesExcelTable(attendeesArray);
       }
     }

@@ -29,7 +29,7 @@ export default gql`
       updatedAt
       createdAt
       status
-      instructorId
+      instructorOrDistributorId
       statusNotes
     }
   }
