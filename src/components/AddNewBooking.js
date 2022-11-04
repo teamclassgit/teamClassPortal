@@ -495,7 +495,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
             className="international-attendee-switch"
             id="exampleCustomSwitch"
             name="customSwitch"
-            label="International Attendees?"
+            label="International attendees?"
             inline
             value={hasInternationalAttendees}
             checked={hasInternationalAttendees}
