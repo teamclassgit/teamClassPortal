@@ -258,7 +258,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                   id="email"
                   placeholder="Email *"
                   value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
+                  onChange={(e) => setNewEmail(e.target.value.toLowerCase())}
                   invalid={!emailValid}
                   onBlur={(e) => {
                     emailValidation(e.target.value);
