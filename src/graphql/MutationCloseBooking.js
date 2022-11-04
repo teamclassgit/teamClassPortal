@@ -35,6 +35,7 @@ export default gql`
     $shippingTrackingLink: String
     $distributorId: String
     $distributorId_unset: Boolean
+    $hasInternationalAttendees: Boolean
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -104,6 +105,7 @@ export default gql`
         distributorId: $distributorId
         distributorId_unset: $distributorId_unset
         addons: $addons
+        hasInternationalAttendees: $hasInternationalAttendees
       }
     ) {
       _id
@@ -125,6 +127,7 @@ export default gql`
       eventLink
       signUpStatusLink
       checkoutLink
+      hasInternationalAttendees
       taxExempt
       distributorId
       payments {

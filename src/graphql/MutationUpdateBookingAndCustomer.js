@@ -35,6 +35,7 @@ export default gql`
     $distributorId_unset: Boolean
     $additionalClassOptions: [BookingAdditionalClassOptionUpdateInput]
     $tags: [String]
+    $hasInternationalAttendees: Boolean
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -104,6 +105,7 @@ export default gql`
         additionalClassOptions: $additionalClassOptions
         tags: $tags
         addons: $addons
+        hasInternationalAttendees: $hasInternationalAttendees
       }
     ) {
       _id
@@ -127,6 +129,7 @@ export default gql`
       checkoutLink
       taxExempt
       distributorId
+      hasInternationalAttendees
       tags
       payments {
         amount

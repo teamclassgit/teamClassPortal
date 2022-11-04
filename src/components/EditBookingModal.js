@@ -120,6 +120,7 @@ const EditBookingModal = ({
   const [updateOpenBooking] = useMutation(mutationOpenBooking, {});
   const [updateCloseBooking] = useMutation(mutationCloseBooking, {});
   const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation, {});
+  const [hasInternationalAttendees, setHasInternationalAttendees] = useState(false);
 
   useQuery(QueryInstructorTeamMemberById, {
     fetchPolicy: 'cache-and-network',
@@ -190,6 +191,7 @@ const EditBookingModal = ({
     }
     setUpgrades(currentElement?.addons || []);
     setClassUpgrades(filteredClass?.addons || []);
+    setHasInternationalAttendees(currentElement?.hasInternationalAttendees);
   }, [currentElement]);
 
   useEffect(() => {
@@ -290,7 +292,8 @@ const EditBookingModal = ({
           distributorId,
           distributorId_unset: distributorId || distributorId === '' ? false : true,
           additionalClassOptions: classOptionsTags,
-          tags: bookingTags
+          tags: bookingTags,
+          hasInternationalAttendees
         }
       });
 
@@ -444,7 +447,8 @@ const EditBookingModal = ({
           distributorId,
           distributorId_unset: distributorId || distributorId === '' ? false : true,
           additionalClassOptions: classOptionsTags,
-          tags: bookingTags
+          tags: bookingTags,
+          hasInternationalAttendees
         }
       });
 
@@ -975,6 +979,22 @@ const EditBookingModal = ({
             )}
             {!(currentElement.status === BOOKING_CLOSED_STATUS) && (
               <>
+                <FormGroup>
+                  <CustomInput
+                    type="switch"
+                    className="edit-booking-switch"
+                    id="internationalAttendeeSwitch"
+                    name="internationalAttendeeSwitch"
+                    label="Has international attendee?"
+                    disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
+                    inline
+                    value={hasInternationalAttendees}
+                    checked={hasInternationalAttendees}
+                    onChange={(e) => {
+                      setHasInternationalAttendees(!hasInternationalAttendees);
+                    }}
+                  />
+                </FormGroup>
                 <FormGroup>
                   <CustomInput
                     type="switch"
