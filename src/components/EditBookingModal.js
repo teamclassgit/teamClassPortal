@@ -292,7 +292,8 @@ const EditBookingModal = ({
           distributorId,
           distributorId_unset: distributorId || distributorId === '' ? false : true,
           additionalClassOptions: classOptionsTags,
-          tags: bookingTags
+          tags: bookingTags,
+          hasInternationalAttendees
         }
       });
 
