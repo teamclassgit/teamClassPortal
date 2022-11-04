@@ -32,6 +32,7 @@ export default gql`
     $closedReason: String
     $distributorId: String
     $utm_source: String
+    $hasInternationalAttendees: Boolean
   ) {
     upsertOneCustomer(
       query: { _id: $customerId }
@@ -90,6 +91,7 @@ export default gql`
         closedReason: $closedReason
         distributorId: $distributorId
         utm_source: $utm_source
+        hasInternationalAttendees: $hasInternationalAttendees
       }
     ) {
       _id
@@ -113,6 +115,7 @@ export default gql`
       checkoutLink
       taxExempt
       distributorId
+      hasInternationalAttendees
       payments {
         amount
         paymentId

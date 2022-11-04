@@ -6,7 +6,7 @@ import { Mail, Phone, User, X, Briefcase } from 'react-feather';
 import { selectThemeColors } from '@utils';
 import { useMutation } from '@apollo/client';
 import { v4 as uuid } from 'uuid';
-import { Alert, Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { Alert, Button, CustomInput, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
 
 // @styles
 import '@styles/react/libs/flatpickr/flatpickr.scss';
@@ -39,6 +39,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
   const [warning, setWarning] = useState({ open: false, message: '' });
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [distributorId, setDistributorId] = useState(null);
+  const [hasInternationalAttendee, setHasInternationalAttendee] = useState(false);
 
   const options = { phone: true, phoneRegionCode: 'US' };
 
@@ -141,7 +142,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           billingAddress: customer ? customer.billingAddress : null,
           company: customer ? customer.company : newCompany,
           distributorId,
-          utm_source: 'opsPortal'
+          utm_source: 'opsPortal',
+          hasInternationalAttendee
         }
       });
 
@@ -487,6 +489,21 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
             </InputGroup>
           </FormGroup>
         )}
+        <FormGroup className="my-2">
+          <CustomInput
+            type="switch"
+            className="international-attendee-switch"
+            id="exampleCustomSwitch"
+            name="customSwitch"
+            label="International Attendee?"
+            inline
+            value={hasInternationalAttendee}
+            checked={hasInternationalAttendee}
+            onChange={(e) => {
+              setHasInternationalAttendee(!hasInternationalAttendee);
+            }}
+          />
+        </FormGroup>
         <div align="center">
           <Button
             className="mr-1"
