@@ -985,7 +985,7 @@ const EditBookingModal = ({
                     className="edit-booking-switch"
                     id="internationalAttendeeSwitch"
                     name="internationalAttendeeSwitch"
-                    label="Has international attendee?"
+                    label="International attendee?"
                     disabled={currentElement.status === BOOKING_CLOSED_STATUS ? true : false}
                     inline
                     value={hasInternationalAttendees}
