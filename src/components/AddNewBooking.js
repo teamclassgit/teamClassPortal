@@ -39,7 +39,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
   const [warning, setWarning] = useState({ open: false, message: '' });
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [distributorId, setDistributorId] = useState(null);
-  const [hasInternationalAttendee, setHasInternationalAttendee] = useState(false);
+  const [hasInternationalAttendees, setHasInternationalAttendees] = useState(false);
 
   const options = { phone: true, phoneRegionCode: 'US' };
 
@@ -143,7 +143,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           company: customer ? customer.company : newCompany,
           distributorId,
           utm_source: 'opsPortal',
-          hasInternationalAttendee
+          hasInternationalAttendees
         }
       });
 
@@ -495,12 +495,12 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
             className="international-attendee-switch"
             id="exampleCustomSwitch"
             name="customSwitch"
-            label="International Attendee?"
+            label="International Attendees?"
             inline
-            value={hasInternationalAttendee}
-            checked={hasInternationalAttendee}
+            value={hasInternationalAttendees}
+            checked={hasInternationalAttendees}
             onChange={(e) => {
-              setHasInternationalAttendee(!hasInternationalAttendee);
+              setHasInternationalAttendees(!hasInternationalAttendees);
             }}
           />
         </FormGroup>
