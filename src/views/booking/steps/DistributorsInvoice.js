@@ -284,7 +284,7 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
                         <Input type="number" name="units" id="units" disabled placeholder="Unit" value={invoice.units} />
                       </Col>
                       <Col lg={3} className="d-flex justify-content-center pop-up-target-total-row">
-                        <span>{`$${invoice.price * invoice.units}`}</span>
+                        <span>{`$${(invoice.price * invoice.units).toFixed(2)}`}</span>
                       </Col>
                     </Row>
                   );
