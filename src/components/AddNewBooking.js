@@ -108,6 +108,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
       let membershipDiscount = undefined;
       if (customer) {
         membershipDiscount = await getUserMembershipDataByEmail(customer.email);
+      } else {
+        membershipDiscount = await getUserMembershipDataByEmail(newEmail);
       }
 
       const bookingVariant = {...classVariant};
