@@ -51,7 +51,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
           updatedAt,
           createdAt,
           status,
-          instructorId,
+          instructorOrDistributorId,
           statusNotes
         } = fileData[i];
         const newAttendee = {
@@ -70,7 +70,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
           updatedAt,
           createdAt,
           status,
-          instructorId,
+          instructorOrDistributorId,
           statusNotes,
           additionalFields: []
         };
@@ -78,7 +78,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
         newAttendee.updatedAt = new Date();
         newAttendee.createdAt = new Date();
         newAttendee.status = 'confirmed';
-        newAttendee.instructorId = booking?.instructorId;
+        newAttendee.instructorOrDistributorId = booking?.instructorOrDistributorId;
         newAttendee.statusNotes = '';
         for (const dynamicField in teamClassInfo.registrationFields) {
           newAttendee.additionalFields.push({

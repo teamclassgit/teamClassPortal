@@ -222,7 +222,7 @@ const AddNewAttendee = ({
         updatedAt: new Date(),
         createdAt: createdAt || new Date(),
         status: status || 'confirmed',
-        instructorId: booking?.instructorId,
+        instructorOrDistributorId: booking?.distributorId ? booking?.distributorId : booking?.instructorId,
         statusNotes: statusNotes || ''
       };
 
@@ -261,7 +261,7 @@ const AddNewAttendee = ({
       setAdditionalCost(currentElement.additionalCost);
       setCreatedAt(currentElement.createdAt);
       setStatus(currentElement.status);
-      setInstructorId(currentElement.instructorId);
+      setInstructorId(currentElement.instructorOrDistributorId);
       setStatusNotes(currentElement.statusNotes);
     }
   }, [currentElement]);
