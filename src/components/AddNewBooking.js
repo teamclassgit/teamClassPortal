@@ -94,8 +94,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
 
     try {
       let customer = undefined;
+      let emailMembership = newEmail;
       if (isOldCustomer && selectedCustomer) {
         customer = customers.find((element) => element._id === selectedCustomer);
+        emailMembership = customer.email;
       } else if (customers.find((element) => element.email.toLowerCase() === newEmail.toLowerCase())) {
         setWarning({
           open: true,
@@ -105,15 +107,9 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
         return;
       }
 
-      let membershipDiscount = undefined;
-      if (customer) {
-        membershipDiscount = await getUserMembershipDataByEmail(customer.email);
-      } else {
-        membershipDiscount = await getUserMembershipDataByEmail(newEmail);
-      }
+      const membershipDiscount = await getUserMembershipDataByEmail(emailMembership);
 
       const bookingVariant = {...classVariant};
-
       if (!bookingVariant.groupEvent) {
         const byPersonPrices = calculateVariantPrice(bookingVariant, newAttendees);
         bookingVariant.pricePerson = byPersonPrices.price;
