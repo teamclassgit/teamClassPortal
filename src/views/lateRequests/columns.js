@@ -2,6 +2,7 @@
 import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
 import Avatar from '@components/avatar';
 import { Badge } from 'reactstrap';
+import CopyClipboard from '../../components/CopyClipboard';
 
 const cellSize = {
   minHeight: 50,
@@ -17,7 +18,12 @@ const columns = [
     defaultFlex: 2,
     filterEditor: StringFilter,
     render: ({value}) => (
-      <span className="d-block font-weight-bold text-truncate">{value}</span>
+      <span className="d-block font-weight-bold text-truncate">
+        { value }
+        <span className='ml-1'>
+          <CopyClipboard text={value}></CopyClipboard>
+        </span>
+      </span>
     )
   },
   {
