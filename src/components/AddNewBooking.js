@@ -105,7 +105,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
         return;
       }
 
-      const membershipDiscount = undefined;
+      let membershipDiscount = undefined;
       if (customer) {
         membershipDiscount = await getUserMembershipDataByEmail(customer.email);
       }
