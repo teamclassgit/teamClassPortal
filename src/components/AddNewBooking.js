@@ -16,7 +16,7 @@ import 'cleave.js/dist/addons/cleave-phone.us';
 import mutationNewBooking from '../graphql/MutationInsertBookingAndCustomer';
 import { BOOKING_QUOTE_STATUS, SALES_TAX, SALES_TAX_STATE, SERVICE_FEE } from '../utility/Constants';
 import { isValidEmail, getUserData } from '../utility/Utils';
-import { calculateVariantPrice } from '../services/BookingService';
+import { calculateVariantPrice, getUserMembershipDataByEmail } from '../services/BookingService';
 
 const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleModal, open, onAddCompleted }) => {
   const [attendeesValid, setAttendeesValid] = useState(true);
@@ -105,6 +105,11 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
         return;
       }
 
+      const membershipDiscount = undefined;
+      if (customer) {
+        membershipDiscount = await getUserMembershipDataByEmail(customer.email);
+      }
+
       const bookingVariant = {...classVariant};
 
       if (!bookingVariant.groupEvent) {
@@ -143,7 +148,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           company: customer ? customer.company : newCompany,
           distributorId,
           utm_source: 'opsPortal',
-          hasInternationalAttendees
+          hasInternationalAttendees,
+          membershipDiscount: membershipDiscount?.active ? membershipDiscount.discount : 0
         }
       });
 
