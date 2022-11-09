@@ -39,7 +39,3 @@ export default gql`
   }
 `;
 
-
-// "query": {
-//   "status_ne": "confirmed"
-// },
