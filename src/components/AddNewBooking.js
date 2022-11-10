@@ -16,7 +16,7 @@ import 'cleave.js/dist/addons/cleave-phone.us';
 import mutationNewBooking from '../graphql/MutationInsertBookingAndCustomer';
 import { BOOKING_QUOTE_STATUS, SALES_TAX, SALES_TAX_STATE, SERVICE_FEE } from '../utility/Constants';
 import { isValidEmail, getUserData } from '../utility/Utils';
-import { calculateVariantPrice } from '../services/BookingService';
+import { calculateVariantPrice, getUserMembershipDataByEmail } from '../services/BookingService';
 
 const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleModal, open, onAddCompleted }) => {
   const [attendeesValid, setAttendeesValid] = useState(true);
@@ -94,8 +94,10 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
 
     try {
       let customer = undefined;
+      let emailMembership = newEmail;
       if (isOldCustomer && selectedCustomer) {
         customer = customers.find((element) => element._id === selectedCustomer);
+        emailMembership = customer.email;
       } else if (customers.find((element) => element.email.toLowerCase() === newEmail.toLowerCase())) {
         setWarning({
           open: true,
@@ -105,8 +107,9 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
         return;
       }
 
-      const bookingVariant = {...classVariant};
+      const membershipDiscount = await getUserMembershipDataByEmail(emailMembership);
 
+      const bookingVariant = {...classVariant};
       if (!bookingVariant.groupEvent) {
         const byPersonPrices = calculateVariantPrice(bookingVariant, newAttendees);
         bookingVariant.pricePerson = byPersonPrices.price;
@@ -143,7 +146,8 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           company: customer ? customer.company : newCompany,
           distributorId,
           utm_source: 'opsPortal',
-          hasInternationalAttendees
+          hasInternationalAttendees,
+          membershipDiscount: membershipDiscount?.active ? membershipDiscount.discount : 0
         }
       });
 

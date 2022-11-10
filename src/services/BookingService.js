@@ -2,6 +2,7 @@ import moment from 'moment';
 import queryGetTotalsUsingFilter from '../graphql/QueryTotalsBookingsUsingFilter';
 import queryGetBookingsWithCriteria from '../graphql/QueryGetBookingsWithCriteria';
 import queryBookingAndCalendarEventById from '../graphql/QueryBookingAndCalendarEventById';
+import queryUserMembershipDataByEmail from '../graphql/QueryMembershipDiscountByEmail';
 import mutationUpdateManyBookings from '../graphql/MutationUpdateManyBookings';
 import queryCustomerById from '../graphql/QueryCustomerById';
 import { CREDIT_CARD_FEE, DEPOSIT, EXPECTED_MARGIN, RUSH_FEE, SALES_TAX } from '../utility/Constants';
@@ -330,4 +331,19 @@ const closeBookingsWithReason = async (bookingsId, closedReason) => {
   });
 };
 
-export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason, calculateVariantPrice };
+const getUserMembershipDataByEmail = async (email) => {
+  
+  if (!email) return null;
+
+  const { data } = await apolloClient.query({
+    query: queryUserMembershipDataByEmail,
+    variables: {
+      email
+    },
+    fetchPolicy: "network-only"
+  });
+
+  return data?.getMembershipInfo;
+};
+
+export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason, calculateVariantPrice, getUserMembershipDataByEmail };

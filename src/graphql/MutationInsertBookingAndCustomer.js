@@ -33,6 +33,7 @@ export default gql`
     $distributorId: String
     $utm_source: String
     $hasInternationalAttendees: Boolean
+    $membershipDiscount: Float
   ) {
     upsertOneCustomer(
       query: { _id: $customerId }
@@ -92,6 +93,7 @@ export default gql`
         distributorId: $distributorId
         utm_source: $utm_source
         hasInternationalAttendees: $hasInternationalAttendees
+        membershipDiscount: $membershipDiscount
       }
     ) {
       _id
@@ -116,6 +118,7 @@ export default gql`
       taxExempt
       distributorId
       hasInternationalAttendees
+      membershipDiscount
       payments {
         amount
         paymentId
