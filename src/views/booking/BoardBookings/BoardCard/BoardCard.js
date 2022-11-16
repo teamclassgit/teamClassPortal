@@ -22,36 +22,37 @@ import { getBookingAndCalendarEventById } from '../../../../services/BookingServ
 const BoardCard = ({
   handleEditModal,
   content: {
-    customerName,
     _id,
+    addons,
     attendees,
-    classVariant,
-    classId,
-    createdAt,
-    updatedAt,
-    status,
-    className,
-    customerEmail,
-    customerPhone,
-    customerCompany,
-    eventDateTime,
-    timezone,
-    timezoneLabel,
-    rescheduleDateTime,
-    customerId,
-    eventCoordinatorName,
+    bookingTags,
     capRegistration,
+    classId,
+    className,
+    classVariant,
+    closedReason,
+    createdAt,
+    customerCompany,
+    customerEmail,
+    customerId,
+    customerName,
+    customerPhone,
+    customerTags,
+    eventCoordinatorId,
+    eventCoordinatorName,
+    eventDateTime,
     eventDateTimeStatus,
     hasInternationalAttendees,
-    payments,
-    eventCoordinatorId,
-    signUpDeadline,
-    closedReason,
-    totalInvoice,
-    shippingTrackingLink,
     joinInfo,
-    customerTags,
-    bookingTags
+    payments,
+    rescheduleDateTime,
+    shippingTrackingLink,
+    signUpDeadline,
+    status,
+    timezone,
+    timezoneLabel,
+    totalInvoice,
+    updatedAt
   }
 }) => {
   const [date, setDate] = useState(null);
@@ -64,7 +65,7 @@ const BoardCard = ({
   const [showAlertEventPayment, setShowAlertEventPayment] = useState(null);
 
   const history = useHistory();
-  
+
   useEffect(() => {
     const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
     const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
@@ -189,6 +190,12 @@ const BoardCard = ({
                 <th className="font-weight-normal small">Option</th>
                 <td className="text-right small">{classVariant && classVariant.title}</td>
               </tr>
+              {addons && addons.length > 0 && (
+                <tr>
+                  <th className="font-weight-normal small">Upgrades</th>
+                  <td className="text-right small">{addons.map(({name}) => name).join(", ")}</td>
+                </tr>
+              )}
               <tr>
                 <th className="font-weight-normal small">Total</th>
                 <td className="text-right small align-top">~ ${totalInvoice.toFixed(2)}</td>
