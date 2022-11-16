@@ -99,6 +99,9 @@ export default gql`
           manualLink
           password
         }
+        addons {
+          name
+        }
         totalInstructorInvoice
         instructorInvoiceStatus
         totalDistributorInvoice
