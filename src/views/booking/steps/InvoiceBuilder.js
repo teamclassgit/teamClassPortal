@@ -2,9 +2,10 @@ import React, { Fragment } from 'react';
 import NumberInput from '@components/number-input';
 import { DollarSign, MinusCircle, PlusCircle } from 'react-feather';
 import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, RUSH_FEE, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
-import { Alert, Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText, InputGroup } from 'reactstrap';
+import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText } from 'reactstrap';
 import { useMutation } from '@apollo/client';
 import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
+import { calculateVariantPrice } from '../../../services/BookingService';
 import Avatar from '@components/avatar';
 import moment from 'moment';
 
@@ -133,7 +134,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           classMinimum,
           rushFeeValue: RUSH_FEE,
           classVariant: classVariantChanges,
-          salesTax: taxExempt ? 0 : booking.salesTax > 0 ? booking.salesTax : SALES_TAX,
+          salesTax: booking.salesTax ?? SALES_TAX,
           salesTaxState: taxExempt ? '' : booking.salesTax > 0 && booking.salesTaxState ? booking.salesTaxState : SALES_TAX_STATE,
           updatedAt: new Date()
         }
@@ -151,6 +152,17 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       setProcessing(false);
     }
   };
+
+  const onChangeUnits = (element, newValue, index) => {
+    element.units = newValue;
+    //price x attendees row
+    if (index === 1) {
+      element.unitPrice = calculateVariantPrice(booking.classVariant, newValue)?.price || element.unitPrice;
+    }
+    const newInvoiceItems = [...invoiceItems];
+    newInvoiceItems.splice(index, 1, element);
+    setInvoiceItems(newInvoiceItems);
+  }
 
   return (
     <Fragment>
@@ -264,12 +276,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                         className="w-50"
                         disabled={!element.unitsEditable}
                         required={true}
-                        onChange={(newValue) => {
-                          element.units = newValue;
-                          const newInvoiceItems = [...invoiceItems];
-                          newInvoiceItems.splice(index, 1, element);
-                          setInvoiceItems(newInvoiceItems);
-                        }}
+                        onChange={(newValue) => onChangeUnits(element, newValue, index)}
                       />
                     </td>
                     <td align="center">
