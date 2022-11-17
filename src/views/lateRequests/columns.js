@@ -1,8 +1,10 @@
 // @packages
 import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
+import SelectFilter from '@inovua/reactdatagrid-community/SelectFilter';
 import Avatar from '@components/avatar';
 import { Badge } from 'reactstrap';
 import CopyClipboard from '../../components/CopyClipboard';
+import moment from 'moment';
 
 const cellSize = {
   minHeight: 50,
@@ -27,10 +29,33 @@ const columns = [
     )
   },
   {
+    name: 'updatedAt',
+    header: 'Updated',
+    type: 'string',
+    defaultFlex: 1,
+    render: ({ value }) => {
+      return moment(value).calendar(null, {
+        lastDay: '[Yesterday]',
+        sameDay: 'LT',
+        lastWeek: 'dddd',
+        sameElse: 'MMMM Do, YYYY'
+      });
+    }
+  },
+  {
     name: 'status',
     header: 'Status',
     type: 'string',
     defaultWidth: 200,
+    filterEditor: SelectFilter,
+    filterEditorProps: {
+      placeholder: 'All',
+      dataSource: [
+        {id: "pending", label: "Pending"},
+        {id: "rejected", label: "Rejected"},
+        {id: "accepted", label: "Accepted"}
+      ]
+    },
     render : ({value, cellProps}) => (
       <span>
         <Badge color={

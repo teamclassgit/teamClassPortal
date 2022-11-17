@@ -1,5 +1,5 @@
 // @packages
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Badge, DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown } from 'reactstrap';
 import { FileText, Share } from 'react-feather';
@@ -22,23 +22,26 @@ const gridStyle = { minHeight: 650, marginTop: 10 };
 const LateRequests = () => {
   const skin = useSelector((state) => state.bookingsBackground);
   const [dataSourceAttendees, setDataSourceAttendees] = useState([]);
+  const [dataAllAttendees, setDataAllAttendees] = useState([]);
   const [attendeesToExcelTable, setAttendeesToExcelTable] = useState([]);
   const [filterValue, setFilterValue] = useState([
     { name: 'bookingId', operator: 'startsWith', type: 'string', value: '' },
-    { name: 'name', operator: 'startsWith', type: 'string', value: '' },
-    { name: 'status', operator: 'startsWith', type: 'string', value: '' }
+    { name: 'status', operator: 'eq', type: 'select', value: '' },
+    { name: 'name', operator: 'startsWith', type: 'string', value: '' }
   ]);
 
   const { loading } = useQuery(queryAllAttendees, {
     fetchPolicy: 'cache-and-network',
     variables: {
       query: {
-        status_ne: "confirmed"
-      }
+        status_ne : "confirmed",
+        status_exists : true
+      },
+      sortBy: "UPDATEDAT_DESC"
     },
     onCompleted: (data) => {
       if (data?.attendees) {
-        setDataSourceAttendees(data?.attendees);
+        setDataAllAttendees(data?.attendees);
       }
     }
   });
@@ -83,11 +86,36 @@ const LateRequests = () => {
     }
   }, [dataSourceAttendees]);
 
+  const filteredByBookigId = (attendees) => {
+    return attendees.filter(({bookingId}) => bookingId.includes(filterValue[0].value));
+  };
+
+  const filteredByStatus = (attendees) => {
+    if (filterValue[1].value === null) {
+      return attendees.filter(({status}) => status.includes(""));
+    }
+    return attendees.filter(({status}) => status.includes(filterValue[1].value));
+  };
+
+  const filteredByName = (attendees) => {
+    return attendees.filter(({name}) => name.toLowerCase().includes(filterValue[2].value.toLowerCase()));
+  };
+
+  useEffect(() => {
+    let filteredAttendees = [...dataAllAttendees] || [];
+
+    filteredAttendees = filteredByBookigId(filteredAttendees);
+    filteredAttendees = filteredByStatus(filteredAttendees);
+    filteredAttendees = filteredByName(filteredAttendees);
+    setDataSourceAttendees(filteredAttendees);
+
+  }, [filterValue, dataAllAttendees]);
+
   return (
     <>
       <div className="d-flex justify-content-between mb-2">
         <h4>
-          All Attendees
+          Late requests
           <Badge color="primary" className='ml-1'>{dataSourceAttendees.length}</Badge>
         </h4>
         <UncontrolledButtonDropdown>
@@ -115,8 +143,8 @@ const LateRequests = () => {
         columns={columns}
         loading={loading}
         style={gridStyle}
-        defaultFilterValue={filterValue}
         onFilterValueChange={setFilterValue}
+        filterValue={filterValue}
         dataSource={dataSourceAttendees}
         licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
         minRowHeight={50}
