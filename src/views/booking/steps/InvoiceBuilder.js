@@ -135,7 +135,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           rushFeeValue: RUSH_FEE,
           classVariant: classVariantChanges,
           salesTax: booking.salesTax ?? SALES_TAX,
-          salesTaxState: taxExempt ? '' : booking.salesTax > 0 && booking.salesTaxState ? booking.salesTaxState : SALES_TAX_STATE,
+          salesTaxState: booking.salesTaxState ?? SALES_TAX_STATE,
           updatedAt: new Date()
         }
       });
