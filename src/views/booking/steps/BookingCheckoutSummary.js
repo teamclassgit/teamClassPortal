@@ -205,7 +205,7 @@ const BookingCheckoutSummary = ({
                   <td className="text-right pt-1 text-sm">${totalRushFee}</td>
                 </tr>
               )}
-              {tax > 0 ? (
+              {tax > 0 && totalTax > 0 ? (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">Sales Tax ({(tax * 100).toFixed(2)}%)</th>
                   <td className="text-right pt-1 text-sm">${totalTax}</td>
