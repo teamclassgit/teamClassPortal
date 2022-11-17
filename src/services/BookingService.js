@@ -29,6 +29,8 @@ const calculateVariantPrice = (classVariant, attendees) => {
 const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardFeeIncluded = false) => {
   const minimum = bookingInfo.classVariant ? bookingInfo.classVariant.minimum : bookingInfo.classMinimum;
 
+  salesTax = bookingInfo.taxExempt ? 0 : salesTax;
+
   //pricePerson is currently in use for group based pricing too
   let price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
 
