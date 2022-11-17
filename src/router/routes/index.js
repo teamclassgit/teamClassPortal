@@ -54,6 +54,10 @@ const Routes = [
     component: lazy(() => import('../../views/listingPrices/ListingPricesList'))
   },
   {
+    path: '/lateRequests',
+    component: lazy(() => import('../../views/lateRequests/LateRequests'))
+  },
+  {
     path: '/login',
     component: lazy(() => import('../../views/Login')),
     layout: 'BlankLayout',
