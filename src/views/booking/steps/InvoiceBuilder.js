@@ -162,7 +162,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
     const newInvoiceItems = [...invoiceItems];
     newInvoiceItems.splice(index, 1, element);
     setInvoiceItems(newInvoiceItems);
-  }
+  };
 
   return (
     <Fragment>
