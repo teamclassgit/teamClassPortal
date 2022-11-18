@@ -22,5 +22,9 @@
   {
     "label": "Test",
     "value": "Test"
+  },
+  {
+    "label": "Postponed",
+    "value": "Postponed"
   }
 ]

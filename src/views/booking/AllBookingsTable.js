@@ -992,6 +992,13 @@ const AllBookingsTable = () => {
           setClosedReason('Test');
           toggle();
         }
+      },
+      {
+        label: 'Postponed',
+        onClick: () => {
+          setClosedReason('Postponed');
+          toggle();
+        }
       }
     ];
   };
