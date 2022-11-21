@@ -53,7 +53,8 @@ const columns = [
       dataSource: [
         {id: "pending", label: "Pending"},
         {id: "rejected", label: "Rejected"},
-        {id: "accepted", label: "Accepted"}
+        {id: "accepted", label: "Accepted"},
+        {id: "confirmed", label: "Confirmed"}
       ]
     },
     render : ({value, cellProps}) => (
@@ -63,7 +64,9 @@ const columns = [
             ? "secondary"
               : cellProps.data?.status === "rejected"
                 ? "danger"
-                  : "primary"
+                  : cellProps.data?.status === "confirmed"
+                    ? "success"
+                      : "primary"
         }
         className="py-1"
         style={{borderRadius: "10px"}}>
@@ -100,6 +103,19 @@ const columns = [
     type: 'string',
     defaultFlex: 1,
     render: ({value}) => <span>{value}</span>
+  },
+  {
+    name: 'additionalCost',
+    header: 'Additional Cost',
+    type: 'number',
+    defaultFlex: 1,
+    render: ({value}) => {
+      if (!value) {
+        return <span className="float-right">{"0.00"}</span>;
+      } else {
+        return <span className="float-right">{value?.toFixed(2)}</span>;
+      }
+    }
   },
   {
     name: 'address',
