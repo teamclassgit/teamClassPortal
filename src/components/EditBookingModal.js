@@ -572,7 +572,11 @@ const EditBookingModal = ({
     { value: 'spam', label: 'Spam' },
     { value: 'drift', label: 'Drift' },
     { value: 'referral', label: 'Referral' },
-    { value: 'repeat', label: 'Repeat' }
+    { value: 'repeat', label: 'Repeat' },
+    { value: 'demo event', label: 'Demo Event' },
+    { value: 'newsletter', label: 'Newsletter' },
+    { value: 'outbound email', label: 'Outbound Email' }
+
   ];
 
   const handleUpdateSharedNote = async (index) => {
