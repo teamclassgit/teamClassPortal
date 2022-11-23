@@ -1,15 +1,12 @@
 // @packages
-import { ApolloProvider } from '@apollo/client';
-import Amplify from 'aws-amplify';
+import { ApolloProvider } from "@apollo/client";
 // @scripts
-import { apolloClient } from './utility/RealmApolloClient';
-import Router from './router/Router';
-import TwilioClientContextProvider from './context/TwilioContext/TwilioContext';
-import { getUserData } from './utility/Utils';
-import AppSyncConfig from './aws-exports';
+import { apolloClient } from "./utility/RealmApolloClient";
+import Router from "./router/Router";
+import TwilioClientContextProvider from "./context/TwilioContext/TwilioContext";
+import { getUserData } from "./utility/Utils";
 
 const App = (props) => {
-  Amplify.configure(AppSyncConfig);
   return (
     <ApolloProvider client={apolloClient}>
       <TwilioClientContextProvider userData={getUserData()?.customData}>
