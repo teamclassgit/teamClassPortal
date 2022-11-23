@@ -41,7 +41,22 @@ const LateRequests = () => {
     },
     onCompleted: (data) => {
       if (data?.attendees) {
-        setDataAllAttendees(data?.attendees);
+        setDataAllAttendees([...dataAllAttendees, ...data?.attendees]);
+      }
+    }
+  });
+
+  useQuery(queryAllAttendees, {
+    variables: {
+      query: {
+        lateRegistrationAnswerDate_exists: true,
+        status: "confirmed"
+      },
+      sortBy: "UPDATEDAT_DESC"
+    },
+    onCompleted: (data) => {
+      if (data?.attendees) {
+        setDataAllAttendees([...dataAllAttendees, ...data?.attendees]);
       }
     }
   });
@@ -102,6 +117,7 @@ const LateRequests = () => {
   };
 
   useEffect(() => {
+
     let filteredAttendees = [...dataAllAttendees] || [];
 
     filteredAttendees = filteredByBookigId(filteredAttendees);
