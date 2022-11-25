@@ -568,15 +568,13 @@ const EditBookingModal = ({
   };
 
   const tagsList = [
-    { value: 'manual', label: 'Manual' },
-    { value: 'spam', label: 'Spam' },
-    { value: 'drift', label: 'Drift' },
-    { value: 'referral', label: 'Referral' },
-    { value: 'repeat', label: 'Repeat' },
+    { value: 'spam', label: 'Manual (spam)' },
+    { value: 'drift', label: 'Manual (drift)' },
+    { value: 'referral', label: 'Manual (referral)' },
+    { value: 'repeat', label: 'Manual (repeat)' },
     { value: 'demo event', label: 'Demo Event' },
     { value: 'newsletter', label: 'Newsletter' },
     { value: 'outbound email', label: 'Outbound Email' }
-
   ];
 
   const handleUpdateSharedNote = async (index) => {
