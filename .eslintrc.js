@@ -61,6 +61,7 @@ module.exports = {
       "error",
       { properties: "never", ignoreDestructuring: true, ignoreImports: true }
     ],
+    quotes: ["error", "double", { avoidEscape: true }],
     eqeqeq: "error",
     indent: "off",
     semi: "error"

@@ -1,10 +1,8 @@
 // @packages
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   Button,
-  Card,
-  CardBody,
   CustomInput,
   FormGroup,
   Input,
@@ -20,40 +18,39 @@ import {
   NavLink,
   TabContent,
   TabPane
-} from 'reactstrap';
-import Cleave from 'cleave.js/react';
-import Flatpickr from 'react-flatpickr';
-import Select from 'react-select';
-import classnames from 'classnames';
-import moment from 'moment';
-import { useQuery, useMutation } from '@apollo/client';
-import { Mail, Phone, User, X, Briefcase, Info, Settings, Video, Key, Truck, List, CornerUpRight, MessageSquare, Users } from 'react-feather';
+} from "reactstrap";
+import Cleave from "cleave.js/react";
+import Flatpickr from "react-flatpickr";
+import Select from "react-select";
+import { useQuery, useMutation } from "@apollo/client";
+import { Mail, Phone, User, X, Briefcase, Info, Settings, Video, Key, Truck, List, MessageSquare, Users } from "react-feather";
 
 // @scripts
-import closeBookingOptions from './ClosedBookingOptions.json';
-import QueryInstructorTeamMemberById from '../graphql/QueryInstructorTeamMemberById';
-import QueryInstructorById from '../graphql/QueryInstructorById';
-import mutationOpenBooking from '../graphql/MutationOpenBooking';
-import mutationCloseBooking from '../graphql/MutationCloseBooking';
-import mutationUpdateBooking from '../graphql/MutationUpdateBookingAndCustomer';
-import mutationUpdateBookingNotes from '../graphql/MutationUpdateBookingNotes';
-import mutationUpdateCalendarEventByBookindId from '../graphql/MutationUpdateCalendarEventByBookindId';
-import removeCampaignRequestQuoteMutation from '../graphql/email/removeCampaignRequestQuote';
-import sendEmailConferenceLinkChangedByCoordinatorMutation from '../graphql/email/sendEmailConferenceLinkChangedByCoordinator';
-import { getUserData, isValidEmail, isUrlValid } from '../utility/Utils';
-import { selectThemeColors } from '@utils';
+import closeBookingOptions from "./ClosedBookingOptions.json";
+import QueryInstructorTeamMemberById from "../graphql/QueryInstructorTeamMemberById";
+import QueryInstructorById from "../graphql/QueryInstructorById";
+import mutationOpenBooking from "../graphql/MutationOpenBooking";
+import mutationCloseBooking from "../graphql/MutationCloseBooking";
+import mutationUpdateBooking from "../graphql/MutationUpdateBookingAndCustomer";
+import mutationUpdateBookingNotes from "../graphql/MutationUpdateBookingNotes";
+import mutationUpdateCalendarEventByBookindId from "../graphql/MutationUpdateCalendarEventByBookindId";
+import removeCampaignRequestQuoteMutation from "../graphql/email/removeCampaignRequestQuote";
+import sendEmailConferenceLinkChangedByCoordinatorMutation from "../graphql/email/sendEmailConferenceLinkChangedByCoordinator";
+import { getUserData, isValidEmail, isUrlValid } from "../utility/Utils";
+import { selectThemeColors } from "@utils";
 import {
   BOOKING_CLOSED_STATUS,
   BOOKING_DEPOSIT_CONFIRMATION_STATUS,
   BOOKING_PAID_STATUS,
   BOOKING_QUOTE_STATUS,
   DATE_AND_TIME_CANCELED_STATUS
-} from '../utility/Constants';
-import mutationDeleteOneCalendarEventByBookingId from '../graphql/MutationDeleteOneCalendarEventById';
-import { calculateVariantPrice } from '../services/BookingService';
+} from "../utility/Constants";
+import mutationDeleteOneCalendarEventByBookingId from "../graphql/MutationDeleteOneCalendarEventById";
+import { calculateVariantPrice } from "../services/BookingService";
 
 // @styles
-import './EditBookingModal.scss';
+import "./EditBookingModal.scss";
+import Notes from "./molecules/notes";
 
 const EditBookingModal = ({
   currentElement,
@@ -66,7 +63,7 @@ const EditBookingModal = ({
   onEditCompleted,
   allInstructors
 }) => {
-  const [active, setActive] = useState('1');
+  const [active, setActive] = useState("1");
   const [attendeesValid, setAttendeesValid] = useState(true);
   const [bookingNotes, setBookingNotes] = useState([]);
   const [bookingSignUpDeadline, setBookingSignUpDeadline] = useState([]);
@@ -87,7 +84,7 @@ const EditBookingModal = ({
   const [customerPhone, setCustomerPhone] = useState(null);
   const [emailValid, setEmailValid] = useState(true);
   const [groupSize, setGroupSize] = useState(null);
-  const [inputNote, setInputNote] = useState('');
+  const [inputNote, setInputNote] = useState("");
   const [processing, setProcessing] = useState(false);
   const [isCapRegistration, setIsCapRegistration] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -95,15 +92,15 @@ const EditBookingModal = ({
   const [selectedMinimumTier, setSelectedMinimumTier] = React.useState(null);
   const [selectedMaximumTier, setSelectedMaximumTier] = React.useState(null);
   const [distributorId, setDistributorId] = useState(null);
-  const [joinLink, setJoinLink] = useState('');
-  const [passwordLink, setPasswordLink] = useState('');
-  const [trackingLink, setTrackingLink] = useState('');
+  const [joinLink, setJoinLink] = useState("");
+  const [passwordLink, setPasswordLink] = useState("");
+  const [trackingLink, setTrackingLink] = useState("");
   const [isValidUrl, setIsValidUrl] = useState({
     trackingLink: true,
     joinUrl: true
   });
   const [classOptionsTags, setClassOptionsTags] = useState([]);
-  const [individualTag, setIndividualTag] = useState('');
+  const [individualTag, setIndividualTag] = useState("");
   const [isChangingJoinLink, setIsChangingJoinLink] = useState(false);
   const [bookingTags, setBookingTags] = useState([]);
   const [instructor, setInstructor] = useState(null);
@@ -123,7 +120,7 @@ const EditBookingModal = ({
   const [hasInternationalAttendees, setHasInternationalAttendees] = useState(false);
 
   useQuery(QueryInstructorTeamMemberById, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     variables: {
       instructorTeamMemberId: currentElement?.instructorTeamMemberId
     },
@@ -135,7 +132,7 @@ const EditBookingModal = ({
   });
 
   useQuery(QueryInstructorById, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     variables: {
       instructorId: currentElement?.instructorId
     },
@@ -207,7 +204,7 @@ const EditBookingModal = ({
     setIsValidUrl({ ...isValidUrl, [name]: isUrlValid(value) });
   };
 
-  const options = { phone: true, phoneRegionCode: 'US' };
+  const options = { phone: true, phoneRegionCode: "US" };
 
   const cancel = () => {
     setClosedBookingReason(null);
@@ -228,8 +225,8 @@ const EditBookingModal = ({
 
     if (currentPayments && currentPayments.length > 0) {
       const depositPayment =
-        currentPayments && currentPayments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
-      const finalPayment = currentPayments && currentPayments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+        currentPayments && currentPayments.find((element) => element.paymentName === "deposit" && element.status === "succeeded");
+      const finalPayment = currentPayments && currentPayments.find((element) => element.paymentName === "final" && element.status === "succeeded");
       if (finalPayment) {
         return BOOKING_PAID_STATUS;
       } else if (depositPayment) {
@@ -278,7 +275,7 @@ const EditBookingModal = ({
           discount: currentElement.discount,
           createdAt: currentElement.createdAt,
           updatedAt: new Date(),
-          status: 'closed',
+          status: "closed",
           email: customerEmail,
           phone: customerPhone,
           company: customerCompany,
@@ -290,7 +287,7 @@ const EditBookingModal = ({
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId || distributorId === '' ? false : true,
+          distributorId_unset: distributorId || distributorId === "" ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags,
           hasInternationalAttendees
@@ -306,14 +303,14 @@ const EditBookingModal = ({
         const resultEmail = await removeCampaignRequestQuote({
           variables: { customerEmail: customerEmail.toLowerCase() }
         });
-        console.log('Remove campaign before redirecting:', resultEmail);
+        console.log("Remove campaign before redirecting:", resultEmail);
       }
 
       if (
-        closedBookingReason === 'Lost' ||
-        closedBookingReason === 'Duplicated' ||
-        closedBookingReason === 'Mistake' ||
-        closedBookingReason === 'Test'
+        closedBookingReason === "Lost" ||
+        closedBookingReason === "Duplicated" ||
+        closedBookingReason === "Mistake" ||
+        closedBookingReason === "Test"
       ) {
         if (calendarEvent) {
           const resultStatusUpdated = await updateCalendarEventStatus({
@@ -322,13 +319,13 @@ const EditBookingModal = ({
               status: DATE_AND_TIME_CANCELED_STATUS
             }
           });
-          console.log('Changing calendar event status', resultStatusUpdated);
+          console.log("Changing calendar event status", resultStatusUpdated);
         }
       }
 
       onEditCompleted(currentElement._id);
     } catch (ex) {
-      console.log('err', ex);
+      console.log("err", ex);
     }
     setProcessing(false);
     handleModal();
@@ -355,7 +352,7 @@ const EditBookingModal = ({
           instructorId,
           instructorName,
           distributorId,
-          distributorId_unset: distributorId || distributorId === '' ? false : true,
+          distributorId_unset: distributorId || distributorId === "" ? false : true,
           attendees: groupSize,
           addons: upgrades,
           closedReason_unset: true,
@@ -445,7 +442,7 @@ const EditBookingModal = ({
           joinInfo,
           joinInfo_unset: joinInfo ? false : true,
           distributorId,
-          distributorId_unset: distributorId || distributorId === '' ? false : true,
+          distributorId_unset: distributorId || distributorId === "" ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags,
           hasInternationalAttendees
@@ -458,7 +455,7 @@ const EditBookingModal = ({
             bookingId: currentElement._id
           }
         });
-        console.log('Sending join info Email', resultConferenceEmail);
+        console.log("Sending join info Email", resultConferenceEmail);
       }
 
       if (!resultUpdateBooking || !resultUpdateBooking.data) {
@@ -480,7 +477,7 @@ const EditBookingModal = ({
     const newArray = bookingNotes ? [...bookingNotes] : [];
     newArray.unshift({
       note: inputNote,
-      author: (userData && userData.customData && userData.customData['name']) || 'Unknown',
+      author: (userData && userData.customData && userData.customData["name"]) || "Unknown",
       date: new Date()
     });
 
@@ -509,7 +506,7 @@ const EditBookingModal = ({
 
   const onChangeNotes = () => {
     saveNotes();
-    setInputNote('');
+    setInputNote("");
   };
 
   const selectStyles = {
@@ -521,7 +518,7 @@ const EditBookingModal = ({
     }),
     option: (provided) => ({
       ...provided,
-      borderBottom: '1px dotted',
+      borderBottom: "1px dotted",
       padding: 10,
       fontSize: 12
     }),
@@ -540,7 +537,7 @@ const EditBookingModal = ({
     }),
     option: (provided) => ({
       ...provided,
-      borderBottom: '1px dotted',
+      borderBottom: "1px dotted",
       padding: 10,
       fontSize: 12
     }),
@@ -553,8 +550,8 @@ const EditBookingModal = ({
   };
 
   const handleAddition = (e) => {
-    if (e.key === 'Enter') {
-      setIndividualTag('');
+    if (e.key === "Enter") {
+      setIndividualTag("");
       const tag = {
         groupId: e.target.value,
         text: e.target.value
@@ -568,39 +565,15 @@ const EditBookingModal = ({
   };
 
   const tagsList = [
-    { value: 'manual', label: 'Manual' },
-    { value: 'spam', label: 'Spam' },
-    { value: 'drift', label: 'Drift' },
-    { value: 'referral', label: 'Referral' },
-    { value: 'repeat', label: 'Repeat' },
-    { value: 'demo event', label: 'Demo Event' },
-    { value: 'newsletter', label: 'Newsletter' },
-    { value: 'outbound email', label: 'Outbound Email' }
-
+    { value: "manual", label: "Manual" },
+    { value: "spam", label: "Spam" },
+    { value: "drift", label: "Drift" },
+    { value: "referral", label: "Referral" },
+    { value: "repeat", label: "Repeat" },
+    { value: "demo event", label: "Demo Event" },
+    { value: "newsletter", label: "Newsletter" },
+    { value: "outbound email", label: "Outbound Email" }
   ];
-
-  const handleUpdateSharedNote = async (index) => {
-    const updateSharedNote = [...bookingNotes];
-    const note = updateSharedNote[index];
-    const shared = !note?.shared;
-    const sharedNote = {
-      ...note,
-      shared
-    };
-    updateSharedNote[index] = sharedNote;
-    try {
-      await updateBookingNotes({
-        variables: {
-          id: currentElement._id,
-          notes: updateSharedNote,
-          updatedAt: new Date()
-        }
-      });
-      setBookingNotes(updateSharedNote);
-    } catch (ex) {
-      console.log(ex);
-    }
-  };
 
   return (
     <Modal
@@ -620,9 +593,9 @@ const EditBookingModal = ({
         <NavItem>
           <NavLink
             title="Basic information"
-            active={active === '1'}
+            active={active === "1"}
             onClick={() => {
-              toggle('1');
+              toggle("1");
             }}
           >
             <Info size="18" />
@@ -631,21 +604,21 @@ const EditBookingModal = ({
         <NavItem>
           <NavLink
             title="Settings"
-            active={active === '2'}
+            active={active === "2"}
             onClick={() => {
-              toggle('2');
+              toggle("2");
             }}
           >
             <Settings size="18" />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink title="Team member" active={active === '3'} onClick={() => toggle('3')}>
+          <NavLink title="Team member" active={active === "3"} onClick={() => toggle("3")}>
             <Users size="18" />
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink title="Notes" active={active === '4'} onClick={() => toggle('4')}>
+          <NavLink title="Notes" active={active === "4"} onClick={() => toggle("4")}>
             <MessageSquare size="18" />
           </NavLink>
         </NavItem>
@@ -816,7 +789,7 @@ const EditBookingModal = ({
                   })
                 }
                 value={{
-                  value: bookingTeamClassId || '',
+                  value: bookingTeamClassId || "",
                   label: bookingTeamClassName
                 }}
                 onChange={(option) => {
@@ -909,7 +882,7 @@ const EditBookingModal = ({
                 onChange={(option) => {
                   setSelectedVariant(option?.value?.order);
                   setClassVariant(option.value);
-                  setGroupSize('');
+                  setGroupSize("");
                 }}
                 isClearable={false}
               />
@@ -1076,7 +1049,7 @@ const EditBookingModal = ({
 
             {isOpenBookingRequested && (
               <Alert color="danger">
-                <p className='mx-1'>
+                <p className="mx-1">
                   Please confirm event details and class variant.
                 </p>
               </Alert>
@@ -1087,7 +1060,7 @@ const EditBookingModal = ({
                 <Button
                   className="mr-1"
                   size="sm"
-                  color={closedBookingReason ? 'danger' : 'primary'}
+                  color={closedBookingReason ? "danger" : "primary"}
                   onClick={() => {
                     if (closedBookingReason) {
                       closeBooking();
@@ -1107,12 +1080,12 @@ const EditBookingModal = ({
                   }
                 >
                   {!processing && !closedBookingReason
-                    ? 'Save'
+                    ? "Save"
                     : closedBookingReason && processing
-                    ? 'Saving...'
+                    ? "Saving..."
                     : processing
-                    ? 'Saving...'
-                    : 'Close booking?'}
+                    ? "Saving..."
+                    : "Close booking?"}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel
@@ -1124,7 +1097,7 @@ const EditBookingModal = ({
                 <Button
                   className="mr-1"
                   size="sm"
-                  color={(isOpenBookingRequested || processing) ? 'primary' : 'danger'}
+                  color={(isOpenBookingRequested || processing) ? "primary" : "danger"}
                   onClick={() => {
                     if (!isOpenBookingRequested && BOOKING_QUOTE_STATUS === getStatusToReOpenBooking()) {
                       setIsOpenBookingRequested(true);
@@ -1149,7 +1122,7 @@ const EditBookingModal = ({
                     !groupSize
                   }
                 >
-                  {processing ? 'Opening...' : isOpenBookingRequested ? 'Save' : 'Back to open status'}
+                  {processing ? "Opening..." : isOpenBookingRequested ? "Save" : "Back to open status"}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel
@@ -1195,63 +1168,7 @@ const EditBookingModal = ({
           </FormGroup>
         </TabPane>
         <TabPane tabId="4">
-          <b className="text-primary ml-2">Notes</b>
-          <Card className="notes-card mt-1">
-            <CardBody>
-              <ul className="timeline p-0 m-0">
-                {bookingNotes && bookingNotes.length > 0 ? (
-                  bookingNotes.map((item, index) => {
-                    return (
-                      <li key={index} className="timeline-item">
-                        <span className={classnames('timeline-point timeline-point-secondary timeline-point-indicator')}>
-                          {item.icon ? item.icon : null}
-                        </span>
-                        <div className="timeline-event">
-                          <div className={classnames('d-flex justify-content-between flex-sm-row flex-column')}>
-                            <small>
-                              <strong>{item.author && item.author.split(' ')[0]}</strong>
-                            </small>
-                            <span className="timeline-event-time">
-                              <small>{moment(item.date).fromNow()}</small>
-                            </span>
-                          </div>
-                          <p className="mb-0">
-                            <small>{item.note}</small>
-                          </p>
-                          {userData?.customData?.name === item.author &&
-                            (item?.shared ? (
-                              <small>
-                                <a href="#" onClick={() => handleUpdateSharedNote(index)}>
-                                  Shared
-                                  <X width={20} />
-                                </a>
-                              </small>
-                            ) : (
-                              <small>
-                                <a href="#" onClick={() => handleUpdateSharedNote(index)}>
-                                  Share with instructor
-                                  <CornerUpRight width={20} />
-                                </a>
-                              </small>
-                            ))}
-                        </div>
-                      </li>
-                    );
-                  })
-                ) : (
-                  <li>
-                    <p>Write your first note below...</p>
-                  </li>
-                )}
-              </ul>
-            </CardBody>
-          </Card>
-          <div className=" ml-2 mr-2" align="right">
-            <Input className="" type="textarea" id="bookingNotes" value={inputNote} onChange={(e) => setInputNote(e.target.value)} />
-            <Button onClick={onChangeNotes} size="sm" className="mt-1" color="primary" disabled={!inputNote}>
-              {processing ? 'Saving note...' : 'Add Note'}
-            </Button>
-          </div>
+          <Notes bookingNotes={bookingNotes} setBookingNotes={setBookingNotes} currentElement={currentElement}></Notes>
         </TabPane>
         <TabPane tabId="2">
           <ModalBody className="flex-grow-1">
@@ -1365,7 +1282,7 @@ const EditBookingModal = ({
 
             <FormGroup>
               <a target="_blank" href={`https://teamclass.com/booking/pre-event/${currentElement?._id}`}>
-                <small>Click to see survey's answer, and selected options.</small>
+                <small>Click to see survey"s answer, and selected options.</small>
               </a>
               {!currentElement?.preEventSurvey?.submittedAt && <p className="pre-event-small-note">(Pre event survey is yet to be completed.)</p>}
             </FormGroup>
@@ -1391,7 +1308,7 @@ const EditBookingModal = ({
                 <Button
                   className="mr-1"
                   size="sm"
-                  color={closedBookingReason ? 'danger' : 'primary'}
+                  color={closedBookingReason ? "danger" : "primary"}
                   onClick={saveChangesBooking}
                   disabled={
                     !customerName ||
@@ -1407,12 +1324,12 @@ const EditBookingModal = ({
                   }
                 >
                   {!processing && !closedBookingReason
-                    ? 'Save'
+                    ? "Save"
                     : closedBookingReason && processing
-                    ? 'Saving...'
+                    ? "Saving..."
                     : processing
-                    ? 'Saving...'
-                    : 'Close booking?'}
+                    ? "Saving..."
+                    : "Close booking?"}
                 </Button>
                 <Button color="secondary" size="sm" onClick={cancel} outline>
                   Cancel
