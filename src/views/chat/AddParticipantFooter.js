@@ -1,8 +1,8 @@
 // @packages
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import React from "react";
 import { ArrowLeft } from "react-feather";
-import { Button, ModalFooter } from 'reactstrap';
+import { Button, ModalFooter } from "reactstrap";
 
 const AddParticipantFooter = ({
   action,

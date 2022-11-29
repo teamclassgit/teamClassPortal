@@ -1,10 +1,10 @@
 // ** Vertical Menu Components
-import VerticalNavMenuLink from './VerticalNavMenuLink';
-import VerticalNavMenuGroup from './VerticalNavMenuGroup';
-import VerticalNavMenuSectionHeader from './VerticalNavMenuSectionHeader';
+import VerticalNavMenuLink from "./VerticalNavMenuLink";
+import VerticalNavMenuGroup from "./VerticalNavMenuGroup";
+import VerticalNavMenuSectionHeader from "./VerticalNavMenuSectionHeader";
 
 // ** Utils
-import { resolveVerticalNavMenuItemComponent as resolveNavItemComponent } from '@layouts/utils';
+import { resolveVerticalNavMenuItemComponent as resolveNavItemComponent } from "@layouts/utils";
 
 const VerticalMenuNavItems = props => {
   // ** Components Object

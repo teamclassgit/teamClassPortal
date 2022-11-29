@@ -1,8 +1,9 @@
+/* eslint-disable no-undef */
 // @packages
-import React, { useState, useEffect } from 'react';
-import moment from 'moment';
-import { Edit, Plus, X, XSquare } from 'react-feather';
-import { useMutation } from '@apollo/client';
+import React, { useState, useEffect } from "react";
+import moment from "moment";
+import { Edit, Plus, X, XSquare } from "react-feather";
+import { useMutation } from "@apollo/client";
 import { 
   Badge,
   Button,
@@ -13,12 +14,12 @@ import {
   ModalFooter,
   Row,
   Table
-} from 'reactstrap';
+} from "reactstrap";
 
 // @scripts
-import AddPaymentModal from './AddPaymentModal';
-import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
-import { capitalizeString } from '../../../utility/Utils';
+import AddPaymentModal from "./AddPaymentModal";
+import mutationUpdateBookingPayments from "../../../graphql/MutationUpdateBookingPayments";
+import { capitalizeString } from "../../../utility/Utils";
 import {
   BOOKING_CLOSED_STATUS,
   BOOKING_DATE_REQUESTED_STATUS,
@@ -28,7 +29,7 @@ import {
   CHARGE_OUTSIDE_SYSTEM,
   PAYMENT_STATUS_CANCELED,
   PAYMENT_STATUS_SUCCEEDED
-} from '../../../utility/Constants';
+} from "../../../utility/Constants";
 
 const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
@@ -60,8 +61,8 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     setProcessing(true);
 
     const newPayment = { ...payment };
-    newPayment.paymentName = 'deposit';
-    const newPaymentsList = payments.filter((element) => element.paymentName !== 'final');
+    newPayment.paymentName = "deposit";
+    const newPaymentsList = payments.filter((element) => element.paymentName !== "final");
     newPaymentsList.push(newPayment);
 
     try {
@@ -90,7 +91,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     setProcessing(true);
 
     const newPayment = { ...payment };
-    newPayment.paymentName = 'final';
+    newPayment.paymentName = "final";
     const newPaymentsArray = [...payments];
     newPaymentsArray[indexPayment] = newPayment;
 
@@ -120,9 +121,9 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     const newPaymentsArray = [...payments];
     payments[indexPayment].status = PAYMENT_STATUS_CANCELED;
 
-    const finalPayment = newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+    const finalPayment = newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === "final" && element.status === "succeeded");
     const depositPayment =
-      newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+      newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === "deposit" && element.status === "succeeded");
 
     const newBookingStatus = finalPayment
       ? BOOKING_PAID_STATUS
@@ -158,20 +159,20 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
             size="sm"
             color="primary"
             onClick={(e) => {
-              setMode('add');
+              setMode("add");
               const newPay = {
-                name: '',
-                email: '',
-                phone: '',
-                amount: '',
-                cardBrand: '',
-                cardLast4: '',
-                createdAt: '',
-                paymentName: '',
-                paymentMethod: '',
-                paymentId: '',
-                chargeUrl: '',
-                status: ''
+                name: "",
+                email: "",
+                phone: "",
+                amount: "",
+                cardBrand: "",
+                cardLast4: "",
+                createdAt: "",
+                paymentName: "",
+                paymentMethod: "",
+                paymentId: "",
+                chargeUrl: "",
+                status: ""
               };
               setCurrentPayment(newPay);
               handleModal();
@@ -218,15 +219,15 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                       <td align="left">
                         <div className="transaction-item">
                           {moment(element.createdAt).calendar(null, {
-                            lastDay: '[Yesterday]',
-                            sameDay: 'LT',
-                            lastWeek: 'dddd',
-                            sameElse: 'MMMM Do, YYYY'
+                            lastDay: "[Yesterday]",
+                            sameDay: "LT",
+                            lastWeek: "dddd",
+                            sameElse: "MMMM Do, YYYY"
                           })}
                         </div>
                       </td>
                       <td align="left">
-                        <div className={`text-default'}`}>
+                        <div className={"text-default'}"}>
                           {capitalizeString(element.paymentName)}
                           {booking && booking.status !== BOOKING_CLOSED_STATUS && <span>
                             {processing && index === indexPayment && (
@@ -235,7 +236,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                                 <span>Converting...</span>
                               </small>
                             )}
-                            {!processing && element.paymentName === 'final' && element.status === PAYMENT_STATUS_SUCCEEDED ? (
+                            {!processing && element.paymentName === "final" && element.status === PAYMENT_STATUS_SUCCEEDED ? (
                               !clickedConvert ? (
                                 <small>
                                   <br />
@@ -266,7 +267,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                                         }}
                                       >
                                         Yes
-                                      </a>{' '}
+                                      </a>{" "}
                                       <a
                                         className="btn btn-secondary btn-sm"
                                         href="#"
@@ -288,7 +289,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                             )}
                             {/* Deposit payment to final */}
                             {payments && !payments.filter(item => item.paymentName === "final" && item.status === "succeeded").length > 0 && (
-                              !processing && element.paymentName === 'deposit' && element.status === PAYMENT_STATUS_SUCCEEDED && (
+                              !processing && element.paymentName === "deposit" && element.status === PAYMENT_STATUS_SUCCEEDED && (
                                 !clickedConvertToFinal ? (
                                   <small>
                                     <br />
@@ -320,7 +321,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                                           }}
                                         >
                                           Yes
-                                        </a>{' '}
+                                        </a>{" "}
                                         <a
                                           className="btn btn-secondary btn-sm"
                                           href="#"
@@ -343,7 +344,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                         </div>
                       </td>
                       <td align="left">
-                        <div className={`text-default'}`}>
+                        <div className={"text-default'}"}>
                           {element.cardBrand ? (
                             <span>
                               {capitalizeString(element.cardBrand)} {element.cardLast4}
@@ -354,18 +355,18 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                         </div>
                       </td>
                       <td align="right">
-                        <div className={`font-weight-bolder text-default'}`}>
+                        <div className={"font-weight-bolder text-default'}"}>
                           <span>${element.amount / 100}</span>
                         </div>
                       </td>
                       <td align="center">
-                        <div className={` text-default`}>
-                          <span>{element.chargeUrl === CHARGE_OUTSIDE_SYSTEM ? 'Manual' : 'Automated'}</span>
+                        <div className={" text-default"}>
+                          <span>{element.chargeUrl === CHARGE_OUTSIDE_SYSTEM ? "Manual" : "Automated"}</span>
                         </div>
                       </td>
                       <td align="center">
-                        <div className={`text-default'}`}>
-                          <Badge color={element.status === 'succeeded' ? 'primary' : 'secondary'}>{capitalizeString(element.status)}</Badge>
+                        <div className={"text-default'}"}>
+                          <Badge color={element.status === "succeeded" ? "primary" : "secondary"}>{capitalizeString(element.status)}</Badge>
                         </div>
                       </td>
                       <td align="center">
@@ -390,7 +391,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                               onClick={(e) => {
                                 e.preventDefault();
                                 setCurrentPayment({ ...element, index });
-                                setMode('edit');
+                                setMode("edit");
                                 handleModal();
                               }}
                               href="#"

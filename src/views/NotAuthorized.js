@@ -1,8 +1,8 @@
-import {Button} from 'reactstrap';
-import {Link} from 'react-router-dom';
-import notAuthImg from '@src/assets/images/pages/not-authorized.svg';
+import {Button} from "reactstrap";
+import {Link} from "react-router-dom";
+import notAuthImg from "@src/assets/images/pages/not-authorized.svg";
 
-import '@styles/base/pages/page-misc.scss';
+import "@styles/base/pages/page-misc.scss";
 
 const NotAuthorized = () => {
   return (
@@ -26,7 +26,7 @@ const NotAuthorized = () => {
                   d='M-5.68434189e-14,2.84217094e-14 L39.1816085,2.84217094e-14 L69.3453773,32.2519224 L101.428699,2.84217094e-14 L138.784583,2.84217094e-14 L138.784199,29.8015838 C137.958931,37.3510206 135.784352,42.5567762 132.260463,45.4188507 C128.736573,48.2809251 112.33867,64.5239941 83.0667527,94.1480575 L56.2750821,94.1480575 L6.71554594,44.4188507 C2.46876683,39.9813776 0.345377275,35.1089553 0.345377275,29.8015838 C0.345377275,24.4942122 0.230251516,14.560351 -5.68434189e-14,2.84217094e-14 Z'
                   id='Path'
                   className='text-primary'
-                  style={{ fill: 'currentColor' }}
+                  style={{ fill: "currentColor" }}
                 ></path>
                 <path
                   d='M69.3453773,32.2519224 L101.428699,1.42108547e-14 L138.784583,1.42108547e-14 L138.784199,29.8015838 C137.958931,37.3510206 135.784352,42.5567762 132.260463,45.4188507 C128.736573,48.2809251 112.33867,64.5239941 83.0667527,94.1480575 L56.2750821,94.1480575 L32.8435758,70.5039241 L69.3453773,32.2519224 Z'

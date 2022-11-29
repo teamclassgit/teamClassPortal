@@ -1,11 +1,11 @@
 // ** React Imports
-import { useState } from 'react';
+import { useState } from "react";
 
 // ** Horizontal Menu Array
-import navigation from '@src/navigation/horizontal';
+import navigation from "@src/navigation/horizontal";
 
 // ** Horizontal Menu Components
-import HorizontalNavMenuItems from './HorizontalNavMenuItems';
+import HorizontalNavMenuItems from "./HorizontalNavMenuItems";
 
 const HorizontalMenu = ({ currentActiveItem, routerProps }) => {
   // ** States

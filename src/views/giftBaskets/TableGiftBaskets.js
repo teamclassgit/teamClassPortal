@@ -1,13 +1,13 @@
 // @packages
-import DataTable from 'react-data-table-component';
-import React, { useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import moment from 'moment';
-import { Card } from 'reactstrap';
-import { ChevronDown } from 'react-feather';
-import { getCustomerEmail } from '../../views/booking/common';
-import ExpandableTable from './ExpandableTable';
-import { useSelector } from 'react-redux';
+import DataTable from "react-data-table-component";
+import React, { useState } from "react";
+import ReactPaginate from "react-paginate";
+import moment from "moment";
+import { Card } from "reactstrap";
+import { ChevronDown } from "react-feather";
+import { getCustomerEmail } from "../../views/booking/common";
+import ExpandableTable from "./ExpandableTable";
+import { useSelector } from "react-redux";
 
 const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -15,34 +15,34 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
 
   const columns = [
     {
-      name: 'Date',
-      selector: 'timePurchased',
+      name: "Date",
+      selector: "timePurchased",
       sortable: true,
-      maxWidth: '10%',
+      maxWidth: "10%",
       cell: (row) => (
         <>
           <small>
             {moment(row.timePurchased).calendar(null, {
-              lastDay: '[Yesterday]',
-              sameDay: 'LT',
-              lastWeek: 'dddd',
-              sameElse: 'MMMM Do, YYYY'
+              lastDay: "[Yesterday]",
+              sameDay: "LT",
+              lastWeek: "dddd",
+              sameElse: "MMMM Do, YYYY"
             })}
           </small>
         </>
       )
     },
     {
-      name: 'Order #',
-      selector: 'orderNumber',
+      name: "Order #",
+      selector: "orderNumber",
       sortable: true,
-      maxWidth: '10%'
+      maxWidth: "10%"
     },
     {
-      name: 'Customer',
-      selector: 'customerName',
+      name: "Customer",
+      selector: "customerName",
       sortable: true,
-      maxWidth: '12%',
+      maxWidth: "12%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -52,10 +52,10 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
       )
     },
     {
-      name: 'Email',
-      selector: 'customerEmail',
+      name: "Email",
+      selector: "customerEmail",
       sortable: true,
-      maxWidth: '15%',
+      maxWidth: "15%",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getCustomerEmail(row.customerId, customers)}</span>
@@ -64,10 +64,10 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
     },
 
     {
-      name: 'Gif tBasket',
-      selector: 'basketName',
+      name: "Gif tBasket",
+      selector: "basketName",
       sortable: true,
-      maxWidth: '20%',
+      maxWidth: "20%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -87,10 +87,10 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
     },
 
     {
-      name: 'Variant',
-      selector: 'variantName',
+      name: "Variant",
+      selector: "variantName",
       sortable: true,
-      maxWidth: '30%',
+      maxWidth: "30%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -110,10 +110,10 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
       )
     },
     {
-      name: 'Paid',
-      selector: 'payments',
+      name: "Paid",
+      selector: "payments",
       sortable: true,
-      maxWidth: '10%',
+      maxWidth: "10%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -146,30 +146,30 @@ const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {
       breakLabel="..."
       pageRangeDisplayed={2}
       marginPagesDisplayed={2}
-      activeClassName={'active'}
-      pageClassName={'page-item'}
-      nextLinkClassName={'page-link'}
-      nextClassName={'page-item next'}
-      previousClassName={'page-item prev'}
-      previousLinkClassName={'page-link'}
-      pageLinkClassName={'page-link'}
+      activeClassName={"active"}
+      pageClassName={"page-item"}
+      nextLinkClassName={"page-link"}
+      nextClassName={"page-item next"}
+      previousClassName={"page-item prev"}
+      previousLinkClassName={"page-link"}
+      pageLinkClassName={"page-link"}
       breakClassName="page-item"
       breakLinkClassName="page-link"
-      containerClassName={'pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1'}
+      containerClassName={"pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1"}
     />
   );
 
   return (
     <Card>
       <DataTable
-        theme={skin === 'dark' ? 'dark' : 'default'}
+        theme={skin === "dark" ? "dark" : "default"}
         noHeader
         pagination
         data={giftBasketPurchases}
         expandableRows={true}
         columns={columns}
         expandOnRowClicked
-        defaultSortField={'timePurchased'}
+        defaultSortField={"timePurchased"}
         defaultSortAsc={false}
         paginationPerPage={8}
         className="react-dataTable"

@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { getUserData } from '../../utility/Utils';
+import React, { createContext, useState, useEffect } from "react";
+import { getUserData } from "../../utility/Utils";
 
 export const FiltersContext = createContext();
 
@@ -13,7 +13,7 @@ const FiltersContextProvider = (props) => {
   useEffect(() => {
     const userData = getUserData();
     if (userData && userData.customData && userData.customData.coordinatorId) setCoordinatorFilterContext({
-      type: 'coordinator',
+      type: "coordinator",
       value: [userData.customData.coordinatorId],
       label: [userData.customData.name]
     });

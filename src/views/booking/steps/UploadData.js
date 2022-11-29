@@ -1,16 +1,16 @@
 // ** React Imports
-import React, { useState } from 'react';
-import readXlsxFile, { Email } from 'read-excel-file';
-import { X } from 'react-feather';
-import { Alert, Button, Card, CardBody, CardHeader, CardTitle, Modal, ModalBody, ModalHeader } from 'reactstrap';
-import Uppy from '@uppy/core';
-import { DragDrop } from '@uppy/react';
+import React, { useState } from "react";
+import readXlsxFile, { Email } from "read-excel-file";
+import { X } from "react-feather";
+import { Alert, Button, Card, CardBody, CardHeader, CardTitle, Modal, ModalBody, ModalHeader } from "reactstrap";
+import Uppy from "@uppy/core";
+import { DragDrop } from "@uppy/react";
 // ** Styles
-import '@styles/react/libs/flatpickr/flatpickr.scss';
-import 'uppy/dist/uppy.css';
-import '@uppy/status-bar/dist/style.css';
-import '@styles/react/libs/file-uploader/file-uploader.scss';
-import { v4 as uuid } from 'uuid';
+import "@styles/react/libs/flatpickr/flatpickr.scss";
+import "uppy/dist/uppy.css";
+import "@uppy/status-bar/dist/style.css";
+import "@styles/react/libs/file-uploader/file-uploader.scss";
+import { v4 as uuid } from "uuid";
 
 const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, setData, updateAttendeesCount, teamClassInfo, booking }) => {
   const [file, setFile] = useState(null);
@@ -77,14 +77,14 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
         newAttendee.additionalCost = 0.0;
         newAttendee.updatedAt = new Date();
         newAttendee.createdAt = new Date();
-        newAttendee.status = 'confirmed';
+        newAttendee.status = "confirmed";
         newAttendee.instructorOrDistributorId = booking?.instructorOrDistributorId;
-        newAttendee.statusNotes = '';
+        newAttendee.statusNotes = "";
         for (const dynamicField in teamClassInfo.registrationFields) {
           newAttendee.additionalFields.push({
             name: teamClassInfo.registrationFields[dynamicField].label,
             order: teamClassInfo.registrationFields[dynamicField].order,
-            value: fileData[i][teamClassInfo.registrationFields[dynamicField].label] || ''
+            value: fileData[i][teamClassInfo.registrationFields[dynamicField].label] || ""
           });
         }
         if (booking?.classVariant?.registrationFields) {
@@ -134,55 +134,55 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
   const CloseBtn = <X className="cursor-pointer" size={15} onClick={cancel} />;
 
   const uppy = new Uppy({
-    meta: { type: 'avatar' },
-    restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ['.xlsx'] },
+    meta: { type: "avatar" },
+    restrictions: { maxNumberOfFiles: 1, allowedFileTypes: [".xlsx"] },
     autoProceed: true
   });
 
   const schema = {
     Name: {
-      prop: 'name',
+      prop: "name",
       type: String,
       required: true
     },
     Email: {
-      prop: 'email',
+      prop: "email",
       type: Email,
       required: false
     },
 
     Phone: {
-      prop: 'phone',
+      prop: "phone",
       type: String,
       required: false
     },
     AddressLine1: {
-      prop: 'addressLine1',
+      prop: "addressLine1",
       type: String,
       required: false
     },
     AddressLine2: {
-      prop: 'addressLine2',
+      prop: "addressLine2",
       type: String,
       required: false
     },
     City: {
-      prop: 'city',
+      prop: "city",
       type: String,
       required: false
     },
     State: {
-      prop: 'state',
+      prop: "state",
       type: String,
       required: false
     },
     Zip: {
-      prop: 'zip',
+      prop: "zip",
       type: String,
       required: false
     },
     Country: {
-      prop: 'country',
+      prop: "country",
       type: String,
       required: false
     }
@@ -214,7 +214,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
     }
   }
 
-  uppy.on('complete', (result) => {
+  uppy.on("complete", (result) => {
     if (result && result.successful && result.successful.length > 0) {
       setFile(result.successful[0].data);
       readXlsxFile(result.successful[0].data, { schema }).then((rows) => {
@@ -273,7 +273,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
         </Card>
 
         <Button className="mr-1" color="primary" onClick={save} disabled={processing || !file || !fileData || (errors && errors.length > 0)}>
-          {processing ? 'Loading...' : 'Load'}
+          {processing ? "Loading..." : "Load"}
         </Button>
         <Button color="secondary" onClick={cancel} outline disabled={processing}>
           Cancel

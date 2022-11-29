@@ -1,40 +1,40 @@
 // @packages
-import React, { useState, useEffect, useCallback } from 'react';
-import { useQuery } from '@apollo/client';
-import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
-import { apolloClient } from '../../utility/RealmApolloClient';
-import { Calendar, Check, DollarSign, Edit2, User, Users } from 'react-feather';
-import Avatar from '@components/avatar';
-import moment from 'moment-timezone';
+import React, { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@apollo/client";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router";
+import { apolloClient } from "../../utility/RealmApolloClient";
+import { Calendar, Check, DollarSign, Edit2, User, Users } from "react-feather";
+import Avatar from "@components/avatar";
+import moment from "moment-timezone";
 window.moment = moment;
-import { getQueryFiltersFromFilterArray, getUserData, isNotEmptyArray } from '../../utility/Utils';
-import { Modal } from 'reactstrap';
+import { getQueryFiltersFromFilterArray, getUserData, isNotEmptyArray } from "../../utility/Utils";
+import { Modal } from "reactstrap";
 
 //@reactdatagrid packages
-import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
-import NumberFilter from '@inovua/reactdatagrid-community/NumberFilter';
-import DateFilter from '@inovua/reactdatagrid-community/DateFilter';
-import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
-import SelectFilter from '@inovua/reactdatagrid-community/SelectFilter';
-import '@inovua/reactdatagrid-enterprise/index.css';
-import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
-import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
-import './BookingsTable.scss';
+import ReactDataGrid from "@inovua/reactdatagrid-enterprise";
+import NumberFilter from "@inovua/reactdatagrid-community/NumberFilter";
+import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
+import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
+import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
+import "@inovua/reactdatagrid-enterprise/index.css";
+import "@inovua/reactdatagrid-enterprise/theme/default-light.css";
+import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
+import "./BookingsTable.scss";
 
 // @scripts
-import queryGetBookingsWithCriteria from '../../graphql/QueryGetBookingsWithCriteria';
-import queryAllClasses from '../../graphql/QueryAllClasses';
-import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
-import queryAllInstructors from '../../graphql/QueryAllInstructors';
-import EditBookingModal from '../../components/EditBookingModal';
-import AddNewBooking from '../../components/AddNewBooking';
-import RowDetails from '../../components/BookingTableRowDetails';
-import TasksBar from '../../components/TasksBar';
-import { getAllDataToExport, getBookingAndCalendarEventById } from '../../services/BookingService';
-import ConfirmBookingsToClose from '../../components/ConfirmBookingsToClose';
-import { DEFAULT_TIME_ZONE_LABEL } from '../../utility/Constants';
+import queryGetBookingsWithCriteria from "../../graphql/QueryGetBookingsWithCriteria";
+import queryAllClasses from "../../graphql/QueryAllClasses";
+import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
+import queryAllCustomers from "../../graphql/QueryAllCustomers";
+import queryAllInstructors from "../../graphql/QueryAllInstructors";
+import EditBookingModal from "../../components/EditBookingModal";
+import AddNewBooking from "../../components/AddNewBooking";
+import RowDetails from "../../components/BookingTableRowDetails";
+import TasksBar from "../../components/TasksBar";
+import { getAllDataToExport, getBookingAndCalendarEventById } from "../../services/BookingService";
+import ConfirmBookingsToClose from "../../components/ConfirmBookingsToClose";
+import { DEFAULT_TIME_ZONE_LABEL } from "../../utility/Constants";
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;
@@ -43,13 +43,13 @@ const renderRowDetails = ({ data }) => {
 const onRenderRow = (rowProps) => {
   const depositPayment = rowProps.data.depositsPaid;
   const finalPayment = rowProps.data.finalPaid;
-  const previousEventDays = moment(rowProps.data.eventDateTime).diff(moment(), 'days');
+  const previousEventDays = moment(rowProps.data.eventDateTime).diff(moment(), "days");
 
   if (depositPayment && rowProps.data.eventDateTime && !finalPayment) {
     if (previousEventDays < 0) {
-      rowProps.style.backgroundColor = 'rgba(234,84,85,.12)';
+      rowProps.style.backgroundColor = "rgba(234,84,85,.12)";
     } else if (previousEventDays < 7 && previousEventDays >= 0) {
-      rowProps.style.backgroundColor = 'rgba(255,159,67,.12)';
+      rowProps.style.backgroundColor = "rgba(255,159,67,.12)";
     }
   }
 };
@@ -69,13 +69,13 @@ const AllBookingsTable = () => {
   const [coordinators, setCoordinators] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
   const [orFilters, setOrFilters] = useState([]);
-  const [sortInfo, setSortInfo] = useState({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
+  const [sortInfo, setSortInfo] = useState({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
   const [filteredRows, setFilteredRows] = useState(null);
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [cellSelection, setCellSelection] = useState({});
   const [selected, setSelected] = useState({});
-  const [closedReason, setClosedReason] = useState('');
+  const [closedReason, setClosedReason] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleModal = () => setShowAddModal(!showAddModal);
@@ -92,175 +92,175 @@ const AllBookingsTable = () => {
 
   const toggle = () => {
     if (isOpenModal) {
-      setSortInfo({ dir: 1, id: 'createdAt', name: 'createdAt', type: 'date' });
+      setSortInfo({ dir: 1, id: "createdAt", name: "createdAt", type: "date" });
     }
-    setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
+    setSortInfo({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
     setIsOpenModal(!isOpenModal);
   };
 
   const columns = [
     {
-      name: 'actions',
-      header: 'Links',
+      name: "actions",
+      header: "Links",
       defaultWidth: 200,
       render: ({ value, cellProps }) => {
         if (cellProps.data) {
-          return cellProps.data.status === 'quote' ? (
+          return cellProps.data.status === "quote" ? (
             <small>
               <div className="d-flex">
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={'_blank'}
-                  title={'Select date and time link'}
+                  target={"_blank"}
+                  title={"Select date and time link"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                 </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
               </div>
             </small>
-          ) : cellProps.data.status === 'closed' ? (
+          ) : cellProps.data.status === "closed" ? (
             <small>
               <div className="d-flex">
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
               </div>
             </small>
-          ) : cellProps.data.status === 'date-requested' &&
+          ) : cellProps.data.status === "date-requested" &&
             cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === 'reserved' ? (
+            cellProps.data.eventDateTimeStatus === "reserved" ? (
             <small>
               <div className="d-flex">
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={'_blank'}
-                  title={'Select date and time link'}
+                  target={"_blank"}
+                  title={"Select date and time link"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                 </a>
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/booking/date-time-confirmation/${cellProps.data._id}`}
-                  target={'_blank'}
-                  title={'Approve/Reject link'}
+                  target={"_blank"}
+                  title={"Approve/Reject link"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Check />} />
                 </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
               </div>
             </small>
-          ) : cellProps.data.status === 'date-requested' &&
+          ) : cellProps.data.status === "date-requested" &&
             cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === 'confirmed' ? (
+            cellProps.data.eventDateTimeStatus === "confirmed" ? (
             <small>
               <div className="d-flex">
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={'_blank'}
-                  title={'Select date and time link'}
+                  target={"_blank"}
+                  title={"Select date and time link"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                 </a>
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
-                  target={'_blank'}
-                  title={'Deposit link'}
+                  target={"_blank"}
+                  title={"Deposit link"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
                 </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
               </div>
             </small>
-          ) : cellProps.data.status === 'date-requested' &&
+          ) : cellProps.data.status === "date-requested" &&
             cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === 'rejected' ? (
+            cellProps.data.eventDateTimeStatus === "rejected" ? (
             <small>
               <div className="d-flex">
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={'_blank'}
-                  title={'Select date and time link'}
+                  target={"_blank"}
+                  title={"Select date and time link"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                 </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} title={'Time / Attendees / Invoice Builder'}>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} title={"Time / Attendees / Invoice Builder"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
               </div>
             </small>
-          ) : cellProps.data.status === 'confirmed' ? (
+          ) : cellProps.data.status === "confirmed" ? (
             <small>
               <div className="d-flex">
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={'_blank'}
-                  title={'Select date and time link'}
+                  target={"_blank"}
+                  title={"Select date and time link"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={'_blank'} title={'Sign-up link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={"_blank"} title={"Sign-up link"}>
                   <Avatar color="light-primary" size="sm" icon={<User />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
                   <Avatar color="light-primary" size="sm" icon={<Users />} />
                 </a>
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
-                  target={'_blank'}
-                  title={'Final payment link'}
+                  target={"_blank"}
+                  title={"Final payment link"}
                 >
                   <Avatar color="secondary" size="sm" icon={<DollarSign />} />
                 </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
               </div>
             </small>
           ) : (
-            cellProps.data.status === 'paid' && (
+            cellProps.data.status === "paid" && (
               <small>
                 <div className="d-flex">
                   <a
                     className="mr-1"
                     href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                    target={'_blank'}
-                    title={'Select date and time link'}
+                    target={"_blank"}
+                    title={"Select date and time link"}
                   >
                     <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                   </a>
-                  <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={'_blank'} title={'Sign-up link'}>
+                  <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={"_blank"} title={"Sign-up link"}>
                     <Avatar color="light-primary" size="sm" icon={<User />} />
                   </a>
                   <a
                     className="mr-1"
                     href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`}
-                    target={'_blank'}
-                    title={'Sign-up status'}
+                    target={"_blank"}
+                    title={"Sign-up status"}
                   >
                     <Avatar color="light-primary" size="sm" icon={<Users />} />
                   </a>
                   <a
                     className="mr-1"
                     href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
-                    target={'_blank'}
-                    title={'Final payment link'}
+                    target={"_blank"}
+                    title={"Final payment link"}
                   >
                     <Avatar color="secondary" size="sm" icon={<DollarSign />} />
                   </a>
-                  <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                  <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                     <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                   </a>
                 </div>
@@ -271,9 +271,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: '_id',
-      header: 'Id',
-      type: 'string',
+      name: "_id",
+      header: "Id",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       width: 200,
@@ -285,7 +285,7 @@ const AllBookingsTable = () => {
                 href="#"
                 onClick={async () => {
                   setOrFilters([]);
-                  setSortInfo({ dir: -1, id: 'createdAt', name: 'createdAt', type: 'date' });
+                  setSortInfo({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
                   const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
                   if (!bookingAndCalendarEvent) return;
                   setCurrentElement(bookingAndCalendarEvent);
@@ -301,36 +301,36 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'createdAt',
-      header: 'Created',
-      type: 'date',
+      name: "createdAt",
+      header: "Created",
+      type: "date",
       width: 250,
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
         return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
+          lastDay: "[Yesterday]",
+          sameDay: "LT",
+          lastWeek: "dddd",
+          sameElse: "MMMM Do, YYYY"
         });
       }
     },
     {
-      name: 'eventDateTime',
-      header: 'Event date',
-      type: 'date',
+      name: "eventDateTime",
+      header: "Event date",
+      type: "date",
       width: 250,
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
         if (value) {
-          return `${moment(value)?.tz(cellProps.data.timezone)?.format('LLL')} ${cellProps.data.timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`;
+          return `${moment(value)?.tz(cellProps.data.timezone)?.format("LLL")} ${cellProps.data.timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`;
         }
       }
     },
     {
-      name: 'eventCoordinatorEmail',
-      header: 'Coordinator',
-      type: 'string',
+      name: "eventCoordinatorEmail",
+      header: "Coordinator",
+      type: "string",
       filterEditor: SelectFilter,
       filterEditorProps: {
         multiple: true,
@@ -342,14 +342,14 @@ const AllBookingsTable = () => {
       width: 200
     },
     {
-      name: 'bookingStage',
-      header: 'Stage ',
-      type: 'string',
+      name: "bookingStage",
+      header: "Stage ",
+      type: "string",
       filterEditor: SelectFilter,
       filterEditorProps: {
         multiple: true,
         wrapMultiple: false,
-        dataSource: ['quote', 'requested', 'rejected', 'accepted', 'deposit', 'paid', 'closed'].map((c) => {
+        dataSource: ["quote", "requested", "rejected", "accepted", "deposit", "paid", "closed"].map((c) => {
           return { id: c, label: c };
         })
       },
@@ -361,46 +361,46 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'updatedAt',
-      header: 'Updated',
-      type: 'date',
+      name: "updatedAt",
+      header: "Updated",
+      type: "date",
       width: 250,
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
         return moment(value).calendar(null, {
-          lastDay: '[Yesterday]',
-          sameDay: 'LT',
-          lastWeek: 'dddd',
-          sameElse: 'MMMM Do, YYYY'
+          lastDay: "[Yesterday]",
+          sameDay: "LT",
+          lastWeek: "dddd",
+          sameElse: "MMMM Do, YYYY"
         });
       },
       defaultVisible: false
     },
 
     {
-      name: 'customerName',
-      header: 'Customer ',
-      type: 'string',
+      name: "customerName",
+      header: "Customer ",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       render: ({ data }) => {
-        if (isNotEmptyArray(data.bookingTags) && data.bookingTags.includes('repeat')) {
+        if (isNotEmptyArray(data.bookingTags) && data.bookingTags.includes("repeat")) {
           return (
             <div>
-              {data.customerName} <span className="card-tags text-warning">{'Repeat'}</span>
+              {data.customerName} <span className="card-tags text-warning">{"Repeat"}</span>
             </div>
           );
         }
         return data.customerName;
       }
     },
-    { name: 'customerEmail', header: 'Email ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerPhone', header: 'Phone ', type: 'number', defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
-    { name: 'customerCompany', header: 'Company ', type: 'string', filterEditor: StringFilter, filterDelay: 1500 },
+    { name: "customerEmail", header: "Email ", type: "string", filterEditor: StringFilter, filterDelay: 1500 },
+    { name: "customerPhone", header: "Phone ", type: "number", defaultVisible: false, filterEditor: StringFilter, filterDelay: 1500 },
+    { name: "customerCompany", header: "Company ", type: "string", filterEditor: StringFilter, filterDelay: 1500 },
     {
-      name: 'className',
-      header: 'Class ',
-      type: 'string',
+      name: "className",
+      header: "Class ",
+      type: "string",
       filterEditor: SelectFilter,
       filterEditorProps: {
         multiple: true,
@@ -412,9 +412,9 @@ const AllBookingsTable = () => {
       width: 300
     },
     {
-      name: 'attendees',
-      header: 'Attendees ',
-      type: 'number',
+      name: "attendees",
+      header: "Attendees ",
+      type: "number",
       filterEditor: NumberFilter,
       filterDelay: 1500,
       defaultWidth: 112,
@@ -425,9 +425,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'registeredAttendees',
-      header: 'Registered Attendees ',
-      type: 'number',
+      name: "registeredAttendees",
+      header: "Registered Attendees ",
+      type: "number",
       filterEditor: NumberFilter,
       filterDelay: 1500,
       defaultWidth: 112,
@@ -438,21 +438,21 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'signUpDeadline',
-      header: 'Registration',
-      type: 'date',
+      name: "signUpDeadline",
+      header: "Registration",
+      type: "date",
       width: 250,
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
         if (value) {
-          return `${moment(value)?.format('LLL')}`;
+          return `${moment(value)?.format("LLL")}`;
         }
       }
     },
     {
-      name: 'taxAmount',
-      header: 'Tax',
-      type: 'number',
+      name: "taxAmount",
+      header: "Tax",
+      type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
@@ -462,9 +462,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'serviceFeeAmount',
-      header: 'Service Fee',
-      type: 'number',
+      name: "serviceFeeAmount",
+      header: "Service Fee",
+      type: "number",
       defaultWidth: 150,
       defaultVisible: false,
       filterDelay: 1500,
@@ -474,9 +474,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'cardFeeAmount',
-      header: 'Card Fee',
-      type: 'number',
+      name: "cardFeeAmount",
+      header: "Card Fee",
+      type: "number",
       defaultWidth: 150,
       defaultVisible: false,
       filterEditor: NumberFilter,
@@ -486,9 +486,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'totalInvoice',
-      header: 'Total',
-      type: 'number',
+      name: "totalInvoice",
+      header: "Total",
+      type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
@@ -497,9 +497,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'depositsPaid',
-      header: 'Deposits',
-      type: 'number',
+      name: "depositsPaid",
+      header: "Deposits",
+      type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
@@ -508,21 +508,21 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'depositPaidDate',
-      header: 'Deposits date',
-      type: 'date',
+      name: "depositPaidDate",
+      header: "Deposits date",
+      type: "date",
       width: 250,
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
         if (value) {
-          return moment(value).format('LLL');
+          return moment(value).format("LLL");
         }
       }
     },
     {
-      name: 'finalPaid',
-      header: 'Final paid',
-      type: 'number',
+      name: "finalPaid",
+      header: "Final paid",
+      type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
       render: ({ value, cellProps }) => {
@@ -530,21 +530,21 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'finalPaymentPaidDate',
-      header: 'Final payment date',
-      type: 'date',
+      name: "finalPaymentPaidDate",
+      header: "Final payment date",
+      type: "date",
       width: 250,
       filterEditor: DateFilter,
       render: ({ value, cellProps }) => {
         if (value) {
-          return moment(value).format('LLL');
+          return moment(value).format("LLL");
         }
       }
     },
     {
-      name: 'balance',
-      header: 'Balance',
-      type: 'number',
+      name: "balance",
+      header: "Balance",
+      type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
@@ -553,9 +553,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'closedReason',
-      header: 'Closed Reason ',
-      type: 'string',
+      name: "closedReason",
+      header: "Closed Reason ",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -566,27 +566,27 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'bookingTags',
-      header: 'Bookings Tags',
-      type: 'string',
+      name: "bookingTags",
+      header: "Bookings Tags",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
       render: ({ value }) => {
         if (value) {
-          return <span className="float-left">{value.join(', ')}</span>;
+          return <span className="float-left">{value.join(", ")}</span>;
         }
       }
     },
     {
-      name: 'customerTags',
-      header: 'Customer Tags',
-      type: 'string',
+      name: "customerTags",
+      header: "Customer Tags",
+      type: "string",
       filterEditor: SelectFilter,
       filterEditorProps: {
         multiple: true,
         wrapMultiple: false,
-        dataSource: ['repeat'].map((tag) => {
+        dataSource: ["repeat"].map((tag) => {
           return { id: tag, label: tag };
         })
       },
@@ -594,14 +594,14 @@ const AllBookingsTable = () => {
       defaultWidth: 200,
       render: ({ value, cellProps }) => {
         if (isNotEmptyArray(value)) {
-          return <span className="float-left">{value.join(',')}</span>;
+          return <span className="float-left">{value.join(",")}</span>;
         }
       }
     },
     {
-      name: 'gclid',
-      header: 'Gclid',
-      type: 'string',
+      name: "gclid",
+      header: "Gclid",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -612,35 +612,22 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'instantBooking',
-      header: 'Instant Booking',
-      type: 'string',
+      name: "instantBooking",
+      header: "Instant Booking",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
       render: ({ value }) => {
         if (value) {
-          return <span className="float-left">{value ? 'Yes' : 'No'}</span>;
+          return <span className="float-left">{value ? "Yes" : "No"}</span>;
         }
       }
     },
     {
-      name: 'utm_campaign',
-      header: 'Utm Compaign',
-      type: 'string',
-      filterEditor: StringFilter,
-      filterDelay: 1500,
-      defaultWidth: 200,
-      render: ({ value }) => {
-        if (value) {
-          return <span className="float-left">{value}</span>;
-        }
-      }
-    },
-    {
-      name: 'utm_source',
-      header: 'Utm Source',
-      type: 'string',
+      name: "utm_campaign",
+      header: "Utm Compaign",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -651,9 +638,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'utm_medium',
-      header: 'Utm Medium',
-      type: 'string',
+      name: "utm_source",
+      header: "Utm Source",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -664,9 +651,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'utm_content',
-      header: 'Utm Content',
-      type: 'string',
+      name: "utm_medium",
+      header: "Utm Medium",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -677,9 +664,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'utm_term',
-      header: 'Utm Term',
-      type: 'string',
+      name: "utm_content",
+      header: "Utm Content",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -690,21 +677,34 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'preEventSurvey.submittedAt',
-      header: 'Pre-event submitted',
-      type: 'date',
+      name: "utm_term",
+      header: "Utm Term",
+      type: "string",
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: "preEventSurvey.submittedAt",
+      header: "Pre-event submitted",
+      type: "date",
       width: 250,
       filterEditor: DateFilter,
       render: ({ cellProps }) => {
         if (cellProps?.data?.preEventSurvey?.submittedAt) {
-          return `${moment(cellProps.data.preEventSurvey.submittedAt)?.format('LLL')}`;
+          return `${moment(cellProps.data.preEventSurvey.submittedAt)?.format("LLL")}`;
         }
       }
     },
     {
-      name: 'preEventSurvey.source',
-      header: 'Pre-event source',
-      type: 'string',
+      name: "preEventSurvey.source",
+      header: "Pre-event source",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -713,9 +713,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'totalInstructorInvoice',
-      header: 'Instructor invoice',
-      type: 'number',
+      name: "totalInstructorInvoice",
+      header: "Instructor invoice",
+      type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
@@ -726,9 +726,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'instructorInvoiceStatus',
-      header: 'Instructor invoice status',
-      type: 'string',
+      name: "instructorInvoiceStatus",
+      header: "Instructor invoice status",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -739,9 +739,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'totalDistributorInvoice',
-      header: 'Distributor Invoice',
-      type: 'number',
+      name: "totalDistributorInvoice",
+      header: "Distributor Invoice",
+      type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
@@ -752,9 +752,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'distributorInvoiceStatus',
-      header: 'Distributor Invoice Status',
-      type: 'string',
+      name: "distributorInvoiceStatus",
+      header: "Distributor Invoice Status",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -765,9 +765,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'totalMembershipDiscount',
-      header: 'Total Membership Discount',
-      type: 'number',
+      name: "totalMembershipDiscount",
+      header: "Total Membership Discount",
+      type: "number",
       filterEditor: NumberFilter,
       filterDelay: 1500,
       defaultWidth: 150,
@@ -778,9 +778,9 @@ const AllBookingsTable = () => {
       }
     },
     {
-      name: 'firstTouchChannel',
-      header: 'First Touch Channel',
-      type: 'string',
+      name: "firstTouchChannel",
+      header: "First Touch Channel",
+      type: "string",
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
@@ -793,7 +793,7 @@ const AllBookingsTable = () => {
   ];
 
   const { ...allClasses } = useQuery(queryAllClasses, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     variables: {
       filter: { isActive: true }
     },
@@ -811,11 +811,11 @@ const AllBookingsTable = () => {
     onCompleted: (data) => {
       if (data) setCoordinators(data.eventCoordinators);
     },
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: "cache-and-network"
   });
 
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     variables: {
       filter: {}
     },
@@ -826,7 +826,7 @@ const AllBookingsTable = () => {
   });
 
   useQuery(queryAllInstructors, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       if (data) setInstructors(data.instructors);
     },
@@ -840,53 +840,53 @@ const AllBookingsTable = () => {
 
     if (currentFilters && currentFilters.length === 0) {
       const userData = getUserData();
-      let coordinatorFilterValue = '';
+      let coordinatorFilterValue = "";
 
       if (userData && userData.customData && userData.customData.coordinatorId) {
         coordinatorFilterValue = userData.customData.email;
       }
 
       currentFilters = [
-        { name: 'createdAt', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'updatedAt', type: 'date', operator: 'inrange', value: undefined },
-        { name: '_id', type: 'string', operator: 'contains', value: '' },
-        { name: 'customerName', type: 'string', operator: 'contains', value: '' },
-        { name: 'bookingStage', type: 'select', operator: 'inlist', value: undefined },
-        { name: 'closedReason', type: 'string', operator: 'contains', value: '' },
-        { name: 'gclid', type: 'string', operator: 'contains', value: '' },
-        { name: 'customerEmail', type: 'string', operator: 'contains', value: '' },
-        { name: 'customerPhone', type: 'string', operator: 'contains', value: '' },
-        { name: 'customerCompany', type: 'string', operator: 'contains', value: '' },
-        { name: 'eventCoordinatorEmail', type: 'select', operator: 'inlist', value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
-        { name: 'className', type: 'select', operator: 'inlist', value: undefined },
-        { name: 'attendees', type: 'number', operator: 'gte', value: undefined },
-        { name: 'registeredAttendees', type: 'number', operator: 'gte', value: undefined },
-        { name: 'taxAmount', type: 'number', operator: 'gte', value: undefined },
-        { name: 'serviceFeeAmount', type: 'number', operator: 'gte', value: undefined },
-        { name: 'cardFeeAmount', type: 'number', operator: 'gte', value: undefined },
-        { name: 'totalInvoice', type: 'number', operator: 'gte', value: undefined },
-        { name: 'depositsPaid', type: 'number', operator: 'gte', value: undefined },
-        { name: 'finalPaid', type: 'number', operator: 'gte', value: undefined },
-        { name: 'depositPaidDate', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'finalPaymentPaidDate', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'balance', type: 'number', operator: 'gte', value: undefined },
-        { name: 'eventDateTime', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'signUpDeadline', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'customerTags', type: 'select', operator: 'inlist', value: undefined },
-        { name: 'utm_campaign', type: 'string', operator: 'contains', value: '' },
-        { name: 'utm_source', type: 'string', operator: 'contains', value: '' },
-        { name: 'utm_medium', type: 'string', operator: 'contains', value: '' },
-        { name: 'utm_content', type: 'string', operator: 'contains', value: '' },
-        { name: 'utm_term', type: 'string', operator: 'contains', value: '' },
-        { name: 'bookingTags', type: 'string', operator: 'contains', value: '' },
-        { name: 'totalInstructorInvoice', type: 'number', operator: 'contains', value: '' },
-        { name: 'instructorInvoiceStatus', type: 'string', operator: 'contains', value: '' },
-        { name: 'totalDistributorInvoice', type: 'number', operator: 'contains', value: '' },
-        { name: 'distributorInvoiceStatus', type: 'string', operator: 'contains', value: '' },
-        { name: 'preEventSurvey.submittedAt', type: 'date', operator: 'inrange', value: undefined },
-        { name: 'preEventSurvey.source', type: 'string', operator: 'contains', value: '' },
-        { name: 'totalMembershipDiscount', type: 'number', operator: 'contains', value: '' },
-        { name: 'firstTouchChannel', type: 'string', operator: 'contains', value: '' }
+        { name: "createdAt", type: "date", operator: "inrange", value: undefined },
+        { name: "updatedAt", type: "date", operator: "inrange", value: undefined },
+        { name: "_id", type: "string", operator: "contains", value: "" },
+        { name: "customerName", type: "string", operator: "contains", value: "" },
+        { name: "bookingStage", type: "select", operator: "inlist", value: undefined },
+        { name: "closedReason", type: "string", operator: "contains", value: "" },
+        { name: "gclid", type: "string", operator: "contains", value: "" },
+        { name: "customerEmail", type: "string", operator: "contains", value: "" },
+        { name: "customerPhone", type: "string", operator: "contains", value: "" },
+        { name: "customerCompany", type: "string", operator: "contains", value: "" },
+        { name: "eventCoordinatorEmail", type: "select", operator: "inlist", value: coordinatorFilterValue ? [coordinatorFilterValue] : undefined },
+        { name: "className", type: "select", operator: "inlist", value: undefined },
+        { name: "attendees", type: "number", operator: "gte", value: undefined },
+        { name: "registeredAttendees", type: "number", operator: "gte", value: undefined },
+        { name: "taxAmount", type: "number", operator: "gte", value: undefined },
+        { name: "serviceFeeAmount", type: "number", operator: "gte", value: undefined },
+        { name: "cardFeeAmount", type: "number", operator: "gte", value: undefined },
+        { name: "totalInvoice", type: "number", operator: "gte", value: undefined },
+        { name: "depositsPaid", type: "number", operator: "gte", value: undefined },
+        { name: "finalPaid", type: "number", operator: "gte", value: undefined },
+        { name: "depositPaidDate", type: "date", operator: "inrange", value: undefined },
+        { name: "finalPaymentPaidDate", type: "date", operator: "inrange", value: undefined },
+        { name: "balance", type: "number", operator: "gte", value: undefined },
+        { name: "eventDateTime", type: "date", operator: "inrange", value: undefined },
+        { name: "signUpDeadline", type: "date", operator: "inrange", value: undefined },
+        { name: "customerTags", type: "select", operator: "inlist", value: undefined },
+        { name: "utm_campaign", type: "string", operator: "contains", value: "" },
+        { name: "utm_source", type: "string", operator: "contains", value: "" },
+        { name: "utm_medium", type: "string", operator: "contains", value: "" },
+        { name: "utm_content", type: "string", operator: "contains", value: "" },
+        { name: "utm_term", type: "string", operator: "contains", value: "" },
+        { name: "bookingTags", type: "string", operator: "contains", value: "" },
+        { name: "totalInstructorInvoice", type: "number", operator: "contains", value: "" },
+        { name: "instructorInvoiceStatus", type: "string", operator: "contains", value: "" },
+        { name: "totalDistributorInvoice", type: "number", operator: "contains", value: "" },
+        { name: "distributorInvoiceStatus", type: "string", operator: "contains", value: "" },
+        { name: "preEventSurvey.submittedAt", type: "date", operator: "inrange", value: undefined },
+        { name: "preEventSurvey.source", type: "string", operator: "contains", value: "" },
+        { name: "totalMembershipDiscount", type: "number", operator: "contains", value: "" },
+        { name: "firstTouchChannel", type: "string", operator: "contains", value: "" }
       ];
     }
 
@@ -898,17 +898,17 @@ const AllBookingsTable = () => {
   }, []);
 
   const onEditCompleted = (bookingId) => {
-    const sortEditedData = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+    const sortEditedData = { dir: -1, id: "updatedAt", name: "updatedAt", type: "date" };
     const currentFilters = [...orFilters];
-    currentFilters.push({ name: '_id', type: 'string', operator: 'eq', value: bookingId });
-    currentFilters.push({ name: '_id', type: 'string', operator: 'neq', value: bookingId });
+    currentFilters.push({ name: "_id", type: "string", operator: "eq", value: bookingId });
+    currentFilters.push({ name: "_id", type: "string", operator: "neq", value: bookingId });
     setOrFilters(currentFilters);
     setSortInfo(sortEditedData);
   };
 
   const onAddCompleted = (bookingId) => {
-    const currentFilters = [...filterValue.filter((element) => element.name !== '_id')];
-    const idFilter = { name: '_id', type: 'string', operator: 'contains', value: bookingId };
+    const currentFilters = [...filterValue.filter((element) => element.name !== "_id")];
+    const idFilter = { name: "_id", type: "string", operator: "contains", value: bookingId };
     currentFilters.push(idFilter);
     setFilterValue(currentFilters);
   };
@@ -922,7 +922,7 @@ const AllBookingsTable = () => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
     const response = await apolloClient.query({
       query: queryGetBookingsWithCriteria,
-      fetchPolicy: 'network-only',
+      fetchPolicy: "network-only",
       variables: {
         limit,
         offset: skip,
@@ -955,48 +955,48 @@ const AllBookingsTable = () => {
     menuProps.autoDismiss = true;
     menuProps.items = [
       {
-        label: 'Close with reason:',
+        label: "Close with reason:",
         disabled: true
       },
       {
-        label: 'Won',
+        label: "Won",
         onClick: () => {
-          setClosedReason('Won');
+          setClosedReason("Won");
           toggle();
         }
       },
       {
-        label: 'Lost',
+        label: "Lost",
         onClick: () => {
-          setClosedReason('Lost');
+          setClosedReason("Lost");
           toggle();
         }
       },
       {
-        label: 'Mistake',
+        label: "Mistake",
         onClick: () => {
-          setClosedReason('Mistake');
+          setClosedReason("Mistake");
           toggle();
         }
       },
       {
-        label: 'Duplicated',
+        label: "Duplicated",
         onClick: () => {
-          setClosedReason('Duplicated');
+          setClosedReason("Duplicated");
           toggle();
         }
       },
       {
-        label: 'Test',
+        label: "Test",
         onClick: () => {
-          setClosedReason('Test');
+          setClosedReason("Test");
           toggle();
         }
       },
       {
-        label: 'Postponed',
+        label: "Postponed",
         onClick: () => {
-          setClosedReason('Postponed');
+          setClosedReason("Postponed");
           toggle();
         }
       }
@@ -1019,7 +1019,7 @@ const AllBookingsTable = () => {
     <div>
       <TasksBar
         setElementToAdd={setElementToAdd}
-        titleView={'ALL Time Bookings (Beta)'}
+        titleView={"ALL Time Bookings (Beta)"}
         titleBadge={` ${totalRows} records found`}
         showAddModal={() => handleModal()}
         getDataToExport={getDataToExport}
@@ -1040,7 +1040,7 @@ const AllBookingsTable = () => {
         onSortInfoChange={setSortInfo}
         onFilterValueChange={setFilterValue}
         showZebraRows={true}
-        theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
+        theme={skin === "dark" ? "amber-dark" : "default-light"}
         /*cellSelection={cellSelection}
         onCellSelectionChange={setCellSelection}
         enableClipboard={true}
@@ -1077,7 +1077,7 @@ const AllBookingsTable = () => {
         allInstructors={instructors}
         allClasses={classes}
         handleClose={() => setCurrentElement({})}
-        editMode={currentElement && currentElement.status !== 'closed' ? true : false}
+        editMode={currentElement && currentElement.status !== "closed" ? true : false}
         onEditCompleted={onEditCompleted}
       />
       <Modal isOpen={isOpenModal} centered>
@@ -1096,26 +1096,26 @@ const AllBookingsTable = () => {
 export default AllBookingsTable;
 
 ReactDataGrid.defaultProps.filterTypes.string = {
-  type: 'string',
-  emptyValue: '',
+  type: "string",
+  emptyValue: "",
   operators: [
     {
-      name: 'contains',
+      name: "contains",
       fn: {}
     }
   ]
 };
 
 ReactDataGrid.defaultProps.filterTypes.select = {
-  type: 'select',
+  type: "select",
   emptyValue: undefined,
   operators: [
     {
-      name: 'inlist',
+      name: "inlist",
       fn: {}
     },
     {
-      name: 'notinlist',
+      name: "notinlist",
       fn: {}
     }
   ]

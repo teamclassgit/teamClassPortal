@@ -1,17 +1,17 @@
 // @packages
-import Avatar from '@components/avatar';
-import CardLink from 'reactstrap/lib/CardLink';
-import DataTable from 'react-data-table-component';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from 'react-feather';
-import { useHistory } from 'react-router';
+import Avatar from "@components/avatar";
+import CardLink from "reactstrap/lib/CardLink";
+import DataTable from "react-data-table-component";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import ReactPaginate from "react-paginate";
+import { Edit2, ChevronDown, User, Users, DollarSign, Calendar, Check } from "react-feather";
+import { useHistory } from "react-router";
 
 // @scripts
-import StatusSelector from './StatusSelector';
-import moment from 'moment';
-import { Card } from 'reactstrap';
+import StatusSelector from "./StatusSelector";
+import moment from "moment";
+import { Card } from "reactstrap";
 import {
   getCustomerEmail,
   getClassTitle,
@@ -22,8 +22,8 @@ import {
   getDepositPaid,
   getFinalPaymentPaid,
   getLastPaymentDate
-} from '../common';
-import './TableBookings.scss';
+} from "../common";
+import "./TableBookings.scss";
 
 const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, filteredData, handleEditModal }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -32,26 +32,26 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
 
   const columns = [
     {
-      name: 'Updated',
-      selector: 'updatedAt',
+      name: "Updated",
+      selector: "updatedAt",
       sortable: true,
-      maxWidth: '120px',
+      maxWidth: "120px",
       cell: (row) => (
         <small>
           {moment(row.updatedAt).calendar(null, {
-            lastDay: '[Yesterday]',
-            sameDay: 'LT',
-            lastWeek: 'dddd',
-            sameElse: 'MMMM Do, YYYY'
+            lastDay: "[Yesterday]",
+            sameDay: "LT",
+            lastWeek: "dddd",
+            sameElse: "MMMM Do, YYYY"
           })}
         </small>
       )
     },
     {
-      name: 'Id',
-      selector: '_id',
+      name: "Id",
+      selector: "_id",
       sortable: false,
-      maxWidth: '200px',
+      maxWidth: "200px",
       cell: (row) => (
         <>
           <small>
@@ -93,10 +93,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Status',
-      selector: 'status',
+      name: "Status",
+      selector: "status",
       sortable: true,
-      maxWidth: '100px',
+      maxWidth: "100px",
       cell: (row) => (
         <small>
           <StatusSelector row={row} calendarEvent={calendarEvents.find((element) => element.bookingId === row._id)} />
@@ -104,10 +104,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Customer',
-      selector: 'customerName',
+      name: "Customer",
+      selector: "customerName",
       sortable: true,
-      maxWidth: '200px',
+      maxWidth: "200px",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -117,10 +117,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Email',
-      selector: 'customer.email',
+      name: "Email",
+      selector: "customer.email",
       sortable: true,
-      maxWidth: '320px',
+      maxWidth: "320px",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getCustomerEmail(row.customerId, customers)}</span>
@@ -128,10 +128,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Company',
-      selector: 'customer.company',
+      name: "Company",
+      selector: "customer.company",
       sortable: true,
-      maxWidth: '200px',
+      maxWidth: "200px",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -141,10 +141,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Class',
-      selector: 'teamClassId',
+      name: "Class",
+      selector: "teamClassId",
       sortable: true,
-      maxWidth: '250px',
+      maxWidth: "250px",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getClassTitle(row.teamClassId, classes)}</span>
@@ -152,10 +152,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: '#',
-      selector: 'attendees',
+      name: "#",
+      selector: "attendees",
       sortable: true,
-      maxWidth: '5px',
+      maxWidth: "5px",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{row.attendees}</span>
@@ -163,10 +163,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Event Date',
-      selector: '_id',
+      name: "Event Date",
+      selector: "_id",
       sortable: true,
-      maxWidth: '140px',
+      maxWidth: "140px",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getFormattedEventDate(row._id, calendarEvents)}</span>
@@ -174,10 +174,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Deposit paid',
-      selector: 'payments',
+      name: "Deposit paid",
+      selector: "payments",
       sortable: false,
-      maxWidth: '140px',
+      maxWidth: "140px",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getDepositPaid(row)}</span>
@@ -185,10 +185,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Final payment paid',
-      selector: 'payments',
+      name: "Final payment paid",
+      selector: "payments",
       sortable: false,
-      maxWidth: '140px',
+      maxWidth: "140px",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getFinalPaymentPaid(row)}</span>
@@ -196,10 +196,10 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Last payment date',
-      selector: 'payments',
+      name: "Last payment date",
+      selector: "payments",
       sortable: false,
-      maxWidth: '140px',
+      maxWidth: "140px",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getLastPaymentDate(row)}</span>
@@ -207,134 +207,134 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
       )
     },
     {
-      name: 'Actions',
+      name: "Actions",
       allowOverflow: true,
-      maxWidth: '400px',
+      maxWidth: "400px",
       cell: (row) => {
         const calendarEvent = calendarEvents.find((element) => element.bookingId === row._id);
 
-        return row.status === 'quote' ? (
+        return row.status === "quote" ? (
           <small>
             <div className="d-flex">
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
               </a>
             </div>
           </small>
-        ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'reserved' ? (
+        ) : row.status === "date-requested" && calendarEvent && calendarEvent.status === "reserved" ? (
           <small>
             <div className="d-flex">
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar />} />
               </a>
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/booking/date-time-confirmation/${row._id}`}
-                target={'_blank'}
-                title={'Approve/Reject link'}
+                target={"_blank"}
+                title={"Approve/Reject link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Check />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
               </a>
             </div>
           </small>
-        ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'confirmed' ? (
+        ) : row.status === "date-requested" && calendarEvent && calendarEvent.status === "confirmed" ? (
           <small>
             <div className="d-flex">
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={'_blank'} title={'Deposit link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={"_blank"} title={"Deposit link"}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
               </a>
             </div>
           </small>
-        ) : row.status === 'date-requested' && calendarEvent && calendarEvent.status === 'rejected' ? (
+        ) : row.status === "date-requested" && calendarEvent && calendarEvent.status === "rejected" ? (
           <small>
             <div className="d-flex">
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(row._id)} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
               </a>
             </div>
           </small>
-        ) : row.status === 'confirmed' ? (
+        ) : row.status === "confirmed" ? (
           <small>
             <div className="d-flex">
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={"_blank"} title={"Sign-up link"}>
                 <Avatar color="light-primary" size="sm" icon={<User />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
                 <Avatar color="light-primary" size="sm" icon={<Users />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={"_blank"} title={"Final payment link"}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(row._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
               </a>
             </div>
           </small>
         ) : (
-          row.status === 'paid' && (
+          row.status === "paid" && (
             <small>
               <div className="d-flex">
                 <a
                   className="mr-1"
                   href={`https://www.teamclass.com/customers/select-date-time/${row._id}`}
-                  target={'_blank'}
-                  title={'Select date and time link'}
+                  target={"_blank"}
+                  title={"Select date and time link"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Calendar />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={'_blank'} title={'Sign-up link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/event/${row._id}`} target={"_blank"} title={"Sign-up link"}>
                   <Avatar color="light-primary" size="sm" icon={<User />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
                   <Avatar color="light-primary" size="sm" icon={<Users />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${row._id}?type=payment`} target={"_blank"} title={"Final payment link"}>
                   <Avatar color="secondary" size="sm" icon={<DollarSign />} />
                 </a>
-                <a className="mr-1" onClick={() => handleEdit(row._id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <a className="mr-1" onClick={() => handleEdit(row._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
                 </a>
               </div>
@@ -382,7 +382,7 @@ const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, f
         noHeader
         pagination
         columns={columns}
-        defaultSortField={'updatedAt'}
+        defaultSortField={"updatedAt"}
         defaultSortAsc={false}
         paginationPerPage={15}
         className="react-dataTable"

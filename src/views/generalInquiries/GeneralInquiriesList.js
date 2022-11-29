@@ -1,16 +1,16 @@
 // @packages
-import moment from 'moment';
-import { Col, Spinner } from 'reactstrap';
-import { useQuery } from '@apollo/client';
-import { useState, useEffect, useContext } from 'react';
+import moment from "moment";
+import { Col, Spinner } from "reactstrap";
+import { useQuery } from "@apollo/client";
+import { useState, useEffect, useContext } from "react";
 
 // @scripts
-import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
-import DataTableGeneralInquiries from './TableGeneralInquiries';
-import FiltersModal from '../booking/BoardBookings/FiltersModal';
-import queryAllQuestions from '../../graphql/QueryAllQuestions';
-import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
+import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
+import DataTableGeneralInquiries from "./TableGeneralInquiries";
+import FiltersModal from "../booking/BoardBookings/FiltersModal";
+import queryAllQuestions from "../../graphql/QueryAllQuestions";
+import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
+import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
 
 const GeneralInquiresList = () => {
   const [filteredGeneralInquiries, setFilteredGeneralInquiries] = useState([]);
@@ -79,7 +79,7 @@ const GeneralInquiresList = () => {
       query = {
         ...query,
         date_gte: moment(dateFilterContext.value[0]).format(),
-        date_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
+        date_lte: moment(dateFilterContext.value[1]).add(23, "hours").add(59, "minutes").format()
       };
     }
 
@@ -87,11 +87,11 @@ const GeneralInquiresList = () => {
   }, [dateFilterContext, coordinatorFilterContext]);
 
   useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
+    handleSearch((textFilterContext && textFilterContext.value) || "");
   }, [textFilterContext]);
 
   useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
+    handleSearch((textFilterContext && textFilterContext.value) || "");
   }, [generalInquiries]);
 
   return (
@@ -109,7 +109,7 @@ const GeneralInquiresList = () => {
         showFilter={true}
         showView={false}
         isGeneralInquiries={true}
-        titleView={'General Inquiries '}
+        titleView={"General Inquiries "}
       />
       {allQuestions.loading ? (
         <div>

@@ -1,12 +1,12 @@
-import { Fragment } from 'react';
-import { Col, Form, Row } from 'reactstrap';
-import TableAttendees from './TableAttendees';
-import { useMutation } from '@apollo/client';
-import mutationUpsertAttendee from '../../../graphql/MutationUpsertAttendee';
-import mutationDeleteAttendee from '../../../graphql/MutationDeleteAttendee';
+import { Fragment } from "react";
+import { Col, Form, Row } from "reactstrap";
+import TableAttendees from "./TableAttendees";
+import { useMutation } from "@apollo/client";
+import mutationUpsertAttendee from "../../../graphql/MutationUpsertAttendee";
+import mutationDeleteAttendee from "../../../graphql/MutationDeleteAttendee";
 
 // @styles
-import '@styles/react/libs/tables/react-dataTable-component.scss';
+import "@styles/react/libs/tables/react-dataTable-component.scss";
 
 const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountAttendees, customer }) => {
   const [upsertAttendee] = useMutation(mutationUpsertAttendee, {});
@@ -22,11 +22,11 @@ const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountA
     });
 
     if (!result || !result.data || !result.data.upsertOneAttendee) {
-      console.log('Error creating attendee', result);
+      console.log("Error creating attendee", result);
       return;
     }
 
-    console.log('1. New attendee created: ', result.data.upsertOneAttendee._id);
+    console.log("1. New attendee created: ", result.data.upsertOneAttendee._id);
     return result.data.upsertOneAttendee;
   };
 

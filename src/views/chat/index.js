@@ -1,18 +1,18 @@
 // @packages
-import React, { useState, useContext, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useContext, useMemo } from "react";
+import { useSelector } from "react-redux";
 // @scripts
-import ConversationContainer from './ConversationsContainer';
-import SidebarLeft from './SidebarLeft';
-import SidebarRight from './SidebarRight';
-import { TwilioContext } from '../../context/TwilioContext/TwilioContext';
+import ConversationContainer from "./ConversationsContainer";
+import SidebarLeft from "./SidebarLeft";
+import SidebarRight from "./SidebarRight";
+import { TwilioContext } from "../../context/TwilioContext/TwilioContext";
 // @styles
-import '@styles/base/pages/app-chat-list.scss';
-import '@styles/base/pages/app-chat.scss';
+import "@styles/base/pages/app-chat-list.scss";
+import "@styles/base/pages/app-chat.scss";
 
 const AppChat = () => {
   const [sidebar, setSidebar] = useState(false);
-  const [status, setStatus] = useState('online');
+  const [status, setStatus] = useState("online");
   const [userSidebarLeft, setUserSidebarLeft] = useState(false);
   const { twilioClient } = useContext(TwilioContext);
   const [selectedBooking, setSelectedBooking] = useState(null);

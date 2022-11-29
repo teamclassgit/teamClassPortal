@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { Card, Row } from 'reactstrap';
-import mutationUpdateBookingStatus from '../../../graphql/MutationUpdateBookingStatus';
-import BoardCard from './BoardCard/BoardCard';
-import Board from '@lourenci/react-kanban';
-import { BOOKING_STATUS } from '../../../utility/Constants';
-import './BoardBookings.scss';
-import '@lourenci/react-kanban/dist/styles.css';
-import Avatar from '@components/avatar';
-import { DollarSign, TrendingUp } from 'react-feather';
+import React, { useEffect, useState } from "react";
+import { useMutation } from "@apollo/client";
+import { Card, Row } from "reactstrap";
+import mutationUpdateBookingStatus from "../../../graphql/MutationUpdateBookingStatus";
+import BoardCard from "./BoardCard/BoardCard";
+import Board from "@lourenci/react-kanban";
+import { BOOKING_STATUS } from "../../../utility/Constants";
+import "./BoardBookings.scss";
+import "@lourenci/react-kanban/dist/styles.css";
+import Avatar from "@components/avatar";
+import { DollarSign, TrendingUp } from "react-feather";
 
 const BoardBookings = ({
   filteredBookingsQuote = [],
@@ -35,37 +35,37 @@ const BoardBookings = ({
     return {
       columns: BOOKING_STATUS.filter((element) => element.board === true).map(({ label, value }, index) => ({
         id: index,
-        title: 'Loading...',
+        title: "Loading...",
         cards: []
       }))
     };
   };
 
   const getColumnData = (bookingCards, column) => {
-    if (column === 'quote') return bookingCards.filter(({ status }) => status.indexOf(column) > -1);
+    if (column === "quote") return bookingCards.filter(({ status }) => status.indexOf(column) > -1);
 
-    if (column === 'date-requested') {
+    if (column === "date-requested") {
       return bookingCards.filter(({ status, eventDateTimeStatus }) => {
-        return status.indexOf(column) > -1 && (eventDateTimeStatus === 'reserved' || eventDateTimeStatus === 'rejected');
+        return status.indexOf(column) > -1 && (eventDateTimeStatus === "reserved" || eventDateTimeStatus === "rejected");
       });
     }
 
-    if (column === 'accepted') {
+    if (column === "accepted") {
       return bookingCards.filter(({ status, eventDateTimeStatus }) => {
-        return status.indexOf('date-requested') > -1 && eventDateTimeStatus === 'confirmed';
+        return status.indexOf("date-requested") > -1 && eventDateTimeStatus === "confirmed";
       });
     }
 
-    if (column === 'confirmed') {
+    if (column === "confirmed") {
       return bookingCards.filter(({ status, payments }) => {
-        const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+        const depositPayment = payments && payments.find((element) => element.paymentName === "deposit" && element.status === "succeeded");
         return status.indexOf(column) > -1 && depositPayment;
       });
     }
 
-    if (column === 'paid') {
+    if (column === "paid") {
       return bookingCards.filter(({ status, payments }) => {
-        const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+        const finalPayment = payments && payments.find((element) => element.paymentName === "final" && element.status === "succeeded");
         return status.indexOf(column) > -1 && finalPayment;
       });
     }
@@ -78,7 +78,7 @@ const BoardBookings = ({
 
     const quoteColumn = {
       id: 0,
-      title: 'Quote',
+      title: "Quote",
       cards: filteredBookingsQuote?.rows || [],
       totalBookings: filteredBookingsQuote?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsQuote?.count || 0
@@ -87,7 +87,7 @@ const BoardBookings = ({
 
     const requestedColumn = {
       id: 0,
-      title: 'Date/Time requested',
+      title: "Date/Time requested",
       cards: filteredBookingsRequested?.rows || [],
       totalBookings: filteredBookingsRequested?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsRequested?.count || 0
@@ -96,7 +96,7 @@ const BoardBookings = ({
 
     const acceptedColumn = {
       id: 0,
-      title: 'Date/Time accepted',
+      title: "Date/Time accepted",
       cards: filteredBookingsAccepted?.rows || [],
       totalBookings: filteredBookingsAccepted?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsAccepted?.count || 0
@@ -105,7 +105,7 @@ const BoardBookings = ({
 
     const depositColumn = {
       id: 0,
-      title: 'Deposit paid',
+      title: "Deposit paid",
       cards: filteredBookingsDeposit?.rows || [],
       totalBookings: filteredBookingsDeposit?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsDeposit?.count || 0
@@ -114,7 +114,7 @@ const BoardBookings = ({
 
     const finalColumn = {
       id: 0,
-      title: 'Paid (Full)',
+      title: "Paid (Full)",
       cards: filteredBookingsPaid?.rows || [],
       totalBookings: filteredBookingsPaid?.total?.toFixed(2) || 0.0,
       numberOfBookings: filteredBookingsPaid?.count || 0
@@ -167,7 +167,7 @@ const BoardBookings = ({
                     </div>
                     <div className="pl-1 m-0">
                       <div>
-                        <strong>${totalBookings ? totalBookings : '0'}</strong>
+                        <strong>${totalBookings ? totalBookings : "0"}</strong>
                       </div>
                       <div className="font-small-1">Total</div>
                     </div>

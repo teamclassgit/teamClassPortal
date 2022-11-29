@@ -1,7 +1,7 @@
 // @packages
-import Flatpickr from 'react-flatpickr';
-import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
+import Flatpickr from "react-flatpickr";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import { 
   Button,
   Col,
@@ -15,9 +15,9 @@ import {
   ModalBody,
   ModalHeader,
   Row 
-} from 'reactstrap';
-import { Mail, Phone, User, X } from 'react-feather';
-import { useMutation } from '@apollo/client';
+} from "reactstrap";
+import { Mail, Phone, User, X } from "react-feather";
+import { useMutation } from "@apollo/client";
 
 // @scripts
 import {
@@ -25,11 +25,11 @@ import {
   BOOKING_PAID_STATUS,
   CHARGE_OUTSIDE_SYSTEM,
   PAYMENT_STATUS_SUCCEEDED
-} from '../../../utility/Constants';
-import mutationUpdateBookingPayments from '../../../graphql/MutationUpdateBookingPayments';
-import paymentMethodOptions from './PaymentMethodOptions.json';
-import { capitalizeString, isValidEmail } from '../../../utility/Utils';
-import { selectThemeColors } from '@utils';
+} from "../../../utility/Constants";
+import mutationUpdateBookingPayments from "../../../graphql/MutationUpdateBookingPayments";
+import paymentMethodOptions from "./PaymentMethodOptions.json";
+import { capitalizeString, isValidEmail } from "../../../utility/Utils";
+import { selectThemeColors } from "@utils";
 
 const AddPaymentModal = ({ 
   booking,
@@ -58,15 +58,15 @@ const AddPaymentModal = ({
 
   const paymentNameOptions = [
     {
-      label: 'Deposit',
-      value: 'deposit'
+      label: "Deposit",
+      value: "deposit"
     }
   ];
 
-  if (booking && (!booking.payments || !booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded'))) {
+  if (booking && (!booking.payments || !booking.payments.find((element) => element.paymentName === "final" && element.status === "succeeded"))) {
     paymentNameOptions.push({
-      label: 'Final',
-      value: 'final'
+      label: "Final",
+      value: "final"
     });
   }
 
@@ -88,22 +88,22 @@ const AddPaymentModal = ({
       setNewPhone(currentPayment.phone);
     } else {
       setNewAmount(0);
-      setNewCardBrand('');
-      setNewCardLastFourDigits('');
-      setNewEmail('');
-      setNewName('');
+      setNewCardBrand("");
+      setNewCardLastFourDigits("");
+      setNewEmail("");
+      setNewName("");
       setNewPaymentCreationDate([]);
-      setNewPaymentId('');
-      setNewPaymentMethod('');
-      setNewPaymentName('');
-      setNewPhone('');
+      setNewPaymentId("");
+      setNewPaymentMethod("");
+      setNewPaymentName("");
+      setNewPhone("");
     }
   }, [currentPayment]);
 
   useEffect(() => {
-    if (newPaymentMethod !== 'card') {
-      setNewCardBrand('');
-      setNewCardLastFourDigits('');
+    if (newPaymentMethod !== "card") {
+      setNewCardBrand("");
+      setNewCardLastFourDigits("");
     }
   }, [newPaymentMethod]);
 
@@ -134,7 +134,7 @@ const AddPaymentModal = ({
       status: PAYMENT_STATUS_SUCCEEDED
     };
 
-    if (mode === 'edit') {
+    if (mode === "edit") {
       newPaymentsArray = [
         ...newPaymentsArray.slice(0, currentPayment.index),
         ...newPaymentsArray.slice(currentPayment.index + 1, newPaymentsArray.lenght)
@@ -143,9 +143,9 @@ const AddPaymentModal = ({
     newPaymentsArray.push(newPayment);
     newPaymentsArray.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
-    const finalPayment = newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+    const finalPayment = newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === "final" && element.status === "succeeded");
     const depositPayment =
-      newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+      newPaymentsArray && newPaymentsArray.find((element) => element.paymentName === "deposit" && element.status === "succeeded");
 
     const newBookingStatus = finalPayment ? BOOKING_PAID_STATUS : depositPayment ? BOOKING_DEPOSIT_CONFIRMATION_STATUS : booking.status;
 
@@ -163,7 +163,7 @@ const AddPaymentModal = ({
         setBooking(result.data.updateOneBooking);
       }
     } catch (error) {
-      console.log('Error saving payments', error);
+      console.log("Error saving payments", error);
     }
     setProcessing(false);
     handleModal();
@@ -177,7 +177,7 @@ const AddPaymentModal = ({
       modalClassName="modal-slide-in" 
     >
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
-        {mode === 'edit' ? <h5 className="modal-title">Edit Payment</h5> : <h5 className="modal-title">New Payment</h5>}
+        {mode === "edit" ? <h5 className="modal-title">Edit Payment</h5> : <h5 className="modal-title">New Payment</h5>}
       </ModalHeader>
       <ModalBody className="flex-grow-1">
         <FormGroup>
@@ -234,7 +234,7 @@ const AddPaymentModal = ({
                 placeholder=""
                 prefix="$"
                 required={true}
-                value={newAmount ? newAmount : ''}
+                value={newAmount ? newAmount : ""}
                 onChange={(e) => setNewAmount(e.target.value)}
                 className="form-control"
               />
@@ -275,7 +275,7 @@ const AddPaymentModal = ({
               <Label for="payment-name">Payment Name*</Label>
               <Select
                 value={{
-                  value: newPaymentName || '',
+                  value: newPaymentName || "",
                   label: capitalizeString(newPaymentName)
                 }}
                 theme={selectThemeColors}
@@ -298,7 +298,7 @@ const AddPaymentModal = ({
               <Label for="payment-method">Payment Method*</Label>
               <Select
                 value={{
-                  value: newPaymentMethod || '',
+                  value: newPaymentMethod || "",
                   label: capitalizeString(newPaymentMethod)
                 }}
                 theme={selectThemeColors}
@@ -317,7 +317,7 @@ const AddPaymentModal = ({
             </FormGroup>
           </Col>
         </Row>
-        {newPaymentMethod === 'card' && (
+        {newPaymentMethod === "card" && (
           <Row>
             <Col md={6}>
               <FormGroup>
@@ -366,11 +366,11 @@ const AddPaymentModal = ({
             !newPaymentCreationDate ||
             !newPaymentName ||
             !newPaymentMethod ||
-            (newPaymentMethod === 'card' && !newCardBrand) ||
-            (newPaymentMethod === 'card' && !newCardLastFourDigits)
+            (newPaymentMethod === "card" && !newCardBrand) ||
+            (newPaymentMethod === "card" && !newCardLastFourDigits)
           }
         >
-          {processing ? 'Saving...' : 'Save'}
+          {processing ? "Saving..." : "Save"}
         </Button>
         <Button className="mt-1" color="secondary" onClick={cancel} outline>
           Cancel

@@ -1,8 +1,8 @@
 //** React Imports
-import { useState } from 'react';
+import { useState } from "react";
 
 // ** Configs
-import themeConfig from '@configs/themeConfig';
+import themeConfig from "@configs/themeConfig";
 
 export const useNavbarType = () => {
   // ** State

@@ -1,13 +1,13 @@
 // @packages
-import Flatpickr from 'react-flatpickr';
-import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
-import Select from 'react-select';
-import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from 'reactstrap';
-import closeBookingOptions from '../../../components/ClosedBookingOptions.json';
+import Flatpickr from "react-flatpickr";
+import PropTypes from "prop-types";
+import React, { useState, useContext } from "react";
+import Select from "react-select";
+import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from "reactstrap";
+import closeBookingOptions from "../../../components/ClosedBookingOptions.json";
 
 // @scripts
-import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
+import { FiltersContext } from "../../../context/FiltersContext/FiltersContext";
 
 const FiltersModal = ({
   classes,
@@ -100,7 +100,7 @@ const FiltersModal = ({
               defaultValue={getClassFilterDefaultValue()}
               options={classOptions}
               onChange={(e) => {
-                setFilterByClass({ type: 'class', value: e.value, label: e.label });
+                setFilterByClass({ type: "class", value: e.value, label: e.label });
               }}
             />
           </FormGroup>
@@ -115,7 +115,7 @@ const FiltersModal = ({
               options={coordinatorOptions}
               classNamePrefix="select"
               onChange={(e) => {
-                setFilterByCoordinator({ type: 'coordinator', value: e.map((element) => element.value), label: e.map((element) => element.label) });
+                setFilterByCoordinator({ type: "coordinator", value: e.map((element) => element.value), label: e.map((element) => element.label) });
               }}
               isMulti={true}
             />
@@ -132,12 +132,12 @@ const FiltersModal = ({
               id="range-picker"
               className="form-control"
               onChange={(dates) => setFilterByDate({
-                type: 'date',
+                type: "date",
                 value: dates
               })
               }
               options={{
-                mode: 'range'
+                mode: "range"
               }}
             />
           </FormGroup>
@@ -153,7 +153,7 @@ const FiltersModal = ({
               defaultValue={getClosedReasonFilterDefaultValue()}
               options={closedReasonOptions}
               onChange={(e) => {
-                setFilterByClosedReason({ type: 'closedReason', value: e.value, label: e.label });
+                setFilterByClosedReason({ type: "closedReason", value: e.value, label: e.label });
               }}
             />
           </FormGroup>

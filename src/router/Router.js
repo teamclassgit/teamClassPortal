@@ -1,31 +1,31 @@
 // ** React Imports
-import { Suspense, useContext, lazy } from 'react';
+import { Suspense, useContext, lazy } from "react";
 
 // ** Utils
-import { isUserLoggedIn } from '@utils';
-import { useLayout } from '@hooks/useLayout';
-import { AbilityContext } from '@src/utility/context/Can';
-import { useRouterTransition } from '@hooks/useRouterTransition';
+import { isUserLoggedIn } from "@utils";
+import { useLayout } from "@hooks/useLayout";
+import { AbilityContext } from "@src/utility/context/Can";
+import { useRouterTransition } from "@hooks/useRouterTransition";
 
 // ** Custom Components
 // import Spinner from '@components/spinner/Loading-spinner' // Uncomment if your require content fallback
-import LayoutWrapper from '@layouts/components/layout-wrapper';
+import LayoutWrapper from "@layouts/components/layout-wrapper";
 
 // ** Router Components
-import { BrowserRouter as AppRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as AppRouter, Route, Switch, Redirect } from "react-router-dom";
 
 // ** Routes & Default Routes
-import { DefaultRoute, Routes } from './routes';
+import { DefaultRoute, Routes } from "./routes";
 
 // ** Layouts
-import BlankLayout from '@layouts/BlankLayout';
-import VerticalLayout from '@src/layouts/VerticalLayout';
-import VerticalLayoutNoMenu from '@src/layouts/VerticalLayoutNoMenu';
-import VerticalLayoutNoTopBar from '@src/layouts/VerticalLayoutNoTopBar';
-import HorizontalLayout from '@src/layouts/HorizontalLayout';
+import BlankLayout from "@layouts/BlankLayout";
+import VerticalLayout from "@src/layouts/VerticalLayout";
+import VerticalLayoutNoMenu from "@src/layouts/VerticalLayoutNoMenu";
+import VerticalLayoutNoTopBar from "@src/layouts/VerticalLayoutNoTopBar";
+import HorizontalLayout from "@src/layouts/HorizontalLayout";
 
 // Context
-import FiltersContextProvider from '../context/FiltersContext/FiltersContext';
+import FiltersContextProvider from "../context/FiltersContext/FiltersContext";
 
 const Router = () => {
   // ** Hooks
@@ -36,7 +36,7 @@ const Router = () => {
   const ability = useContext(AbilityContext);
 
   // ** Default Layout
-  const DefaultLayout = layout === 'horizontal' ? 'HorizontalLayout' : 'VerticalLayout';
+  const DefaultLayout = layout === "horizontal" ? "HorizontalLayout" : "VerticalLayout";
 
   // ** All of the available layouts
   const Layouts = {
@@ -68,10 +68,10 @@ const Router = () => {
     return { LayoutRoutes, LayoutPaths };
   };
 
-  const NotAuthorized = lazy(() => import('@src/views/NotAuthorized'));
+  const NotAuthorized = lazy(() => import("@src/views/NotAuthorized"));
 
   // ** Init Error Component
-  const Error = lazy(() => import('@src/views/Error'));
+  const Error = lazy(() => import("@src/views/Error"));
 
   /**
    ** Final Route Component Checks for Login & User Role and then redirects to the route
@@ -98,7 +98,7 @@ const Router = () => {
     } else if (route.meta && route.meta.authRoute && isUserLoggedIn()) {
       // ** If route has meta and authRole and user is Logged in then redirect user to home page (DefaultRoute)
       return <Redirect to="/" />;
-    } else if (isUserLoggedIn() && !ability.can(action || 'read', resource)) {
+    } else if (isUserLoggedIn() && !ability.can(action || "read", resource)) {
       // ** If user is Logged in and doesn't have ability to visit the page redirect the user to Not Authorized
       return <Redirect to="/misc/not-authorized" />;
     } else {

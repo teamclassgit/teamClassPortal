@@ -1,64 +1,64 @@
-import { BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, Inbox, User } from 'react-feather';
+import { BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, Inbox, User } from "react-feather";
 
 export default [
   {
-    id: 'listBookings',
-    title: 'Funnel (Beta)',
+    id: "listBookings",
+    title: "Funnel (Beta)",
     icon: <Filter size={20} />,
-    navLink: '/pipeline'
+    navLink: "/pipeline"
   },
   {
-    id: 'listBookingsAll',
-    title: 'All Bookings (Beta)',
+    id: "listBookingsAll",
+    title: "All Bookings (Beta)",
     icon: <Database size={20} />,
-    navLink: '/allbookings'
+    navLink: "/allbookings"
   },
   {
-    id: 'checkout1',
-    title: 'In progress',
+    id: "checkout1",
+    title: "In progress",
     icon: <BookOpen size={20} />,
-    navLink: '/bookings'
+    navLink: "/bookings"
   },
   {
-    id: 'checkout0',
-    title: 'Events calendar',
+    id: "checkout0",
+    title: "Events calendar",
     icon: <Calendar size={20} />,
-    navLink: '/calendar'
+    navLink: "/calendar"
   },
   {
-    id: 'checkout3',
-    title: 'Private requests',
+    id: "checkout3",
+    title: "Private requests",
     icon: <Book size={20} />,
-    navLink: '/privateRequests'
+    navLink: "/privateRequests"
   },
   {
-    id: 'checkout4',
-    title: 'General inquiries',
+    id: "checkout4",
+    title: "General inquiries",
     icon: <HelpCircle size={20} />,
-    navLink: '/generalInquiries'
+    navLink: "/generalInquiries"
   },
   {
-    id: 'checkout5',
-    title: 'Discount codes',
+    id: "checkout5",
+    title: "Discount codes",
     icon: <Tag size={20} />,
-    navLink: '/discountCodes'
+    navLink: "/discountCodes"
   },
   {
-    id: 'checkout6',
-    title: 'Gift Baskets',
+    id: "checkout6",
+    title: "Gift Baskets",
     icon: <Gift size={20} />,
-    navLink: '/giftBaskets'
+    navLink: "/giftBaskets"
   },
   {
-    id: 'checkout7',
-    title: 'Listing Prices',
+    id: "checkout7",
+    title: "Listing Prices",
     icon: <Edit2 size={20} />,
-    navLink: '/listingPrices'
+    navLink: "/listingPrices"
   },
   {
-    id: 'checkout8',
-    title: 'Late requests',
+    id: "checkout8",
+    title: "Late requests",
     icon: <User size={20} />,
-    navLink: '/lateRequests'
+    navLink: "/lateRequests"
   }
 ];

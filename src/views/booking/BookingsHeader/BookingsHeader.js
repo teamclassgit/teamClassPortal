@@ -1,5 +1,5 @@
 // @packages
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from "react";
 import {
   Button,
   ButtonGroup,
@@ -15,15 +15,15 @@ import {
   InputGroupAddon,
   UncontrolledButtonDropdown,
   Spinner
-} from 'reactstrap';
-import { Share, Filter, FileText, Plus, List, Trello, Search } from 'react-feather';
-import PropTypes from 'prop-types';
+} from "reactstrap";
+import { Share, Filter, FileText, Plus, List, Trello, Search } from "react-feather";
+import PropTypes from "prop-types";
 
 // @scripts
-import ExportToExcel from '../../../components/ExportToExcel';
-import { FiltersContext } from '../../../context/FiltersContext/FiltersContext';
-import { getCustomerEmail, getCoordinatorName } from '../common';
-import ExportToExcelLegacy from '../../../components/ExportToExcelLegacy';
+import ExportToExcel from "../../../components/ExportToExcel";
+import { FiltersContext } from "../../../context/FiltersContext/FiltersContext";
+import { getCustomerEmail, getCoordinatorName } from "../common";
+import ExportToExcelLegacy from "../../../components/ExportToExcelLegacy";
 
 const BookingsHeader = ({
   classes,
@@ -74,7 +74,7 @@ const BookingsHeader = ({
   useEffect(() => {
     if (privateRequests) {
       const privateClassRequestsArray = [];
-      const headers = ['Created', 'Name', 'Email', 'Phone', 'Coordinator', 'Attendees', 'Date Option 1', "Event Type", "Time Frame"];
+      const headers = ["Created", "Name", "Email", "Phone", "Coordinator", "Attendees", "Date Option 1", "Event Type", "Time Frame"];
 
       privateClassRequestsArray.push(headers);
 
@@ -101,7 +101,7 @@ const BookingsHeader = ({
     if (generalInquiries) {
       const questionsArray = [];
 
-      const headers = ['Created', 'Name', 'Email', 'Phone', 'Inquiry'];
+      const headers = ["Created", "Name", "Email", "Phone", "Inquiry"];
 
       questionsArray.push(headers);
 
@@ -128,7 +128,7 @@ const BookingsHeader = ({
     if (giftBasketPurchases) {
       const giftBasketsPurchaseArray = [];
 
-      const headers = ['Date', 'Customer', 'Email', 'Gift Basket', 'Variant', 'Paid', 'Shipping Address', 'Personalizations'];
+      const headers = ["Date", "Customer", "Email", "Gift Basket", "Variant", "Paid", "Shipping Address", "Personalizations"];
 
       giftBasketsPurchaseArray.push(headers);
 
@@ -142,13 +142,13 @@ const BookingsHeader = ({
           giftBasketPurchases[i].timePurchased,
           giftBasketPurchases[i].customerName,
           getCustomerEmail(giftBasketPurchases[i].customerId, customers),
-          filteredBasketGift && filteredBasketGift.map((item2) => item2.title).join(' | '),
-          giftBasketPurchases[i].basketsPurchased.map((item) => item.variantName).join(' | '),
+          filteredBasketGift && filteredBasketGift.map((item2) => item2.title).join(" | "),
+          giftBasketPurchases[i].basketsPurchased.map((item) => item.variantName).join(" | "),
           giftBasketPurchases[i].payments.map((item) => item.amount / 100),
-          `${giftBasketPurchases[i].shippingAddress.address1}${giftBasketPurchases[i].shippingAddress.address1 ? ', ' : ''}${
+          `${giftBasketPurchases[i].shippingAddress.address1}${giftBasketPurchases[i].shippingAddress.address1 ? ", " : ""}${
             giftBasketPurchases[i].shippingAddress.city
-          }${giftBasketPurchases[i].shippingAddress.city ? ', ' : ''}${giftBasketPurchases[i].shippingAddress.country}`,
-          giftBasketPurchases[i].personalizations.map((item) => item.value).join(' | ')
+          }${giftBasketPurchases[i].shippingAddress.city ? ", " : ""}${giftBasketPurchases[i].shippingAddress.country}`,
+          giftBasketPurchases[i].personalizations.map((item) => item.value).join(" | ")
         ];
 
         giftBasketsPurchaseArray.push(row);
@@ -161,7 +161,7 @@ const BookingsHeader = ({
     if (discountCodes) {
       const discountCodesArray = [];
 
-      const headers = ['Created', 'Expiration', 'Discount Code', 'Description', 'Active', 'Redemptions', 'Discount'];
+      const headers = ["Created", "Expiration", "Discount Code", "Description", "Active", "Redemptions", "Discount"];
 
       discountCodesArray.push(headers);
 
@@ -183,8 +183,8 @@ const BookingsHeader = ({
   }, [discountCodes]);
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      setTextFilterContext({ type: 'text', value: searchValue });
+    if (e.key === "Enter") {
+      setTextFilterContext({ type: "text", value: searchValue });
     }
   };
 
@@ -202,7 +202,7 @@ const BookingsHeader = ({
                   setShowFiltersModal(true);
                 }}
               >
-                {!noCoordinators && (coordinatorFilterContext ? coordinatorFilterContext.label.join(', ') : 'All Coordinators')}
+                {!noCoordinators && (coordinatorFilterContext ? coordinatorFilterContext.label.join(", ") : "All Coordinators")}
               </a>
             </small>
           </CardTitle>
@@ -214,7 +214,7 @@ const BookingsHeader = ({
               <Button
                 color="primary"
                 onClick={() => {
-                  setTextFilterContext({ type: 'text', value: searchValue });
+                  setTextFilterContext({ type: "text", value: searchValue });
                 }}
               >
                 <Search size={12} />
@@ -226,7 +226,7 @@ const BookingsHeader = ({
             {showLimit && (
               <UncontrolledButtonDropdown>
                 <DropdownToggle color="primary" caret outline title="Number of results">
-                  {limit >= 20000 ? 'ALL' : limit}
+                  {limit >= 20000 ? "ALL" : limit}
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem
@@ -299,7 +299,7 @@ const BookingsHeader = ({
                           apiDataFunc={async () => {
                             return await getDataToExport();
                           }}
-                          fileName={'Bookings'}
+                          fileName={"Bookings"}
                           setIsExporting={setIsExporting}
                         />
                       </DropdownItem>
@@ -323,11 +323,11 @@ const BookingsHeader = ({
                     {isPrivateRequest ? (
                       <ExportToExcelLegacy
                         apiData={privateRequestsExcelTable}
-                        fileName={'Private Class Requests'}
+                        fileName={"Private Class Requests"}
                         title={
                           <h6>
                             <FileText size={13} />
-                            {' Excel File'}
+                            {" Excel File"}
                           </h6>
                         }
                         smallText={<h6 className="small m-0 p-0">Download file with Private Requests</h6>}
@@ -335,11 +335,11 @@ const BookingsHeader = ({
                     ) : isGeneralInquiries ? (
                       <ExportToExcelLegacy
                         apiData={generalInquiriesExcelTable}
-                        fileName={'General Inquires'}
+                        fileName={"General Inquires"}
                         title={
                           <h6>
                             <FileText size={13} />
-                            {' Excel File'}
+                            {" Excel File"}
                           </h6>
                         }
                         smallText={<h6 className="small m-0 p-0">Download file with General Inquiries</h6>}
@@ -347,11 +347,11 @@ const BookingsHeader = ({
                     ) : isDiscountCodes ? (
                       <ExportToExcelLegacy
                         apiData={discountCodesExcelTable}
-                        fileName={'Discount Codes'}
+                        fileName={"Discount Codes"}
                         title={
                           <h6>
                             <FileText size={13} />
-                            {' Excel File'}
+                            {" Excel File"}
                           </h6>
                         }
                         smallText={<h6 className="small m-0 p-0">Download file with Discount Codes</h6>}
@@ -360,11 +360,11 @@ const BookingsHeader = ({
                       isGiftBasketsPurchase && (
                         <ExportToExcelLegacy
                           apiData={giftBasketsPurchaseExcelTable}
-                          fileName={'GiftBasketsPurchase'}
+                          fileName={"GiftBasketsPurchase"}
                           title={
                             <h6>
                               <FileText size={13} />
-                              {' Excel File'}
+                              {" Excel File"}
                             </h6>
                           }
                           smallText={<h6 className="small m-0 p-0">Download file with Gift Basket Purchases</h6>}
@@ -381,11 +381,11 @@ const BookingsHeader = ({
                 color="primary"
                 onClick={(e) => {
                   const newElement = {
-                    name: '',
-                    email: '',
-                    phone: '',
-                    company: '',
-                    attendees: ''
+                    name: "",
+                    email: "",
+                    phone: "",
+                    company: "",
+                    attendees: ""
                   };
                   setElementToAdd(newElement);
                   showAddModal();
@@ -395,20 +395,20 @@ const BookingsHeader = ({
                 <Plus size={13} />
               </Button>
             )}
-            {showAdd && isDiscountCodes && userData?.customData?.role === 'Admin' && (
+            {showAdd && isDiscountCodes && userData?.customData?.role === "Admin" && (
               <Button
                 outline
                 color="primary"
                 onClick={(e) => {
                   const newElement = {
-                    customerId: '',
-                    code: '',
-                    description: '',
-                    redemption: '',
-                    discount: '',
-                    maxDiscount: '',
-                    expirationDate: '',
-                    type: ''
+                    customerId: "",
+                    code: "",
+                    description: "",
+                    redemption: "",
+                    discount: "",
+                    maxDiscount: "",
+                    expirationDate: "",
+                    type: ""
                   };
                   setElementToAdd(newElement);
                   showAddModal();

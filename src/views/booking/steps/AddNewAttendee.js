@@ -1,60 +1,60 @@
 // @packages
-import 'cleave.js/dist/addons/cleave-phone.us';
-import Cleave from 'cleave.js/react';
-import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import { Mail, Phone, User, X } from 'react-feather';
-import { v4 as uuid } from 'uuid';
+import "cleave.js/dist/addons/cleave-phone.us";
+import Cleave from "cleave.js/react";
+import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import { Mail, Phone, User, X } from "react-feather";
+import { v4 as uuid } from "uuid";
 
 // @scripts
-import countriesData from '../../../data/countries.json';
-import { Alert, Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
-import { isValidEmail } from '../../../utility/Utils';
+import countriesData from "../../../data/countries.json";
+import { Alert, Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from "reactstrap";
+import { isValidEmail } from "../../../utility/Utils";
 
 // @styles
-import '@styles/react/libs/flatpickr/flatpickr.scss';
+import "@styles/react/libs/flatpickr/flatpickr.scss";
 
 const noShippingAlcoholStates = [
   {
-    name: 'utah',
-    abbreviation: 'UT'
+    name: "utah",
+    abbreviation: "UT"
   },
   {
-    name: 'oklahoma',
-    abbreviation: 'OK'
+    name: "oklahoma",
+    abbreviation: "OK"
   },
   {
-    name: 'arkansas',
-    abbreviation: 'AR'
+    name: "arkansas",
+    abbreviation: "AR"
   },
   {
-    name: 'mississippi',
-    abbreviation: 'MS'
+    name: "mississippi",
+    abbreviation: "MS"
   },
   {
-    name: 'alabama',
-    abbreviation: 'AL'
+    name: "alabama",
+    abbreviation: "AL"
   },
   {
-    name: 'Alaska',
-    abbreviation: 'AK'
+    name: "Alaska",
+    abbreviation: "AK"
   },
   {
-    name: 'delaware',
-    abbreviation: 'DE'
+    name: "delaware",
+    abbreviation: "DE"
   },
   {
-    name: 'rhode Island',
-    abbreviation: 'RI'
+    name: "rhode Island",
+    abbreviation: "RI"
   },
   {
-    name: 'Hawaii',
-    abbreviation: 'HI'
+    name: "Hawaii",
+    abbreviation: "HI"
   },
   {
-    name: 'Kentucky',
-    abbreviation: 'KY'
+    name: "Kentucky",
+    abbreviation: "KY"
   }
 ];
 
@@ -73,28 +73,28 @@ const AddNewAttendee = ({
 }) => {
   const [dynamicValues, setDynamicValues] = useState([]);
   const [emailValid, setEmailValid] = useState(true);
-  const [newAddress1, setNewAddress1] = useState('');
-  const [newAddress2, setNewAddress2] = useState('');
-  const [newCity, setNewCity] = useState('');
-  const [newCountry, setNewCountry] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newName, setNewName] = useState('');
-  const [newPhone, setNewPhone] = useState('');
-  const [newState, setNewState] = useState('');
-  const [newZip, setNewZip] = useState('');
+  const [newAddress1, setNewAddress1] = useState("");
+  const [newAddress2, setNewAddress2] = useState("");
+  const [newCity, setNewCity] = useState("");
+  const [newCountry, setNewCountry] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newState, setNewState] = useState("");
+  const [newZip, setNewZip] = useState("");
   const [processing, setProcessing] = useState(false);
   const [isDeliverKit, setIsDeliverKit] = useState(true);
-  const [deliverKitReason, setDeliverKitReason] = useState('');
+  const [deliverKitReason, setDeliverKitReason] = useState("");
   const [messageAlert, setMessageAlert] = useState(null);
   const [registrationFields, setRegistrationFields] = useState([]);
   const [validationValues, setValidationValues] = useState(true);
   const [additionalCost, setAdditionalCost] = useState(0);
   const [createdAt, setCreatedAt] = useState(null);
-  const [status, setStatus] = useState('');
-  const [instructorId, setInstructorId] = useState('');
-  const [statusNotes, setStatusNotes] = useState('');
+  const [status, setStatus] = useState("");
+  const [instructorId, setInstructorId] = useState("");
+  const [statusNotes, setStatusNotes] = useState("");
 
-  const options = { phone: true, phoneRegionCode: 'US' };
+  const options = { phone: true, phoneRegionCode: "US" };
 
   const shippingCountries =
     countriesData &&
@@ -170,13 +170,13 @@ const AddNewAttendee = ({
     const countryLC = country.toLowerCase();
     if (
       isShippingAlcohol ||
-      !(countryLC === 'united states of america' || countryLC === 'usa' || countryLC === 'us' || countryLC === 'united states')
+      !(countryLC === "united states of america" || countryLC === "usa" || countryLC === "us" || countryLC === "united states")
     ) {
       setMessageAlert("Notice: kit contains alcohol and can't be delivered to your address due to shipping restrictions.");
-      return { canDeliverKit: false, canDeliverKitReason: 'Alcohol can not be delivery to shipping address' };
+      return { canDeliverKit: false, canDeliverKitReason: "Alcohol can not be delivery to shipping address" };
     } else {
       setMessageAlert(null);
-      return { canDeliverKit: true, canDeliverKitReason: '' };
+      return { canDeliverKit: true, canDeliverKitReason: "" };
     }
   };
 
@@ -197,7 +197,7 @@ const AddNewAttendee = ({
             const dynamicValue = dynamicValues.find((item2) => item2.name === item.label);
             return {
               name: item.label,
-              value: (dynamicValue && dynamicValue.value) || '',
+              value: (dynamicValue && dynamicValue.value) || "",
               order: item.order
             };
           })
@@ -221,9 +221,9 @@ const AddNewAttendee = ({
         additionalCost: additionalCost || 0.0,
         updatedAt: new Date(),
         createdAt: createdAt || new Date(),
-        status: status || 'confirmed',
+        status: status || "confirmed",
         instructorOrDistributorId: booking?.distributorId ? booking?.distributorId : booking?.instructorId,
-        statusNotes: statusNotes || ''
+        statusNotes: statusNotes || ""
       };
 
       const savedRow = await saveAttendee(newElement);
@@ -267,9 +267,9 @@ const AddNewAttendee = ({
   }, [currentElement]);
 
   const onChangeDynamic = (value, additionalField, field) => {
-    if (field.type === 'multiSelectionList') {
+    if (field.type === "multiSelectionList") {
       const newArr = value.map((element) => element.label);
-      value = newArr.join(' | ');
+      value = newArr.join(" | ");
     }
     if (additionalField) {
       const additionalFieldChanged = { ...additionalField };
@@ -289,7 +289,7 @@ const AddNewAttendee = ({
   return (
     <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={open} modalClassName="modal-slide-in">
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
-        {mode === 'edit' ? <h5 className="modal-title">Edit Attendee</h5> : <h5 className="modal-title">New Attendee</h5>}
+        {mode === "edit" ? <h5 className="modal-title">Edit Attendee</h5> : <h5 className="modal-title">New Attendee</h5>}
       </ModalHeader>
       <ModalBody className="flex-grow-1">
         <FormGroup>
@@ -414,7 +414,7 @@ const AddNewAttendee = ({
             Additional information
           </Label>
         ) : (
-          ''
+          ""
         )}
         {registrationFields &&
           registrationFields
@@ -424,7 +424,7 @@ const AddNewAttendee = ({
               return (
                 <FormGroup className="ml-0 pl-0">
                   <Label for={field.label}>{field.label}</Label>
-                  {field.type === 'textarea' && (
+                  {field.type === "textarea" && (
                     <Input
                       type={field.type}
                       name={field.label}
@@ -434,7 +434,7 @@ const AddNewAttendee = ({
                       onChange={(e) => onChangeDynamic(e.target.value, additionalField, field)}
                     />
                   )}
-                  {field.type === 'text' && (
+                  {field.type === "text" && (
                     <Input
                       type={field.type}
                       name={field.label}
@@ -446,7 +446,7 @@ const AddNewAttendee = ({
                       }}
                     />
                   )}
-                  {field.type === 'number' && (
+                  {field.type === "number" && (
                     <Input
                       type={field.type}
                       name={field.label}
@@ -458,7 +458,7 @@ const AddNewAttendee = ({
                       onChange={(e) => onChangeDynamic(e.target.value, additionalField, field)}
                     />
                   )}
-                  {field.type === 'list' && (
+                  {field.type === "list" && (
                     <Input
                       type="select"
                       value={additionalField && additionalField.value}
@@ -473,12 +473,12 @@ const AddNewAttendee = ({
                       ))}
                     </Input>
                   )}
-                  {field.type === 'multiSelectionList' && (
+                  {field.type === "multiSelectionList" && (
                     <Select
                       id={field.label}
                       value={
                         additionalField &&
-                        additionalField.value.split(' | ').map((item) => {
+                        additionalField.value.split(" | ").map((item) => {
                           return {
                             label: item,
                             value: item
@@ -503,7 +503,7 @@ const AddNewAttendee = ({
               );
             })}
         <Button className="mr-1 mt-1" color="primary" onClick={saveNewAttendee} disabled={processing || validationValues}>
-          {processing ? 'Saving...' : 'Save'}
+          {processing ? "Saving..." : "Save"}
         </Button>
         <Button className="mt-1" color="secondary" onClick={cancel} outline>
           Cancel

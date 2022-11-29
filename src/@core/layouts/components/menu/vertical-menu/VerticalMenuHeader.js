@@ -1,13 +1,13 @@
 // ** React Imports
-import { useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useEffect } from "react";
+import { NavLink } from "react-router-dom";
 
 // ** Third Party Components
-import { Disc, X, Circle } from 'react-feather';
+import { Disc, X, Circle } from "react-feather";
 
 // ** Config
-import themeConfig from '@configs/themeConfig';
-import logo from '../../../../../assets/images/logo/logo.png';
+import themeConfig from "@configs/themeConfig";
+import logo from "../../../../../assets/images/logo/logo.png";
 
 const VerticalMenuHeader = (props) => {
   // ** Props

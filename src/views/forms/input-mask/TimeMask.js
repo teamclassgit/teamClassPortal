@@ -1,8 +1,8 @@
-import {Fragment} from 'react';
-import Cleave from 'cleave.js/react';
+import {Fragment} from "react";
+import Cleave from "cleave.js/react";
 
 const TimeMask = () => {
-  const options = { time: true, timePattern: ['h', 'm', 's'] };
+  const options = { time: true, timePattern: ["h", "m", "s"] };
   return (
     <Fragment>
       <label htmlFor='time'>Time</label>

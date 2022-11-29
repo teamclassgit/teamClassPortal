@@ -1,26 +1,26 @@
 // @packages
-import React, { useState, useEffect, useContext } from 'react';
-import moment from 'moment';
-import { Col, Spinner } from 'reactstrap';
-import { useQuery } from '@apollo/client';
+import React, { useState, useEffect, useContext } from "react";
+import moment from "moment";
+import { Col, Spinner } from "reactstrap";
+import { useQuery } from "@apollo/client";
 
 // @scripts
-import AddNewBooking from '../../components/AddNewBooking';
-import BoardBookings from './BoardBookings/BoardBookings';
-import BookingsHeader from './BookingsHeader/BookingsHeader';
-import EditBookingModal from '../../components/EditBookingModal';
-import FiltersModal from './BoardBookings/FiltersModal';
-import queryAllBookings from '../../graphql/QueryGetBookingsWithCriteria';
-import queryAllClasses from '../../graphql/QueryAllClasses';
-import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
-import { getAllDataToExport } from '../../services/BookingService';
-import QueryAllInstructors from '../../graphql/QueryAllInstructors';
+import AddNewBooking from "../../components/AddNewBooking";
+import BoardBookings from "./BoardBookings/BoardBookings";
+import BookingsHeader from "./BookingsHeader/BookingsHeader";
+import EditBookingModal from "../../components/EditBookingModal";
+import FiltersModal from "./BoardBookings/FiltersModal";
+import queryAllBookings from "../../graphql/QueryGetBookingsWithCriteria";
+import queryAllClasses from "../../graphql/QueryAllClasses";
+import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
+import queryAllCustomers from "../../graphql/QueryAllCustomers";
+import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
+import { getAllDataToExport } from "../../services/BookingService";
+import QueryAllInstructors from "../../graphql/QueryAllInstructors";
 
 const BookingList = () => {
   const defaultFilter = [];
-  const defaultSort = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+  const defaultSort = { dir: -1, id: "updatedAt", name: "updatedAt", type: "date" };
   const defaultOrFilter = [];
   const [bookingsFilter, setBookingsFilter] = useState([...defaultOrFilter]);
   const [mainFilter, setMainFilter] = useState([]);
@@ -45,16 +45,16 @@ const BookingList = () => {
   const handleEditModal = () => setEditModal(!editModal);
 
   const { ...allBookingsResultQuote } = useQuery(queryAllBookings, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     pollInterval: 60000,
     variables: {
       filterBy: [
         ...mainFilter,
         {
-          name: 'bookingStage',
-          type: 'string',
-          operator: 'eq',
-          value: 'quote'
+          name: "bookingStage",
+          type: "string",
+          operator: "eq",
+          value: "quote"
         }
       ],
       filterByOr: bookingsFilter,
@@ -68,16 +68,16 @@ const BookingList = () => {
   });
 
   const { ...allBookingsResultRequested } = useQuery(queryAllBookings, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     pollInterval: 60000,
     variables: {
       filterBy: [
         ...mainFilter,
         {
-          name: 'bookingStage',
-          type: 'select',
-          operator: 'inlist',
-          valueList: ['rejected', 'requested']
+          name: "bookingStage",
+          type: "select",
+          operator: "inlist",
+          valueList: ["rejected", "requested"]
         }
       ],
       filterByOr: bookingsFilter,
@@ -91,16 +91,16 @@ const BookingList = () => {
   });
 
   const { ...allBookingsResultAccepted } = useQuery(queryAllBookings, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     pollInterval: 60000,
     variables: {
       filterBy: [
         ...mainFilter,
         {
-          name: 'bookingStage',
-          type: 'string',
-          operator: 'eq',
-          value: 'accepted'
+          name: "bookingStage",
+          type: "string",
+          operator: "eq",
+          value: "accepted"
         }
       ],
       filterByOr: bookingsFilter,
@@ -114,16 +114,16 @@ const BookingList = () => {
   });
 
   const { ...allBookingsResultDeposit } = useQuery(queryAllBookings, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     pollInterval: 60000,
     variables: {
       filterBy: [
         ...mainFilter,
         {
-          name: 'bookingStage',
-          type: 'string',
-          operator: 'eq',
-          value: 'deposit'
+          name: "bookingStage",
+          type: "string",
+          operator: "eq",
+          value: "deposit"
         }
       ],
       filterByOr: bookingsFilter,
@@ -137,16 +137,16 @@ const BookingList = () => {
   });
 
   const { ...allBookingsResultPaid } = useQuery(queryAllBookings, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     pollInterval: 60000,
     variables: {
       filterBy: [
         ...mainFilter,
         {
-          name: 'bookingStage',
-          type: 'string',
-          operator: 'eq',
-          value: 'paid'
+          name: "bookingStage",
+          type: "string",
+          operator: "eq",
+          value: "paid"
         }
       ],
       filterByOr: bookingsFilter,
@@ -160,7 +160,7 @@ const BookingList = () => {
   });
 
   const { ...allClasses } = useQuery(queryAllClasses, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     variables: {
       filter: {}
     },
@@ -178,11 +178,11 @@ const BookingList = () => {
     onCompleted: (data) => {
       if (data) setCoordinators(data.eventCoordinators);
     },
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: "cache-and-network"
   });
 
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     variables: {
       filter: {}
     },
@@ -193,7 +193,7 @@ const BookingList = () => {
   });
 
   useQuery(QueryAllInstructors, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       if (data) setInstructors(data.instructors);
     },
@@ -207,18 +207,18 @@ const BookingList = () => {
     const queryOr = [...defaultOrFilter];
 
     if (textFilterContext && textFilterContext.value) {
-      queryOr.push({ name: 'customerName', type: 'string', operator: 'contains', value: textFilterContext.value });
-      queryOr.push({ name: 'customerEmail', type: 'string', operator: 'contains', value: textFilterContext.value });
-      queryOr.push({ name: 'customerPhone', type: 'string', operator: 'contains', value: textFilterContext.value });
-      queryOr.push({ name: 'customerCompany', type: 'string', operator: 'contains', value: textFilterContext.value });
-      queryOr.push({ name: '_id', type: 'string', operator: 'contains', value: textFilterContext.value });
+      queryOr.push({ name: "customerName", type: "string", operator: "contains", value: textFilterContext.value });
+      queryOr.push({ name: "customerEmail", type: "string", operator: "contains", value: textFilterContext.value });
+      queryOr.push({ name: "customerPhone", type: "string", operator: "contains", value: textFilterContext.value });
+      queryOr.push({ name: "customerCompany", type: "string", operator: "contains", value: textFilterContext.value });
+      queryOr.push({ name: "_id", type: "string", operator: "contains", value: textFilterContext.value });
     }
 
     if (classFilterContext) {
       const filter = {
-        name: 'classId',
-        type: 'string',
-        operator: 'contains',
+        name: "classId",
+        type: "string",
+        operator: "contains",
         value: classFilterContext.value
       };
       query.push(filter);
@@ -226,12 +226,12 @@ const BookingList = () => {
 
     if (dateFilterContext) {
       const filter = {
-        name: 'createdAt',
-        type: 'date',
-        operator: 'inrange',
+        name: "createdAt",
+        type: "date",
+        operator: "inrange",
         value: {
           start: moment(dateFilterContext.value[0]).format(),
-          end: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
+          end: moment(dateFilterContext.value[1]).add(23, "hours").add(59, "minutes").format()
         }
       };
       query.push(filter);
@@ -241,9 +241,9 @@ const BookingList = () => {
       const coordinators = coordinatorFilterContext.value;
       if (coordinators?.length) {
         const filter = {
-          name: 'eventCoordinatorId',
-          type: 'select',
-          operator: 'inlist',
+          name: "eventCoordinatorId",
+          type: "select",
+          operator: "inlist",
           valueList: coordinators
         };
         query.push(filter);
@@ -257,8 +257,8 @@ const BookingList = () => {
   const onEditCompleted = (bookingId) => {
     const currentFilters = [...bookingsFilter];
     const newFilters = [...bookingsFilter];
-    newFilters.push({ name: '_id', type: 'string', operator: 'eq', value: bookingId });
-    newFilters.push({ name: '_id', type: 'string', operator: 'neq', value: bookingId });
+    newFilters.push({ name: "_id", type: "string", operator: "eq", value: bookingId });
+    newFilters.push({ name: "_id", type: "string", operator: "neq", value: bookingId });
     setBookingsFilter(newFilters);
     setTimeout(() => {
       setBookingsFilter(currentFilters);
@@ -268,8 +268,8 @@ const BookingList = () => {
   const onAddCompleted = (bookingId) => {
     const currentFilters = [...bookingsFilter];
     const newFilters = [...bookingsFilter];
-    newFilters.push({ name: '_id', type: 'string', operator: 'eq', value: bookingId });
-    newFilters.push({ name: '_id', type: 'string', operator: 'neq', value: bookingId });
+    newFilters.push({ name: "_id", type: "string", operator: "eq", value: bookingId });
+    newFilters.push({ name: "_id", type: "string", operator: "neq", value: bookingId });
     setBookingsFilter(newFilters);
     setTimeout(() => {
       setBookingsFilter(currentFilters);
@@ -281,10 +281,10 @@ const BookingList = () => {
       [
         ...mainFilter,
         {
-          name: 'bookingStage',
-          type: 'string',
-          operator: 'neq',
-          value: 'closed'
+          name: "bookingStage",
+          type: "string",
+          operator: "neq",
+          value: "closed"
         }
       ],
       bookingsFilter,
@@ -313,7 +313,7 @@ const BookingList = () => {
         showAdd={true}
         showFilter={true}
         showView={false}
-        titleView={'Bookings '}
+        titleView={"Bookings "}
         isInProgressBookings={true}
         getDataToExport={getDataToExport}
       />
@@ -366,7 +366,7 @@ const BookingList = () => {
             allCoordinators={coordinators}
             allClasses={classes}
             handleClose={() => setCurrentElement({})}
-            editMode={currentElement && currentElement.status !== 'closed' ? true : false}
+            editMode={currentElement && currentElement.status !== "closed" ? true : false}
             onEditCompleted={onEditCompleted}
           />
         </>

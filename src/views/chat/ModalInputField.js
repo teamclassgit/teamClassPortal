@@ -1,6 +1,6 @@
 // @packages
 import React from "react";
-import { Eye, EyeOff } from 'react-feather';
+import { Eye, EyeOff } from "react-feather";
 import { Label, Input, Button } from "reactstrap";
 
 const PrefixType = {

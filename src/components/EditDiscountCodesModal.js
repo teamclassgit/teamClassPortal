@@ -1,9 +1,9 @@
 // @packages
-import Flatpickr from 'react-flatpickr';
-import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import { X, Key, Percent, Tag, MessageCircle, DollarSign } from 'react-feather';
+import Flatpickr from "react-flatpickr";
+import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import { X, Key, Percent, Tag, MessageCircle, DollarSign } from "react-feather";
 import {
   Alert,
   Button,
@@ -16,13 +16,13 @@ import {
   Modal,
   ModalBody,
   ModalHeader
-} from 'reactstrap';
-import { selectThemeColors } from '@utils';
-import { useMutation } from '@apollo/client';
+} from "reactstrap";
+import { selectThemeColors } from "@utils";
+import { useMutation } from "@apollo/client";
 
 // @scripts
-import mutationEditDiscountCode from '../graphql/MutationEditDiscountCode';
-import allTypes from './AllTypes.json';
+import mutationEditDiscountCode from "../graphql/MutationEditDiscountCode";
+import allTypes from "./AllTypes.json";
 
 const EditDiscountCodesModal = ({
   currentElement: {
@@ -54,9 +54,9 @@ const EditDiscountCodesModal = ({
   const [newMaxDiscount, setNewMaxDiscount] = useState(null);
   const [newRedemption, setNewRedemption] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState('');
-  const [type, setType] = useState('');
-  const [warning, setWarning] = useState({ open: false, message: '' });
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [type, setType] = useState("");
+  const [warning, setWarning] = useState({ open: false, message: "" });
   const updatedDate = discountCodesdDeadLine && discountCodesdDeadLine?.length > 0 && discountCodesdDeadLine ? discountCodesdDeadLine[0] : undefined;
 
   useEffect(() => {
@@ -75,10 +75,10 @@ const EditDiscountCodesModal = ({
   };
 
   const handleDifferentType = () => {
-    if ((type === 'Amount' || type === 'Percentage') && (newDiscount < 0 || newDiscount > 100)) {
-      setWarning({ open: true, message: 'Discount must be greater or equal than 0 and less than 100' });
+    if ((type === "Amount" || type === "Percentage") && (newDiscount < 0 || newDiscount > 100)) {
+      setWarning({ open: true, message: "Discount must be greater or equal than 0 and less than 100" });
     } else {
-      setWarning({ open: false, message: '' });
+      setWarning({ open: false, message: "" });
     }
   };
 
@@ -92,18 +92,18 @@ const EditDiscountCodesModal = ({
   const sameCode = sameCodeFilter.filter((item) => item !== null);
 
   const findCustomer = customers.find((customer) => customer._id === selectedCustomer);
-  const findAllCustomerSelected = findCustomer ? `${findCustomer?.name?.split(' ')[0]} <${findCustomer?.email}>` : '';
+  const findAllCustomerSelected = findCustomer ? `${findCustomer?.name?.split(" ")[0]} <${findCustomer?.email}>` : "";
 
   const handleDifferentCode = () => {
     if (newCode.length > 0) {
-      setNewCode(newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''));
+      setNewCode(newCode.replace(/[^a-zA-Z0-9]/g, "").replace(/\s+/g, ""));
     }
     if (String(sameCode).length > 0) {
-      setWarning({ open: true, message: 'Discount Code already exists' });
-    } else if (newCode === '') {
-      setWarning({ open: true, message: 'Please enter Discount Code' });
+      setWarning({ open: true, message: "Discount Code already exists" });
+    } else if (newCode === "") {
+      setWarning({ open: true, message: "Please enter Discount Code" });
     } else {
-      setWarning({ open: false, message: '' });
+      setWarning({ open: false, message: "" });
     }
   };
 
@@ -113,9 +113,9 @@ const EditDiscountCodesModal = ({
       const resultEditDiscountCode = await editDiscountCode({
         variables: {
           id: currentCodeId,
-          discountCode: newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''),
+          discountCode: newCode.replace(/[^a-zA-Z0-9]/g, "").replace(/\s+/g, ""),
           description: newDescription,
-          expirationDate: updatedDate === '2' ? currentExpirationDate :  updatedDate,
+          expirationDate: updatedDate === "2" ? currentExpirationDate :  updatedDate,
           customerId: selectedCustomer,
           redemptions: newRedemption,
           createdAt: currentCreatedAt,
@@ -156,7 +156,7 @@ const EditDiscountCodesModal = ({
     }),
     option: (provided) => ({
       ...provided,
-      borderBottom: '1px dotted',
+      borderBottom: "1px dotted",
       padding: 10,
       fontSize: 12
     }),
@@ -217,10 +217,10 @@ const EditDiscountCodesModal = ({
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               onBlur={() => {
-                if (newCode === '') {
-                  setWarning({ open: true, message: 'Please enter description code' });
+                if (newCode === "") {
+                  setWarning({ open: true, message: "Please enter description code" });
                 } else {
-                  setWarning({ open: false, message: '' });
+                  setWarning({ open: false, message: "" });
                 }
               }}
             />
@@ -242,9 +242,9 @@ const EditDiscountCodesModal = ({
               type="number"
               onBlur={() => {
                 if (newRedemption < 1) {
-                  setWarning({ open: true, message: 'Redemptions must be greater than 0' });
+                  setWarning({ open: true, message: "Redemptions must be greater than 0" });
                 } else {
-                  setWarning({ open: false, message: '' });
+                  setWarning({ open: false, message: "" });
                 }
               }}
             />
@@ -276,7 +276,7 @@ const EditDiscountCodesModal = ({
           <InputGroup size="sm">
             <InputGroupAddon addonType="prepend">
               <InputGroupText>
-                {type === 'Amount' ? (
+                {type === "Amount" ? (
                   <DollarSign size={15} />
                 ) : (
                   <Percent size={15} />
@@ -293,7 +293,7 @@ const EditDiscountCodesModal = ({
             />
           </InputGroup>
         </FormGroup>
-        {type === 'Percentage' && (
+        {type === "Percentage" && (
           <FormGroup>
             <InputGroup size="sm">
               <InputGroupAddon addonType="prepend">
@@ -357,7 +357,7 @@ const EditDiscountCodesModal = ({
               customers.map((element) => {
                 return {
                   value: element._id,
-                  label: `${element.name.split(' ')[0]} <${element.email}>`
+                  label: `${element.name.split(" ")[0]} <${element.email}>`
                 };
               })
             }
@@ -377,7 +377,7 @@ const EditDiscountCodesModal = ({
                 !type ||
                 String(sameCode).length > 0 ||
                 newDescription.length < 5 ||
-                (type === 'Amount' || type === 'Percentage') && (newDiscount < 0 || newDiscount > 100) ||
+                (type === "Amount" || type === "Percentage") && (newDiscount < 0 || newDiscount > 100) ||
                 !newDiscount  ||
                 !newRedemption ||
                 (type === "Percentage" && !newMaxDiscount) ||
@@ -386,7 +386,7 @@ const EditDiscountCodesModal = ({
               onClick={editDiscountCodes}
               size="sm"
             >
-              {processing ? 'Saving...' : 'Save'}
+              {processing ? "Saving..." : "Save"}
             </Button>
             <Button color="secondary" size="sm" onClick={cancel} outline>
               Cancel

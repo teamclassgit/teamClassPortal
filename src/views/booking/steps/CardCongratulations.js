@@ -1,10 +1,10 @@
 // @packages
-import Avatar from '@components/avatar';
-import PropTypes from 'prop-types';
-import decorationLeft from '@src/assets/images/elements/decore-left.png';
-import decorationRight from '@src/assets/images/elements/decore-right.png';
-import { Award } from 'react-feather';
-import { Button, Card, CardBody, CardFooter } from 'reactstrap';
+import Avatar from "@components/avatar";
+import PropTypes from "prop-types";
+import decorationLeft from "@src/assets/images/elements/decore-left.png";
+import decorationRight from "@src/assets/images/elements/decore-right.png";
+import { Award } from "react-feather";
+import { Button, Card, CardBody, CardFooter } from "reactstrap";
 
 const CardCongratulations = ({ setConfirmation }) => (
   <Card className='card-congratulations'>

@@ -23,11 +23,11 @@ import {
 import { Calendar, Info, Mail, Phone, User } from "react-feather";
 import { useMutation } from "@apollo/client";
 import MutationUpdateOneQuestion from "../graphql/MutationUpdateOneQuestion";
-import Select from 'react-select';
-import { selectThemeColors } from '@utils';
+import Select from "react-select";
+import { selectThemeColors } from "@utils";
 
 const EditGeneralInqueries = ({ open, currentElement, closeModal, allCoordinators }) => {
-  const [active, setActive] = useState('1');
+  const [active, setActive] = useState("1");
   const [isCatchError, setIsCatchError] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [coordinatorId, setCoordinatorId] = useState(null);
@@ -50,7 +50,7 @@ const EditGeneralInqueries = ({ open, currentElement, closeModal, allCoordinator
     }),
     option: (provided) => ({
       ...provided,
-      borderBottom: '1px dotted',
+      borderBottom: "1px dotted",
       padding: 10,
       fontSize: 12
     }),
@@ -97,9 +97,9 @@ const EditGeneralInqueries = ({ open, currentElement, closeModal, allCoordinator
         <NavItem>
           <NavLink
             title="Basic information"
-            active={active === '1'}
+            active={active === "1"}
             onClick={() => {
-              toggle('1');
+              toggle("1");
             }}
           >
             <Info size="18" />

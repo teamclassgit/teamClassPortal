@@ -1,5 +1,5 @@
-import {Fragment} from 'react';
-import Cleave from 'cleave.js/react';
+import {Fragment} from "react";
+import Cleave from "cleave.js/react";
 
 const CreditCardMask = () => {
   const options = { creditCard: true };

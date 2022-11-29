@@ -1,20 +1,20 @@
 // @packages
-import React, { useState, useEffect } from 'react';
-import moment from 'moment';
-import { useLazyQuery, useQuery } from '@apollo/client';
-import Proptypes from 'prop-types';
+import React, { useState, useEffect } from "react";
+import moment from "moment";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import Proptypes from "prop-types";
 
 // @scripts
-import BookingCheckoutSummary from '../booking/steps/BookingCheckoutSummary';
-import queryAttendeesByBookingId from '../../graphql/QueryAttendeesByBookingId';
-import queryBookingById from '../../graphql/QueryBookingById';
-import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByClassId';
-import queryClassById from '../../graphql/QueryClassById';
-import queryCustomerById from '../../graphql/QueryCustomerById';
-import { getBookingTotals } from '../../services/BookingService';
+import BookingCheckoutSummary from "../booking/steps/BookingCheckoutSummary";
+import queryAttendeesByBookingId from "../../graphql/QueryAttendeesByBookingId";
+import queryBookingById from "../../graphql/QueryBookingById";
+import queryCalendarEventsByClassId from "../../graphql/QueryCalendarEventsByClassId";
+import queryClassById from "../../graphql/QueryClassById";
+import queryCustomerById from "../../graphql/QueryCustomerById";
+import { getBookingTotals } from "../../services/BookingService";
 
 // @styles
-import './SidebarRight.scss';
+import "./SidebarRight.scss";
 
 const SidebarRight = ({ client, id }) => {
   const [attendees, setAttendees] = useState([]);
@@ -80,8 +80,8 @@ const SidebarRight = ({ client, id }) => {
   useEffect(() => {
     if (calendarEvent) {
       const eventDate = [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)];
-      const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}`;
-      const eventNewDate = moment(`${moment(eventDate[0]).format('DD/MM/YYYY')} ${eventTime}`, 'DD/MM/YYYY HH:mm');
+      const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? "00" : calendarEvent.fromMinutes}`;
+      const eventNewDate = moment(`${moment(eventDate[0]).format("DD/MM/YYYY")} ${eventTime}`, "DD/MM/YYYY HH:mm");
 
       const newCalendarEventOption = {
         dateOption: eventDate[0],
@@ -113,7 +113,7 @@ const SidebarRight = ({ client, id }) => {
     const depositsPaid =
       bookingInfo &&
       bookingInfo.payments &&
-      bookingInfo.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+      bookingInfo.payments.filter((element) => element.paymentName === "deposit" && element.status === "succeeded");
 
     const initialDepositPaid = !isNaN(bookingTotals.customDeposit)
       ? bookingTotals.customDeposit
@@ -162,13 +162,13 @@ const SidebarRight = ({ client, id }) => {
         <div
           className="chat-profile-sidebar"
           style={{
-            transform: 'translateX(-99%)'
+            transform: "translateX(-99%)"
           }}
         >
           <div className="sidebar-right-container">
             <h4>Details</h4>
           </div>
-          {bookingInfo && client?.connectionState !== 'denied' && (
+          {bookingInfo && client?.connectionState !== "denied" && (
             <div className="booking-container">
               <BookingCheckoutSummary
                 teamClass={teamClass}

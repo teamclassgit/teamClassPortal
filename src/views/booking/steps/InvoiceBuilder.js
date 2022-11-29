@@ -1,18 +1,18 @@
-import React, { Fragment } from 'react';
-import NumberInput from '@components/number-input';
-import { DollarSign, MinusCircle, PlusCircle } from 'react-feather';
-import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, RUSH_FEE, SALES_TAX, SALES_TAX_STATE } from '../../../utility/Constants';
-import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText } from 'reactstrap';
-import { useMutation } from '@apollo/client';
-import mutationUpdateBookingInvoiceDetails from '../../../graphql/MutationUpdateBookingInvoiceDetails';
-import { calculateVariantPrice } from '../../../services/BookingService';
-import Avatar from '@components/avatar';
-import moment from 'moment';
+import React, { Fragment } from "react";
+import NumberInput from "@components/number-input";
+import { DollarSign, MinusCircle, PlusCircle } from "react-feather";
+import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, RUSH_FEE, SALES_TAX, SALES_TAX_STATE } from "../../../utility/Constants";
+import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText } from "reactstrap";
+import { useMutation } from "@apollo/client";
+import mutationUpdateBookingInvoiceDetails from "../../../graphql/MutationUpdateBookingInvoiceDetails";
+import { calculateVariantPrice } from "../../../services/BookingService";
+import Avatar from "@components/avatar";
+import moment from "moment";
 
 const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking, setBooking, calendarEvent }) => {
   const defaultInvoiceItems = [
     {
-      item: 'Initial Deposit',
+      item: "Initial Deposit",
       unitPrice: 0,
       units: 1,
       priceEditable: true,
@@ -21,7 +21,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       readOnly: true
     },
     {
-      item: 'Class / Attendees',
+      item: "Class / Attendees",
       unitPrice: 0,
       units: 1,
       priceEditable: true,
@@ -55,7 +55,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
       setDiscount(currentDiscount);
     } else if (booking) {
       const depositsPaid =
-        booking && booking.payments && booking.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+        booking && booking.payments && booking.payments.filter((element) => element.paymentName === "deposit" && element.status === "succeeded");
 
       if (depositsPaid && depositsPaid.length > 0) {
         const depositAmountPaid = depositsPaid.reduce((previous, current) => previous + current.amount, 0);
@@ -74,7 +74,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
     }
 
     const finalPaymentPaid =
-      booking && booking.payments && booking.payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+      booking && booking.payments && booking.payments.find((element) => element.paymentName === "final" && element.status === "succeeded");
 
     setHasFinalPayment(finalPaymentPaid ? true : false);
     setTaxExempt(booking && booking.taxExempt ? true : false);
@@ -99,7 +99,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
   const addNewInvoiceItem = () => {
     const newInvoiceItems = [...invoiceItems];
     newInvoiceItems.push({
-      item: '',
+      item: "",
       unitPrice: 0,
       units: 1,
       priceEditable: true,
@@ -135,7 +135,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
           rushFeeValue: RUSH_FEE,
           classVariant: classVariantChanges,
           salesTax: !booking.salesTax ? SALES_TAX : booking.salesTax,
-          salesTaxState: !booking.salesTaxState || booking.salesTaxState === '' ? SALES_TAX_STATE : booking.salesTaxState,
+          salesTaxState: !booking.salesTaxState || booking.salesTaxState === "" ? SALES_TAX_STATE : booking.salesTaxState,
           updatedAt: new Date()
         }
       });
@@ -144,7 +144,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
         setBooking(result.data.updateOneBooking);
       }
 
-      console.log('booking updated');
+      console.log("booking updated");
 
       setProcessing(false);
     } catch (ex) {
@@ -224,7 +224,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                       Taxable
                       <br />
                       <small>
-                        {taxExempt || !booking.salesTaxState ? '' : `(${booking.salesTaxState}, ${(booking.salesTax * 100).toFixed(2)}%)`}
+                        {taxExempt || !booking.salesTaxState ? "" : `(${booking.salesTaxState}, ${(booking.salesTax * 100).toFixed(2)}%)`}
                       </small>
                     </div>
                   </th>
@@ -251,7 +251,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
                       </div>
                     </td>
                     <td align="right">
-                      <div className={`font-weight-bolder ${element.down ? 'text-danger' : 'text-default'}`}>
+                      <div className={`font-weight-bolder ${element.down ? "text-danger" : "text-default"}`}>
                         <Input
                           type="number"
                           required={true}
@@ -375,7 +375,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
         <div>
           <div className="d-flex justify-content-between">
             <span>
-              <CardLink href={`https://www.teamclass.com/customers/events/${booking._id}?type=payment`} target={'_blank'} title={'Final payment link'}>
+              <CardLink href={`https://www.teamclass.com/customers/events/${booking._id}?type=payment`} target={"_blank"} title={"Final payment link"}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
               </CardLink>
             </span>
@@ -386,7 +386,7 @@ const InvoiceBuilder = ({ stepper, type, teamClass, realCountAttendees, booking,
               className="btn-next"
               onClick={() => saveInvoiceDetails()}
             >
-              <span className="align-middle d-sm-inline-block d-none">{processing ? 'Saving...' : 'Save'}</span>
+              <span className="align-middle d-sm-inline-block d-none">{processing ? "Saving..." : "Save"}</span>
             </Button.Ripple>
           </div>
         </div>

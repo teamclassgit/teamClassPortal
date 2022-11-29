@@ -1,8 +1,8 @@
-import {Fragment} from 'react';
-import Cleave from 'cleave.js/react';
+import {Fragment} from "react";
+import Cleave from "cleave.js/react";
 
 const DateMask = () => {
-  const options = { date: true, delimiter: '-', datePattern: ['Y', 'm', 'd'] };
+  const options = { date: true, delimiter: "-", datePattern: ["Y", "m", "d"] };
   return (
     <Fragment>
       <label htmlFor='date'>Date</label>

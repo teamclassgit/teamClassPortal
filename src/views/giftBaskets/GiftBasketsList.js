@@ -1,15 +1,15 @@
 // @packages
-import React, { useState, useEffect, useContext } from 'react';
-import { Col, Spinner } from 'reactstrap';
-import { useQuery } from '@apollo/client';
+import React, { useState, useEffect, useContext } from "react";
+import { Col, Spinner } from "reactstrap";
+import { useQuery } from "@apollo/client";
 
 // @scripts
-import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
-import queryAllGiftBasketPurchases from '../../graphql/QueryAllGiftBasketPurchases';
-import queryAllGiftBaskets from '../../graphql/QueryAllGiftBaskets';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
-import TableGiftBaskets from './TableGiftBaskets';
+import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
+import queryAllGiftBasketPurchases from "../../graphql/QueryAllGiftBasketPurchases";
+import queryAllGiftBaskets from "../../graphql/QueryAllGiftBaskets";
+import queryAllCustomers from "../../graphql/QueryAllCustomers";
+import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
+import TableGiftBaskets from "./TableGiftBaskets";
 
 const GiftBasketsList = () => {
   const [giftBasketPurchases, setGiftBasketPurchases] = useState(null);
@@ -21,7 +21,7 @@ const GiftBasketsList = () => {
   const { textFilterContext } = useContext(FiltersContext);
 
   const { ...allGiftBasketsPurchase } = useQuery(queryAllGiftBasketPurchases, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     pollInterval: 200000,
     variables: {
       filter: genericFilter
@@ -34,7 +34,7 @@ const GiftBasketsList = () => {
   });
 
   const { ...allGiftBaskets } = useQuery(queryAllGiftBaskets, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     pollInterval: 200000,
     variables: {
       filter: genericFilter
@@ -47,7 +47,7 @@ const GiftBasketsList = () => {
   });
 
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     variables: {
       filter: genericFilter
     },
@@ -58,7 +58,7 @@ const GiftBasketsList = () => {
   });
 
   useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
+    handleSearch((textFilterContext && textFilterContext.value) || "");
   }, [giftBasketPurchases]);
 
   const handleSearch = (value) => {
@@ -78,7 +78,7 @@ const GiftBasketsList = () => {
   };
 
   useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
+    handleSearch((textFilterContext && textFilterContext.value) || "");
   }, [textFilterContext]);
 
   return (
@@ -86,7 +86,7 @@ const GiftBasketsList = () => {
       <BookingsHeader
         noCoordinators
         defaultLimit={200}
-        coordinators={''}
+        coordinators={""}
         showLimit={true}
         onChangeLimit={(newLimit) => {
           setLimit(newLimit);
@@ -97,7 +97,7 @@ const GiftBasketsList = () => {
         showFilter={false}
         showView={false}
         showAddModal={false}
-        generalInquiries={''}
+        generalInquiries={""}
         isGeneralInquiries={false}
         isInProgressBookings={false}
         isDiscountCodes={false}
@@ -105,7 +105,7 @@ const GiftBasketsList = () => {
         giftBasketPurchases={giftBasketPurchases}
         customers={customers}
         giftBaskets={giftBaskets}
-        titleView={'Gift Baskets Purchases '}
+        titleView={"Gift Baskets Purchases "}
         isClosedBookings={false}
         isGiftBasketsPurchase={true}
       />

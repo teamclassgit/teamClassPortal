@@ -1,8 +1,8 @@
 // @packages
-import Avatar from '@components/avatar';
-import Proptypes from 'prop-types';
+import Avatar from "@components/avatar";
+import Proptypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Check, Send, Frown, Eye } from 'react-feather';
+import { Check, Send, Frown, Eye } from "react-feather";
 import { useSelector } from "react-redux";
 
 // @scripts
@@ -11,7 +11,7 @@ import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
 
 // @styles
 import "./MessageView.scss";
-import { getUserData } from '../../utility/Utils';
+import { getUserData } from "../../utility/Utils";
 
 const statusStyle = {
   display: "inline-block",
@@ -63,7 +63,7 @@ const MessageView = ({
               <div className='message-view-avatar'>
                 <Avatar
                   className='avatar-border'
-                  content={userData && userData['name'] || 'Uknown'}
+                  content={userData && userData["name"] || "Uknown"}
                   initials
                   status={statusAvatar}
                 />
@@ -120,7 +120,7 @@ const MessageView = ({
                         <div 
                           style={{
                             marginLeft: "-15px",
-                            left: '15px',
+                            left: "15px",
                             position: "relative"
                           }}
                         >
@@ -177,9 +177,9 @@ const MessageView = ({
             <div className='message-view-avatar-not-author'>
               <Avatar
                 className='avatar-border'
-                content={author || 'Uknown'}
+                content={author || "Uknown"}
                 initials
-                status={'online'}
+                status={"online"}
               />
             </div>
             <div className='message-not-author-message'>

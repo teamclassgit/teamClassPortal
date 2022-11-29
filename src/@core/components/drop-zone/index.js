@@ -1,20 +1,20 @@
 // @packages
-import { useState } from 'react';
-import Uppy from '@uppy/core';
-import thumbnailGenerator from '@uppy/thumbnail-generator';
-import { DragDrop } from '@uppy/react';
-import { Button, Card, CardHeader, CardTitle, CardBody, Modal, ModalBody, ModalHeader } from 'reactstrap';
-import { X } from 'react-feather';
+import { useState } from "react";
+import Uppy from "@uppy/core";
+import thumbnailGenerator from "@uppy/thumbnail-generator";
+import { DragDrop } from "@uppy/react";
+import { Button, Card, CardHeader, CardTitle, CardBody, Modal, ModalBody, ModalHeader } from "reactstrap";
+import { X } from "react-feather";
 
 // @styles
-import './drop-zone.scss';
+import "./drop-zone.scss";
 
 const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
   const [showModal, setShowModal] = useState(false);
   const [removeIndex, setRemoveIndex] = useState(null);
 
   const uppy = new Uppy({
-    meta: { type: 'avatar' },
+    meta: { type: "avatar" },
     autoProceed: true,
     restrictions: {
       maxNumberOfFiles: 1
@@ -29,7 +29,7 @@ const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
 
   uppy.use(thumbnailGenerator);
 
-  uppy.on('complete', (file) => {
+  uppy.on("complete", (file) => {
     const arr = attachedFile;
     arr.push(file);
     setAttachedFile([...arr]);
@@ -41,12 +41,12 @@ const DropZone = ({ dropText, attachedFile, setAttachedFile, fileUrl }) => {
           <ul key={index} className="list-unstyled">
             <li className="mt-2">
               <a href={fileUrl} target="_blank">
-                {item2.type === 'application/pdf' ? (
+                {item2.type === "application/pdf" ? (
                   <img src="https://www.comfatolima.com.co/wp-content/uploads/2018/10/icon-pdf.png" width="35px" height="20px" alt="pdf-icon" />
                 ) : (
                   <img src="https://sm.pcmag.com/pcmag_au/review/m/microsoft-/microsoft-photos_aguw.jpg" width="40px" height="20px" alt="pdf-icon" />
                 )}
-                {item2.data.name}{' '}
+                {item2.data.name}{" "}
                 <a
                   onClick={(e) => {
                     setRemoveIndex(index);

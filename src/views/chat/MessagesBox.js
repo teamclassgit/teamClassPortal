@@ -1,17 +1,17 @@
 // @packages
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Spinner } from 'reactstrap';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Spinner } from "reactstrap";
 
 // @scripts
-import MessageList from './MessageList';
-import { CONVERSATION_PAGE_SIZE } from './Constants';
-import { getMessages } from './Apis';
-import { useDispatch } from 'react-redux';
+import MessageList from "./MessageList";
+import { CONVERSATION_PAGE_SIZE } from "./Constants";
+import { getMessages } from "./Apis";
+import { useDispatch } from "react-redux";
 
 // @styles
-import './MessagesBox.scss';
-import { getUserData } from '../../utility/Utils';
+import "./MessagesBox.scss";
+import { getUserData } from "../../utility/Utils";
 
 export async function loadMessages (conversation, currentMessages = [], addMessage) {
   const convoSid = conversation?.sid;

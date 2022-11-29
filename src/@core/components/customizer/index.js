@@ -1,18 +1,18 @@
 // @packages
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import Select from 'react-select';
-import classnames from 'classnames';
-import { CustomInput, FormGroup } from 'reactstrap';
-import { X } from 'react-feather';
-import { selectThemeColors } from '@utils';
-import { useHistory } from 'react-router-dom';
-import { useState } from 'react';
+import PerfectScrollbar from "react-perfect-scrollbar";
+import Select from "react-select";
+import classnames from "classnames";
+import { CustomInput, FormGroup } from "reactstrap";
+import { X } from "react-feather";
+import { selectThemeColors } from "@utils";
+import { useHistory } from "react-router-dom";
+import { useState } from "react";
 
 // @scripts
-import MessageNotifications from './messageNotification';
+import MessageNotifications from "./messageNotification";
 
 // @styles
-import '@styles/react/libs/react-select/_react-select.scss';
+import "@styles/react/libs/react-select/_react-select.scss";
 
 const Customizer = (props) => {
   // ** Props
@@ -53,31 +53,31 @@ const Customizer = (props) => {
   const renderSkinsRadio = () => {
     const skinsArr = [
       {
-        name: 'light',
-        label: 'Light',
-        checked: skin === 'light'
+        name: "light",
+        label: "Light",
+        checked: skin === "light"
       },
       {
-        name: 'bordered',
-        label: 'Bordered',
-        checked: skin === 'bordered'
+        name: "bordered",
+        label: "Bordered",
+        checked: skin === "bordered"
       },
       {
-        name: 'dark',
-        label: 'Dark',
-        checked: skin === 'dark'
+        name: "dark",
+        label: "Dark",
+        checked: skin === "dark"
       },
       {
-        name: 'semi-dark',
-        label: 'Semi Dark',
-        checked: skin === 'semi-dark'
+        name: "semi-dark",
+        label: "Semi Dark",
+        checked: skin === "semi-dark"
       }
     ];
 
     return skinsArr.map((radio, index) => {
       const marginCondition = index !== skinsArr.length - 1;
 
-      if (layout === 'HorizontalLayout' && radio.name === 'semi-dark') {
+      if (layout === "HorizontalLayout" && radio.name === "semi-dark") {
         return null;
       }
 
@@ -89,7 +89,7 @@ const Customizer = (props) => {
           label={radio.label}
           checked={radio.checked}
           onChange={() => setSkin(radio.name)}
-          className={classnames({ 'mr-1': marginCondition })}
+          className={classnames({ "mr-1": marginCondition })}
         />
       );
     });
@@ -97,14 +97,14 @@ const Customizer = (props) => {
 
   // ** Render Navbar Colors Options
   const renderNavbarColors = () => {
-    const colorsArr = ['white', 'primary', 'secondary', 'success', 'danger', 'info', 'warning', 'dark'];
+    const colorsArr = ["white", "primary", "secondary", "success", "danger", "info", "warning", "dark"];
 
     return colorsArr.map((color) => (
       <li
         key={color}
         className={classnames(`color-box bg-${color}`, {
           selected: navbarColor === color,
-          border: color === 'white'
+          border: color === "white"
         })}
         onClick={() => setNavbarColor(color)}
       ></li>
@@ -115,31 +115,31 @@ const Customizer = (props) => {
   const renderNavbarTypeRadio = () => {
     const navbarTypeArr = [
       {
-        name: 'floating',
-        label: 'Floating',
-        checked: navbarType === 'floating'
+        name: "floating",
+        label: "Floating",
+        checked: navbarType === "floating"
       },
       {
-        name: 'sticky',
-        label: 'Sticky',
-        checked: navbarType === 'sticky'
+        name: "sticky",
+        label: "Sticky",
+        checked: navbarType === "sticky"
       },
       {
-        name: 'static',
-        label: 'Static',
-        checked: navbarType === 'static'
+        name: "static",
+        label: "Static",
+        checked: navbarType === "static"
       },
       {
-        name: 'hidden',
-        label: 'Hidden',
-        checked: navbarType === 'hidden'
+        name: "hidden",
+        label: "Hidden",
+        checked: navbarType === "hidden"
       }
     ];
 
     return navbarTypeArr.map((radio, index) => {
       const marginCondition = index !== navbarTypeArr.length - 1;
 
-      if (layout === 'HorizontalLayout' && radio.name === 'hidden') {
+      if (layout === "HorizontalLayout" && radio.name === "hidden") {
         return null;
       }
 
@@ -151,7 +151,7 @@ const Customizer = (props) => {
           label={radio.label}
           checked={radio.checked}
           onChange={() => setNavbarType(radio.name)}
-          className={classnames({ 'mr-1': marginCondition })}
+          className={classnames({ "mr-1": marginCondition })}
         />
       );
     });
@@ -161,19 +161,19 @@ const Customizer = (props) => {
   const renderFooterTypeRadio = () => {
     const footerTypeArr = [
       {
-        name: 'sticky',
-        label: 'Sticky',
-        checked: footerType === 'sticky'
+        name: "sticky",
+        label: "Sticky",
+        checked: footerType === "sticky"
       },
       {
-        name: 'static',
-        label: 'Static',
-        checked: footerType === 'static'
+        name: "static",
+        label: "Static",
+        checked: footerType === "static"
       },
       {
-        name: 'hidden',
-        label: 'Hidden',
-        checked: footerType === 'hidden'
+        name: "hidden",
+        label: "Hidden",
+        checked: footerType === "hidden"
       }
     ];
 
@@ -188,7 +188,7 @@ const Customizer = (props) => {
           label={radio.label}
           checked={radio.checked}
           onChange={() => setFooterType(radio.name)}
-          className={classnames({ 'mr-1': marginCondition })}
+          className={classnames({ "mr-1": marginCondition })}
         />
       );
     });
@@ -196,10 +196,10 @@ const Customizer = (props) => {
 
   // **  Router Transition Options
   const transitionOptions = [
-    { value: 'fadeIn', label: 'Fade' },
-    { value: 'fadeInLeft', label: 'Fade In Left' },
-    { value: 'zoomIn', label: 'Zoom In' },
-    { value: 'none', label: 'None' }
+    { value: "fadeIn", label: "Fade" },
+    { value: "fadeInLeft", label: "Fade In Left" },
+    { value: "zoomIn", label: "Zoom In" },
+    { value: "none", label: "None" }
   ];
 
   // ** Get Current Transition
@@ -209,12 +209,12 @@ const Customizer = (props) => {
 
   const handleChat = (e) => {
     e.preventDefault();
-    history.push('/chat');
+    history.push("/chat");
   };
 
   return (
     <div
-      className={classnames('customizer d-none d-md-block', {
+      className={classnames("customizer d-none d-md-block", {
         open: openCustomizer
       })}
     >
@@ -248,10 +248,10 @@ const Customizer = (props) => {
                   id="full-width"
                   className="mr-1"
                   label="Full Width"
-                  checked={contentWidth === 'full'}
-                  onChange={() => setContentWidth('full')}
+                  checked={contentWidth === "full"}
+                  onChange={() => setContentWidth("full")}
                 />
-                <CustomInput type="radio" id="boxes" label="Boxed" checked={contentWidth === 'boxed'} onChange={() => setContentWidth('boxed')} />
+                <CustomInput type="radio" id="boxes" label="Boxed" checked={contentWidth === "boxed"} onChange={() => setContentWidth("boxed")} />
               </div>
             </FormGroup>
 
@@ -289,20 +289,20 @@ const Customizer = (props) => {
                   type="radio"
                   id="vertical-layout"
                   label="Vertical"
-                  checked={layout === 'VerticalLayout'}
-                  onChange={() => setLayout('vertical')}
+                  checked={layout === "VerticalLayout"}
+                  onChange={() => setLayout("vertical")}
                   className="mr-1"
                 />
                 <CustomInput
                   type="radio"
                   id="horizontal-layout"
                   label="Horizontal"
-                  checked={layout === 'HorizontalLayout'}
-                  onChange={() => setLayout('horizontal')}
+                  checked={layout === "HorizontalLayout"}
+                  onChange={() => setLayout("horizontal")}
                 />
               </div>
             </FormGroup>
-            {layout !== 'HorizontalLayout' ? (
+            {layout !== "HorizontalLayout" ? (
               <FormGroup className="mb-2">
                 <div className="d-flex align-items-center">
                   <p className="font-weight-bold mr-auto mb-0">Menu Collapsed</p>
@@ -328,7 +328,7 @@ const Customizer = (props) => {
           <hr />
 
           <div className="px-2">
-            {layout !== 'HorizontalLayout' ? (
+            {layout !== "HorizontalLayout" ? (
               <FormGroup className="mb-2">
                 <p className="font-weight-bold">Navbar Color</p>
                 <ul className="list-inline unstyled-list">{renderNavbarColors()}</ul>
@@ -336,7 +336,7 @@ const Customizer = (props) => {
             ) : null}
 
             <FormGroup className="mb-2">
-              <p className="font-weight-bold">{layout === 'HorizontalLayout' ? 'Menu' : 'Navbar'} Type</p>
+              <p className="font-weight-bold">{layout === "HorizontalLayout" ? "Menu" : "Navbar"} Type</p>
               <div className="d-flex">{renderNavbarTypeRadio()}</div>
             </FormGroup>
           </div>

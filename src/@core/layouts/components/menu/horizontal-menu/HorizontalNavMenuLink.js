@@ -1,15 +1,15 @@
 // ** React Imports
-import { useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 
 // ** Horizontal menu items array
-import navigation from '@src/navigation/horizontal';
+import navigation from "@src/navigation/horizontal";
 
 // ** Third Party Components
-import classnames from 'classnames';
+import classnames from "classnames";
 
 // ** Utils
-import { isNavLinkActive, search, getAllParents } from '@layouts/utils';
+import { isNavLinkActive, search, getAllParents } from "@layouts/utils";
 
 const HorizontalNavMenuLink = ({
   item,
@@ -22,7 +22,7 @@ const HorizontalNavMenuLink = ({
   isChild
 }) => {
   // ** Conditional Link Tag, if item has newTab or externalLink props use <a> tag else use NavLink
-  const LinkTag = item.externalLink ? 'a' : NavLink;
+  const LinkTag = item.externalLink ? "a" : NavLink;
 
   // ** URL Vars
   const location = useLocation();
@@ -33,7 +33,7 @@ const HorizontalNavMenuLink = ({
   // ** Get parents of current items
   const searchParents = (navigation, currentURL) => {
     const parents = search(navigation, currentURL, routerProps); // Search for parent object
-    const allParents = getAllParents(parents, 'id'); // Parents Object to Parents Array
+    const allParents = getAllParents(parents, "id"); // Parents Object to Parents Array
     allParents.pop();
     return allParents;
   };
@@ -52,19 +52,19 @@ const HorizontalNavMenuLink = ({
 
   return (
     <li
-      className={classnames('nav-item', {
+      className={classnames("nav-item", {
         active: item.navLink === activeItem,
         disabled: item.disabled
       })}
       onClick={resetOpenDropdowns}
     >
       <LinkTag
-        className={classnames('d-flex align-items-center', {
-          'dropdown-item': isChild,
-          'nav-link': !isChild
+        className={classnames("d-flex align-items-center", {
+          "dropdown-item": isChild,
+          "nav-link": !isChild
         })}
         tag={LinkTag}
-        target={item.newTab ? '_blank' : undefined}
+        target={item.newTab ? "_blank" : undefined}
         /*eslint-disable */
         {...(item.externalLink === true
           ? {

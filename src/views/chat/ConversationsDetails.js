@@ -1,14 +1,14 @@
 // @packages
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Badge } from 'reactstrap';
+import PropTypes from "prop-types";
+import React from "react";
+import { Badge } from "reactstrap";
 
 // @scripts
-import Settings from './Settings';
+import Settings from "./Settings";
 
 // @styles
-import './ConversationsDetails.scss';
-import { capitalizeString } from '../../utility/Utils';
+import "./ConversationsDetails.scss";
+import { capitalizeString } from "../../utility/Utils";
 
 const ConversationDetails = ({ convo, participants, customer }) => (
   <div className="conversations-details-container">
@@ -17,7 +17,7 @@ const ConversationDetails = ({ convo, participants, customer }) => (
       <div className="conversations-participants-container">
         <div className="conversations-participants">
           {participants?.length}
-          {participants?.length > 1 ? ' participants' : ' participant'}
+          {participants?.length > 1 ? " participants" : " participant"}
         </div>
         <Settings convo={convo} participants={participants} />
       </div>

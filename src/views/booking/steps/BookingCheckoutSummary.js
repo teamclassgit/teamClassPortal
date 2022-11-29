@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Card, CardBody, CardFooter, FormText, Media, Badge, Row, Col, CardHeader } from 'reactstrap';
+import React, { useState } from "react";
+import { Card, CardBody, CardFooter, FormText, Media, Badge, Row, Col, CardHeader } from "reactstrap";
 import {
   BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_PAID_STATUS,
@@ -9,13 +9,13 @@ import {
   DEFAULT_TIME_ZONE_LABEL,
   DEFAULT_TIME_ZONE_LABEL_DESCRIPTION,
   RUSH_FEE
-} from '../../../utility/Constants';
+} from "../../../utility/Constants";
 
-import moment from 'moment';
-import { capitalizeString } from '../../../utility/Utils';
-import StatusSelector from '../TableBookings/StatusSelector';
+import moment from "moment";
+import { capitalizeString } from "../../../utility/Utils";
+import StatusSelector from "../TableBookings/StatusSelector";
 
-import styles from './BookingCheckoutSummary.module.scss';
+import styles from "./BookingCheckoutSummary.module.scss";
 
 const BookingCheckoutSummary = ({
   teamClass,
@@ -54,7 +54,7 @@ const BookingCheckoutSummary = ({
                 <br />
                 <br />
                 <Badge className="booking-checkout-summary-priceBadge">
-                  ${bookingInfo.classVariant?.pricePerson} / {bookingInfo.classVariant?.groupEvent ? 'group' : 'person'}
+                  ${bookingInfo.classVariant?.pricePerson} / {bookingInfo.classVariant?.groupEvent ? "group" : "person"}
                 </Badge>
               </>
             )}
@@ -66,7 +66,7 @@ const BookingCheckoutSummary = ({
               <Media className="align-items-center">
                 <img
                   src={
-                    teamClass?.catalogImage && teamClass?.catalogImage.indexOf('https:') !== -1
+                    teamClass?.catalogImage && teamClass?.catalogImage.indexOf("https:") !== -1
                       ? teamClass?.catalogImage
                       : `/content/img/photo/listing/${teamClass?.catalogImage}`
                   }
@@ -100,7 +100,7 @@ const BookingCheckoutSummary = ({
           )}
           <div className="text-block py-1">
             <h6 className="mb-0 text-black booking-checkout-summary-subTitle">
-              {`Booking status `}{' '}
+              {"Booking status "}{" "}
               <Badge color="secondary" className="text-xs booking-checkout-summary-date-status ml-1">
                 <StatusSelector row={bookingInfo} calendarEvent={calendarEvent} />
               </Badge>
@@ -112,13 +112,13 @@ const BookingCheckoutSummary = ({
                     <tbody>
                       <tr>
                         <th className="font-weight-normal pt-1">
-                          <span> {`${moment(requestEventDate.fullEventDate).format('LL')}`}</span>
+                          <span> {`${moment(requestEventDate.fullEventDate).format("LL")}`}</span>
                         </th>
                         <td className="text-right pt-2">
                           <span>
-                            {' '}
-                            {`${moment(requestEventDate.fullEventDate).format('hh:mm ')}`}
-                            <Badge color="primary text-uppercase">{`${moment(requestEventDate.fullEventDate).format('a ')}`}</Badge>
+                            {" "}
+                            {`${moment(requestEventDate.fullEventDate).format("hh:mm ")}`}
+                            <Badge color="primary text-uppercase">{`${moment(requestEventDate.fullEventDate).format("a ")}`}</Badge>
                           </span>
                         </td>
                       </tr>
@@ -136,7 +136,7 @@ const BookingCheckoutSummary = ({
                 {!requestEventDate && (
                   <Row>
                     <Col>
-                      {' '}
+                      {" "}
                       <span>TBD</span>
                     </Col>
                   </Row>
@@ -169,11 +169,11 @@ const BookingCheckoutSummary = ({
                 bookingInfo.invoiceDetails.length > 2 &&
                 bookingInfo.invoiceDetails.slice(2).map((additionalItem) => (
                   <tr key={additionalItem.item}>
-                    <th className={`font-weight-normal text-sm pt-1 ${additionalItem.unitPrice < 0 ? 'text-danger' : ''}`}>
+                    <th className={`font-weight-normal text-sm pt-1 ${additionalItem.unitPrice < 0 ? "text-danger" : ""}`}>
                       {additionalItem.item}
-                      {additionalItem.units > 1 ? ` x ${additionalItem.units}` : ``}
+                      {additionalItem.units > 1 ? ` x ${additionalItem.units}` : ""}
                     </th>
-                    <td className={`text-right pt-1 text-sm ${additionalItem.unitPrice < 0 ? 'text-danger' : ''}`}>
+                    <td className={`text-right pt-1 text-sm ${additionalItem.unitPrice < 0 ? "text-danger" : ""}`}>
                       ${(additionalItem.unitPrice * additionalItem.units).toFixed(2)}
                     </td>
                   </tr>
@@ -199,8 +199,8 @@ const BookingCheckoutSummary = ({
               {totalRushFee > 0 && (
                 <tr>
                   <th className="font-weight-normal text-sm pt-1">
-                    {`Rush fee ($${bookingInfo.rushFee || RUSH_FEE.toFixed(2)}`} x{' '}
-                    {` ${attendeesToInvoice < bookingInfo.classVariant.minimum ? bookingInfo.classVariant.minimum : attendeesToInvoice})`}{' '}
+                    {`Rush fee ($${bookingInfo.rushFee || RUSH_FEE.toFixed(2)}`} x{" "}
+                    {` ${attendeesToInvoice < bookingInfo.classVariant.minimum ? bookingInfo.classVariant.minimum : attendeesToInvoice})`}{" "}
                   </th>
                   <td className="text-right pt-1 text-sm">${totalRushFee}</td>
                 </tr>
@@ -229,7 +229,7 @@ const BookingCheckoutSummary = ({
               </tr>
 
               <tr className="border-top">
-                <th className="pt-1">{`Deposit paid`}</th>
+                <th className="pt-1">{"Deposit paid"}</th>
                 <td className="text-right pt-1">
                   <span className="font-weight-bold">${deposit}</span>
                 </td>
@@ -237,7 +237,7 @@ const BookingCheckoutSummary = ({
 
               {finalPayment && (showFinalPaymentLine || bookingInfo.status === BOOKING_PAID_STATUS) && (
                 <tr className="border-top">
-                  <th className="pt-1">{bookingInfo.status === BOOKING_PAID_STATUS ? `Final payment` : `Outstanding Balance`} </th>
+                  <th className="pt-1">{bookingInfo.status === BOOKING_PAID_STATUS ? "Final payment" : "Outstanding Balance"} </th>
                   <td className="text-right pt-1">
                     <span className="font-weight-bold">${finalPayment}</span>
                   </td>

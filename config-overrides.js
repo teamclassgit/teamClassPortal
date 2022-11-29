@@ -1,25 +1,26 @@
-const SassRuleRewire = require('react-app-rewire-sass-rule');
-const path = require('path');
-const rewireAliases = require('react-app-rewire-aliases');
+const SassRuleRewire = require("react-app-rewire-sass-rule");
+const path = require("path");
+const rewireAliases = require("react-app-rewire-aliases");
 
 module.exports = function override (config, env) {
-  require('react-app-rewire-postcss')(config, {
-    plugins: loader => [require('postcss-rtl')()]
+  require("react-app-rewire-postcss")(config, {
+    plugins: loader => [require("postcss-rtl")()]
   });
 
   config = rewireAliases.aliasesOptions({
-    '@src': path.resolve(__dirname, 'src'),
-    '@assets': path.resolve(__dirname, 'src/@core/assets'),
-    '@components': path.resolve(__dirname, 'src/@core/components'),
-    '@layouts': path.resolve(__dirname, 'src/@core/layouts'),
-    '@store': path.resolve(__dirname, 'src/redux'),
-    '@styles': path.resolve(__dirname, 'src/@core/scss'),
-    '@configs': path.resolve(__dirname, 'src/configs'),
-    '@utils': path.resolve(__dirname, 'src/utility/Utils'),
-    '@hooks': path.resolve(__dirname, 'src/utility/hooks'),
-    '@atoms': path.resolve(__dirname, 'src/components/atoms'),
-    '@molecules': path.resolve(__dirname, 'src/components/molecules'),
-    '@organisms': path.resolve(__dirname, 'src/components/organisms')
+    "@src": path.resolve(__dirname, "src"),
+    "@assets": path.resolve(__dirname, "src/@core/assets"),
+    "@components": path.resolve(__dirname, "src/@core/components"),
+    "@layouts": path.resolve(__dirname, "src/@core/layouts"),
+    "@store": path.resolve(__dirname, "src/redux"),
+    "@styles": path.resolve(__dirname, "src/@core/scss"),
+    "@configs": path.resolve(__dirname, "src/configs"),
+    "@utils": path.resolve(__dirname, "src/utility/Utils"),
+    "@hooks": path.resolve(__dirname, "src/utility/hooks"),
+    "@graphql": path.resolve(__dirname, "src/graphql"),
+    "@atoms": path.resolve(__dirname, "src/components/atoms"),
+    "@molecules": path.resolve(__dirname, "src/components/molecules"),
+    "@organisms": path.resolve(__dirname, "src/components/organisms")
   })(config, env);
 
   config = new SassRuleRewire()
@@ -27,10 +28,10 @@ module.exports = function override (config, env) {
       test: /\.s[ac]ss$/i,
       use: [
         {
-          loader: 'sass-loader',
+          loader: "sass-loader",
           options: {
             sassOptions: {
-              includePaths: ['node_modules', 'src/assets']
+              includePaths: ["node_modules", "src/assets"]
             }
           }
         }
@@ -38,5 +39,5 @@ module.exports = function override (config, env) {
     })
     .rewire(config, env);
 
-  return config
-}
+  return config;
+};

@@ -1,7 +1,7 @@
 // @packages
 import React, { useEffect, useState } from "react";
 import { Button, Input } from "reactstrap";
-import { Paperclip } from 'react-feather';
+import { Paperclip } from "react-feather";
 import { debounce } from "lodash";
 import { useDispatch } from "react-redux";
 
@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import MessageInput from "./MessageInput";
 import SendMessageButton from "./SendMessageButton";
 import { MAX_FILE_SIZE } from "./Constants";
-import { addMessages } from '../../redux/actions/chat';
+import { addMessages } from "../../redux/actions/chat";
 
 // @styles
 import "./MessageInputField.scss";
@@ -133,7 +133,7 @@ const MessageInputField = (props) => {
               id="file-input"
               key={filesInputKey}
               type="file"
-              style={{ display: "none", cursor: 'pointer' }}
+              style={{ display: "none", cursor: "pointer" }}
               onChange={onFilesChange}
             />
           </Button>

@@ -1,29 +1,29 @@
 // @packages
-import Breadcrumbs from '@components/breadcrumbs';
-import React, { useRef, useState, useEffect } from 'react';
-import Wizard from '@components/wizard';
-import moment from 'moment';
-import { Calendar, Users, DollarSign } from 'react-feather';
-import { Col, Row, Spinner } from 'reactstrap';
-import { useLazyQuery, useQuery } from '@apollo/client';
-import { useParams, useHistory } from 'react-router-dom';
+import Breadcrumbs from "@components/breadcrumbs";
+import React, { useRef, useState, useEffect } from "react";
+import Wizard from "@components/wizard";
+import moment from "moment";
+import { Calendar, Users, DollarSign } from "react-feather";
+import { Col, Row, Spinner } from "reactstrap";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { useParams, useHistory } from "react-router-dom";
 // @scripts
-import Attendees from './steps/Attendees';
-import BookingCheckoutSummary from './steps/BookingCheckoutSummary';
-import DateTimeConfirmation from './steps/DateTimeConfirmation';
-import DistributorsInvoice from './steps/DistributorsInvoice';
-import InvoiceBuilder from './steps/InvoiceBuilder';
-import PartnersInvoice from './steps/PartnersInvoice';
-import Payments from './steps/Payments';
-import queryAttendeesByBookingId from '../../graphql/QueryAttendeesByBookingId';
-import queryBookingById from '../../graphql/QueryBookingById';
-import queryCalendarEventsByClassId from '../../graphql/QueryCalendarEventsByClassId';
-import queryClassById from '../../graphql/QueryClassById';
-import queryCustomerById from '../../graphql/QueryCustomerById';
-import { RUSH_FEE } from '../../utility/Constants';
-import { getBookingTotals } from '../../services/BookingService';
+import Attendees from "./steps/Attendees";
+import BookingCheckoutSummary from "./steps/BookingCheckoutSummary";
+import DateTimeConfirmation from "./steps/DateTimeConfirmation";
+import DistributorsInvoice from "./steps/DistributorsInvoice";
+import InvoiceBuilder from "./steps/InvoiceBuilder";
+import PartnersInvoice from "./steps/PartnersInvoice";
+import Payments from "./steps/Payments";
+import queryAttendeesByBookingId from "../../graphql/QueryAttendeesByBookingId";
+import queryBookingById from "../../graphql/QueryBookingById";
+import queryCalendarEventsByClassId from "../../graphql/QueryCalendarEventsByClassId";
+import queryClassById from "../../graphql/QueryClassById";
+import queryCustomerById from "../../graphql/QueryCustomerById";
+import { RUSH_FEE } from "../../utility/Constants";
+import { getBookingTotals } from "../../services/BookingService";
 //@styles
-import './wizard-class-booking.scss';
+import "./wizard-class-booking.scss";
 
 const WizardClassBooking = () => {
   const [attendees, setAttendees] = useState([]);
@@ -98,8 +98,8 @@ const WizardClassBooking = () => {
   useEffect(() => {
     if (calendarEvent) {
       const eventDate = [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)];
-      const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}`;
-      const eventNewDate = moment(`${moment(eventDate[0]).format('DD/MM/YYYY')} ${eventTime}`, 'DD/MM/YYYY HH:mm');
+      const eventTime = `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? "00" : calendarEvent.fromMinutes}`;
+      const eventNewDate = moment(`${moment(eventDate[0]).format("DD/MM/YYYY")} ${eventTime}`, "DD/MM/YYYY HH:mm");
 
       const newCalendarEventOption = {
         dateOption: eventDate[0],
@@ -134,7 +134,7 @@ const WizardClassBooking = () => {
     const depositsPaid =
       bookingInfo &&
       bookingInfo.payments &&
-      bookingInfo.payments.filter((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
+      bookingInfo.payments.filter((element) => element.paymentName === "deposit" && element.status === "succeeded");
 
     const initialDepositPaid = bookingTotals.customDeposit
       ? bookingTotals.customDeposit
@@ -177,8 +177,8 @@ const WizardClassBooking = () => {
 
   const steps = [
     {
-      id: 'account-details',
-      title: 'Event Date',
+      id: "account-details",
+      title: "Event Date",
       icon: <Calendar size={18} />,
       content: (
         <DateTimeConfirmation
@@ -196,8 +196,8 @@ const WizardClassBooking = () => {
     },
 
     {
-      id: 'step-address',
-      title: 'Attendees',
+      id: "step-address",
+      title: "Attendees",
       icon: <Users size={18} />,
       content: (
         <Attendees
@@ -213,8 +213,8 @@ const WizardClassBooking = () => {
     },
 
     {
-      id: 'payments',
-      title: 'Payments',
+      id: "payments",
+      title: "Payments",
       icon: <DollarSign size={18} />,
       content: (
         <Payments
@@ -228,8 +228,8 @@ const WizardClassBooking = () => {
     },
 
     {
-      id: 'final-invoice',
-      title: 'Final Invoice',
+      id: "final-invoice",
+      title: "Final Invoice",
       icon: <DollarSign size={18} />,
       content: (
         <InvoiceBuilder
@@ -249,16 +249,16 @@ const WizardClassBooking = () => {
 
   if (bookingInfo && bookingInfo.instructorInvoice) {
     invoiceSteps.push({
-      id: 'partner-invoice',
-      title: 'Partner Invoice',
+      id: "partner-invoice",
+      title: "Partner Invoice",
       icon: <DollarSign size={18} />,
       content: <PartnersInvoice booking={bookingInfo} calendarEvent={calendarEvent}></PartnersInvoice>
     });
   }
   if (bookingInfo && bookingInfo.distributorInvoice) {
     invoiceSteps.push({
-      id: 'distributor-invoice',
-      title: 'Distributor Invoice',
+      id: "distributor-invoice",
+      title: "Distributor Invoice",
       icon: <DollarSign size={18} />,
       content: <DistributorsInvoice booking={bookingInfo} calendarEvent={calendarEvent}></DistributorsInvoice>
     });

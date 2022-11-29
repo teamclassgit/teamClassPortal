@@ -87,7 +87,7 @@ const Settings = ({
           })
         }
         conversation={convo}
-        addNotifications={'addNotifications'}
+        addNotifications={"addNotifications"}
       />
       {isManageParticipantOpen && (
         <ManageParticipantsModal

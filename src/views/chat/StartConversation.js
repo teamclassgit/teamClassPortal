@@ -1,13 +1,13 @@
 // @packages
-import Proptypes from 'prop-types';
-import React, { useState } from 'react';
-import { MessageSquare } from 'react-feather';
-import { useDispatch } from 'react-redux';
-import { useMutation } from '@apollo/client';
-import { informationId, updateCurrentConversation } from '../../redux/actions/chat';
+import Proptypes from "prop-types";
+import React, { useState } from "react";
+import { MessageSquare } from "react-feather";
+import { useDispatch } from "react-redux";
+import { useMutation } from "@apollo/client";
+import { informationId, updateCurrentConversation } from "../../redux/actions/chat";
 // @scripts
-import mutationCreateTwilioConversation from '../../graphql/conversations/MutationCreateConversation';
-import { Spinner } from 'reactstrap';
+import mutationCreateTwilioConversation from "../../graphql/conversations/MutationCreateConversation";
+import { Spinner } from "reactstrap";
 
 const StartConversation = ({ client, customer }) => {
   const dispatch = useDispatch();

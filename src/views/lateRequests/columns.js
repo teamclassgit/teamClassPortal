@@ -1,22 +1,22 @@
 // @packages
-import StringFilter from '@inovua/reactdatagrid-community/StringFilter';
-import SelectFilter from '@inovua/reactdatagrid-community/SelectFilter';
-import Avatar from '@components/avatar';
-import { Badge } from 'reactstrap';
-import CopyClipboard from '../../components/CopyClipboard';
-import moment from 'moment';
+import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
+import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
+import Avatar from "@components/avatar";
+import { Badge } from "reactstrap";
+import CopyClipboard from "../../components/CopyClipboard";
+import moment from "moment";
 
 const cellSize = {
   minHeight: 50,
-  display: 'flex',
-  alignItems: 'center'
+  display: "flex",
+  alignItems: "center"
 };
 
 const columns = [
   {
-    name: 'bookingId',
-    header: 'Booking Id',
-    type: 'string',
+    name: "bookingId",
+    header: "Booking Id",
+    type: "string",
     defaultFlex: 2,
     filterEditor: StringFilter,
     render: ({value}) => (
@@ -29,27 +29,27 @@ const columns = [
     )
   },
   {
-    name: 'updatedAt',
-    header: 'Updated',
-    type: 'string',
+    name: "updatedAt",
+    header: "Updated",
+    type: "string",
     defaultFlex: 1,
     render: ({ value }) => {
       return moment(value).calendar(null, {
-        lastDay: '[Yesterday]',
-        sameDay: 'LT',
-        lastWeek: 'dddd',
-        sameElse: 'MMMM Do, YYYY'
+        lastDay: "[Yesterday]",
+        sameDay: "LT",
+        lastWeek: "dddd",
+        sameElse: "MMMM Do, YYYY"
       });
     }
   },
   {
-    name: 'status',
-    header: 'Status',
-    type: 'string',
+    name: "status",
+    header: "Status",
+    type: "string",
     defaultWidth: 200,
     filterEditor: SelectFilter,
     filterEditorProps: {
-      placeholder: 'All',
+      placeholder: "All",
       dataSource: [
         {id: "pending", label: "Pending"},
         {id: "rejected", label: "Rejected"},
@@ -76,9 +76,9 @@ const columns = [
     )
   },
   {
-    name: 'name',
-    header: 'Name',
-    type: 'string',
+    name: "name",
+    header: "Name",
+    type: "string",
     defaultFlex: 1,
     filterEditor: StringFilter,
     render: ({value}) => (
@@ -91,23 +91,23 @@ const columns = [
     )
   },
   {
-    name: 'phone',
-    header: 'Phone',
-    type: 'string',
+    name: "phone",
+    header: "Phone",
+    type: "string",
     defaultFlex: 1,
     render: ({value}) => <span>{value}</span>
   },
   {
-    name: 'email',
-    header: 'Email',
-    type: 'string',
+    name: "email",
+    header: "Email",
+    type: "string",
     defaultFlex: 1,
     render: ({value}) => <span>{value}</span>
   },
   {
-    name: 'additionalCost',
-    header: 'Additional Cost',
-    type: 'number',
+    name: "additionalCost",
+    header: "Additional Cost",
+    type: "number",
     defaultFlex: 1,
     render: ({value}) => {
       if (!value) {
@@ -118,9 +118,9 @@ const columns = [
     }
   },
   {
-    name: 'address',
-    header: 'Address',
-    type: 'string',
+    name: "address",
+    header: "Address",
+    type: "string",
     defaultFlex: 1,
     render: ({ cellProps }) => {
       return (

@@ -1,15 +1,15 @@
 // ** React Imports
-import React, { forwardRef, Fragment, useState } from 'react';
+import React, { forwardRef, Fragment, useState } from "react";
 // ** Add New Modal Component
-import AddNewAttendee from './AddNewAttendee';
-import UploadData from './UploadData';
+import AddNewAttendee from "./AddNewAttendee";
+import UploadData from "./UploadData";
 // ** Custom Components
-import Avatar from '@components/avatar';
+import Avatar from "@components/avatar";
 // ** Third Party Components
-import ReactPaginate from 'react-paginate';
-import DataTable from 'react-data-table-component';
-import moment from 'moment';
-import { ChevronDown, Edit, FileText, File, Grid, Plus, Share, Trash, X } from 'react-feather';
+import ReactPaginate from "react-paginate";
+import DataTable from "react-data-table-component";
+import moment from "moment";
+import { ChevronDown, Edit, FileText, File, Grid, Plus, Share, Trash, X } from "react-feather";
 import {
   Badge,
   Button,
@@ -27,11 +27,11 @@ import {
   ModalFooter,
   Row,
   UncontrolledButtonDropdown
-} from 'reactstrap';
-import ExportToExcel from '../../../components/ExportToExcel';
-import ExportToCsv from '../../../components/ExportToCsv';
-import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
-import ExportToExcelLegacy from '../../../components/ExportToExcelLegacy';
+} from "reactstrap";
+import ExportToExcel from "../../../components/ExportToExcel";
+import ExportToCsv from "../../../components/ExportToCsv";
+import { BOOKING_CLOSED_STATUS } from "../../../utility/Constants";
+import ExportToExcelLegacy from "../../../components/ExportToExcelLegacy";
 import "./TableAttendees.scss";
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
@@ -57,7 +57,7 @@ const DataTableAttendees = ({
   const [modal, setModal] = useState(false);
   const [modalUpload, setModalUpload] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [mode, setMode] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -72,10 +72,10 @@ const DataTableAttendees = ({
     setData(attendees);
   }, [attendees]);
   // ** Vars
-  const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
+  const states = ["success", "danger", "warning", "info", "dark", "primary", "secondary"];
   const status = {
-    1: { title: 'Waiting', color: 'light-warning' },
-    2: { title: 'Completed', color: 'light-success' }
+    1: { title: "Waiting", color: "light-warning" },
+    2: { title: "Completed", color: "light-success" }
   };
   const getStatus = (row) => {
     return row.addressLine1 && row.city && row.state && row.zip && row.country ? 2 : 1;
@@ -85,10 +85,10 @@ const DataTableAttendees = ({
   // ** Table Common Column
   const columns = [
     {
-      name: 'Name',
-      selector: 'name',
+      name: "Name",
+      selector: "name",
       sortable: true,
-      maxWidth: '260px',
+      maxWidth: "260px",
       cell: (row) => (
         <div className="d-flex align-items-center">
           <Avatar color={`${status[getStatus(row)].color}`} content={row.name} initials />
@@ -99,22 +99,22 @@ const DataTableAttendees = ({
       )
     },
     {
-      name: 'Phone',
-      selector: 'phone',
+      name: "Phone",
+      selector: "phone",
       sortable: true,
-      maxWidth: '120px'
+      maxWidth: "120px"
     },
     {
-      name: 'Email',
-      selector: 'email',
+      name: "Email",
+      selector: "email",
       sortable: true,
-      maxWidth: '220px'
+      maxWidth: "220px"
     },
     {
-      name: 'Address',
-      selector: 'addressLine',
+      name: "Address",
+      selector: "addressLine",
       sortable: true,
-      maxWidth: '250px',
+      maxWidth: "250px",
       cell: (row) => {
         return (
           <div style={{ color: "#868E96", fontWeight: "400", fontSize: "12px", lineHeight: "18px" }}>
@@ -126,10 +126,10 @@ const DataTableAttendees = ({
       }
     },
     {
-      name: 'Status',
-      selector: 'status',
+      name: "Status",
+      selector: "status",
       sortable: true,
-      maxWidth: '120px',
+      maxWidth: "120px",
       cell : (row) => {
         if (row.status === null) {
           return "confirmed";
@@ -139,9 +139,9 @@ const DataTableAttendees = ({
       }
     },
     {
-      name: 'Actions',
+      name: "Actions",
       allowOverflow: true,
-      maxWidth: '30px',
+      maxWidth: "30px",
       cell: (row) => {
         return (
           <div className="d-flex ">
@@ -161,7 +161,7 @@ const DataTableAttendees = ({
               onClick={(e) => {
                 setCurrentElement(row);
                 handleModal();
-                setMode('edit');
+                setMode("edit");
               }}
               href="#"
               title="Edit attendee"
@@ -183,11 +183,11 @@ const DataTableAttendees = ({
         // setRegistrationFields(fields.filter((element) => element.active === true));
 
         const attendeesArray = [];
-        const headers = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country', 'Status'];
-        const templateHeaders = ['Name', 'Email', 'Phone', 'AddressLine1', 'AddressLine2', 'City', 'State', 'Zip', 'Country'];
+        const headers = ["Name", "Email", "Phone", "AddressLine1", "AddressLine2", "City", "State", "Zip", "Country", "Status"];
+        const templateHeaders = ["Name", "Email", "Phone", "AddressLine1", "AddressLine2", "City", "State", "Zip", "Country"];
         fields.forEach((dynamicField) => headers.push(dynamicField.label));
         teamClassInfo.variants.map((item) => {
-          if (item.kitHasAlcohol) headers.push('Delivery Restriction');
+          if (item.kitHasAlcohol) headers.push("Delivery Restriction");
         });
         attendeesArray.push(headers);
 
@@ -287,7 +287,7 @@ const DataTableAttendees = ({
             <p className="bd-highlight mb-0">Your list of attendees</p>
             <p className="bd-highlight">
               <small>
-                {` Attendees registered: `}
+                {" Attendees registered: "}
                 <Badge color="primary"> {`${data.length || 0}`}</Badge>
               </small>
             </p>
@@ -304,11 +304,11 @@ const DataTableAttendees = ({
                     <DropdownItem className="align-middle w-100">
                       <ExportToExcelLegacy
                         apiData={excelHeadersTemplate}
-                        fileName={'Template'}
+                        fileName={"Template"}
                         title={
                           <h6>
                             <FileText size={13} />
-                            {'  Download template'}
+                            {"  Download template"}
                           </h6>
                         }
                         smallText={<h6 className="small m-0 p-0">Use this template to build your list</h6>}
@@ -327,13 +327,13 @@ const DataTableAttendees = ({
                     <DropdownItem className="align-middle w-100">
                       <ExportToExcelLegacy
                         apiData={attendeesExcelTable}
-                        fileName={`${customer && customer.name}${customer && customer.company ? ', ' : ''}${
-                          customer && customer.company ? customer.company : ''
-                        }-${moment().format('LL')}-${teamClassInfo.title}`}
+                        fileName={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
+                          customer && customer.company ? customer.company : ""
+                        }-${moment().format("LL")}-${teamClassInfo.title}`}
                         title={
                           <h6>
                             <FileText size={13} />
-                            {'   Excel File'}
+                            {"   Excel File"}
                           </h6>
                         }
                         smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
@@ -342,13 +342,13 @@ const DataTableAttendees = ({
                     <DropdownItem className="align-middle w-100">
                       <ExportToCsv
                         array={attendees}
-                        name={`${customer && customer.name}${customer && customer.company ? ', ' : ''}${
-                          customer && customer.company ? customer.company : ''
-                        }-${moment().format('LL')}-${teamClassInfo.title}.csv`}
+                        name={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
+                          customer && customer.company ? customer.company : ""
+                        }-${moment().format("LL")}-${teamClassInfo.title}.csv`}
                         title={
                           <h6>
                             <File size={13} />
-                            {'   Csv File'}
+                            {"   Csv File"}
                           </h6>
                         }
                         smallText={<h6 className="small m-0 p-0">Download csv file with attendees</h6>}
@@ -364,18 +364,18 @@ const DataTableAttendees = ({
                     className="ml-2"
                     color="primary"
                     onClick={(e) => {
-                      setMode('new');
+                      setMode("new");
                       const newElementTemplate = {
-                        city: '',
-                        phone: '',
+                        city: "",
+                        phone: "",
                         bookingId: currentBookingId,
-                        zip: '',
-                        addressLine1: '',
-                        addressLine2: '',
-                        email: '',
-                        country: '',
-                        name: '',
-                        state: '',
+                        zip: "",
+                        addressLine1: "",
+                        addressLine2: "",
+                        email: "",
+                        country: "",
+                        name: "",
+                        state: "",
                         dinamycValues: []
                       };
                       setCurrentElement(newElementTemplate);

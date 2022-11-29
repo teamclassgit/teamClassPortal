@@ -1,29 +1,29 @@
 // @packages
-import React, { useState, useEffect, useContext } from 'react';
-import moment from 'moment';
-import { Col, Spinner } from 'reactstrap';
-import { useQuery } from '@apollo/client';
+import React, { useState, useEffect, useContext } from "react";
+import moment from "moment";
+import { Col, Spinner } from "reactstrap";
+import { useQuery } from "@apollo/client";
 
 // @scripts
-import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
-import DataTablePrivateRequest from './TablePrivateRequests';
-import FiltersModal from '../booking/BoardBookings/FiltersModal';
-import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
-import queryAllPrivateClassRequest from '../../graphql/QueryAllPrivateClassRequest';
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
-import { getCoordinatorName } from '../booking/common';
+import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
+import DataTablePrivateRequest from "./TablePrivateRequests";
+import FiltersModal from "../booking/BoardBookings/FiltersModal";
+import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
+import queryAllPrivateClassRequest from "../../graphql/QueryAllPrivateClassRequest";
+import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
+import { getCoordinatorName } from "../booking/common";
 
 const PrivateRequestsList = () => {
   const [coordinators, setCoordinators] = useState([]);
   const [filteredPrivateClassRequests, setFilteredPrivateClassRequests] = useState([]);
   const [limit, setLimit] = useState(200);
   const [privateClassRequests, setPrivateClassRequests] = useState([]);
-  const [privateClassRequestsFilter, setPrivateClassRequestsFilter] = useState({ status_in: 'closed' });
+  const [privateClassRequestsFilter, setPrivateClassRequestsFilter] = useState({ status_in: "closed" });
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const { coordinatorFilterContext, textFilterContext, dateFilterContext } = useContext(FiltersContext);
 
   const { ...allPrivateRequests } = useQuery(queryAllPrivateClassRequest, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     variables: {
       filter: privateClassRequestsFilter,
       limit
@@ -80,7 +80,7 @@ const PrivateRequestsList = () => {
       query = {
         ...query,
         date_gte: moment(dateFilterContext.value[0]).format(),
-        date_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
+        date_lte: moment(dateFilterContext.value[1]).add(23, "hours").add(59, "minutes").format()
       };
     }
 
@@ -88,11 +88,11 @@ const PrivateRequestsList = () => {
   }, [coordinatorFilterContext, dateFilterContext]);
 
   useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
+    handleSearch((textFilterContext && textFilterContext.value) || "");
   }, [textFilterContext]);
 
   useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
+    handleSearch((textFilterContext && textFilterContext.value) || "");
   }, [privateClassRequests]);
 
   return (
@@ -111,7 +111,7 @@ const PrivateRequestsList = () => {
         showFilter={true}
         showLimit={true}
         showView={false}
-        titleView={'Private Requests '}
+        titleView={"Private Requests "}
       />
       {allPrivateRequests.loading || allCoordinatorResult.loading ? (
         <>

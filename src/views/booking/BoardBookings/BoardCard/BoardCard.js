@@ -1,23 +1,23 @@
 // @packages
-import Avatar from '@components/avatar';
-import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
-import moment from 'moment-timezone';
-import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video, Tag } from 'react-feather';
-import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from 'reactstrap';
-import { useHistory } from 'react-router';
+import Avatar from "@components/avatar";
+import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
+import moment from "moment-timezone";
+import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video, Tag } from "react-feather";
+import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from "reactstrap";
+import { useHistory } from "react-router";
 // @scripts
-import CopyClipboard from '../../../../components/CopyClipboard';
-import { capitalizeString, isNotEmptyArray } from '../../../../utility/Utils';
+import CopyClipboard from "../../../../components/CopyClipboard";
+import { capitalizeString, isNotEmptyArray } from "../../../../utility/Utils";
 // @styles
-import './BoardCard.scss';
+import "./BoardCard.scss";
 import {
   DATE_AND_TIME_CONFIRMATION_STATUS,
   DATE_AND_TIME_REJECTED_STATUS,
   DAYS_BEFORE_EVENT_REGISTRATION,
   DEFAULT_TIME_ZONE_LABEL
-} from '../../../../utility/Constants';
-import { getBookingAndCalendarEventById } from '../../../../services/BookingService';
+} from "../../../../utility/Constants";
+import { getBookingAndCalendarEventById } from "../../../../services/BookingService";
 
 const BoardCard = ({
   handleEditModal,
@@ -67,25 +67,25 @@ const BoardCard = ({
   const history = useHistory();
 
   useEffect(() => {
-    const depositPayment = payments && payments.find((element) => element.paymentName === 'deposit' && element.status === 'succeeded');
-    const finalPayment = payments && payments.find((element) => element.paymentName === 'final' && element.status === 'succeeded');
+    const depositPayment = payments && payments.find((element) => element.paymentName === "deposit" && element.status === "succeeded");
+    const finalPayment = payments && payments.find((element) => element.paymentName === "final" && element.status === "succeeded");
 
     if (depositPayment || finalPayment) {
-      setShowFinalPaymentLabel(finalPayment ? 'success' : 'danger');
+      setShowFinalPaymentLabel(finalPayment ? "success" : "danger");
 
       if (date && !finalPayment) {
-        const previousEventDays = moment(date).diff(moment(), 'days');
+        const previousEventDays = moment(date).diff(moment(), "days");
         if (previousEventDays < 0) {
           setAlertMessage({ _id, message: `Booking has not been paid and event was ${previousEventDays * -1} days ago.` });
-          setShowAlertEventPayment('danger');
+          setShowAlertEventPayment("danger");
         } else if (previousEventDays < 7 && previousEventDays >= 0) {
           setAlertMessage({
             _id,
             message: `Booking has not been paid and event is in ${
-              moment(date).format('MM/DD/YYYY') === moment().format('MM/DD/YYYY') ? 0 : previousEventDays + 1
+              moment(date).format("MM/DD/YYYY") === moment().format("MM/DD/YYYY") ? 0 : previousEventDays + 1
             } days.`
           });
-          setShowAlertEventPayment('warning');
+          setShowAlertEventPayment("warning");
         } else {
           setAlertMessage(null);
         }
@@ -96,7 +96,7 @@ const BoardCard = ({
   useEffect(() => {
     if (!eventDateTime) return;
 
-    const timeObject = `${moment(eventDateTime)?.tz(timezone)?.format('hh:mm A')} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`;
+    const timeObject = `${moment(eventDateTime)?.tz(timezone)?.format("hh:mm A")} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`;
     setTime(timeObject);
     setDate(eventDateTime);
 
@@ -104,7 +104,7 @@ const BoardCard = ({
     if (signUpDeadline) {
       finalSignUpDeadline = moment(signUpDeadline);
     } else {
-      finalSignUpDeadline = moment(eventDateTime).subtract(DAYS_BEFORE_EVENT_REGISTRATION, 'days');
+      finalSignUpDeadline = moment(eventDateTime).subtract(DAYS_BEFORE_EVENT_REGISTRATION, "days");
     }
 
     setSignUpDeadlineToShow(finalSignUpDeadline);
@@ -117,7 +117,7 @@ const BoardCard = ({
   const showAlertDeadline = () => {
     if (!signUpDeadlineToShow) return;
 
-    const daysToRegistration = Math.abs(moment().diff(signUpDeadlineToShow, 'days'));
+    const daysToRegistration = Math.abs(moment().diff(signUpDeadlineToShow, "days"));
     if (daysToRegistration >= 0 && daysToRegistration <= 1) {
       setSignUpRegistrationClass(true);
     } else {
@@ -153,7 +153,7 @@ const BoardCard = ({
                 if (!bookingAndCalendarEvent) return;
                 handleEditModal(bookingAndCalendarEvent);
               }}
-              title={'Edit booking info'}
+              title={"Edit booking info"}
             >
               {`${_id}  `}
             </a>
@@ -165,7 +165,7 @@ const BoardCard = ({
           <Media className="pb-1">
             <Avatar color="light-primary" className="rounded mr-1" icon={<Calendar size={18} />} />
             <Media body>
-              <h6 className="mb-0">{` ${moment(date).format('LL')}`}</h6>
+              <h6 className="mb-0">{` ${moment(date).format("LL")}`}</h6>
               <small>{time}</small>
             </Media>
           </Media>
@@ -202,15 +202,15 @@ const BoardCard = ({
               </tr>
               <tr>
                 <th className="font-weight-normal small pt-1">International Attendees?</th>
-                <td className="text-right small">{hasInternationalAttendees ? 'Yes' : 'No'}</td>
+                <td className="text-right small">{hasInternationalAttendees ? "Yes" : "No"}</td>
               </tr>
               <tr>
                 <th className="font-weight-normal small">Created</th>
-                <td className="text-right small pt-1">{` ${moment(createdAt).format('LL')}`}</td>
+                <td className="text-right small pt-1">{` ${moment(createdAt).format("LL")}`}</td>
               </tr>
               <tr>
                 <th className="font-weight-normal small">Updated</th>
-                <td className="text-right small">{` ${moment(updatedAt).format('LL')}`}</td>
+                <td className="text-right small">{` ${moment(updatedAt).format("LL")}`}</td>
               </tr>
             </tbody>
             <tfoot>
@@ -234,7 +234,7 @@ const BoardCard = ({
           if (!bookingAndCalendarEvent) return;
           handleEditModal(bookingAndCalendarEvent);
         }}
-        title={'Edit booking info'}
+        title={"Edit booking info"}
       >
         <p className="text-truncate m-0 p-0">
           <small>
@@ -250,16 +250,16 @@ const BoardCard = ({
             <p className="m-0 p-0">
               <small>
                 <strong>Event: </strong>
-                {`${moment(eventDateTime)?.tz(timezone)?.format('MM/DD/YYYY hh:mm A')} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`}
+                {`${moment(eventDateTime)?.tz(timezone)?.format("MM/DD/YYYY hh:mm A")} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`}
               </small>
               {rescheduleDateTime && (
                 <small>
                   <span>
                     <strong>
                       <br />
-                      Change:{' '}
+                      Change:{" "}
                     </strong>
-                    {`${moment(rescheduleDateTime)?.tz(timezone)?.format('MM/DD/YYYY hh:mm A')} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`}
+                    {`${moment(rescheduleDateTime)?.tz(timezone)?.format("MM/DD/YYYY hh:mm A")} ${timezoneLabel || DEFAULT_TIME_ZONE_LABEL}`}
                   </span>
                 </small>
               )}
@@ -269,8 +269,8 @@ const BoardCard = ({
                 <div>
                   <small>
                     <strong>Sign-up: </strong>
-                    <span className={signUpRegistrationClass && 'signup-deadline'}>{`${signUpDeadlineToShow.format(
-                      'MM/DD/YYYY hh:mm A'
+                    <span className={signUpRegistrationClass && "signup-deadline"}>{`${signUpDeadlineToShow.format(
+                      "MM/DD/YYYY hh:mm A"
                     )} ${DEFAULT_TIME_ZONE_LABEL}`}</span>
                   </small>
                 </div>
@@ -320,119 +320,119 @@ const BoardCard = ({
         </CardHeader>
         <CardBody className="p-1 ">{flippedCard ? cardBack() : cardFront()}</CardBody>
         <CardFooter className="card-board-footer justify-content-end">
-          {status === 'quote' ? (
+          {status === "quote" ? (
             <div align="right">
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
-          ) : status === 'date-requested' && eventDateTimeStatus === 'reserved' ? (
+          ) : status === "date-requested" && eventDateTimeStatus === "reserved" ? (
             <div align="right">
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/booking/date-time-confirmation/${_id}`}
-                target={'_blank'}
-                title={'Approve/Reject link'}
+                target={"_blank"}
+                title={"Approve/Reject link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
-          ) : status === 'date-requested' && eventDateTimeStatus === 'confirmed' ? (
+          ) : status === "date-requested" && eventDateTimeStatus === "confirmed" ? (
             <div>
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={"_blank"} title={"Sign-up link"}>
                 <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
                 <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Deposit link"}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
-          ) : status === 'date-requested' && eventDateTimeStatus === 'rejected' ? (
+          ) : status === "date-requested" && eventDateTimeStatus === "rejected" ? (
             <div align="right">
               <a
                 className="mr-1"
                 href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
-                target={'_blank'}
-                title={'Select date and time link'}
+                target={"_blank"}
+                title={"Select date and time link"}
               >
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
-          ) : status === 'confirmed' ? (
+          ) : status === "confirmed" ? (
             <div align="right">
-              <a className="mr-1" href={`https://www.teamclass.com/customers/select-date-time/${_id}`} target={'_blank'} title={'Reschedule link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/select-date-time/${_id}`} target={"_blank"} title={"Reschedule link"}>
                 <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={"_blank"} title={"Sign-up link"}>
                 <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
                 <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Deposit link"}>
                 <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
               </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Final payment link'}>
+              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Final payment link"}>
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
               </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                 <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
               </a>
             </div>
           ) : (
-            status === 'paid' && (
+            status === "paid" && (
               <div align="right">
-                <a className="mr-1" href={`https://www.teamclass.com/customers/select-date-time/${_id}`} target={'_blank'} title={'Reschedule link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/select-date-time/${_id}`} target={"_blank"} title={"Reschedule link"}>
                   <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={'_blank'} title={'Sign-up link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={"_blank"} title={"Sign-up link"}>
                   <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={'_blank'} title={'Sign-up status'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
                   <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Deposit link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Deposit link"}>
                   <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
                 </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={'_blank'} title={'Final payment link'}>
+                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Final payment link"}>
                   <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
                 </a>
-                <a className="mr-1" onClick={() => handleEdit(_id)} target={'_blank'} title={'Time / Attendees / Invoice Builder'}>
+                <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
                 </a>
               </div>
@@ -449,9 +449,9 @@ const BoardCard = ({
                 <a
                   className="mr-1"
                   href={shippingTrackingLink}
-                  target={'_blank'}
+                  target={"_blank"}
                   rel="noopener noreferrer"
-                  title={'Shipping Tracking'}
+                  title={"Shipping Tracking"}
                 >
                   <Avatar color="light-primary" size="sm" icon={<Truck size={18} />} />
                 </a>
@@ -459,7 +459,7 @@ const BoardCard = ({
                 <a
                   className="mr-1"
                   href="#"
-                  title={'Tracking link has not been provided'}
+                  title={"Tracking link has not been provided"}
                   onClick={(e) => e.preventDefault()}
                 >
                   <Avatar color="light-danger" size="sm" icon={<Truck size={18} />} />
@@ -468,7 +468,7 @@ const BoardCard = ({
               {joinInfo && joinInfo?.joinUrl ? (
                 <a
                   href={joinInfo?.joinUrl}
-                  target={'_blank'}
+                  target={"_blank"}
                   rel="noopener noreferrer"
                   title={`password: ${joinInfo.password}`}
                 >
@@ -491,7 +491,7 @@ const BoardCard = ({
         )}
         {eventDateTimeStatus === DATE_AND_TIME_REJECTED_STATUS && (
           <CardFooter className="card-board-footer justify-content-end pr-1">
-            <Badge size="sm" color={`light-warning`} pill>
+            <Badge size="sm" color={"light-warning"} pill>
               Rejected
             </Badge>
           </CardFooter>

@@ -1,13 +1,13 @@
 // @packages
 import Proptypes from "prop-types";
 import React, { useState, useLayoutEffect } from "react";
-import { Input } from 'reactstrap';
+import { Input } from "reactstrap";
 
 // @scripts
 import MessageFile from "./MessageFile";
 
 // @styles
-import './MessageInput.scss';
+import "./MessageInput.scss";
 
 const useWindowSize = () => {
   const [size, setSize] = useState(0);

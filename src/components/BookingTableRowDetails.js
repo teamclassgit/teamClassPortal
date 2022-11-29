@@ -1,27 +1,27 @@
 // @packages
-import React from 'react';
-import moment from 'moment';
-import { Briefcase, Calendar, Mail, Phone } from 'react-feather';
-import { Alert } from 'reactstrap';
+import React from "react";
+import moment from "moment";
+import { Briefcase, Calendar, Mail, Phone } from "react-feather";
+import { Alert } from "reactstrap";
 
 // @scripts
-import CopyClipboard from './CopyClipboard';
-import { capitalizeString } from '../utility/Utils';
+import CopyClipboard from "./CopyClipboard";
+import { capitalizeString } from "../utility/Utils";
 
 const RowDetails = ({ data }) => {
-  const previousEventDays = moment(data.eventDateTime).diff(moment(), 'days');
-  let alertMessage = '';
-  let alertColor = '';
+  const previousEventDays = moment(data.eventDateTime).diff(moment(), "days");
+  let alertMessage = "";
+  let alertColor = "";
 
   if (data.depositsPaid && data.eventDateTime && !data.finalPaid) {
     if (previousEventDays < 0) {
       alertMessage = `Booking has not been paid and event was ${previousEventDays * -1} days ago.`;
-      alertColor = 'danger';
+      alertColor = "danger";
     } else if (previousEventDays < 7 && previousEventDays >= 0) {
       alertMessage = `Booking has not been paid and event is in ${
-        moment(data.eventDateTime).format('MM/DD/YYYY') === moment().format('MM/DD/YYYY') ? 0 : previousEventDays + 1
+        moment(data.eventDateTime).format("MM/DD/YYYY") === moment().format("MM/DD/YYYY") ? 0 : previousEventDays + 1
       } days.`;
-      alertColor = 'warning';
+      alertColor = "warning";
     }
   }
 
@@ -71,7 +71,7 @@ const RowDetails = ({ data }) => {
               <>
                 <td>Option</td>
                 <td>
-                  {data.classVariant.title} {`$${data.classVariant.pricePerson}`} {data.classVariant.groupEvent ? '/group' : '/person'}
+                  {data.classVariant.title} {`$${data.classVariant.pricePerson}`} {data.classVariant.groupEvent ? "/group" : "/person"}
                 </td>
               </>
             )}
@@ -79,7 +79,7 @@ const RowDetails = ({ data }) => {
           <tr>
             <td>Event Date</td>
             <td>
-              <Calendar size={16} /> {data.eventDateTime ? moment(data.eventDateTime).format('LLL') : 'TBD'}
+              <Calendar size={16} /> {data.eventDateTime ? moment(data.eventDateTime).format("LLL") : "TBD"}
             </td>
           </tr>
           <tr>
@@ -88,26 +88,26 @@ const RowDetails = ({ data }) => {
           </tr>
           <tr>
             <td>International attendees</td>
-            <td>{data.hasInternationalAttendees ? 'Yes' : 'No'}</td>
+            <td>{data.hasInternationalAttendees ? "Yes" : "No"}</td>
           </tr>
           <tr>
             <td>Created</td>
-            <td>{moment(data.createdAt).format('LL')}</td>
+            <td>{moment(data.createdAt).format("LL")}</td>
           </tr>
           <tr>
             <td>Updated</td>
-            <td>{moment(data.updatedAt).format('LL')}</td>
+            <td>{moment(data.updatedAt).format("LL")}</td>
           </tr>
           <tr>
             <td>Sign Up Date</td>
-            <td>{data.signUpDeadline && moment(data.signUpDeadline).format('LL')}</td>
+            <td>{data.signUpDeadline && moment(data.signUpDeadline).format("LL")}</td>
           </tr>
           <tr>
             <td>Conference Link</td>
             <td>
               {data?.joinInfo && data?.joinInfo?.joinUrl ? (
                 <>
-                  <a href={data?.joinInfo?.joinUrl} target={'_blank'} rel="noopener noreferrer" title={'Zoom link'}>
+                  <a href={data?.joinInfo?.joinUrl} target={"_blank"} rel="noopener noreferrer" title={"Zoom link"}>
                     Link to the conference
                   </a>
                   {data?.joinInfo?.password ? `(${data?.joinInfo?.password})` : ""}
@@ -123,7 +123,7 @@ const RowDetails = ({ data }) => {
             <td>
               {data?.shippingTrackingLink ? (
                 <>
-                  <a href={data?.shippingTrackingLink} target={'_blank'} rel="noopener noreferrer" title={'Shipping tracking'}>
+                  <a href={data?.shippingTrackingLink} target={"_blank"} rel="noopener noreferrer" title={"Shipping tracking"}>
                     Link to shipping tracking document
                   </a>
                   <CopyClipboard className="z-index-2" text={data?.shippingTrackingLink} />

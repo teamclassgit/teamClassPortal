@@ -1,18 +1,18 @@
 // @packages
-import DataTable from 'react-data-table-component';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import moment from 'moment';
-import { Card } from 'reactstrap';
-import { ChevronDown } from 'react-feather';
+import DataTable from "react-data-table-component";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import ReactPaginate from "react-paginate";
+import moment from "moment";
+import { Card } from "reactstrap";
+import { ChevronDown } from "react-feather";
 
 // @scripts
-import { getCoordinatorName } from '../booking/common';
-import EditGeneralInqueries from '../../components/EditGeneralInqueries';
+import { getCoordinatorName } from "../booking/common";
+import EditGeneralInqueries from "../../components/EditGeneralInqueries";
 
 // @styles
-import '../booking/TableBookings/TableBookings.scss';
+import "../booking/TableBookings/TableBookings.scss";
 
 const TableGeneralInquiries = ({ filteredData, coordinators }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -21,10 +21,10 @@ const TableGeneralInquiries = ({ filteredData, coordinators }) => {
 
   const columns = [
     {
-      name: 'Id',
-      selector: 'id',
+      name: "Id",
+      selector: "id",
       sortable: true,
-      maxWidth: '12%',
+      maxWidth: "12%",
       cell: (row) => (
         <small>
             <a
@@ -40,26 +40,26 @@ const TableGeneralInquiries = ({ filteredData, coordinators }) => {
       )
     },
     {
-      name: 'Created',
-      selector: 'date',
+      name: "Created",
+      selector: "date",
       sortable: true,
-      maxWidth: '8%',
+      maxWidth: "8%",
       cell: (row) => (
         <small>
           {moment(row?.date).calendar(null, {
-            lastDay: '[Yesterday]',
-            sameDay: 'LT',
-            lastWeek: 'dddd',
-            sameElse: 'MMMM Do, YYYY'
+            lastDay: "[Yesterday]",
+            sameDay: "LT",
+            lastWeek: "dddd",
+            sameElse: "MMMM Do, YYYY"
           })}
         </small>
       )
     },
     {
-      name: 'Name',
-      selector: 'name',
+      name: "Name",
+      selector: "name",
       sortable: true,
-      maxWidth: '10%',
+      maxWidth: "10%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -69,10 +69,10 @@ const TableGeneralInquiries = ({ filteredData, coordinators }) => {
       )
     },
     {
-      name: 'Email',
-      selector: 'email',
+      name: "Email",
+      selector: "email",
       sortable: true,
-      maxWidth: '16%',
+      maxWidth: "16%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -82,10 +82,10 @@ const TableGeneralInquiries = ({ filteredData, coordinators }) => {
       )
     },
     {
-      name: 'Phone',
-      selector: 'phone',
+      name: "Phone",
+      selector: "phone",
       sortable: true,
-      maxWidth: '9%',
+      maxWidth: "9%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -95,10 +95,10 @@ const TableGeneralInquiries = ({ filteredData, coordinators }) => {
       )
     },
     {
-      name: 'Coordinator',
-      selector: 'coordinator.name',
+      name: "Coordinator",
+      selector: "coordinator.name",
       sortable: true,
-      maxWidth: '120px',
+      maxWidth: "120px",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{getCoordinatorName(row?.eventCoordinatorId, coordinators)}</span>
@@ -106,10 +106,10 @@ const TableGeneralInquiries = ({ filteredData, coordinators }) => {
       )
     },
     {
-      name: 'Inquiry',
-      selector: 'inquiry',
+      name: "Inquiry",
+      selector: "inquiry",
       sortable: true,
-      maxWidth: '55%',
+      maxWidth: "55%",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{row?.inquiry}</span>
@@ -155,7 +155,7 @@ const TableGeneralInquiries = ({ filteredData, coordinators }) => {
           columns={columns}
           data={filteredData}
           defaultSortAsc={false}
-          defaultSortField={'updatedAt'}
+          defaultSortField={"updatedAt"}
           noHeader
           pagination
           paginationComponent={CustomPagination}

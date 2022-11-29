@@ -1,10 +1,10 @@
 // @packages
-import React, { useEffect, useState } from 'react';
-import { Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from 'reactstrap';
-import { DollarSign, TrendingUp } from 'react-feather';
-import Avatar from '@components/avatar';
-import PropTypes from 'prop-types';
-import { getTotalsUsingFilter } from '../../services/BookingService';
+import React, { useEffect, useState } from "react";
+import { Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from "reactstrap";
+import { DollarSign, TrendingUp } from "react-feather";
+import Avatar from "@components/avatar";
+import PropTypes from "prop-types";
+import { getTotalsUsingFilter } from "../../services/BookingService";
 
 const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
   const [quoteTotals, setQuoteTotals] = useState({ count: 0, total: 0 });
@@ -22,33 +22,33 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
       setFunction(selected);
     };
 
-    const currentFilters = filters.filter((filter) => filter.name !== 'status' && filter.name !== 'eventDateTimeStatus');
+    const currentFilters = filters.filter((filter) => filter.name !== "status" && filter.name !== "eventDateTimeStatus");
 
     const quoteFilters = [...currentFilters];
-    quoteFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'quote' });
+    quoteFilters.push({ name: "status", type: "string", operator: "contains", value: "quote" });
     getTotals(quoteFilters, setQuoteTotals);
 
     const requestedFilters = [...currentFilters];
-    requestedFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'date-requested' });
-    requestedFilters.push({ name: 'eventDateTimeStatus', type: 'string', operator: 'contains', value: 'reserved' });
+    requestedFilters.push({ name: "status", type: "string", operator: "contains", value: "date-requested" });
+    requestedFilters.push({ name: "eventDateTimeStatus", type: "string", operator: "contains", value: "reserved" });
     getTotals(requestedFilters, setRequestedTotals);
 
     const rejectedFilters = [...currentFilters];
-    rejectedFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'date-requested' });
-    rejectedFilters.push({ name: 'eventDateTimeStatus', type: 'string', operator: 'contains', value: 'rejected' });
+    rejectedFilters.push({ name: "status", type: "string", operator: "contains", value: "date-requested" });
+    rejectedFilters.push({ name: "eventDateTimeStatus", type: "string", operator: "contains", value: "rejected" });
     getTotals(rejectedFilters, setRejectedTotals);
 
     const acceptedFilters = [...currentFilters];
-    acceptedFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'date-requested' });
-    acceptedFilters.push({ name: 'eventDateTimeStatus', type: 'string', operator: 'contains', value: 'confirmed' });
+    acceptedFilters.push({ name: "status", type: "string", operator: "contains", value: "date-requested" });
+    acceptedFilters.push({ name: "eventDateTimeStatus", type: "string", operator: "contains", value: "confirmed" });
     getTotals(acceptedFilters, setAcceptedTotals);
 
     const depositFilters = [...currentFilters];
-    depositFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'confirmed' });
+    depositFilters.push({ name: "status", type: "string", operator: "contains", value: "confirmed" });
     getTotals(depositFilters, setDepositTotals);
 
     const paidFilters = [...currentFilters];
-    paidFilters.push({ name: 'status', type: 'string', operator: 'contains', value: 'paid' });
+    paidFilters.push({ name: "status", type: "string", operator: "contains", value: "paid" });
     getTotals(paidFilters, setFinalTotals);
   }, [filters]);
 
@@ -88,10 +88,10 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline={!status || (status && status.value === 'quote') ? false : true}
+              outline={!status || (status && status.value === "quote") ? false : true}
               className="btn-sm"
               onClick={(e) => {
-                setStatus({ value: 'quote', label: 'Quote' });
+                setStatus({ value: "quote", label: "Quote" });
               }}
             >
               Details
@@ -133,10 +133,10 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline={!status || (status && status.value === 'date-requested' && status.calendarEventStatus === 'reserved') ? false : true}
+              outline={!status || (status && status.value === "date-requested" && status.calendarEventStatus === "reserved") ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
-                setStatus({ value: 'date-requested', label: 'Requested', calendarEventStatus: 'reserved' });
+                setStatus({ value: "date-requested", label: "Requested", calendarEventStatus: "reserved" });
               }}
             >
               Details
@@ -178,11 +178,11 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline={!status || (status && status.value === 'date-requested' && status.calendarEventStatus === 'rejected') ? false : true}
+              outline={!status || (status && status.value === "date-requested" && status.calendarEventStatus === "rejected") ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 e.preventDefault();
-                setStatus({ value: 'date-requested', label: 'Rejected', calendarEventStatus: 'rejected' });
+                setStatus({ value: "date-requested", label: "Rejected", calendarEventStatus: "rejected" });
               }}
             >
               Details
@@ -224,11 +224,11 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline={!status || (status && status.value === 'date-requested' && status.calendarEventStatus === 'confirmed') ? false : true}
+              outline={!status || (status && status.value === "date-requested" && status.calendarEventStatus === "confirmed") ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 e.preventDefault();
-                setStatus({ value: 'date-requested', label: 'Accepted', calendarEventStatus: 'confirmed' });
+                setStatus({ value: "date-requested", label: "Accepted", calendarEventStatus: "confirmed" });
               }}
             >
               Details
@@ -270,11 +270,11 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline={!status || (status && status.value === 'confirmed') ? false : true}
+              outline={!status || (status && status.value === "confirmed") ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 e.preventDefault();
-                setStatus({ value: 'confirmed', label: 'Deposit Paid' });
+                setStatus({ value: "confirmed", label: "Deposit Paid" });
               }}
             >
               Details
@@ -316,11 +316,11 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
           <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
             <Button
               color="primary"
-              outline={!status || (status && status.value === 'paid') ? false : true}
+              outline={!status || (status && status.value === "paid") ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
                 e.preventDefault();
-                setStatus({ value: 'paid', label: 'Paid' });
+                setStatus({ value: "paid", label: "Paid" });
               }}
             >
               Details

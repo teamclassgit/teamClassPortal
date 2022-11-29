@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
-import { AlertCircle, ArrowLeft, ArrowRight } from 'react-feather';
-import { Alert, Button, Col, Form, FormGroup, Row, Badge } from 'reactstrap';
-import Flatpickr from 'react-flatpickr';
-import moment from 'moment';
-import { toAmPm } from '../../../utility/Utils';
+import React, { Fragment } from "react";
+import { AlertCircle, ArrowLeft, ArrowRight } from "react-feather";
+import { Alert, Button, Col, Form, FormGroup, Row, Badge } from "reactstrap";
+import Flatpickr from "react-flatpickr";
+import moment from "moment";
+import { toAmPm } from "../../../utility/Utils";
 import {
   DEFAULT_AVAILABILITY_ALWAYS,
   DEFAULT_AVAILABILITY,
@@ -16,10 +16,10 @@ import {
   RUSH_FEE,
   DEFAULT_TIME_ZONE,
   DEFAULT_TIME_ZONE_LABEL
-} from '../../../utility/Constants';
-import { useMutation } from '@apollo/client';
-import mutationRequestPreferredTime from '../../../graphql/MutationRequestPreferredTime';
-import { v4 as uuid } from 'uuid';
+} from "../../../utility/Constants";
+import { useMutation } from "@apollo/client";
+import mutationRequestPreferredTime from "../../../graphql/MutationRequestPreferredTime";
+import { v4 as uuid } from "uuid";
 
 const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, calendarEvent, setCalendarEvent, booking, setBooking, teamClass }) => {
   const [date, setDate] = React.useState(null);
@@ -50,7 +50,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
     setDate(
       calendarEvent ? [new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)] : [new Date().setDate(new Date().getDate() + 20)]
     );
-    setTime(calendarEvent ? `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? '00' : calendarEvent.fromMinutes}` : null);
+    setTime(calendarEvent ? `${calendarEvent.fromHour}:${calendarEvent.fromMinutes === 0 ? "00" : calendarEvent.fromMinutes}` : null);
   }, [calendarEvent]);
 
   const hasEvents = (selectedDate, fullStartHour, fullEndHour, breakBetweenClasses) => {
@@ -111,7 +111,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
             hour: eHour,
             minutes: eMinutes,
             label: `${eHour}:${eMinutes}`,
-            amPm: toAmPm(eHour, eMinutes, ''),
+            amPm: toAmPm(eHour, eMinutes, ""),
             open: !hasEventsInSlot.isBlockedSlot && (teamClass.multipleInstructors || !hasEventsInSlot.hasEvents)
           });
         }
@@ -131,10 +131,10 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
     setProcessing(true);
 
     const selectedDate = moment(date[0]);
-    const eventDate = moment(`${selectedDate.format('DD/MM/YYYY')} ${time}`, 'DD/MM/YYYY HH:mm');
+    const eventDate = moment(`${selectedDate.format("DD/MM/YYYY")} ${time}`, "DD/MM/YYYY HH:mm");
     const newFromHour = eventDate.hour();
     const newFromMinutes = eventDate.minutes();
-    const eventEnd = eventDate.add(teamClass.duration, 'hours');
+    const eventEnd = eventDate.add(teamClass.duration, "hours");
     const newToHour = eventEnd.hour();
     const newToMinutes = eventEnd.minutes();
 
@@ -184,7 +184,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         setBooking(result.data.updateOneBooking);
       }
 
-      console.log('calendar event saved');
+      console.log("calendar event saved");
 
       setProcessing(false);
     } catch (ex) {
@@ -225,7 +225,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
                     key={`time${index}`}
                     className="btn-sm"
                     disabled={(isDateInThePast() || isDateTooEarly()) && !(time === element.label)}
-                    color={element.open || (time === element.label) ? 'primary' : 'secondary'}
+                    color={element.open || (time === element.label) ? "primary" : "secondary"}
                     tag={Col}
                     lg={4}
                     md={6}
@@ -261,7 +261,7 @@ const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, ca
         <div className="d-flex justify-content-end">
           {booking && booking.status !== BOOKING_CLOSED_STATUS && (
             <Button.Ripple size="sm" color="primary" className="btn-next" onClick={() => saveCalendarEvent()} disabled={!time || !date || processing}>
-              <span className="align-middle d-sm-inline-block d-none">{processing ? 'Processing...' : 'Save date'}</span>
+              <span className="align-middle d-sm-inline-block d-none">{processing ? "Processing..." : "Save date"}</span>
             </Button.Ripple>
           )}
         </div>

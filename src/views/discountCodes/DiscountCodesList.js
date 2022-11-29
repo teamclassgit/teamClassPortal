@@ -1,18 +1,18 @@
 // @packages
-import moment from 'moment';
-import { Col, Spinner } from 'reactstrap';
-import { isUserLoggedIn, getUserData } from '@utils';
-import { useQuery } from '@apollo/client';
-import { useState, useEffect, useContext } from 'react';
+import moment from "moment";
+import { Col, Spinner } from "reactstrap";
+import { isUserLoggedIn, getUserData } from "@utils";
+import { useQuery } from "@apollo/client";
+import { useState, useEffect, useContext } from "react";
 
 // @scripts
-import AddNewDiscountCode from './AddNewDiscountCode';
-import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
-import EditDiscountCodesModal from '../../components/EditDiscountCodesModal';
-import TableDiscountCodes from '../discountCodes/TableDiscountCodes';
-import queryAllCustomers from '../../graphql/QueryAllCustomers';
-import queryDiscountCodes from '../../graphql/QueryDiscountCodes';
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
+import AddNewDiscountCode from "./AddNewDiscountCode";
+import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
+import EditDiscountCodesModal from "../../components/EditDiscountCodesModal";
+import TableDiscountCodes from "../discountCodes/TableDiscountCodes";
+import queryAllCustomers from "../../graphql/QueryAllCustomers";
+import queryDiscountCodes from "../../graphql/QueryDiscountCodes";
+import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
 
 const DiscountCodesList = () => {
   const [currentElement, setCurrentElement] = useState({});
@@ -31,7 +31,7 @@ const DiscountCodesList = () => {
   const handleModal = () => setShowAddModal(!showAddModal);
 
   const { ...allDiscountCodes } = useQuery(queryDiscountCodes, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     variables: {
       filter: discountCodesFilter
     },
@@ -39,7 +39,7 @@ const DiscountCodesList = () => {
   });
 
   const { ...allCustomersResult } = useQuery(queryAllCustomers, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     variables: {
       filter: discountCodesFilter
     },
@@ -88,7 +88,7 @@ const DiscountCodesList = () => {
       query = {
         ...query,
         date_gte: moment(dateFilterContext.value[0]).format(),
-        date_lte: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
+        date_lte: moment(dateFilterContext.value[1]).add(23, "hours").add(59, "minutes").format()
       };
     }
 
@@ -96,7 +96,7 @@ const DiscountCodesList = () => {
   }, [dateFilterContext]);
 
   useEffect(() => {
-    handleSearch((textFilterContext && textFilterContext.value) || '');
+    handleSearch((textFilterContext && textFilterContext.value) || "");
   }, [textFilterContext, discountCodesInformation]);
 
   return (
@@ -113,7 +113,7 @@ const DiscountCodesList = () => {
         showAddModal={() => handleModal()}
         showExport
         showLimit
-        titleView={'Discount Codes '}
+        titleView={"Discount Codes "}
       />
       {allDiscountCodes.loading ? (
         <div>

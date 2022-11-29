@@ -1,8 +1,8 @@
 // @packages
-import { Col, Row } from 'reactstrap';
+import { Col, Row } from "reactstrap";
 
 // @scripts
-import WizardClassBooking from './WizardClassBooking';
+import WizardClassBooking from "./WizardClassBooking";
 
 const Booking = () => (
   <Row>

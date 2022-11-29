@@ -1,7 +1,7 @@
 // @packages
 import CardCongratulations from "./CardCongratulations";
-import PropTypes from 'prop-types';
-import { Col, Row } from 'reactstrap';
+import PropTypes from "prop-types";
+import { Col, Row } from "reactstrap";
 
 const Confirmation = ({ stepper, customer, setConfirmation }) => {
   return (

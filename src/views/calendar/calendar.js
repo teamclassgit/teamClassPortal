@@ -1,17 +1,17 @@
 // ** React Import
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 // ** Full Calendar & it's Plugins
-import FullCalendar from '@fullcalendar/react';
-import listPlugin from '@fullcalendar/list';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
+import FullCalendar from "@fullcalendar/react";
+import listPlugin from "@fullcalendar/list";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
 
-import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Alert } from 'reactstrap';
-import moment from 'moment-timezone';
-import './calendar.scss';
-import { BOOKING_DATE_REQUESTED_STATUS } from '../../utility/Constants';
+import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Alert } from "reactstrap";
+import moment from "moment-timezone";
+import "./calendar.scss";
+import { BOOKING_DATE_REQUESTED_STATUS } from "../../utility/Constants";
 
 const Calendar = ({ bookings, classes }) => {
   const [events, setEvents] = useState([]);
@@ -25,7 +25,7 @@ const Calendar = ({ bookings, classes }) => {
     if (bookings && classes) {
       const eventsArray = bookings.map((item, index) => {
         return {
-          title: `${item.customerCompany ? item.customerCompany.concat(' / ') : ''}${item.customerName}`,
+          title: `${item.customerCompany ? item.customerCompany.concat(" / ") : ""}${item.customerName}`,
           classTitle: item.className,
           bookingId: item._id,
           attendees: item.attendees,
@@ -34,11 +34,11 @@ const Calendar = ({ bookings, classes }) => {
           customerPhone: item.customerPhone,
           customerEmail: item.customerEmail,
           classVariant:
-            item.classVariant && `${item.classVariant.title} $${item.classVariant.pricePerson}${item.classVariant.groupEvent ? '/group' : '/person'}`,
+            item.classVariant && `${item.classVariant.title} $${item.classVariant.pricePerson}${item.classVariant.groupEvent ? "/group" : "/person"}`,
           signUpDeadline: item.signUpDeadline,
-          eventDate: moment(item.eventDateTime)?.tz(item.timezone)?.format('LLL'),
-          date: moment(item.eventDateTime)?.tz(item.timezone)?.format('YYYY-MM-DD HH:mm'),
-          backgroundColor: item.status === BOOKING_DATE_REQUESTED_STATUS ? '#FF6563' : '#557FE7',
+          eventDate: moment(item.eventDateTime)?.tz(item.timezone)?.format("LLL"),
+          date: moment(item.eventDateTime)?.tz(item.timezone)?.format("YYYY-MM-DD HH:mm"),
+          backgroundColor: item.status === BOOKING_DATE_REQUESTED_STATUS ? "#FF6563" : "#557FE7",
           status: item.status
         };
       });
@@ -92,7 +92,7 @@ const Calendar = ({ bookings, classes }) => {
           {modalBookingInfo && modalBookingInfo.signUpDeadline && (
             <p>
               <strong>Sign Up Deadline: </strong>
-              {moment(modalBookingInfo.signUpDeadline).format('lll')}
+              {moment(modalBookingInfo.signUpDeadline).format("lll")}
             </p>
           )}
           <Alert color="danger" isOpen={modalBookingInfo && modalBookingInfo.status === BOOKING_DATE_REQUESTED_STATUS ? true : false}>
@@ -110,7 +110,7 @@ const Calendar = ({ bookings, classes }) => {
             className="col-2 "
           >
             Ok
-          </Button>{' '}
+          </Button>{" "}
         </ModalFooter>
       </Modal>
 
@@ -127,9 +127,9 @@ const Calendar = ({ bookings, classes }) => {
           }}
           events={{ events }}
           headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
           }}
         />
       </div>

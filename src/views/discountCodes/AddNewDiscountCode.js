@@ -1,12 +1,12 @@
 // @packages
-import 'cleave.js/dist/addons/cleave-phone.us';
-import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
-import PropTypes from 'prop-types';
-import { Key, Percent, X, Tag, MessageCircle, DollarSign } from 'react-feather';
-import { selectThemeColors } from '@utils';
-import { useMutation } from '@apollo/client';
-import { v4 as uuid } from 'uuid';
+import "cleave.js/dist/addons/cleave-phone.us";
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
+import PropTypes from "prop-types";
+import { Key, Percent, X, Tag, MessageCircle, DollarSign } from "react-feather";
+import { selectThemeColors } from "@utils";
+import { useMutation } from "@apollo/client";
+import { v4 as uuid } from "uuid";
 import {
   Alert,
   Button,
@@ -19,15 +19,15 @@ import {
   Modal,
   ModalBody,
   ModalHeader
-} from 'reactstrap';
-import Flatpickr from 'react-flatpickr';
+} from "reactstrap";
+import Flatpickr from "react-flatpickr";
 
 // @scripts
-import mutationCreateDiscountCode from '../../graphql/MutationCreateDiscountCode';
-import allTypes from '../../components/AllTypes.json';
+import mutationCreateDiscountCode from "../../graphql/MutationCreateDiscountCode";
+import allTypes from "../../components/AllTypes.json";
 
 // @styles
-import '@styles/react/libs/flatpickr/flatpickr.scss';
+import "@styles/react/libs/flatpickr/flatpickr.scss";
 
 const AddNewDiscountCode = ({ 
   baseElement,
@@ -39,15 +39,15 @@ const AddNewDiscountCode = ({
 }) => {
   const [discountCodesDeadLine, setDiscountCodesDeadLine] = useState([]);
   const [createDiscountCode] = useMutation(mutationCreateDiscountCode, {});
-  const [newCode, setNewCode] = useState('');
-  const [newDescription, setNewDescription] = useState('');
-  const [newDiscount, setNewDiscount] = useState('');
+  const [newCode, setNewCode] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newDiscount, setNewDiscount] = useState("");
   const [newMaxDiscount, setNewMaxDiscount] = useState(null);
   const [newRedemption, setNewRedemption] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState('');
-  const [type, setType] = useState('Percentage');
-  const [warning, setWarning] = useState({ open: false, message: '' });
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [type, setType] = useState("Percentage");
+  const [warning, setWarning] = useState({ open: false, message: "" });
   
   const selectStyles = {
     control: (base) => ({
@@ -58,7 +58,7 @@ const AddNewDiscountCode = ({
     }),
     option: (provided) => ({
       ...provided,
-      borderBottom: '1px dotted',
+      borderBottom: "1px dotted",
       padding: 10,
       fontSize: 12
     }),
@@ -76,7 +76,7 @@ const AddNewDiscountCode = ({
       const resultCreateDiscountCode = await createDiscountCode({
         variables: {
           id: uuid(),
-          discountCode: newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''),
+          discountCode: newCode.replace(/[^a-zA-Z0-9]/g, "").replace(/\s+/g, ""),
           description: newDescription,
           expirationDate: discountCodesDeadLine && discountCodesDeadLine.length > 0 ? discountCodesDeadLine[0] : undefined,
           customerId: selectedCustomer,
@@ -112,10 +112,10 @@ const AddNewDiscountCode = ({
   };
 
   const handleDifferentType = () => {
-    if ((type === 'Amount' || type === 'Percentage') && (newDiscount < 0 || newDiscount > 100)) {
-      setWarning({ open: true, message: 'Discount must be greater or equal than 0 and less than 100' });
+    if ((type === "Amount" || type === "Percentage") && (newDiscount < 0 || newDiscount > 100)) {
+      setWarning({ open: true, message: "Discount must be greater or equal than 0 and less than 100" });
     } else {
-      setWarning({ open: false, message: '' });
+      setWarning({ open: false, message: "" });
     }
   };
 
@@ -131,14 +131,14 @@ const AddNewDiscountCode = ({
 
   const handleDifferentCode = () => {
     if (newCode.length > 0) {
-      setNewCode(newCode.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, ''));
+      setNewCode(newCode.replace(/[^a-zA-Z0-9]/g, "").replace(/\s+/g, ""));
     }
     if (String(sameCode).length > 0) {
-      setWarning({ open: true, message: 'Discount Code already exists' });
-    } else if (newCode === '') {
-      setWarning({ open: true, message: 'Please enter Discount Code' });
+      setWarning({ open: true, message: "Discount Code already exists" });
+    } else if (newCode === "") {
+      setWarning({ open: true, message: "Please enter Discount Code" });
     } else {
-      setWarning({ open: false, message: '' });
+      setWarning({ open: false, message: "" });
     }
   };
 
@@ -153,7 +153,7 @@ const AddNewDiscountCode = ({
       setNewDiscount(baseElement.discount);
       setNewMaxDiscount(baseElement.maxDiscount);
       setDiscountCodesDeadLine(baseElement.expirationDate);
-      setWarning({ open: false, message: '' });
+      setWarning({ open: false, message: "" });
     }
   }, [baseElement]);
 
@@ -165,7 +165,7 @@ const AddNewDiscountCode = ({
       modalClassName="modal-slide-in" 
     >
       <ModalHeader toggle={handleModal} close={CloseBtn} tag="div">
-        <h5 className="modal-title">{'New Discount Code'}</h5>
+        <h5 className="modal-title">{"New Discount Code"}</h5>
       </ModalHeader>
       <ModalBody className="flex-grow-1">
         <div className="demo-inline-spacing ">
@@ -208,10 +208,10 @@ const AddNewDiscountCode = ({
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
                 onBlur={() => {
-                  if (newDescription === '') {
-                    setWarning({ open: true, message: 'Please enter description' });
+                  if (newDescription === "") {
+                    setWarning({ open: true, message: "Please enter description" });
                   } else {
-                    setWarning({ open: false, message: '' });
+                    setWarning({ open: false, message: "" });
                   }
                 }}
               />
@@ -233,9 +233,9 @@ const AddNewDiscountCode = ({
                 type="number"
                 onBlur={() => {
                   if (newRedemption < 1) {
-                    setWarning({ open: true, message: 'Redemptions must be greater than 0' });
+                    setWarning({ open: true, message: "Redemptions must be greater than 0" });
                   } else {
-                    setWarning({ open: false, message: '' });
+                    setWarning({ open: false, message: "" });
                   }
                 }}
               />
@@ -267,7 +267,7 @@ const AddNewDiscountCode = ({
             <InputGroup size="sm">
               <InputGroupAddon addonType="prepend">
                 <InputGroupText>
-                  {type === 'Amount' ? (
+                  {type === "Amount" ? (
                     <DollarSign size={15} />
                   ) : (
                     <Percent size={15} />
@@ -284,7 +284,7 @@ const AddNewDiscountCode = ({
               />
             </InputGroup>
           </FormGroup>
-          {type === 'Percentage' && (
+          {type === "Percentage" && (
             <FormGroup>
               <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
@@ -346,7 +346,7 @@ const AddNewDiscountCode = ({
                 customers.map((element) => {
                   return {
                     value: element._id,
-                    label: `${element.name.split(' ')[0]} <${element.email}>`
+                    label: `${element.name.split(" ")[0]} <${element.email}>`
                   };
                 })
               }
@@ -366,7 +366,7 @@ const AddNewDiscountCode = ({
               !type ||
               String(sameCode).length > 0 ||
               newDescription.length < 5 ||
-              (type === 'Amount' || type === 'Percentage') && (newDiscount < 0 || newDiscount > 100) ||
+              (type === "Amount" || type === "Percentage") && (newDiscount < 0 || newDiscount > 100) ||
               !newDiscount  ||
               !newRedemption ||
               (type === "Percentage" && !newMaxDiscount) ||
@@ -375,7 +375,7 @@ const AddNewDiscountCode = ({
             onClick={saveNewDiscountCode}
             size="sm"
           >
-            {processing ? 'Saving...' : 'Save'}
+            {processing ? "Saving..." : "Save"}
           </Button>
           <Button color="secondary" onClick={cancel} outline size="sm">
             Cancel

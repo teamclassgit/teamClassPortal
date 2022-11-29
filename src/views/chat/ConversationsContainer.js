@@ -1,18 +1,18 @@
 // @packages
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import PropTypes from "prop-types";
+import React from "react";
+import { useSelector } from "react-redux";
 
 // @scripts
-import ConversationsDetails from './ConversationsDetails';
-import MessageInputField from './MessageInputField';
-import MessagesBox from './MessagesBox';
-import StartConversation from './StartConversation';
-import { pushMessages } from '../../redux/actions/chat';
+import ConversationsDetails from "./ConversationsDetails";
+import MessageInputField from "./MessageInputField";
+import MessagesBox from "./MessagesBox";
+import StartConversation from "./StartConversation";
+import { pushMessages } from "../../redux/actions/chat";
 
 // @scripts
-import './ConversationsContainer.scss';
-import { getUserData } from '../../utility/Utils';
+import "./ConversationsContainer.scss";
+import { getUserData } from "../../utility/Utils";
 
 const ConversationContainer = ({ client, conversation, status, customer }) => {
   const userData = getUserData();
@@ -24,7 +24,7 @@ const ConversationContainer = ({ client, conversation, status, customer }) => {
   const typingData = useSelector((state) => state.reducer.typingData)[sid] ?? [];
 
   return (
-    <div className={'chatContainer-without-conversations'}>
+    <div className={"chatContainer-without-conversations"}>
       {conversation ? (
         <>
           <ConversationsDetails convo={conversation} participants={participants} customer={customer} />

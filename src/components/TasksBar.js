@@ -1,9 +1,9 @@
 // @packages
-import React, { useState } from 'react';
-import { Button, ButtonGroup, Col, DropdownItem, DropdownMenu, DropdownToggle, Row, Spinner, UncontrolledButtonDropdown } from 'reactstrap';
-import { Share, Plus } from 'react-feather';
-import PropTypes from 'prop-types';
-import ExportToExcel from './ExportToExcel';
+import React, { useState } from "react";
+import { Button, ButtonGroup, Col, DropdownItem, DropdownMenu, DropdownToggle, Row, Spinner, UncontrolledButtonDropdown } from "reactstrap";
+import { Share, Plus } from "react-feather";
+import PropTypes from "prop-types";
+import ExportToExcel from "./ExportToExcel";
 
 const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDataToExport }) => {
   const [isExporting, setIsExporting] = useState(false);
@@ -13,7 +13,7 @@ const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDat
       <Col md={6} lg={6}>
         <h4>
           {titleView}
-          {` `}
+          {" "}
           <small>
             <a href="#">{titleBadge}</a>
           </small>
@@ -34,7 +34,7 @@ const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDat
                         apiDataFunc={async () => {
                           return await getDataToExport();
                         }}
-                        fileName={'Bookings'}
+                        fileName={"Bookings"}
                         setIsExporting={setIsExporting}
                       />
                     </DropdownItem>
@@ -52,11 +52,11 @@ const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDat
               color="primary"
               onClick={(e) => {
                 const newElement = {
-                  name: '',
-                  email: '',
-                  phone: '',
-                  company: '',
-                  attendees: ''
+                  name: "",
+                  email: "",
+                  phone: "",
+                  company: "",
+                  attendees: ""
                 };
                 setElementToAdd(newElement);
                 showAddModal();

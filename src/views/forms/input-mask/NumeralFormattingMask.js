@@ -1,8 +1,8 @@
-import {Fragment} from 'react';
-import Cleave from 'cleave.js/react';
+import {Fragment} from "react";
+import Cleave from "cleave.js/react";
 
 const NumeralFormattingMask = () => {
-  const options = { numeral: true, numeralThousandsGroupStyle: 'thousand' };
+  const options = { numeral: true, numeralThousandsGroupStyle: "thousand" };
 
   return (
     <Fragment>

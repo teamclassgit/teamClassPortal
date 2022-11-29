@@ -1,12 +1,12 @@
 // ** React Imports
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import { Plus, Minus } from 'react-feather';
-import { useState, useEffect } from 'react';
-import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap';
+import PropTypes from "prop-types";
+import classnames from "classnames";
+import { Plus, Minus } from "react-feather";
+import { useState, useEffect } from "react";
+import { InputGroup, InputGroupAddon, Input, Button } from "reactstrap";
 
 // ** Styles
-import './number-input.scss';
+import "./number-input.scss";
 
 // ** Keycode Vars
 const KEYCODE_UP = 38;
@@ -123,11 +123,11 @@ const NumberInput = props => {
 
   return (
     <InputGroup
-      className={classnames('number-input', {
+      className={classnames("number-input", {
         disabled,
         readonly,
         [className]: className,
-        'vertical-number-input': vertical,
+        "vertical-number-input": vertical,
         [`vertical-number-input-${size}`]: vertical && size
       })}
       {...(style ? { style } : {})}
@@ -201,5 +201,5 @@ NumberInput.propTypes = {
   onDecrement: PropTypes.func,
   onIncrement: PropTypes.func,
   inputClassName: PropTypes.string,
-  size: PropTypes.oneOf(['sm', 'lg'])
+  size: PropTypes.oneOf(["sm", "lg"])
 };

@@ -1,11 +1,12 @@
+/* eslint-disable no-undef */
 // @packages
-import PropTypes from 'prop-types';
-import React from 'react';
-import classnames from 'classnames';
-import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from "prop-types";
+import React from "react";
+import classnames from "classnames";
+import { useDispatch, useSelector } from "react-redux";
 
 // @scripts
-import ConversationView from './ConversationView';
+import ConversationView from "./ConversationView";
 import {
   informationId,
   setLastReadIndex,
@@ -13,8 +14,8 @@ import {
   updateCurrentConversation,
   updateParticipants,
   updateUnreadMessages
-} from '../../redux/actions/chat';
-import { getUserData } from '../../utility/Utils';
+} from "../../redux/actions/chat";
+import { getUserData } from "../../utility/Utils";
 
 const ConversationsList = ({ client, setSelectedBooking, selectedBooking, customersData }) => {
   const selectedCustomer = useSelector((state) => state.reducer.information.info);
@@ -28,16 +29,16 @@ const ConversationsList = ({ client, setSelectedBooking, selectedBooking, custom
 
   const getLastMessage = (messages, typingData, convo) => {
     if (messages === undefined || messages === null) {
-      return 'Loading...';
+      return "Loading...";
     }
     if (typingData.length) {
       return getTypingMessage(typingData);
     }
     if (messages.length === 0) {
-      return 'No messages';
+      return "No messages";
     }
     if (!!messages[messages.length - 1].media) {
-      return 'Media message';
+      return "Media message";
     }
     return messages[messages.length - 1].body;
   };
@@ -77,10 +78,10 @@ const ConversationsList = ({ client, setSelectedBooking, selectedBooking, custom
         const unreadConvo = conversations.find((convo) => convo.sid === key);
         return renderItem(
           {
-            _id: 'convo.sid',
-            name: 'nn',
+            _id: "convo.sid",
+            name: "nn",
             email: `${unreadConvo.sid}@conversations.com`,
-            company: 'nn',
+            company: "nn",
             createdAt: new Date(),
             updateddAt: new Date()
           },
@@ -107,7 +108,7 @@ const ConversationsList = ({ client, setSelectedBooking, selectedBooking, custom
         await updateCurrentConvo(convo, customer);
       }}
       key={`${index}_${customer._id}`}
-      style={{ backgroundColor: 'transparent' }}
+      style={{ backgroundColor: "transparent" }}
       className={classnames({
         active: customer._id === selectedCustomer?._id
       })}

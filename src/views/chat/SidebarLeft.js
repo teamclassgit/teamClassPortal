@@ -1,24 +1,24 @@
 // @packages
-import { useEffect, useMemo, useState } from 'react';
-import { useLazyQuery, useQuery } from '@apollo/client';
-import { useDispatch, useSelector } from 'react-redux';
-import Avatar from '@components/avatar';
-import PropTypes from 'prop-types';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import classnames from 'classnames';
-import { X, Search } from 'react-feather';
-import { debounce } from 'lodash';
-import { InputGroup, InputGroupAddon, InputGroupText, Input, Spinner } from 'reactstrap';
-import queryGetCustomersForChat from '../../graphql/QueryGetCustomersForChat';
-import queryGetMostRecentInteractions from '../../graphql/conversations/QueryGetMostRecentInteractions';
+import { useEffect, useMemo, useState } from "react";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { useDispatch, useSelector } from "react-redux";
+import Avatar from "@components/avatar";
+import PropTypes from "prop-types";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import classnames from "classnames";
+import { X, Search } from "react-feather";
+import { debounce } from "lodash";
+import { InputGroup, InputGroupAddon, InputGroupText, Input, Spinner } from "reactstrap";
+import queryGetCustomersForChat from "../../graphql/QueryGetCustomersForChat";
+import queryGetMostRecentInteractions from "../../graphql/conversations/QueryGetMostRecentInteractions";
 
 // @scripts
-import ConversationsList from './ConversationsList';
-import SidebarInfo from './SidebarInfo';
-import { informationId, updateCurrentConversation } from '../../redux/actions/chat';
+import ConversationsList from "./ConversationsList";
+import SidebarInfo from "./SidebarInfo";
+import { informationId, updateCurrentConversation } from "../../redux/actions/chat";
 // @styles
-import './SidebarLeft.scss';
-import { getUserData } from '../../utility/Utils';
+import "./SidebarLeft.scss";
+import { getUserData } from "../../utility/Utils";
 
 const SidebarLeft = ({
   client,
@@ -35,32 +35,32 @@ const SidebarLeft = ({
 
   const defaultFilter = [
     {
-      name: 'closedReason',
-      type: 'string',
-      operator: 'neq',
-      value: 'Duplicated'
+      name: "closedReason",
+      type: "string",
+      operator: "neq",
+      value: "Duplicated"
     },
     {
-      name: 'closedReason',
-      type: 'string',
-      operator: 'neq',
-      value: 'Mistake'
+      name: "closedReason",
+      type: "string",
+      operator: "neq",
+      value: "Mistake"
     },
     {
-      name: 'closedReason',
-      type: 'string',
-      operator: 'neq',
-      value: 'Test'
+      name: "closedReason",
+      type: "string",
+      operator: "neq",
+      value: "Test"
     },
     {
-      name: 'eventCoordinatorId',
-      type: 'string',
-      operator: 'contains',
+      name: "eventCoordinatorId",
+      type: "string",
+      operator: "contains",
       value: userData?.customData?.coordinatorId
     }
   ];
 
-  const defaultSort = { dir: -1, id: 'updatedAt', name: 'updatedAt', type: 'date' };
+  const defaultSort = { dir: -1, id: "updatedAt", name: "updatedAt", type: "date" };
   const limit = 40;
 
   const [customersData, setCustomersData] = useState([]);
@@ -72,7 +72,7 @@ const SidebarLeft = ({
   const dispatch = useDispatch();
 
   const { loadingMainData } = useQuery(queryGetMostRecentInteractions, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     pollInterval: 15000,
     variables: {
       coordinatorId: userData?.customData?.coordinatorId
@@ -81,9 +81,9 @@ const SidebarLeft = ({
       const filter =
         data?.getMostRecentInteractions?.length > 0
           ? {
-              name: 'customerId',
-              type: 'select',
-              operator: 'inlist',
+              name: "customerId",
+              type: "select",
+              operator: "inlist",
               valueList: data?.getMostRecentInteractions
             }
           : null;
@@ -93,7 +93,7 @@ const SidebarLeft = ({
   });
 
   const [getCustomersForChat, { ...getCustomersForChatResult }] = useLazyQuery(queryGetCustomersForChat, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       const mostRecentCustomers = {};
       data.getBookingsWithCriteria.rows.forEach((element) => {
@@ -168,39 +168,39 @@ const SidebarLeft = ({
     else {
       getData(mainFilter, [
         {
-          name: '_id',
-          type: 'string',
-          operator: 'eq',
+          name: "_id",
+          type: "string",
+          operator: "eq",
           value: inputValue
         },
         {
-          name: 'customerName',
-          type: 'string',
-          operator: 'contains',
+          name: "customerName",
+          type: "string",
+          operator: "contains",
           value: inputValue
         },
         {
-          name: 'customerId',
-          type: 'string',
-          operator: 'contains',
+          name: "customerId",
+          type: "string",
+          operator: "contains",
           value: inputValue
         },
         {
-          name: 'customerEmail',
-          type: 'string',
-          operator: 'contains',
+          name: "customerEmail",
+          type: "string",
+          operator: "contains",
           value: inputValue
         },
         {
-          name: 'customerPhone',
-          type: 'string',
-          operator: 'contains',
+          name: "customerPhone",
+          type: "string",
+          operator: "contains",
           value: inputValue
         },
         {
-          name: 'customerCompany',
-          type: 'string',
-          operator: 'contains',
+          name: "customerCompany",
+          type: "string",
+          operator: "contains",
           value: inputValue
         }
       ]);
@@ -211,14 +211,14 @@ const SidebarLeft = ({
     <div className="sidebar-left">
       <div className="sidebar">
         <div
-          className={classnames('chat-profile-sidebar', {
+          className={classnames("chat-profile-sidebar", {
             show: userSidebarLeft
           })}
         >
           <SidebarInfo handleUserSidebarLeft={handleUserSidebarLeft} setStatus={setStatus} status={status} userData={userData} />
         </div>
         <div
-          className={classnames('sidebar-content', {
+          className={classnames("sidebar-content", {
             show: sidebar === true
           })}
         >
@@ -231,7 +231,7 @@ const SidebarLeft = ({
           <div className="chat-fixed-search">
             <div className="d-flex align-items-center w-100">
               <div className="sidebar-profile-toggle" onClick={handleUserSidebarLeft}>
-                <Avatar className="avatar-border" content={(userData && userData['name']) || 'Unknown'} initials status={status} />
+                <Avatar className="avatar-border" content={(userData && userData["name"]) || "Unknown"} initials status={status} />
               </div>
               <InputGroup className="input-group-merge ml-1 w-100">
                 <InputGroupAddon addonType="prepend">
@@ -246,7 +246,7 @@ const SidebarLeft = ({
           <PerfectScrollbar
             className="chat-user-list-wrapper list-group"
             options={{ wheelPropagation: false }}
-            style={{ height: 'calc(100% - 110px)' }}
+            style={{ height: "calc(100% - 110px)" }}
           >
             {!isInfoReady && <Spinner className="spinner" color="primary" />}
             <ConversationsList

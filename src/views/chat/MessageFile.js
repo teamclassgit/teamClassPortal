@@ -1,6 +1,6 @@
 // @packages
 import Proptypes from "prop-types";
-import { Button, Spinner } from 'reactstrap';
+import { Button, Spinner } from "reactstrap";
 import { Truncate } from "@twilio-paste/core";
 import { X, File, Download } from "react-feather";
 import { useEffect, useState } from "react";

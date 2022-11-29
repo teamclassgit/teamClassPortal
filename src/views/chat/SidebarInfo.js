@@ -1,18 +1,18 @@
 // @packages
-import Avatar from '@components/avatar';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import classnames from 'classnames';
-import { X } from 'react-feather';
-import { useMutation } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import Avatar from "@components/avatar";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import classnames from "classnames";
+import { X } from "react-feather";
+import { useMutation } from "@apollo/client";
+import { useEffect, useState } from "react";
 import { 
   Button,
   CustomInput,
   Input
-} from 'reactstrap';
+} from "reactstrap";
 
 // @scripts
-import mutationUpdateAllUsers from '../../graphql/MutationUpdateAllUsers';
+import mutationUpdateAllUsers from "../../graphql/MutationUpdateAllUsers";
 
 const SidebarInfo = ({
   handleUserSidebarLeft,
@@ -20,7 +20,7 @@ const SidebarInfo = ({
   status,
   userData
 }) => {
-  const [about, setAbout] = useState('');
+  const [about, setAbout] = useState("");
   const [updateAllUsers] = useMutation(mutationUpdateAllUsers, {});
 
   const allUsers = async () => {
@@ -54,8 +54,8 @@ const SidebarInfo = ({
         <div className='header-profile-sidebar'>
           <Avatar
             className='avatar-border'
-            color={`light-dark`} 
-            content={(userData && userData['name']) || 'Uknown'} 
+            color={"light-dark"} 
+            content={(userData && userData["name"]) || "Uknown"} 
             initials
             size= 'xl'
             status={status}
@@ -68,8 +68,8 @@ const SidebarInfo = ({
         <h6 className='section-label mb-1'>About</h6>
         <div className='about-user'>
           <Input
-            className={classnames('char-textarea', {
-              'text-danger': about && about.length > 120
+            className={classnames("char-textarea", {
+              "text-danger": about && about.length > 120
             })}
             defaultValue={userData?.description}
             onChange={e => setAbout(e.target.value)}
@@ -84,50 +84,50 @@ const SidebarInfo = ({
         <ul className='list-unstyled user-status'>
           <li className='pb-1'>
             <CustomInput
-              checked={status === 'online'}
+              checked={status === "online"}
               className='custom-control-success'
               id='online'
               label='Online'
-              onChange={() => setStatus('online')}
+              onChange={() => setStatus("online")}
               type='radio'
             />
           </li>
           <li className='pb-1'>
             <CustomInput
-              checked={status === 'busy'}
+              checked={status === "busy"}
               className='custom-control-danger'
               id='busy'
               label='Do Not Disturb'
-              onChange={() => setStatus('busy')}
+              onChange={() => setStatus("busy")}
               type='radio'
             />
           </li>
           <li className='pb-1'>
             <CustomInput
-              checked={status === 'away'}
+              checked={status === "away"}
               className='custom-control-warning'
               id='away'
               label='Away'
-              onChange={() => setStatus('away')}
+              onChange={() => setStatus("away")}
               type='radio'
             />
           </li>
           <li className='pb-1'>
             <CustomInput
-              checked={status === 'offline'}
+              checked={status === "offline"}
               className='custom-control-secondary'
               id='offline'
               label='Offline'
-              onChange={() => setStatus('offline')}
+              onChange={() => setStatus("offline")}
               type='radio'
             />
           </li>
         </ul>
         <div 
           style={{
-            display: 'flex',
-            justifyContent: 'space-around',
-            marginTop: '1rem'
+            display: "flex",
+            justifyContent: "space-around",
+            marginTop: "1rem"
           }}
         >
           <Button 

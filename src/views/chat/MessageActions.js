@@ -1,12 +1,12 @@
 // @packages
 import Proptypes from "prop-types";
 import React, { useState } from "react";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 import { MediaBody, MediaFigure, MediaObject } from "@twilio-paste/media-object";
-import { MoreVertical, Copy, Delete } from 'react-feather';
+import { MoreVertical, Copy, Delete } from "react-feather";
 
 // @styles
-import './MessageActions.scss';
+import "./MessageActions.scss";
 
 const MessageActions = ({
   messageText,

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Button } from 'reactstrap';
-import { Copy } from 'react-feather';
+import React, { useState } from "react";
+import { Button } from "reactstrap";
+import { Copy } from "react-feather";
 
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const CopyClipboard = ({ text }) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -17,7 +17,7 @@ const CopyClipboard = ({ text }) => {
     <CopyToClipboard text={text} onCopy={onCopyText}>
       <Button color="link" className="btn-copy p-0 " title="Copy to clipboard" onClick={(e) => e.preventDefault()}>
         <Copy className=" text-muted" size={12} />
-        <small className="text-secondary text-lowercase">{isCopied ? ' Copied!' : ''}</small>
+        <small className="text-secondary text-lowercase">{isCopied ? " Copied!" : ""}</small>
       </Button>
     </CopyToClipboard>
   );

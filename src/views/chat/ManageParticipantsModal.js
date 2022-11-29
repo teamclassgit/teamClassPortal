@@ -1,17 +1,17 @@
 // @packages
-import Avatar from '@components/avatar';
-import Proptypes from 'prop-types';
-import React, { useState } from 'react';
-import { ModalBody, Table, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import { TBody, Td, Tr } from '@twilio-paste/core';
-import { User, ChevronDown, Trash } from 'react-feather';
+import Avatar from "@components/avatar";
+import Proptypes from "prop-types";
+import React, { useState } from "react";
+import { ModalBody, Table, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
+import { TBody, Td, Tr } from "@twilio-paste/core";
+import { User, ChevronDown, Trash } from "react-feather";
 
 // @scripts
-import ConvoModal from './ConvoModal';
+import ConvoModal from "./ConvoModal";
 
 // @styles
-import './ManageParticipantsModal.scss';
-import { getUserData } from '../../utility/Utils';
+import "./ManageParticipantsModal.scss";
+import { getUserData } from "../../utility/Utils";
 
 const ManageParticipantsModal = ({ handleClose, isModalOpen, onClick, onParticipantRemove, participantsCount, participantsList, title }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -37,14 +37,14 @@ const ManageParticipantsModal = ({ handleClose, isModalOpen, onClick, onParticip
                 <DropdownMenu>
                   <DropdownItem
                     onClick={() => {
-                      onClick('Add chat participant');
+                      onClick("Add chat participant");
                     }}
                   >
                     Chat Participant
                   </DropdownItem>
                   <DropdownItem
                     onClick={() => {
-                      onClick('Add SMS participant');
+                      onClick("Add SMS participant");
                     }}
                   >
                     SMS Participant
@@ -61,14 +61,14 @@ const ManageParticipantsModal = ({ handleClose, isModalOpen, onClick, onParticip
                         <Tr key={user.sid}>
                           <Td>
                             <Avatar
-                              color={`light-dark`}
-                              content={(user && user?.identity) || (user?.type === 'sms' && 'SMS') || 'Unknown'}
+                              color={"light-dark"}
+                              content={(user && user?.identity) || (user?.type === "sms" && "SMS") || "Unknown"}
                               initials
                             />
                           </Td>
                           <Td textAlign="left">
                             <span as="span" textAlign="left">
-                              {user.type === 'chat' ? user.identity : user?.type === 'sms' ? 'SMS User' : 'Unknown'}
+                              {user.type === "chat" ? user.identity : user?.type === "sms" ? "SMS User" : "Unknown"}
                             </span>
                           </Td>
                           <Td textAlign="right">

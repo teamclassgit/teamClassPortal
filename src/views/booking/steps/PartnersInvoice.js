@@ -1,20 +1,20 @@
 // @packages
-import { Fragment, useEffect, useState } from 'react';
-import { Alert, Button, Card, CardBody, Col, Input, FormGroup, Label, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
-import { Icon } from '@iconify/react';
-import { useMutation, useQuery } from '@apollo/client';
-import moment from 'moment';
+import { Fragment, useEffect, useState } from "react";
+import { Alert, Button, Card, CardBody, Col, Input, FormGroup, Label, Modal, ModalHeader, ModalBody, ModalFooter, Row } from "reactstrap";
+import { Icon } from "@iconify/react";
+import { useMutation, useQuery } from "@apollo/client";
+import moment from "moment";
 
 // @scripts
-import mutationUpdateBookingInvoiceInstructor from '../../../graphql/MutationUpdateBookingInvoiceInstructor';
-import mutationPayEventToInstructor from '../../../graphql/MutationPayEventToInstructor';
-import queryInstructorById from '../../../graphql/QueryInstructorById';
-import DropZone from '../../../@core/components/drop-zone';
-import { uploadFile } from '../../../utility/Utils';
-import { getEventFullDate } from '../../../services/CalendarEventService';
+import mutationUpdateBookingInvoiceInstructor from "../../../graphql/MutationUpdateBookingInvoiceInstructor";
+import mutationPayEventToInstructor from "../../../graphql/MutationPayEventToInstructor";
+import queryInstructorById from "../../../graphql/QueryInstructorById";
+import DropZone from "../../../@core/components/drop-zone";
+import { uploadFile } from "../../../utility/Utils";
+import { getEventFullDate } from "../../../services/CalendarEventService";
 
 // @styles
-import './partners-invoice.scss';
+import "./partners-invoice.scss";
 
 const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [totalInvoice, setTotalInvoice] = useState(0);
@@ -38,13 +38,13 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const [updateBookingInvoiceInstructor] = useMutation(mutationUpdateBookingInvoiceInstructor, {});
   const [payEventToInstructor] = useMutation(mutationPayEventToInstructor, {});
   const { data } = useQuery(queryInstructorById, {
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
     pollInterval: 10000,
     variables: {
       instructorId: booking?.instructorId
     }
   });
-  const calendarEventDate = moment(getEventFullDate(calendarEvent)).format('LL');
+  const calendarEventDate = moment(getEventFullDate(calendarEvent)).format("LL");
 
   useEffect(() => {
     setInstructorData(data?.instructor);
@@ -62,27 +62,27 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
       );
       setInvoiceInstructorStatus(booking.instructorInvoice.status);
 
-      if (booking?.instructorInvoice?.paymentReceipt && booking?.instructorInvoice?.paymentReceipt !== '') {
+      if (booking?.instructorInvoice?.paymentReceipt && booking?.instructorInvoice?.paymentReceipt !== "") {
         setIsPaidWithStripe(false);
       } else {
         setIsPaidWithStripe(true);
       }
 
-      if (booking?.instructorInvoice?.status === 'approved') {
+      if (booking?.instructorInvoice?.status === "approved") {
         setShowPayInvoiceButton(true);
         setIsPaid(true);
       } else {
         setShowPayInvoiceButton(false);
       }
 
-      if (booking?.instructorInvoice?.status === 'rejected') {
+      if (booking?.instructorInvoice?.status === "rejected") {
         setRejectedReasons(booking.instructorInvoice.rejectedReasons);
         setIsRejected(true);
       } else {
         setIsRejected(false);
       }
 
-      if (booking?.instructorInvoice?.status === 'paid') {
+      if (booking?.instructorInvoice?.status === "paid") {
         setRejectedReasons(booking.instructorInvoice.rejectedReasons);
         setIsPaid(true);
       } else {
@@ -93,14 +93,14 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
   const handleSaveInfo = async () => {
     setProcessing(true);
-    let newStatus = '';
+    let newStatus = "";
     if (isPaid) {
-      newStatus = 'paid';
+      newStatus = "paid";
     } else if (!isRejected && !isPaid) {
-      newStatus = 'approved';
-      setRejectedReasons('');
+      newStatus = "approved";
+      setRejectedReasons("");
     } else {
-      newStatus = 'rejected';
+      newStatus = "rejected";
     }
 
     setInvoiceInstructorStatus(newStatus);
@@ -127,7 +127,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
   const handleStripePayment = async () => {
     setProcessingPayment(true);
-    if (instructorData?.stripeConnect?.status === 'connected') {
+    if (instructorData?.stripeConnect?.status === "connected") {
       try {
         await payEventToInstructor({
           variables: {
@@ -136,22 +136,22 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
         });
         setIsPaidWithStripe(true);
         setIsPaid(true);
-        setInvoiceInstructorStatus('paid');
+        setInvoiceInstructorStatus("paid");
         setShowModal(!showModal);
         setShowPayInvoiceButton(false);
       } catch (ex) {
-        console.log('ex', ex);
+        console.log("ex", ex);
       }
-    } else if (instructorData?.stripeConnect?.status === 'pending') {
-      setError('Instructor without stripe connect setup.');
+    } else if (instructorData?.stripeConnect?.status === "pending") {
+      setError("Instructor without stripe connect setup.");
     } else if (!instructorData?.stripeConnect) {
-      setError('Instructorwithout stripe account');
+      setError("Instructorwithout stripe account");
     }
     setProcessingPayment(false);
   };
 
   const updateAttachedFile = async () => {
-    let result = '';
+    let result = "";
     for (let i = 0; i < attachedFile.length; i++) {
       result = await uploadFile(attachedFile[i].successful[0].data);
       if (result.error) {
@@ -179,7 +179,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
   const handleApprove = () => {
     setIsRejected(false);
     setShowPayInvoiceButton(true);
-    setRejectedReasons('');
+    setRejectedReasons("");
     setIsApprovedInvoice(true);
   };
 
@@ -234,13 +234,13 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                       <Icon className="mb-1 event-confirmed-icon" fontSize={30} icon="akar-icons:circle-check" />
                     </span>
                     <h2 className="text-center mt-2 mb-2 font-weight-bold">Event Confirmed</h2>
-                    {(invoiceInstructorStatus === 'submitted' ||
-                      invoiceInstructorStatus === 'approved' ||
-                      invoiceInstructorStatus === 'rejected' ||
-                      invoiceInstructorStatus === 'paid') && (
+                    {(invoiceInstructorStatus === "submitted" ||
+                      invoiceInstructorStatus === "approved" ||
+                      invoiceInstructorStatus === "rejected" ||
+                      invoiceInstructorStatus === "paid") && (
                       <p className="text-justify mb-2">Our partner has submitted a new invoice for this event.</p>
                     )}
-                    {invoiceInstructorStatus === 'created' && (
+                    {invoiceInstructorStatus === "created" && (
                       <p className="text-justify mb-2">This is just a draft. Final invoice has not been summitted for approval.</p>
                     )}
                   </CardBody>
@@ -308,7 +308,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
               <Row>
                 <Col lg={12}>
                   <div className="mt-2 d-flex justify-content-end">
-                    <span className="total-title">Total{'  '}</span>
+                    <span className="total-title">Total{"  "}</span>
                     <span className="total-value">{`$ ${totalInvoice.toFixed(2)}`}</span>
                   </div>
                 </Col>
@@ -316,29 +316,29 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
               <Row>
                 <Col lg={12}>
                   <div className="button-container d-flex justify-content-end mt-2">
-                    {invoiceInstructorStatus === 'submitted' && (
+                    {invoiceInstructorStatus === "submitted" && (
                       <Button
                         className="mr-2"
                         onClick={(e) => {
                           setIsRejected(true);
                         }}
                       >
-                        {'Reject'}
+                        {"Reject"}
                       </Button>
                     )}
-                    {(invoiceInstructorStatus === 'submitted' || invoiceInstructorStatus === 'rejected') && (
+                    {(invoiceInstructorStatus === "submitted" || invoiceInstructorStatus === "rejected") && (
                       <Button
                         onClick={(e) => {
                           handleApprove();
                         }}
                       >
-                        {processing ? 'Saving' : 'Approve'}
+                        {processing ? "Saving" : "Approve"}
                       </Button>
                     )}
                   </div>
                 </Col>
 
-                {invoiceInstructorStatus === 'paid' && (
+                {invoiceInstructorStatus === "paid" && (
                   <Col lg={12}>
                     <div className="d-flex justify-content-end">
                       <Alert>This invoice has been paid!</Alert>
@@ -356,7 +356,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                 )}
               </Row>
 
-              {showPayInvoiceButton && invoiceInstructorStatus === 'approved' && (
+              {showPayInvoiceButton && invoiceInstructorStatus === "approved" && (
                 <Row>
                   <Col className="d-flex justify-content-end">
                     <Button
@@ -366,7 +366,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         setIsRejected(true);
                       }}
                     >
-                      {'Reject'}
+                      {"Reject"}
                     </Button>
                     <Button
                       color="primary"
@@ -382,7 +382,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
               )}
 
 
-              {isRejected && invoiceInstructorStatus !== 'rejected' && (
+              {isRejected && invoiceInstructorStatus !== "rejected" && (
                 <Row className="mt-2">
                   <Col lg={12} className="mb-2">
                     <span>Rejected Reason*</span>
@@ -408,7 +408,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         }}
                         disabled={!rejectedReasons}
                       >
-                        {'Save'}
+                        {"Save"}
                       </Button>
                       <Button className="small" onClick={(e) => setIsRejected(false)}>
                         Cancel
@@ -420,17 +420,17 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
               <Row>
                 <Col lg={12} className="d-flex justify-content-end">
-                  {invoiceInstructorStatus === 'approved' && !isPaid && (
+                  {invoiceInstructorStatus === "approved" && !isPaid && (
                     <Alert color="primary" className="mt-2">
                       This invoice has been approved
                     </Alert>
                   )}
-                  {invoiceInstructorStatus === 'rejected' && (
+                  {invoiceInstructorStatus === "rejected" && (
                     <Row>
                       <Col lg={12} className="">
                         <Alert color="warning" className="mt-2 px-3 py-1">
                           This invoice has been rejected.
-                          {invoiceInstructorStatus === 'rejected' && (
+                          {invoiceInstructorStatus === "rejected" && (
                             <p>
                               <span>Rejected Reason: </span>
                               <span className="text-justify">{rejectedReasons}</span>
@@ -468,7 +468,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         setIsStripeOption(true);
                         setIsOtherOption(false);
                       }}
-                    />{' '}
+                    />{" "}
                     Stripe
                   </Label>
                 </FormGroup>
@@ -482,7 +482,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                         setIsOtherOption(true);
                         setIsStripeOption(false);
                       }}
-                    />{' '}
+                    />{" "}
                     Other
                   </Label>
                 </FormGroup>
@@ -494,7 +494,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                           handleStripePayment();
                         }}
                       >
-                        {processingPayment ? 'Submitting' : 'Submit Payment'}
+                        {processingPayment ? "Submitting" : "Submit Payment"}
                       </Button>
                     </div>
                     {error && (
@@ -511,10 +511,10 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
 
                 {isOtherOption && (
                   <div>
-                    <DropZone dropText={'Upload your file'} attachedFile={attachedFile} setAttachedFile={setAttachedFile} fileUrl={fileUrl} />
+                    <DropZone dropText={"Upload your file"} attachedFile={attachedFile} setAttachedFile={setAttachedFile} fileUrl={fileUrl} />
                     <div className="d-flex justify-content-center mt-2">
                       {attachedFile && attachedFile.length > 1 ? (
-                        'Upload just one file'
+                        "Upload just one file"
                       ) : (
                         <Button
                           onClick={(e) => {
@@ -524,7 +524,7 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
                           }}
                           disabled={(attachedFile && attachedFile.length === 0) || (attachedFile && attachedFile.length > 1)}
                         >
-                          {processing ? 'Submitting' : 'Submit Payment'}
+                          {processing ? "Submitting" : "Submit Payment"}
                         </Button>
                       )}
                     </div>

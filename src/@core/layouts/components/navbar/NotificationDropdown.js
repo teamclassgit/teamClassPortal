@@ -1,6 +1,6 @@
 // @packages
-import React from 'react';
-import { Bell } from 'react-feather';
+import React from "react";
+import { Bell } from "react-feather";
 import {
   Badge,
   Button,
@@ -8,8 +8,8 @@ import {
   DropdownMenu,
   DropdownToggle,
   UncontrolledDropdown
-} from 'reactstrap';
-import { useHistory } from 'react-router';
+} from "reactstrap";
+import { useHistory } from "react-router";
 
 const NotificationDropdown = ({
   filterData,
@@ -18,7 +18,7 @@ const NotificationDropdown = ({
   const history = useHistory();
 
   const handleChatClick = () => { 
-    history.push('/chat');
+    history.push("/chat");
   };
 
   return (

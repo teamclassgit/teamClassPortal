@@ -1,55 +1,56 @@
+/* eslint-disable no-undef */
 // @packages
-import React, { useState, useEffect, useContext } from 'react';
-import moment from 'moment';
-import { Spinner } from 'reactstrap';
-import { useQuery } from '@apollo/client';
+import React, { useState, useEffect, useContext } from "react";
+import moment from "moment";
+import { Spinner } from "reactstrap";
+import { useQuery } from "@apollo/client";
 
 // @scripts
-import BookingsHeader from '../booking/BookingsHeader/BookingsHeader';
-import Calendar from './calendar';
-import queryAllBookings from '../../graphql/QueryGetBookingsWithCriteria';
-import queryAllClasses from '../../graphql/QueryAllClasses';
-import queryAllCoordinators from '../../graphql/QueryAllEventCoordinators';
-import { FiltersContext } from '../../context/FiltersContext/FiltersContext';
-import FiltersModal from '../booking/BoardBookings/FiltersModal';
+import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
+import Calendar from "./calendar";
+import queryAllBookings from "../../graphql/QueryGetBookingsWithCriteria";
+import queryAllClasses from "../../graphql/QueryAllClasses";
+import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
+import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
+import FiltersModal from "../booking/BoardBookings/FiltersModal";
 
 const BookingCalendarList = () => {
   const defaultFilter = [
     {
-      name: 'eventDateTime',
-      type: 'date',
-      operator: 'after',
-      value: moment().subtract(30, 'days').format()
+      name: "eventDateTime",
+      type: "date",
+      operator: "after",
+      value: moment().subtract(30, "days").format()
     },
     {
-      name: 'bookingStage',
-      type: 'string',
-      operator: 'neq',
-      value: 'rejected'
+      name: "bookingStage",
+      type: "string",
+      operator: "neq",
+      value: "rejected"
     },
     {
-      name: 'closedReason',
-      type: 'string',
-      operator: 'neq',
-      value: 'Lost'
+      name: "closedReason",
+      type: "string",
+      operator: "neq",
+      value: "Lost"
     },
     {
-      name: 'closedReason',
-      type: 'string',
-      operator: 'neq',
-      value: 'Duplicated'
+      name: "closedReason",
+      type: "string",
+      operator: "neq",
+      value: "Duplicated"
     },
     {
-      name: 'closedReason',
-      type: 'string',
-      operator: 'neq',
-      value: 'Mistake'
+      name: "closedReason",
+      type: "string",
+      operator: "neq",
+      value: "Mistake"
     },
     {
-      name: 'closedReason',
-      type: 'string',
-      operator: 'neq',
-      value: 'Test'
+      name: "closedReason",
+      type: "string",
+      operator: "neq",
+      value: "Test"
     }
   ];
   const defaultOrFilter = [];
@@ -63,7 +64,7 @@ const BookingCalendarList = () => {
   const [filteredBookings, setFilteredBookings] = useState([]);
 
   const { ...allBookingsResult } = useQuery(queryAllBookings, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     pollInterval: 200000,
     variables: {
       filterBy: mainFilter,
@@ -77,7 +78,7 @@ const BookingCalendarList = () => {
   });
 
   const { ...allClasses } = useQuery(queryAllClasses, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     variables: {
       filter: {}
     },
@@ -95,7 +96,7 @@ const BookingCalendarList = () => {
     onCompleted: (data) => {
       if (data) setCoordinators(data.eventCoordinators);
     },
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: "cache-and-network"
   });
 
   useEffect(() => {
@@ -103,18 +104,18 @@ const BookingCalendarList = () => {
     const queryOr = [...defaultOrFilter];
 
     if (textFilterContext && textFilterContext.value) {
-      queryOr.push({ name: 'customerName', type: 'string', operator: 'contains', value: textFilterContext.value });
-      queryOr.push({ name: 'customerEmail', type: 'string', operator: 'contains', value: textFilterContext.value });
-      queryOr.push({ name: 'customerPhone', type: 'string', operator: 'contains', value: textFilterContext.value });
-      queryOr.push({ name: 'customerCompany', type: 'string', operator: 'contains', value: textFilterContext.value });
-      queryOr.push({ name: '_id', type: 'string', operator: 'contains', value: textFilterContext.value });
+      queryOr.push({ name: "customerName", type: "string", operator: "contains", value: textFilterContext.value });
+      queryOr.push({ name: "customerEmail", type: "string", operator: "contains", value: textFilterContext.value });
+      queryOr.push({ name: "customerPhone", type: "string", operator: "contains", value: textFilterContext.value });
+      queryOr.push({ name: "customerCompany", type: "string", operator: "contains", value: textFilterContext.value });
+      queryOr.push({ name: "_id", type: "string", operator: "contains", value: textFilterContext.value });
     }
 
     if (classFilterContext) {
       const filter = {
-        name: 'classId',
-        type: 'string',
-        operator: 'contains',
+        name: "classId",
+        type: "string",
+        operator: "contains",
         value: classFilterContext.value
       };
       query.push(filter);
@@ -122,12 +123,12 @@ const BookingCalendarList = () => {
 
     if (dateFilterContext) {
       const filter = {
-        name: 'createdAt',
-        type: 'date',
-        operator: 'inrange',
+        name: "createdAt",
+        type: "date",
+        operator: "inrange",
         value: {
           start: moment(dateFilterContext.value[0]).format(),
-          end: moment(dateFilterContext.value[1]).add(23, 'hours').add(59, 'minutes').format()
+          end: moment(dateFilterContext.value[1]).add(23, "hours").add(59, "minutes").format()
         }
       };
       query.push(filter);
@@ -137,9 +138,9 @@ const BookingCalendarList = () => {
       const coordinators = coordinatorFilterContext.value;
       if (coordinators?.length) {
         const filter = {
-          name: 'eventCoordinatorId',
-          type: 'select',
-          operator: 'inlist',
+          name: "eventCoordinatorId",
+          type: "select",
+          operator: "inlist",
           valueList: coordinators
         };
         query.push(filter);
@@ -165,7 +166,7 @@ const BookingCalendarList = () => {
         showAdd={false}
         showFilter={true}
         showView={false}
-        titleView={'Events Calendar '}
+        titleView={"Events Calendar "}
         isClosedBookings={false}
       />
       <FiltersModal

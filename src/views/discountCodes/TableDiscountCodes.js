@@ -1,20 +1,20 @@
 // @packages
-import Avatar from '@components/avatar';
-import CardLink from 'reactstrap/lib/CardLink';
-import DataTable from 'react-data-table-component';
-import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import moment from 'moment';
-import { Card, CustomInput } from 'reactstrap';
-import { Edit2, ChevronDown } from 'react-feather';
-import { useMutation } from '@apollo/client';
+import Avatar from "@components/avatar";
+import CardLink from "reactstrap/lib/CardLink";
+import DataTable from "react-data-table-component";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
+import moment from "moment";
+import { Card, CustomInput } from "reactstrap";
+import { Edit2, ChevronDown } from "react-feather";
+import { useMutation } from "@apollo/client";
 
 // @scripts
-import mutationUpdateDiscountCode from '../../graphql/MutationUpdateDiscountCode';
+import mutationUpdateDiscountCode from "../../graphql/MutationUpdateDiscountCode";
 
 // @styles
-import '../booking/TableBookings/TableBookings.scss';
+import "../booking/TableBookings/TableBookings.scss";
 
 const TableDiscountCodes = ({ 
   filteredData,
@@ -85,42 +85,42 @@ const TableDiscountCodes = ({
 
   const columns = [
     {
-      name: 'Created',
-      selector: 'createdAt',
+      name: "Created",
+      selector: "createdAt",
       sortable: true,
-      maxWidth: '10%',
+      maxWidth: "10%",
       cell: (row) => (
         <small>
           {moment(row.createdAt).calendar(null, {
-            lastDay: '[Yesterday]',
-            sameDay: 'LT',
-            lastWeek: 'dddd',
-            sameElse: 'MMMM Do, YYYY'
+            lastDay: "[Yesterday]",
+            sameDay: "LT",
+            lastWeek: "dddd",
+            sameElse: "MMMM Do, YYYY"
           })}
         </small>
       )
     },
     {
-      name: 'Expiration',
-      selector: 'expirationDate',
+      name: "Expiration",
+      selector: "expirationDate",
       sortable: true,
-      maxWidth: '16%',
+      maxWidth: "16%",
       cell: (row) => (
         <small>
           {moment(row.expirationDate).calendar(null, {
-            lastDay: '[Yesterday]',
-            sameDay: 'LT',
-            lastWeek: 'dddd',
-            sameElse: 'MMMM Do, YYYY'
+            lastDay: "[Yesterday]",
+            sameDay: "LT",
+            lastWeek: "dddd",
+            sameElse: "MMMM Do, YYYY"
           })}
         </small>
       )
     },
     {
-      name: 'Discount Code',
-      selector: 'discountCode',
+      name: "Discount Code",
+      selector: "discountCode",
       sortable: true,
-      maxWidth: '18%',
+      maxWidth: "18%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -130,10 +130,10 @@ const TableDiscountCodes = ({
       )
     },
     {
-      name: 'Description',
-      selector: 'description',
+      name: "Description",
+      selector: "description",
       sortable: true,
-      maxWidth: '16%',
+      maxWidth: "16%",
       cell: (row) => (
         <small>
           <div className="d-flex align-items-center">
@@ -143,10 +143,10 @@ const TableDiscountCodes = ({
       )
     },
     {
-      name: 'Redemptions',
-      selector: 'redemptions',
+      name: "Redemptions",
+      selector: "redemptions",
       sortable: true,
-      maxWidth: '11%',
+      maxWidth: "11%",
       cell: (row) => (
         <small>
           <span className="d-block font-weight-bold">{row.redemptions}</span>
@@ -154,34 +154,34 @@ const TableDiscountCodes = ({
       )
     },
     {
-      name: 'Discount',
-      selector: 'discount',
+      name: "Discount",
+      selector: "discount",
       sortable: true,
-      maxWidth:  '9%',
+      maxWidth:  "9%",
       cell: (row) => (
         <small>
-          <span className="d-block font-weight-bold">{`${row.type === 'Percentage' ? `${(row.discount)} %` : `${row.discount} $`}`}</span>
+          <span className="d-block font-weight-bold">{`${row.type === "Percentage" ? `${(row.discount)} %` : `${row.discount} $`}`}</span>
         </small>
       )
     },
-    userData?.customData?.role === 'Admin' && (
+    userData?.customData?.role === "Admin" && (
       {
-        name: 'Active',
+        name: "Active",
         allowOverflow: true,
-        maxWidth: '15%',
+        maxWidth: "15%",
         cell: (row) => {
           return (
             <small>
               <div className="d-flex">
                 <CardLink 
                   onClick={row.active ? () => handleChangeValidCode(row) : () => handleChangeInvalidCode(row)} 
-                  target={'_blank'} title={'Enable/Disable'}
+                  target={"_blank"} title={"Enable/Disable"}
                 >
                   <CustomInput
                     checked={row.active}
                     className="custom-control-secondary"
                     id={`customSwitch${row._id}`} 
-                    label={row.active ? 'Active' : 'Inactive'}
+                    label={row.active ? "Active" : "Inactive"}
                     name="enabled"
                     type="switch"
                   />
@@ -192,11 +192,11 @@ const TableDiscountCodes = ({
         }
       }
     ),
-    userData?.customData?.role === 'Admin' && (
+    userData?.customData?.role === "Admin" && (
       {
-        name: 'Actions',
+        name: "Actions",
         allowOverflow: true,
-        maxWidth: '15%',
+        maxWidth: "15%",
         cell: (row) => {
           return (
             <small>
@@ -216,7 +216,7 @@ const TableDiscountCodes = ({
                     currentType: row.type
                   });
                 }} 
-                target={'_blank'} title={'Edit'}>
+                target={"_blank"} title={"Edit"}>
                   <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
                 </CardLink>
               </div>

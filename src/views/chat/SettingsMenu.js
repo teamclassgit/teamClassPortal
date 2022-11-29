@@ -1,6 +1,6 @@
 // @packages
 import React, { useState } from "react";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 import { MoreVertical, ArrowLeft as ArrowBackIcon, User, Bell } from "react-feather";
 import {
   MediaObject,
@@ -13,7 +13,7 @@ import Proptypes from "prop-types";
 import { NOTIFICATION_LEVEL } from "./Constants";
 
 // @styles
-import './SettingsMenu.scss';
+import "./SettingsMenu.scss";
 
 const SettingsMenu = ({
   conversation,
@@ -55,7 +55,7 @@ const SettingsMenu = ({
                 color={muted ? "gray" : "black"}
                 size={16}
               >
-                {muted ? 'Unmute' : 'Mute'}
+                {muted ? "Unmute" : "Mute"}
               </Bell>
               <MediaBody>{muted ? "Unmute" : "Mute"} Conversation</MediaBody>
             </MediaObject>

@@ -6,7 +6,7 @@ export const handlePromiseRejection = async (func, addNotifications) => {
     await func();
   } catch (e) {
     console.log(e, func);
-    return Promise.reject('Unexpected error');
+    return Promise.reject("Unexpected error");
   }
 };
 
@@ -17,8 +17,8 @@ export const unexpectedErrorNotification = (addNotifications) => {
   pushNotification(
     [
       {
-        message: 'Unexpected error',
-        variant: 'error'
+        message: "Unexpected error",
+        variant: "error"
       }
     ],
     addNotifications
@@ -32,7 +32,7 @@ export const pushNotification = (messages, func) => {
         variant,
         message,
         id: new Date().getTime(),
-        dismissAfter: 'never'
+        dismissAfter: "never"
       }))
     );
   }
@@ -50,7 +50,7 @@ export const successNotification = ({ message, addNotifications }) => {
     [
       {
         message,
-        variant: 'success'
+        variant: "success"
       }
     ],
     addNotifications

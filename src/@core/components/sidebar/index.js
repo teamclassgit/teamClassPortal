@@ -1,8 +1,8 @@
 // ** Third Party Components
-import { X } from 'react-feather';
-import Proptypes from 'prop-types';
-import classnames from 'classnames';
-import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { X } from "react-feather";
+import Proptypes from "prop-types";
+import classnames from "classnames";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 const Sidebar = props => {
   // ** Props
@@ -32,13 +32,13 @@ const Sidebar = props => {
       contentClassName={classnames({
         [contentClassName]: contentClassName
       })}
-      modalClassName={classnames('modal-slide-in', {
+      modalClassName={classnames("modal-slide-in", {
         [wrapperClassName]: wrapperClassName
       })}
       className={classnames({
         [className]: className,
-        'sidebar-lg': size === 'lg',
-        'sidebar-sm': size === 'sm'
+        "sidebar-lg": size === "lg",
+        "sidebar-sm": size === "sm"
       })}
       /*eslint-disable */
       {...(width !== undefined
@@ -62,7 +62,7 @@ const Sidebar = props => {
         </h5>
       </ModalHeader>
       <ModalBody
-        className={classnames('flex-grow-1', {
+        className={classnames("flex-grow-1", {
           [bodyClassName]: bodyClassName
         })}
       >
@@ -79,7 +79,7 @@ Sidebar.propTypes = {
   title: Proptypes.string.isRequired,
   open: Proptypes.bool.isRequired,
   toggleSidebar: Proptypes.func.isRequired,
-  size: Proptypes.oneOf(['sm', 'lg']),
+  size: Proptypes.oneOf(["sm", "lg"]),
   className: Proptypes.string,
   bodyClassName: Proptypes.string,
   contentClassName: Proptypes.string,

@@ -1,13 +1,13 @@
-import moment from 'moment';
-import queryGetTotalsUsingFilter from '../graphql/QueryTotalsBookingsUsingFilter';
-import queryGetBookingsWithCriteria from '../graphql/QueryGetBookingsWithCriteria';
-import queryBookingAndCalendarEventById from '../graphql/QueryBookingAndCalendarEventById';
-import queryUserMembershipDataByEmail from '../graphql/QueryMembershipDiscountByEmail';
-import mutationUpdateManyBookings from '../graphql/MutationUpdateManyBookings';
-import queryCustomerById from '../graphql/QueryCustomerById';
-import { CREDIT_CARD_FEE, DEPOSIT, EXPECTED_MARGIN, RUSH_FEE, SALES_TAX } from '../utility/Constants';
-import { apolloClient } from '../utility/RealmApolloClient';
-import { getQueryFiltersFromFilterArray, isNotEmptyArray } from '../utility/Utils';
+import moment from "moment";
+import queryGetTotalsUsingFilter from "../graphql/QueryTotalsBookingsUsingFilter";
+import queryGetBookingsWithCriteria from "../graphql/QueryGetBookingsWithCriteria";
+import queryBookingAndCalendarEventById from "../graphql/QueryBookingAndCalendarEventById";
+import queryUserMembershipDataByEmail from "../graphql/QueryMembershipDiscountByEmail";
+import mutationUpdateManyBookings from "../graphql/MutationUpdateManyBookings";
+import queryCustomerById from "../graphql/QueryCustomerById";
+import { CREDIT_CARD_FEE, DEPOSIT, EXPECTED_MARGIN, RUSH_FEE, SALES_TAX } from "../utility/Constants";
+import { apolloClient } from "../utility/RealmApolloClient";
+import { getQueryFiltersFromFilterArray, isNotEmptyArray } from "../utility/Utils";
 
 
 const calculateVariantPrice = (classVariant, attendees) => {
@@ -68,7 +68,7 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
 
   const addons = bookingInfo.addons
     ? bookingInfo.addons.reduce((previous, current) => {
-      return previous + (current.unit === 'Attendee' ? current.unitPrice * attendees : current.unitPrice);
+      return previous + (current.unit === "Attendee" ? current.unitPrice * attendees : current.unitPrice);
     }, 0)
     : 0;
 
@@ -165,7 +165,7 @@ const getTotalsUsingFilter = async (filters) => {
 const getAllDataToExport = async (filters, orFilters, sortInfo) => {
   const { data } = await apolloClient.query({
     query: queryGetBookingsWithCriteria,
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
     variables: {
       filterBy: filters,
       sortBy: sortInfo,
@@ -180,57 +180,57 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
   const bookings = data.getBookingsWithCriteria.rows;
   const bookingsArray = [];
   const headers = [
-    '_id',
-    'createdAt',
-    'updatedAt',
-    'className',
-    'attendees',
-    'registeredAttendees',
-    'eventDateTime',
-    'signUpDeadline',
-    'classVariant',
-    'groupEvent',
-    'hasKit',
-    'kitHasAlcohol',
-    'customerName',
-    'customerPhone',
-    'customerEmail',
-    'customerCompany',
-    'eventCoordinatorName',
-    'bookingStage',
-    'closedReason',
-    'capRegistration',
-    'hasInternationalAttendees',
-    'depositsPaid',
-    'depositPaidDate',
-    'finalPaid',
-    'finalPaymentPaidDate',
-    'isRush',
-    'salesTax',
-    'salesTaxState',
-    'taxExempt',
-    'discount',
-    'taxAmount',
-    'serviceFeeAmount',
-    'cardFeeAmount',
-    'totalInvoice',
-    'balance',
-    'customerTags',
-    'gclid',
-    'instantBooking',
-    'utm_campaign',
-    'utm_source',
-    'utm_medium',
-    'utm_content',
-    'utm_term',
-    'bookingTags',
-    'Pre-vent Survey submitted',
-    'Pre-vent Survey source',
-    'distributorInvoiceStatus',
-    'instructorInvoiceStatus',
-    'totalDistributorInvoice',
-    'totalInstructorInvoice',
-    'firstTouchChannel'
+    "_id",
+    "createdAt",
+    "updatedAt",
+    "className",
+    "attendees",
+    "registeredAttendees",
+    "eventDateTime",
+    "signUpDeadline",
+    "classVariant",
+    "groupEvent",
+    "hasKit",
+    "kitHasAlcohol",
+    "customerName",
+    "customerPhone",
+    "customerEmail",
+    "customerCompany",
+    "eventCoordinatorName",
+    "bookingStage",
+    "closedReason",
+    "capRegistration",
+    "hasInternationalAttendees",
+    "depositsPaid",
+    "depositPaidDate",
+    "finalPaid",
+    "finalPaymentPaidDate",
+    "isRush",
+    "salesTax",
+    "salesTaxState",
+    "taxExempt",
+    "discount",
+    "taxAmount",
+    "serviceFeeAmount",
+    "cardFeeAmount",
+    "totalInvoice",
+    "balance",
+    "customerTags",
+    "gclid",
+    "instantBooking",
+    "utm_campaign",
+    "utm_source",
+    "utm_medium",
+    "utm_content",
+    "utm_term",
+    "bookingTags",
+    "Pre-vent Survey submitted",
+    "Pre-vent Survey source",
+    "distributorInvoiceStatus",
+    "instructorInvoiceStatus",
+    "totalDistributorInvoice",
+    "totalInstructorInvoice",
+    "firstTouchChannel"
   ];
 
   bookingsArray.push(headers);

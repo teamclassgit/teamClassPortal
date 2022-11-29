@@ -1,18 +1,18 @@
-import React, { Fragment } from 'react';
-import { Button, Col, Form, FormGroup, Input, Row } from 'reactstrap';
-import '@styles/react/libs/react-select/_react-select.scss';
-import Cleave from 'cleave.js/react';
-import 'cleave.js/dist/addons/cleave-phone.us';
-import { useMutation } from '@apollo/client';
-import mutationUpdateQuote from '../../../graphql/MutationUpdateQuote';
-import { isValidEmail } from '../../../utility/Utils';
-import { BOOKING_CLOSED_STATUS } from '../../../utility/Constants';
+import React, { Fragment } from "react";
+import { Button, Col, Form, FormGroup, Input, Row } from "reactstrap";
+import "@styles/react/libs/react-select/_react-select.scss";
+import Cleave from "cleave.js/react";
+import "cleave.js/dist/addons/cleave-phone.us";
+import { useMutation } from "@apollo/client";
+import mutationUpdateQuote from "../../../graphql/MutationUpdateQuote";
+import { isValidEmail } from "../../../utility/Utils";
+import { BOOKING_CLOSED_STATUS } from "../../../utility/Constants";
 
 const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
-  const [phone, setPhone] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [company, setCompany] = React.useState('');
-  const [email, setEmail] = React.useState('');
+  const [phone, setPhone] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [company, setCompany] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const [emailValid, setEmailValid] = React.useState(true);
   const [processing, setProcessing] = React.useState(false);
   const [updateBooking, { ...finalQuotaData }] = useMutation(mutationUpdateQuote, {});
@@ -21,7 +21,7 @@ const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
     setEmailValid(isValidEmail(email));
   };
 
-  const options = { phone: true, phoneRegionCode: 'US' };
+  const options = { phone: true, phoneRegionCode: "US" };
 
   React.useEffect(() => {
     if (customer) {
@@ -48,7 +48,7 @@ const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
         }
       });
 
-      console.log('booking updated');
+      console.log("booking updated");
 
       setProcessing(false);
     } catch (ex) {
@@ -127,7 +127,7 @@ const BillingInfo = ({ type, booking, customer, calendarEvent }) => {
               onClick={() => saveBooking()}
               disabled={!phone || !name || !email || processing || !emailValid || !calendarEvent}
             >
-              {processing ? `Saving...` : `Save`}
+              {processing ? "Saving..." : "Save"}
             </Button.Ripple>
           </div>
         )}

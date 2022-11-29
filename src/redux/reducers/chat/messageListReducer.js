@@ -9,7 +9,7 @@ export const MessageStatus = {
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
-  case 'PUSH_MESSAGES': {
+  case "PUSH_MESSAGES": {
     const { channelSid, messages: messagesToAdd } = action.payload;
     const existingMessages = state[channelSid] ?? [];
 
@@ -17,7 +17,7 @@ const reducer = (state = {}, action) => {
       [channelSid]: existingMessages.concat(messagesToAdd)
     });
   }
-  case 'ADD_MESSAGES': {
+  case "ADD_MESSAGES": {
     const { channelSid, messages: messagesToAdd } = action.payload;
     const existingMessages = state[channelSid] ?? [];
 
@@ -43,7 +43,7 @@ const reducer = (state = {}, action) => {
       [channelSid]: sortedMessages
     });
   }
-  case 'REMOVE_MESSAGES': {
+  case "REMOVE_MESSAGES": {
     const { channelSid, messages: messagesToRemove } = action.payload;
     const existingMessages = state[channelSid] ?? [];
     const messages = existingMessages.filter(

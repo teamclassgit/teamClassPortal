@@ -1,10 +1,10 @@
 // ** Third Party Components
-import { Fragment } from 'react';
-import Proptypes from 'prop-types';
-import classnames from 'classnames';
-import { Spinner } from 'reactstrap';
+import { Fragment } from "react";
+import Proptypes from "prop-types";
+import classnames from "classnames";
+import { Spinner } from "reactstrap";
 
-import './ui-loader.scss';
+import "./ui-loader.scss";
 
 const UILoader = props => {
   const { children, blocking, loader, className, tag, overlayColor } = props;
@@ -12,7 +12,7 @@ const UILoader = props => {
   const Tag = tag;
 
   return (
-    <Tag className={classnames('ui-loader', { [className]: className, show: blocking })}>
+    <Tag className={classnames("ui-loader", { [className]: className, show: blocking })}>
       {children}
       {blocking ? (
         <Fragment>
@@ -31,7 +31,7 @@ const UILoader = props => {
 export default UILoader;
 
 UILoader.defaultProps = {
-  tag: 'div',
+  tag: "div",
   blocking: false,
   loader: <Spinner color='primary' />
 };

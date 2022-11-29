@@ -1,6 +1,6 @@
 // @scripts
 import { CONVERSATION_PAGE_SIZE } from "./Constants";
-import { MessageStatus } from '../../redux/reducers/chat/messageListReducer';
+import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
 import { getUserData } from "../../utility/Utils";
 
 export const getConversationParticipants = async (conversation) => await conversation.getParticipants();
@@ -20,10 +20,10 @@ export async function addConversation (name, updateParticipants, client, dispatc
       return conversation;
     } catch (e) {
       console.log(e);
-      return Promise.reject('Error creating conversation');
+      return Promise.reject("Error creating conversation");
     }
   }
-  return Promise.reject('Error');
+  return Promise.reject("Error");
 }
 
 export const getFileUrl = async (media) => {
@@ -41,7 +41,7 @@ export const getBlobFile = async (
     return response.blob();
   } catch (e) {
     console.log(e);
-    return Promise.reject('Unexpected error');
+    return Promise.reject("Unexpected error");
   }
 };
 
@@ -122,7 +122,7 @@ export async function addParticipant (
   if (chatParticipant && name.length > 0 && convo !== undefined) {
     try {
       const result = await convo.add(name);
-      console.log('success');
+      console.log("success");
       return result;
     } catch (e) {
       return Promise.reject(e);
@@ -138,14 +138,14 @@ export async function addParticipant (
       const result = await convo.addNonChatParticipant(proxyName, name, {
         friendlyName: name
       });
-      console.log('success');
+      console.log("success");
       return result;
     } catch (e) {
       console.log(e);
       return Promise.reject(e);
     }
   }
-  return Promise.reject('Error');
+  return Promise.reject("Error");
 }
 
 // @RemoveParticipant
@@ -155,9 +155,9 @@ export const removeParticipant = async (
 ) => {
   try {
     await conversation.removeParticipant(participant);
-    console.log('success');
+    console.log("success");
   } catch (e) {
     console.log(e);
-    return Promise.reject('Error');
+    return Promise.reject("Error");
   }
 };

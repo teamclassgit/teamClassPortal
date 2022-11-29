@@ -1,21 +1,21 @@
 // @packages
-import React, { useCallback, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Badge, DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown } from 'reactstrap';
-import { FileText, Share } from 'react-feather';
-import ReactDataGrid from '@inovua/reactdatagrid-enterprise';
-import { useSelector } from 'react-redux';
-import { useQuery } from '@apollo/client';
+import React, { useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { Badge, DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown } from "reactstrap";
+import { FileText, Share } from "react-feather";
+import ReactDataGrid from "@inovua/reactdatagrid-enterprise";
+import { useSelector } from "react-redux";
+import { useQuery } from "@apollo/client";
 
 // @Scrips
-import columns from './columns';
-import ExportToExcelLegacy from '../../components/ExportToExcelLegacy';
-import queryAllAttendees from '../../graphql/QueryAllAttendees';
+import columns from "./columns";
+import ExportToExcelLegacy from "../../components/ExportToExcelLegacy";
+import queryAllAttendees from "../../graphql/QueryAllAttendees";
 
 // @Styles
-import '@inovua/reactdatagrid-enterprise/index.css';
-import '@inovua/reactdatagrid-enterprise/theme/default-light.css';
-import '@inovua/reactdatagrid-enterprise/theme/amber-dark.css';
+import "@inovua/reactdatagrid-enterprise/index.css";
+import "@inovua/reactdatagrid-enterprise/theme/default-light.css";
+import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
 
 const gridStyle = { minHeight: 650, marginTop: 10 };
 
@@ -25,13 +25,13 @@ const LateRequests = () => {
   const [dataAllAttendees, setDataAllAttendees] = useState([]);
   const [attendeesToExcelTable, setAttendeesToExcelTable] = useState([]);
   const [filterValue, setFilterValue] = useState([
-    { name: 'bookingId', operator: 'startsWith', type: 'string', value: '' },
-    { name: 'status', operator: 'eq', type: 'select', value: '' },
-    { name: 'name', operator: 'startsWith', type: 'string', value: '' }
+    { name: "bookingId", operator: "startsWith", type: "string", value: "" },
+    { name: "status", operator: "eq", type: "select", value: "" },
+    { name: "name", operator: "startsWith", type: "string", value: "" }
   ]);
 
   const { loading } = useQuery(queryAllAttendees, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
     variables: {
       query: {
         status_ne : "confirmed",
@@ -65,17 +65,17 @@ const LateRequests = () => {
     if (dataSourceAttendees) {
       const attendeesArray = [];
       const headers = [
-        'bookingId',
-        'status',
-        'name',
-        'email',
-        'phone',
-        'addressLine1',
-        'addressLine2',
-        'country',
-        'state',
-        'city',
-        'zip'
+        "bookingId",
+        "status",
+        "name",
+        "email",
+        "phone",
+        "addressLine1",
+        "addressLine2",
+        "country",
+        "state",
+        "city",
+        "zip"
       ];
 
       attendeesArray.push(headers);
@@ -142,11 +142,11 @@ const LateRequests = () => {
             <DropdownItem className="align-middle w-100">
               <ExportToExcelLegacy
                 apiData={attendeesToExcelTable}
-                fileName={'Late Attendees'}
+                fileName={"Late Attendees"}
                 title={
                   <h6 className="p-0">
                     <FileText size={13} />
-                    {'Excel file'}
+                    {"Excel file"}
                   </h6>
                 }
               />
@@ -165,7 +165,7 @@ const LateRequests = () => {
         licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
         minRowHeight={50}
         rowHeight={null}
-        theme={skin === 'dark' ? 'amber-dark' : 'default-light'}
+        theme={skin === "dark" ? "amber-dark" : "default-light"}
       />
     </>
   );
