@@ -28,7 +28,7 @@ import queryAllClasses from "../../graphql/QueryAllClasses";
 import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
 import queryAllCustomers from "../../graphql/QueryAllCustomers";
 import queryAllInstructors from "../../graphql/QueryAllInstructors";
-import EditBookingModal from "../../components/EditBookingModal";
+import EditBookingModal from "../../components/organisms/editBookingModal";
 import AddNewBooking from "../../components/AddNewBooking";
 import RowDetails from "../../components/BookingTableRowDetails";
 import TasksBar from "../../components/TasksBar";
@@ -1069,17 +1069,19 @@ const AllBookingsTable = () => {
         coordinators={coordinators}
         onAddCompleted={onAddCompleted}
       />
-      <EditBookingModal
-        open={editModal}
-        handleModal={handleEditModal}
-        currentElement={currentElement}
-        allCoordinators={coordinators}
-        allInstructors={instructors}
-        allClasses={classes}
-        handleClose={() => setCurrentElement({})}
-        editMode={currentElement && currentElement.status !== "closed" ? true : false}
-        onEditCompleted={onEditCompleted}
-      />
+      {editModal && !!currentElement ? 
+        <EditBookingModal
+          open={editModal}
+          handleModal={handleEditModal}
+          currentElement={currentElement}
+          allCoordinators={coordinators}
+          allInstructors={instructors}
+          allClasses={classes}
+          handleClose={() => setCurrentElement({})}
+          editMode={currentElement && currentElement.status !== "closed" ? true : false}
+          onEditCompleted={onEditCompleted}
+        /> : null
+      }
       <Modal isOpen={isOpenModal} centered>
         <ConfirmBookingsToClose
           toggle={toggle}
