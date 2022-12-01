@@ -1,7 +1,7 @@
 // @packages
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import { Edit, Plus, X, XSquare } from 'react-feather';
+import { DollarSign, Edit, Plus, X, XSquare } from 'react-feather';
 import { useMutation } from '@apollo/client';
 import { 
   Badge,
@@ -29,6 +29,7 @@ import {
   PAYMENT_STATUS_CANCELED,
   PAYMENT_STATUS_SUCCEEDED
 } from '../../../utility/Constants';
+import RefundPaymentModal from '../../../components/RefundPaymentModal';
 
 const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
@@ -41,6 +42,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [indexPayment, setIndexPayment] = useState(null);
   const [updateBooking] = useMutation(mutationUpdateBookingPayments, {});
+  const [showRefoundModal, setShowRefoundModal] = useState(false);
 
   const handleModal = () => setModal(!modal);
 
@@ -150,6 +152,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     }
   };
 
+  console.log("payments", payments);
   return (
     <>
       {booking && booking.status !== BOOKING_CLOSED_STATUS && (
@@ -205,6 +208,9 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                   </th>
                   <th>
                     <div align="center">Status</div>
+                  </th>
+                  <th>
+                    <div align="center">Refunded</div>
                   </th>
                   <th>
                     <div align="center">Actions</div>
@@ -369,11 +375,16 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                         </div>
                       </td>
                       <td align="center">
+                        <div className={`text-default'}`}>
+                        <span>{element?.refund ? `$${element?.refund?.refundAmount / 100}` : ""}</span>
+                        </div>
+                      </td>
+                      <td className="d-flex justify-content-between" align="center"> 
                         {booking &&
                           booking.status !== BOOKING_CLOSED_STATUS &&
                           element.chargeUrl === CHARGE_OUTSIDE_SYSTEM &&
                           element.status === PAYMENT_STATUS_SUCCEEDED && (
-                          <div align="center">
+                          <div className="d-flex justify-content-between">
                             <a
                               className="mr-1"
                               onClick={(e) => {
@@ -387,6 +398,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                               <XSquare size={18} />
                             </a>
                             <a
+                              className="mr-1"
                               onClick={(e) => {
                                 e.preventDefault();
                                 setCurrentPayment({ ...element, index });
@@ -400,6 +412,24 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                             </a>
                           </div>
                         )}
+                        {booking &&
+                          (booking.status !== BOOKING_CLOSED_STATUS && !element?.refund) && (
+                          <div className="d-flex justify-content-center">
+                            <a
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setIndexPayment(index);
+                                setCurrentPayment({ ...element, index });
+                                setMode("refund");
+                                setShowRefoundModal(true);
+                              }}
+                              href="#"
+                              title="Add refund to this payment"
+                            >
+                              <DollarSign size={18} title="Refund"/>
+                            </a>
+                          </div>
+                          )}
                       </td>
                     </tr>
                   ))
@@ -424,6 +454,16 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
         setBooking={setBooking}
         setCurrentPayment={setCurrentPayment}
         setPayments={setPayments}
+      />
+      <RefundPaymentModal
+        booking={booking}
+        currentPayment={currentPayment}
+        showRefoundModal={showRefoundModal}
+        setShowRefoundModal={setShowRefoundModal}
+        mode={mode}
+        payments={payments}
+        setPayments={setPayments}
+        indexPayment={indexPayment}
       />
       <Modal
         isOpen={deleteModal}
