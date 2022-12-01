@@ -17,10 +17,6 @@ import NumberFilter from "@inovua/reactdatagrid-community/NumberFilter";
 import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
-import "@inovua/reactdatagrid-enterprise/index.css";
-import "@inovua/reactdatagrid-enterprise/theme/default-light.css";
-import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
-import "./BookingsTable.scss";
 
 // @scripts
 import queryGetBookingsWithCriteria from "../../graphql/QueryGetBookingsWithCriteria";
@@ -35,6 +31,12 @@ import TasksBar from "../../components/TasksBar";
 import { getAllDataToExport, getBookingAndCalendarEventById } from "../../services/BookingService";
 import ConfirmBookingsToClose from "../../components/ConfirmBookingsToClose";
 import { DEFAULT_TIME_ZONE_LABEL } from "../../utility/Constants";
+
+// @styles
+import "@inovua/reactdatagrid-enterprise/index.css";
+import "@inovua/reactdatagrid-enterprise/theme/default-light.css";
+import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
+import "./BookingsTable.scss";
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;

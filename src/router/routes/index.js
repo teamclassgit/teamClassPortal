@@ -27,7 +27,7 @@ const Routes = [
   },
   {
     path: "/allbookings",
-    component: lazy(() => import("../../views/booking/AllBookingsTable"))
+    component: lazy(() => import("../../views/allBookings/AllBookingsTable"))
   },
   {
     path: "/booking/:id",

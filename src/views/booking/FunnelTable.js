@@ -20,7 +20,7 @@ import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
 import "@inovua/reactdatagrid-enterprise/index.css";
 import "@inovua/reactdatagrid-enterprise/theme/default-light.css";
 import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
-import "./BookingsTable.scss";
+import "../allBookings/BookingsTable.scss";
 
 // @scripts
 import queryGetBookingsWithCriteria from "../../graphql/QueryGetBookingsWithCriteria";

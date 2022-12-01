@@ -25,7 +25,7 @@ import queryAllClassesForListingPrice from "../../graphql/QueryAllClassesForList
 import queryAllInstructors from "../../graphql/QueryAllInstructors";
 
 // @styles
-import "../booking/BookingsTable.scss";
+import "../allBookings/BookingsTable.scss";
 
 const gridStyle = { minHeight: 600 };
 
