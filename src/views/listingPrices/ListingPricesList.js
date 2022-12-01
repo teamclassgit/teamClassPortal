@@ -12,9 +12,6 @@ import queryString from "query-string";
 //@reactdatagrid packages
 import ReactDataGrid from "@inovua/reactdatagrid-enterprise";
 import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
-import "@inovua/reactdatagrid-enterprise/index.css";
-import "@inovua/reactdatagrid-enterprise/theme/default-light.css";
-import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
 
 // @scripts
 import { isUserLoggedIn, getUserData } from "@utils";
@@ -25,7 +22,10 @@ import queryAllClassesForListingPrice from "../../graphql/QueryAllClassesForList
 import queryAllInstructors from "../../graphql/QueryAllInstructors";
 
 // @styles
-import "../allBookings/BookingsTable.scss";
+import "@inovua/reactdatagrid-enterprise/index.css";
+import "@inovua/reactdatagrid-enterprise/theme/default-light.css";
+import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
+import "@organisms/all-bookings/BookingsTable.scss";
 
 const gridStyle = { minHeight: 600 };
 
