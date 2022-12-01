@@ -5,7 +5,7 @@ import { Briefcase, Calendar, Mail, Phone } from "react-feather";
 import { Alert } from "reactstrap";
 
 // @scripts
-import CopyClipboard from "./CopyClipboard";
+import CopyClipboard from "@atoms/copy-clipboard";
 import { capitalizeString } from "../utility/Utils";
 
 const RowDetails = ({ data }) => {

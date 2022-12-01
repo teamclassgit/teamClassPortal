@@ -14,8 +14,8 @@ import { X, Info, Settings, MessageSquare, Users } from "react-feather";
 // @scripts
 import Notes from "@molecules/notes";
 import SettingsComponent from "@molecules/settings";
-import BasicInformation from "@molecules/basicInformation";
-import TeamMemberInstructor from "@molecules/teamMemberInstructor";
+import BasicInformation from "@molecules/basic-information";
+import TeamMemberInstructor from "@molecules/team-member-instructor";
 
 // @styles
 import "./EditBookingModal.scss";

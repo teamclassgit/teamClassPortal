@@ -28,7 +28,7 @@ import queryAllClasses from "../../graphql/QueryAllClasses";
 import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
 import queryAllCustomers from "../../graphql/QueryAllCustomers";
 import queryAllInstructors from "../../graphql/QueryAllInstructors";
-import EditBookingModal from "@organisms/editBookingModal";
+import EditBookingModal from "@organisms/edit-booking-modal";
 import AddNewBooking from "../../components/AddNewBooking";
 import RowDetails from "../../components/BookingTableRowDetails";
 import TasksBar from "../../components/TasksBar";

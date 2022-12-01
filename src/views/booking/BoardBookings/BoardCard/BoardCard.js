@@ -7,7 +7,7 @@ import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, T
 import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from "reactstrap";
 import { useHistory } from "react-router";
 // @scripts
-import CopyClipboard from "../../../../components/CopyClipboard";
+import CopyClipboard from "@atoms/copy-clipboard";
 import { capitalizeString, isNotEmptyArray } from "../../../../utility/Utils";
 // @styles
 import "./BoardCard.scss";

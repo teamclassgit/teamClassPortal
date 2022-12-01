@@ -3,7 +3,7 @@ import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
 import Avatar from "@components/avatar";
 import { Badge } from "reactstrap";
-import CopyClipboard from "../../components/CopyClipboard";
+import CopyClipboard from "@atoms/copy-clipboard";
 import moment from "moment";
 
 const cellSize = {
