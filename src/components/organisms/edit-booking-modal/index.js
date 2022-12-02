@@ -123,7 +123,7 @@ const EditBookingModal = ({
           <TeamMemberInstructor currentElement={currentElement}/>
         </TabPane>
         <TabPane tabId="4">
-          <Notes bookingNotes={bookingNotes} setBookingNotes={setBookingNotes} currentElement={currentElement}></Notes>
+          <Notes bookingNotes={bookingNotes} setBookingNotes={setBookingNotes} currentElement={currentElement} />
         </TabPane>
         <TabPane tabId="2">
           <SettingsComponent

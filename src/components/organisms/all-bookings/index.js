@@ -306,7 +306,7 @@ const AllBookingsTable = () => {
           allInstructors={instructors}
           allClasses={classes}
           handleClose={() => setCurrentElement({})}
-          editMode={currentElement && currentElement.status !== "closed" ? true : false}
+          editMode={currentElement && currentElement.status !== "closed"}
           onEditCompleted={onEditCompleted}
         /> : null
       }
