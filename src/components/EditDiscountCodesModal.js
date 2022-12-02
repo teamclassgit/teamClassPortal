@@ -22,7 +22,7 @@ import { useMutation } from "@apollo/client";
 
 // @scripts
 import mutationEditDiscountCode from "../graphql/MutationEditDiscountCode";
-import allTypes from "./AllTypes.json";
+import allTypes from "@data/all-types.json";
 
 const EditDiscountCodesModal = ({
   currentElement: {

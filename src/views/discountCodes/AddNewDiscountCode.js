@@ -24,7 +24,7 @@ import Flatpickr from "react-flatpickr";
 
 // @scripts
 import mutationCreateDiscountCode from "../../graphql/MutationCreateDiscountCode";
-import allTypes from "../../components/AllTypes.json";
+import allTypes from "@data/all-types.json";
 
 // @styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";

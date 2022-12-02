@@ -15,6 +15,7 @@ module.exports = function override (config, env) {
     "@store": path.resolve(__dirname, "src/redux"),
     "@styles": path.resolve(__dirname, "src/@core/scss"),
     "@configs": path.resolve(__dirname, "src/configs"),
+    "@data": path.resolve(__dirname, "src/data"),
     "@utils": path.resolve(__dirname, "src/utility/Utils"),
     "@hooks": path.resolve(__dirname, "src/utility/hooks"),
     "@utility": path.resolve(__dirname, "src/utility"),
