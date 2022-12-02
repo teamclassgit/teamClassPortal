@@ -21,7 +21,7 @@ import queryAllInstructors from "@graphql/QueryAllInstructors";
 import EditBookingModal from "@organisms/edit-booking-modal";
 import AddNewBooking from "../../AddNewBooking";
 import RowDetails from "@molecules/booking-table-row-details";
-import TasksBar from "../../TasksBar";
+import TasksBar from "@molecules/task-bar";
 import { getAllDataToExport } from "@services/BookingService";
 import ConfirmBookingsToClose from "@molecules/confirm-bookings-to-close";
 import { getColumns } from "./columns";

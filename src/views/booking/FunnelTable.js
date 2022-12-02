@@ -32,7 +32,7 @@ import EditBookingModal from "@organisms/edit-booking-modal";
 import AddNewBooking from "../../components/AddNewBooking";
 import BookingsTableStatusCards from "./BookingsTableStatusCards";
 import RowDetails from "@molecules/booking-table-row-details";
-import TasksBar from "../../components/TasksBar";
+import TasksBar from "@molecules/task-bar";
 import { getAllDataToExport, getBookingAndCalendarEventById } from "@services/BookingService";
 import ConfirmBookingsToClose from "@molecules/confirm-bookings-to-close";
 import { DEFAULT_TIME_ZONE_LABEL } from "../../utility/Constants";

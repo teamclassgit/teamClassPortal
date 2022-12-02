@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, ButtonGroup, Col, DropdownItem, DropdownMenu, DropdownToggle, Row, Spinner, UncontrolledButtonDropdown } from "reactstrap";
 import { Share, Plus } from "react-feather";
 import PropTypes from "prop-types";
-import ExportToExcel from "./ExportToExcel";
+import ExportToExcel from "../../ExportToExcel";
 
 const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDataToExport }) => {
   const [isExporting, setIsExporting] = useState(false);
