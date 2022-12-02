@@ -23,17 +23,17 @@ import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
 import "@organisms/all-bookings/BookingsTable.scss";
 
 // @scripts
-import queryGetBookingsWithCriteria from "../../graphql/QueryGetBookingsWithCriteria";
-import queryAllClasses from "../../graphql/QueryAllClasses";
-import queryAllCustomers from "../../graphql/QueryAllCustomers";
-import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
-import queryAllInstructors from "../../graphql/QueryAllInstructors";
+import queryGetBookingsWithCriteria from "@graphql/QueryGetBookingsWithCriteria";
+import queryAllClasses from "@graphql/QueryAllClasses";
+import queryAllCustomers from "@graphql/QueryAllCustomers";
+import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
+import queryAllInstructors from "@graphql/QueryAllInstructors";
 import EditBookingModal from "@organisms/edit-booking-modal";
 import AddNewBooking from "../../components/AddNewBooking";
 import BookingsTableStatusCards from "./BookingsTableStatusCards";
-import RowDetails from "../../components/BookingTableRowDetails";
+import RowDetails from "@molecules/booking-table-row-details";
 import TasksBar from "../../components/TasksBar";
-import { getAllDataToExport, getBookingAndCalendarEventById } from "../../services/BookingService";
+import { getAllDataToExport, getBookingAndCalendarEventById } from "@services/BookingService";
 import ConfirmBookingsToClose from "../../components/ConfirmBookingsToClose";
 import { DEFAULT_TIME_ZONE_LABEL } from "../../utility/Constants";
 
