@@ -9,7 +9,7 @@ import { ChevronDown } from "react-feather";
 
 // @scripts
 import { getCoordinatorName } from "../booking/common";
-import EditGeneralInqueries from "../../components/EditGeneralInqueries";
+import EditGeneralInqueries from "@molecules/edit-general-inqueries";
 
 // @styles
 import "../booking/TableBookings/TableBookings.scss";

@@ -21,7 +21,7 @@ import { selectThemeColors } from "@utils";
 import { useMutation } from "@apollo/client";
 
 // @scripts
-import mutationEditDiscountCode from "../graphql/MutationEditDiscountCode";
+import mutationEditDiscountCode from "@graphql/MutationEditDiscountCode";
 import allTypes from "@data/all-types.json";
 
 const EditDiscountCodesModal = ({

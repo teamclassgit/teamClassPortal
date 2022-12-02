@@ -22,7 +22,7 @@ import {
 } from "reactstrap";
 import { Calendar, Info, Mail, Phone, User } from "react-feather";
 import { useMutation } from "@apollo/client";
-import MutationUpdateOneQuestion from "../graphql/MutationUpdateOneQuestion";
+import MutationUpdateOneQuestion from "@graphql/MutationUpdateOneQuestion";
 import Select from "react-select";
 import { selectThemeColors } from "@utils";
 
