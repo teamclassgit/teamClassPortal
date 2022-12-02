@@ -22,7 +22,7 @@ import EditBookingModal from "@organisms/edit-booking-modal";
 import AddNewBooking from "../../AddNewBooking";
 import RowDetails from "../../BookingTableRowDetails";
 import TasksBar from "../../TasksBar";
-import { getAllDataToExport, getBookingAndCalendarEventById } from "@services/BookingService";
+import { getAllDataToExport } from "@services/BookingService";
 import ConfirmBookingsToClose from "../../ConfirmBookingsToClose";
 import { getColumns } from "./columns";
 
@@ -53,7 +53,6 @@ const onRenderRow = (rowProps) => {
 const AllBookingsTable = () => {
   const skin = useSelector((state) => state.bookingsBackground);
   const genericFilter = {};
-  const [gridRef, setGridRef] = useState(null);
   const [totalRows, setTotalRows] = useState(0);
   const [editModal, setEditModal] = useState(false);
   const [currentElement, setCurrentElement] = useState({});
@@ -66,10 +65,8 @@ const AllBookingsTable = () => {
   const [filterValue, setFilterValue] = useState([]);
   const [orFilters, setOrFilters] = useState([]);
   const [sortInfo, setSortInfo] = useState({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
-  const [filteredRows, setFilteredRows] = useState(null);
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
-  const [cellSelection, setCellSelection] = useState({});
   const [selected, setSelected] = useState({});
   const [closedReason, setClosedReason] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -88,7 +85,7 @@ const AllBookingsTable = () => {
     setIsOpenModal(!isOpenModal);
   };
 
-  const { ...allClasses } = useQuery(queryAllClasses, {
+  useQuery(queryAllClasses, {
     fetchPolicy: "cache-and-network",
     variables: {
       filter: { isActive: true }
@@ -100,7 +97,7 @@ const AllBookingsTable = () => {
     }
   });
 
-  const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
+  useQuery(queryAllCoordinators, {
     variables: {
       filter: genericFilter
     },
@@ -110,7 +107,7 @@ const AllBookingsTable = () => {
     fetchPolicy: "cache-and-network"
   });
 
-  const { ...allCustomersResult } = useQuery(queryAllCustomers, {
+  useQuery(queryAllCustomers, {
     fetchPolicy: "cache-and-network",
     variables: {
       filter: {}
@@ -129,8 +126,14 @@ const AllBookingsTable = () => {
     pollInterval: 200000
   });
 
+  const handleClickCurrentElement = () => {
+    setOrFilters([]);
+    setSortInfo({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
+    handleEditModal();
+  };
+
   const gridStyle = { minHeight: 600, marginTop: 10 };
-  const columns = getColumns(coordinators, classes);
+  const columns = getColumns(coordinators, classes, setCurrentElement, handleClickCurrentElement);
 
   const applyFilters = () => {
     let currentFilters = [...filterValue];
@@ -240,14 +243,6 @@ const AllBookingsTable = () => {
     setCollapsedRows(collapsedRows);
   }, []);
 
-  const onCopySelectedCellsChange = useCallback((cells) => {
-    console.log(cells);
-  }, []);
-
-  const onPasteSelectedCellsChange = useCallback((cells) => {
-    console.log(cells);
-  }, []);
-
   const renderRowContextMenu = (menuProps) => {
     menuProps.autoDismiss = true;
     menuProps.items = [
@@ -323,11 +318,9 @@ const AllBookingsTable = () => {
       ></TasksBar>
       <ReactDataGrid
         idProperty="_id"
-        onReady={setGridRef}
         className="bookings-table text-small"
         style={gridStyle}
         columns={columns}
-        filteredRowsCount={setFilteredRows}
         filterValue={filterValue}
         pagination
         limit={50}
@@ -338,11 +331,6 @@ const AllBookingsTable = () => {
         onFilterValueChange={setFilterValue}
         showZebraRows={true}
         theme={skin === "dark" ? "amber-dark" : "default-light"}
-        /*cellSelection={cellSelection}
-        onCellSelectionChange={setCellSelection}
-        enableClipboard={true}
-        onCopySelectedCellsChange={onCopySelectedCellsChange}
-        onPasteSelectedCellsChange={onPasteSelectedCellsChange}*/
         selected={selected}
         checkboxColumn
         enableSelection={true}

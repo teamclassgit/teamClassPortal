@@ -17,8 +17,9 @@ import RegistrationLink from "@atoms/registration-link";
 import SignupLink from "@atoms/signup-link";
 import { isNotEmptyArray } from "@utility/Utils";
 import { DEFAULT_TIME_ZONE_LABEL } from "@utility/Constants";
+import { getBookingAndCalendarEventById } from "@services/BookingService";
 
-export const getColumns = (coordinators, classes) => {
+export const getColumns = (coordinators, classes, setCurrentElement, handleClickCurrentElement) => {
 
   const history = useHistory();
 
@@ -31,7 +32,7 @@ export const getColumns = (coordinators, classes) => {
       name: "actions",
       header: "Links",
       defaultWidth: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ cellProps }) => {
         if (cellProps.data) {
           return cellProps.data.status === "quote" ? (
             <div className="d-flex">
@@ -94,24 +95,19 @@ export const getColumns = (coordinators, classes) => {
       filterEditor: StringFilter,
       filterDelay: 1500,
       width: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return (
           <>
-            <small>
-              {/* <a
-                href="#"
-                onClick={async () => {
-                  setOrFilters([]);
-                  setSortInfo({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
-                  const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
-                  if (!bookingAndCalendarEvent) return;
-                  setCurrentElement(bookingAndCalendarEvent);
-                  handleEditModal();
-                }}
-                title={`Edit booking info ${cellProps.data._id}`}
-              >
-                {cellProps.data._id}
-              </a> */}
+            <small
+              className="text-primary cursor-pointer"
+              onClick={async () => {
+                const bookingAndCalendarEvent = await getBookingAndCalendarEventById(value);
+                if (!bookingAndCalendarEvent) return;
+                setCurrentElement(bookingAndCalendarEvent);
+                handleClickCurrentElement();
+              }}
+              title={`Edit booking info ${value}`}
+            >
               {value}
             </small>
           </>
@@ -124,7 +120,7 @@ export const getColumns = (coordinators, classes) => {
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return moment(value).calendar(null, {
           lastDay: "[Yesterday]",
           sameDay: "LT",
@@ -172,7 +168,7 @@ export const getColumns = (coordinators, classes) => {
         })
       },
       defaultWidth: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return <span className="float-left">{value}</span>;
         }
@@ -184,7 +180,7 @@ export const getColumns = (coordinators, classes) => {
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return moment(value).calendar(null, {
           lastDay: "[Yesterday]",
           sameDay: "LT",
@@ -261,7 +257,7 @@ export const getColumns = (coordinators, classes) => {
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return `${moment(value)?.format("LLL")}`;
         }
@@ -275,7 +271,7 @@ export const getColumns = (coordinators, classes) => {
       filterEditor: NumberFilter,
       filterDelay: 1500,
       defaultVisible: false,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
@@ -287,7 +283,7 @@ export const getColumns = (coordinators, classes) => {
       defaultVisible: false,
       filterDelay: 1500,
       filterEditor: NumberFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
@@ -299,7 +295,7 @@ export const getColumns = (coordinators, classes) => {
       defaultVisible: false,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
@@ -310,7 +306,7 @@ export const getColumns = (coordinators, classes) => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
@@ -321,7 +317,7 @@ export const getColumns = (coordinators, classes) => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
@@ -331,7 +327,7 @@ export const getColumns = (coordinators, classes) => {
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return moment(value).format("LLL");
         }
@@ -343,7 +339,7 @@ export const getColumns = (coordinators, classes) => {
       type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
@@ -353,7 +349,7 @@ export const getColumns = (coordinators, classes) => {
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return moment(value).format("LLL");
         }
@@ -366,7 +362,7 @@ export const getColumns = (coordinators, classes) => {
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value.toFixed(2)}</span>;
       }
     },
@@ -377,7 +373,7 @@ export const getColumns = (coordinators, classes) => {
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return <span className="float-left">{value}</span>;
         }
@@ -410,7 +406,7 @@ export const getColumns = (coordinators, classes) => {
       },
       filterDelay: 1500,
       defaultWidth: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (isNotEmptyArray(value)) {
           return <span className="float-left">{value.join(",")}</span>;
         }
