@@ -30,6 +30,8 @@ import {
   PAYMENT_STATUS_SUCCEEDED
 } from '../../../utility/Constants';
 import RefundPaymentModal from '../../../components/RefundPaymentModal';
+import RefundImage from "../../../@core/assets/images/refund.png";
+import "./Payment.scss";
 
 const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
@@ -398,7 +400,6 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                               <XSquare size={18} />
                             </a>
                             <a
-                              className="mr-1"
                               onClick={(e) => {
                                 e.preventDefault();
                                 setCurrentPayment({ ...element, index });
@@ -414,9 +415,10 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                         )}
                         {booking &&
                           (booking.status !== BOOKING_CLOSED_STATUS && !element?.refund) && (
-                          <div className="d-flex justify-content-center">
+                          <div className="d-flex align-items-center justify-content-between">
                             <a
                               onClick={(e) => {
+                                className = "mr-1";
                                 e.preventDefault();
                                 setIndexPayment(index);
                                 setCurrentPayment({ ...element, index });
@@ -426,7 +428,8 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                               href="#"
                               title="Add refund to this payment"
                             >
-                              <DollarSign size={18} title="Refund"/>
+                              {/* <div className="refund-icon"></div> */}
+                              <img className="refund-icon" src={RefundImage} width={30} height={27}/>
                             </a>
                           </div>
                           )}
