@@ -29,7 +29,7 @@ import queryAllCustomers from "@graphql/QueryAllCustomers";
 import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
 import queryAllInstructors from "@graphql/QueryAllInstructors";
 import EditBookingModal from "@organisms/edit-booking-modal";
-import AddNewBooking from "../../components/AddNewBooking";
+import AddNewBooking from "@organisms/add-new-booking";
 import BookingsTableStatusCards from "./BookingsTableStatusCards";
 import RowDetails from "@molecules/booking-table-row-details";
 import TasksBar from "@molecules/task-bar";

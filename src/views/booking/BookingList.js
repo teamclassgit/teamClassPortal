@@ -1,11 +1,11 @@
 // @packages
 import React, { useState, useEffect, useContext } from "react";
 import moment from "moment";
-import { Col, Spinner } from "reactstrap";
+import { Spinner } from "reactstrap";
 import { useQuery } from "@apollo/client";
 
 // @scripts
-import AddNewBooking from "../../components/AddNewBooking";
+import AddNewBooking from "@organisms/add-new-booking";
 import BoardBookings from "./BoardBookings/BoardBookings";
 import BookingsHeader from "./BookingsHeader/BookingsHeader";
 import EditBookingModal from "@organisms/edit-booking-modal";

@@ -19,7 +19,7 @@ import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
 import queryAllCustomers from "@graphql/QueryAllCustomers";
 import queryAllInstructors from "@graphql/QueryAllInstructors";
 import EditBookingModal from "@organisms/edit-booking-modal";
-import AddNewBooking from "../../AddNewBooking";
+import AddNewBooking from "@organisms/add-new-booking";
 import RowDetails from "@molecules/booking-table-row-details";
 import TasksBar from "@molecules/task-bar";
 import { getAllDataToExport } from "@services/BookingService";
