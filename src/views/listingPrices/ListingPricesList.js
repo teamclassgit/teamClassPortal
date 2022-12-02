@@ -15,7 +15,7 @@ import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 
 // @scripts
 import { isUserLoggedIn, getUserData } from "@utils";
-import ExportToExcelLegacy from "../../components/ExportToExcelLegacy";
+import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
 import mutationUpdateClassListingPrices from "../../graphql/MutationUpdateClassListingPrices";
 import mutationUpdateClassListingTitle from "../../graphql/MutationUpdateClassListingTitle";
 import queryAllClassesForListingPrice from "../../graphql/QueryAllClassesForListingPrice";

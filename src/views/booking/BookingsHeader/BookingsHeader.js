@@ -20,13 +20,12 @@ import { Share, Filter, FileText, Plus, List, Trello, Search } from "react-feath
 import PropTypes from "prop-types";
 
 // @scripts
-import ExportToExcel from "../../../components/ExportToExcel";
+import ExportToExcel from "@molecules/export-to-excel";
 import { FiltersContext } from "../../../context/FiltersContext/FiltersContext";
 import { getCustomerEmail, getCoordinatorName } from "../common";
-import ExportToExcelLegacy from "../../../components/ExportToExcelLegacy";
+import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
 
 const BookingsHeader = ({
-  classes,
   coordinators,
   userData,
   customers,

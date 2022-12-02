@@ -28,10 +28,9 @@ import {
   Row,
   UncontrolledButtonDropdown
 } from "reactstrap";
-import ExportToExcel from "../../../components/ExportToExcel";
-import ExportToCsv from "../../../components/ExportToCsv";
+import ExportToCsv from "@molecules/export-to-csv";
 import { BOOKING_CLOSED_STATUS } from "../../../utility/Constants";
-import ExportToExcelLegacy from "../../../components/ExportToExcelLegacy";
+import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
 import "./TableAttendees.scss";
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (

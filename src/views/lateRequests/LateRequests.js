@@ -9,8 +9,8 @@ import { useQuery } from "@apollo/client";
 
 // @Scrips
 import columns from "./columns";
-import ExportToExcelLegacy from "../../components/ExportToExcelLegacy";
-import queryAllAttendees from "../../graphql/QueryAllAttendees";
+import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
+import queryAllAttendees from "@graphql/QueryAllAttendees";
 
 // @Styles
 import "@inovua/reactdatagrid-enterprise/index.css";
