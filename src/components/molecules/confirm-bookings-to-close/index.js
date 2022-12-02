@@ -10,7 +10,7 @@ import {
 } from "reactstrap";
 
 // @scripts
-import { closeBookingsWithReason } from "../services/BookingService";
+import { closeBookingsWithReason } from "../../../services/BookingService";
 
 const ConfirmBookingsToClose = ({toggle, closedReason, selectedBookingsIds, onEditCompleted, setSelected }) => {
   const [closingBookingsInProcess, setClosingBookingsInProcess] = useState(false);

@@ -23,7 +23,7 @@ import AddNewBooking from "../../AddNewBooking";
 import RowDetails from "@molecules/booking-table-row-details";
 import TasksBar from "../../TasksBar";
 import { getAllDataToExport } from "@services/BookingService";
-import ConfirmBookingsToClose from "../../ConfirmBookingsToClose";
+import ConfirmBookingsToClose from "@molecules/confirm-bookings-to-close";
 import { getColumns } from "./columns";
 import { applyFilters } from "./filter";
 

@@ -34,7 +34,7 @@ import BookingsTableStatusCards from "./BookingsTableStatusCards";
 import RowDetails from "@molecules/booking-table-row-details";
 import TasksBar from "../../components/TasksBar";
 import { getAllDataToExport, getBookingAndCalendarEventById } from "@services/BookingService";
-import ConfirmBookingsToClose from "../../components/ConfirmBookingsToClose";
+import ConfirmBookingsToClose from "@molecules/confirm-bookings-to-close";
 import { DEFAULT_TIME_ZONE_LABEL } from "../../utility/Constants";
 
 const renderRowDetails = ({ data }) => {
