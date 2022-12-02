@@ -16,7 +16,7 @@ import mutationOpenBooking from "@graphql/MutationOpenBooking";
 import mutationCloseBooking from "@graphql/MutationCloseBooking";
 import mutationUpdateCalendarEventByBookindId from "@graphql/MutationUpdateCalendarEventByBookindId";
 import removeCampaignRequestQuoteMutation from "@graphql/email/removeCampaignRequestQuote";
-import closeBookingOptions from "../../ClosedBookingOptions.json";
+import closeBookingOptions from "@data/closed-booking-options.json";
 import { calculateVariantPrice } from "../../../services/BookingService";
 import mutationDeleteOneCalendarEventByBookingId from "@graphql/MutationDeleteOneCalendarEventById";
 

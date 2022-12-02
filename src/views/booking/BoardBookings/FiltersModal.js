@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React, { useState, useContext } from "react";
 import Select from "react-select";
 import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from "reactstrap";
-import closeBookingOptions from "../../../components/ClosedBookingOptions.json";
+import closeBookingOptions from "@data/closed-booking-options.json";
 
 // @scripts
 import { FiltersContext } from "../../../context/FiltersContext/FiltersContext";
