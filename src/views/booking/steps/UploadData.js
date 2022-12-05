@@ -236,8 +236,6 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
     }
   });
 
-  console.log("errors", errors);
-
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
