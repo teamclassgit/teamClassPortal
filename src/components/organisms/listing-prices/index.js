@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 /* eslint-disable no-unused-expressions */
 // @packages
 import React, { useState, useEffect, useCallback } from "react";
@@ -11,21 +10,21 @@ import queryString from "query-string";
 
 //@reactdatagrid packages
 import ReactDataGrid from "@inovua/reactdatagrid-enterprise";
-import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 
 // @scripts
 import { isUserLoggedIn, getUserData } from "@utils";
 import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
-import mutationUpdateClassListingPrices from "../../graphql/MutationUpdateClassListingPrices";
-import mutationUpdateClassListingTitle from "../../graphql/MutationUpdateClassListingTitle";
-import queryAllClassesForListingPrice from "../../graphql/QueryAllClassesForListingPrice";
-import queryAllInstructors from "../../graphql/QueryAllInstructors";
+import mutationUpdateClassListingPrices from "../../../graphql/MutationUpdateClassListingPrices";
+import mutationUpdateClassListingTitle from "../../../graphql/MutationUpdateClassListingTitle";
+import queryAllClassesForListingPrice from "../../../graphql/QueryAllClassesForListingPrice";
+import queryAllInstructors from "../../../graphql/QueryAllInstructors";
 
 // @styles
 import "@inovua/reactdatagrid-enterprise/index.css";
 import "@inovua/reactdatagrid-enterprise/theme/default-light.css";
 import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
 import "@organisms/all-bookings/BookingsTable.scss";
+import { getColums } from "./columns";
 
 const gridStyle = { minHeight: 600 };
 
@@ -50,152 +49,6 @@ const ListingPricesList = () => {
 
   const [updateClassListingPrices] = useMutation(mutationUpdateClassListingPrices, {});
   const [updateClassListingTitle] = useMutation(mutationUpdateClassListingTitle, {});
-
-  const columns = [
-    {
-      name: "tableId",
-      header: "Table Id",
-      type: "string",
-      defaultVisible: false,
-      editable: false,
-      render: ({ value }) => {
-        return <span className="">{value}</span>;
-      }
-    },
-    {
-      name: "title",
-      header: "Listing \nClass",
-      type: "string",
-      filterEditor: StringFilter,
-      defaultWidth: 250,
-      render: ({ value }) => {
-        return <span className="">{value}</span>;
-      }
-    },
-    {
-      name: "variantTitle",
-      header: "Variant",
-      defaultWidth: 180,
-      type: "string",
-      filterEditor: StringFilter,
-      render: ({ cellProps }) => {
-        return <span className="">{cellProps.data.variant.title}</span>;
-      }
-    },
-    {
-      name: "variantGroupEvent",
-      header: "Person / Group",
-      type: "string",
-      editable: false,
-      render: ({ cellProps }) => {
-        return <span className="">{cellProps.data.variant.groupEvent ? "Group" : "Person"}</span>;
-      }
-    },
-    {
-      name: "priceTiers",
-      header: "Tiers",
-      type: "string",
-      defaultWidth: 80,
-      editable: false,
-      render: ({ cellProps }) => {
-        return (
-          <span className="">{cellProps.data.priceTier ? `${cellProps.data.priceTier.minimum} - ${cellProps.data.priceTier.maximum}` : ""}</span>
-        );
-      }
-    },
-    {
-      name: "pricePerson",
-      header: "Web Price",
-      type: "number",
-      defaultWidth: 118,
-      editable,
-      render: ({ cellProps }) => {
-        if (!cellProps.data.variant.groupEvent) {
-          onEditableChange(false);
-        } else {
-          onEditableChange(true);
-          return <span className="float-right">{`$ ${cellProps.data.priceTier.price}`}</span>;
-        }
-      }
-    },
-    {
-      name: "pricePersonInstructor",
-      header: "Instructor Price",
-      type: "number",
-      render: ({ cellProps }) => {
-        return (
-          <span className="float-right">
-            {cellProps.data.variant.groupEvent && cellProps.data.priceTier.priceInstructor ? `$ ${cellProps.data.priceTier.priceInstructor}` : ""}
-            {cellProps.data.variant.pricePersonInstructor ? `$ ${cellProps.data.variant.pricePersonInstructor}` : ""}
-          </span>
-        );
-      }
-    },
-    {
-      name: "instructorFlatFee",
-      header: "Instructor Flat Fee",
-      type: "number",
-      render: ({ cellProps }) => {
-        return (
-          <span className="float-right">{cellProps.data.variant.instructorFlatFee ? `$ ${cellProps.data.variant.instructorFlatFee}` : ""} </span>
-        );
-      }
-    },
-    {
-      name: "expectedProfit",
-      header: "Margin/profit",
-      type: "number",
-      editable: (_, cellProps) => {
-        return Promise.resolve(!cellProps.data.variant.groupEvent);
-      },
-      render: ({ cellProps }) => {
-        return (
-          <span className="float-right">{cellProps.data.variant.expectedProfit ? `${cellProps.data.variant.expectedProfit * 100}%` : ""} </span>
-        );
-      }
-    },
-    {
-      name: "variantHasKit",
-      header: "Kit Included",
-      type: "string",
-      editable: false,
-      defaultWidth: 100,
-      render: ({ cellProps }) => {
-        return <span>{cellProps.data.variant.hasKit ? "Yes" : "No"}</span>;
-      }
-    },
-    {
-      name: "variantActive",
-      header: "Variant status",
-      type: "string",
-      defaultWidth: 130,
-      editable: false,
-      render: ({ cellProps }) => {
-        return <span>{cellProps.data.variant.active ? "Active" : "Inactive"}</span>;
-      }
-    },
-    {
-      name: "isActive",
-      header: "Published",
-      type: "string",
-      editable: false,
-      defaultWidth: 115,
-      render: ({ value }) => {
-        return <span>{value ? "Yes" : "No"}</span>;
-      }
-    },
-    { name: "instructorName", header: "Instructor Name", type: "string", editable: false },
-    {
-      name: "instructorEmail",
-      header: "Instructor Email",
-      type: "string",
-      editable: false,
-      render: ({ cellProps }) => {
-        const classInstructor = instructors.find((item) => item._id === cellProps.data.instructorId);
-        return <span className="">{classInstructor && classInstructor.email}</span>;
-      }
-    }
-  ];
 
   const { ...allData } = useQuery(queryAllClassesForListingPrice, {
     fetchPolicy: "cache-and-network",
@@ -375,8 +228,8 @@ const ListingPricesList = () => {
 
       if (columnId === "pricePerson") {
         if (filterData && filterData.variant.groupEvent) {
-          let newPriceTiers = [...filterData.variant.priceTiers];
-          let newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
+          const newPriceTiers = [...filterData.variant.priceTiers];
+          const newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
           newPriceTierItem.price = value;
           newPriceTiers[filterData.tierIndex] = newPriceTierItem;
           filterData.variant = { ...newVariant, priceTiers: newPriceTiers };
@@ -388,8 +241,8 @@ const ListingPricesList = () => {
 
       if (columnId === "pricePersonInstructor") {
         if (filterData && filterData.variant.groupEvent) {
-          let newPriceTiers = [...filterData.variant.priceTiers];
-          let newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
+          const newPriceTiers = [...filterData.variant.priceTiers];
+          const newPriceTierItem = { ...newPriceTiers[filterData.tierIndex] };
           newPriceTierItem.priceInstructor = value;
           newPriceTiers[filterData.tierIndex] = newPriceTierItem;
           filterData.variant = { ...newVariant, priceTiers: newPriceTiers };
@@ -429,6 +282,8 @@ const ListingPricesList = () => {
   const onEditableChange = useCallback((editable) => {
     setEditable(editable);
   }, []);
+
+  const columns = getColums(editable, onEditableChange, instructors);
 
   return (
     <div>

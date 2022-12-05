@@ -51,7 +51,7 @@ const Routes = [
   },
   {
     path: "/listingPrices",
-    component: lazy(() => import("../../views/listingPrices/ListingPricesList"))
+    component: lazy(() => import("../../views/ListingPrices"))
   },
   {
     path: "/lateRequests",
