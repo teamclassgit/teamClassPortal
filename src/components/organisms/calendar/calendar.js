@@ -11,9 +11,9 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Alert } from "reactstrap";
 import moment from "moment-timezone";
 import "./calendar.scss";
-import { BOOKING_DATE_REQUESTED_STATUS } from "../../utility/Constants";
+import { BOOKING_DATE_REQUESTED_STATUS } from "../../../utility/Constants";
 
-const Calendar = ({ bookings, classes }) => {
+const CalendarComponent = ({ bookings, classes }) => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalClassTitle, setModalClassTitle] = useState(null);
@@ -137,4 +137,4 @@ const Calendar = ({ bookings, classes }) => {
   );
 };
 
-export default Calendar;
+export default CalendarComponent;

@@ -6,13 +6,13 @@ import { Spinner } from "reactstrap";
 import { useQuery } from "@apollo/client";
 
 // @scripts
-import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
+import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
 import Calendar from "./calendar";
-import queryAllBookings from "../../graphql/QueryGetBookingsWithCriteria";
-import queryAllClasses from "../../graphql/QueryAllClasses";
-import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
-import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
-import FiltersModal from "../booking/BoardBookings/FiltersModal";
+import queryAllBookings from "../../../graphql/QueryGetBookingsWithCriteria";
+import queryAllClasses from "../../../graphql/QueryAllClasses";
+import queryAllCoordinators from "../../../graphql/QueryAllEventCoordinators";
+import { FiltersContext } from "../../../context/FiltersContext/FiltersContext";
+import FiltersModal from "../../../views/booking/BoardBookings/FiltersModal";
 
 const BookingCalendarList = () => {
   const defaultFilter = [

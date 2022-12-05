@@ -9,7 +9,7 @@ const DefaultRoute = "/pipeline";
 const Routes = [
   {
     path: "/calendar",
-    component: lazy(() => import("../../views/calendar/bookingCalendarList"))
+    component: lazy(() => import("../../views/Calendar"))
   },
   {
     path: "/bookings",
@@ -27,7 +27,7 @@ const Routes = [
   },
   {
     path: "/allbookings",
-    component: lazy(() => import("../../views/allBookings"))
+    component: lazy(() => import("../../views/AllBookings"))
   },
   {
     path: "/booking/:id",
