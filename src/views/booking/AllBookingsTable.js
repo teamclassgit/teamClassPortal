@@ -789,6 +789,30 @@ const AllBookingsTable = () => {
           return <span className="float-left">{value}</span>;
         }
       }
+    },
+    {
+      name: 'classVariant.hasKit',
+      header: 'Has Kit',
+      type: 'string',
+      filterDelay: 1500,
+      defaultWidth: 200,
+      render: ({ data }) => {
+        return (
+          <span className="float-left">{data.classVariant?.hasKit ? "true" : "false" }</span>
+        );
+      }
+    },
+    {
+      name: 'shippingTrackingLink',
+      header: 'Shipping Tracking Link',
+      type: 'string',
+      filterDelay: 1500,
+      defaultWidth: 220,
+      render: ({ value }) => {
+        return (
+          <span className="float-left">{ value }</span>
+        );
+      }
     }
   ];
 
