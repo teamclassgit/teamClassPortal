@@ -154,7 +154,6 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     }
   };
 
-  console.log("payments", payments);
   return (
     <>
       {booking && booking.status !== BOOKING_CLOSED_STATUS && (
@@ -418,7 +417,6 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                           <div className="d-flex align-items-center justify-content-between">
                             <a
                               onClick={(e) => {
-                                className = "mr-1";
                                 e.preventDefault();
                                 setIndexPayment(index);
                                 setCurrentPayment({ ...element, index });
