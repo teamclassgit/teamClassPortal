@@ -84,6 +84,8 @@ export default gql`
           groupEvent
           hasKit
           instructorFlatFee
+          pricePersonInstructor
+          expectedProfit
           kitHasAlcohol
           maximum
           minimum

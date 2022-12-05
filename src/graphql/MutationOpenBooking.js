@@ -69,6 +69,8 @@ export default gql`
         hasKit
         groupEvent
         instructorFlatFee
+        pricePersonInstructor
+        expectedProfit
         registrationFields {
           label
           placeholder

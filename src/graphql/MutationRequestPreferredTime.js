@@ -72,6 +72,9 @@ mutation requestPreferredTime(
         maximum
         duration
         pricePerson
+        instructorFlatFee
+        pricePersonInstructor
+        expectedProfit
         hasKit
         order
         active
