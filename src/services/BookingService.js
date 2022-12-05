@@ -230,7 +230,8 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     'instructorInvoiceStatus',
     'totalDistributorInvoice',
     'totalInstructorInvoice',
-    'firstTouchChannel'
+    'firstTouchChannel',
+    'Shipping tracking link'
   ];
 
   bookingsArray.push(headers);
@@ -247,7 +248,7 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.signUpDeadline,
       element.classVariant?.title,
       element.classVariant?.groupEvent,
-      element.classVariant?.hasKit,
+      element.classVariant?.hasKit ? "true" : "false",
       element.classVariant?.kitHasAlcohol,
       element.customerName,
       element.customerPhone,
@@ -287,7 +288,8 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.instructorInvoiceStatus,
       element.totalDistributorInvoice,
       element.totalInstructorInvoice,
-      element.firstTouchChannel
+      element.firstTouchChannel,
+      element.shippingTrackingLink
     ];
     bookingsArray.push(row);
   });
