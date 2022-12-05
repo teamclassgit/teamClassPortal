@@ -148,7 +148,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
     Email: {
       prop: 'email',
       type: Email,
-      required: true
+      required: false
     },
 
     Phone: {
@@ -159,7 +159,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
     AddressLine1: {
       prop: 'addressLine1',
       type: String,
-      required: true
+      required: booking?.classVariant?.hasKit
     },
     AddressLine2: {
       prop: 'addressLine2',
@@ -169,22 +169,22 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
     City: {
       prop: 'city',
       type: String,
-      required: true
+      required: booking?.classVariant?.hasKit
     },
     State: {
       prop: 'state',
       type: String,
-      required: true
+      required: booking?.classVariant?.hasKit
     },
     Zip: {
       prop: 'zip',
       type: String,
-      required: true
+      required: booking?.classVariant?.hasKit
     },
     Country: {
       prop: 'country',
       type: String,
-      required: true
+      required: booking?.classVariant?.hasKit
     }
   };
 
@@ -235,7 +235,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
       });
     }
   });
-
+  
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
