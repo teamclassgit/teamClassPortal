@@ -16,13 +16,14 @@ export default gql`
         maximum
         duration
         pricePerson
+        instructorFlatFee
         pricePersonInstructor
+        expectedProfit
         hasKit
         order
         active
         groupEvent
         kitHasAlcohol
-        instructorFlatFee
         registrationFields {
           label
           placeholder
