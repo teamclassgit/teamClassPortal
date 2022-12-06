@@ -5,8 +5,8 @@ import ReactPaginate from "react-paginate";
 import moment from "moment";
 import { Card } from "reactstrap";
 import { ChevronDown } from "react-feather";
-import { getCustomerEmail } from "../../views/booking/common";
-import ExpandableTable from "./ExpandableTable";
+import { getCustomerEmail } from "../../../views/booking/common";
+import ExpandableTable from "@atoms/expandible-table";
 import { useSelector } from "react-redux";
 
 const TableGiftBaskets = ({ giftBasketPurchases, giftBaskets, customers }) => {

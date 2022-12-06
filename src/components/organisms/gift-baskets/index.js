@@ -4,12 +4,12 @@ import { Col, Spinner } from "reactstrap";
 import { useQuery } from "@apollo/client";
 
 // @scripts
-import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
-import queryAllGiftBasketPurchases from "../../graphql/QueryAllGiftBasketPurchases";
-import queryAllGiftBaskets from "../../graphql/QueryAllGiftBaskets";
-import queryAllCustomers from "../../graphql/QueryAllCustomers";
-import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
-import TableGiftBaskets from "./TableGiftBaskets";
+import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
+import queryAllGiftBasketPurchases from "@graphql/QueryAllGiftBasketPurchases";
+import queryAllGiftBaskets from "@graphql/QueryAllGiftBaskets";
+import queryAllCustomers from "@graphql/QueryAllCustomers";
+import { FiltersContext } from "@context/FiltersContext/FiltersContext";
+import TableGiftBaskets from "@molecules/table-gift-baskets";
 
 const GiftBasketsList = () => {
   const [giftBasketPurchases, setGiftBasketPurchases] = useState(null);
@@ -85,7 +85,6 @@ const GiftBasketsList = () => {
     <>
       <BookingsHeader
         noCoordinators
-        defaultLimit={200}
         coordinators={""}
         showLimit={true}
         onChangeLimit={(newLimit) => {
