@@ -8,11 +8,11 @@ import { Card } from "reactstrap";
 import { ChevronDown } from "react-feather";
 
 // @scripts
-import { getCoordinatorName } from "../booking/common";
+import { getCoordinatorName } from "../../../views/booking/common";
 import EditGeneralInqueries from "@molecules/edit-general-inqueries";
 
 // @styles
-import "../booking/TableBookings/TableBookings.scss";
+import "../../../views/booking/TableBookings/TableBookings.scss";
 
 const TableGeneralInquiries = ({ filteredData, coordinators }) => {
   const [currentPage, setCurrentPage] = useState(0);

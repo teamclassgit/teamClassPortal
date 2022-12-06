@@ -35,7 +35,7 @@ export default [
     id: "checkout4",
     title: "General inquiries",
     icon: <HelpCircle size={20} />,
-    navLink: "/generalInquiries"
+    navLink: "/general-inquiries"
   },
   {
     id: "checkout5",

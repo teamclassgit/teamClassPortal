@@ -5,12 +5,12 @@ import { useQuery } from "@apollo/client";
 import { useState, useEffect, useContext } from "react";
 
 // @scripts
-import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
-import DataTableGeneralInquiries from "./TableGeneralInquiries";
+import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
+import DataTableGeneralInquiries from "@molecules/table-general-inquiries";
 import FiltersModal from "@molecules/filters-modal";
-import queryAllQuestions from "../../graphql/QueryAllQuestions";
-import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
-import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
+import queryAllQuestions from "@graphql/QueryAllQuestions";
+import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
+import { FiltersContext } from "@context/FiltersContext/FiltersContext";
 
 const GeneralInquiresList = () => {
   const [filteredGeneralInquiries, setFilteredGeneralInquiries] = useState([]);
