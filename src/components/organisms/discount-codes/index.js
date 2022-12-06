@@ -6,13 +6,13 @@ import { useQuery } from "@apollo/client";
 import { useState, useEffect, useContext } from "react";
 
 // @scripts
-import AddNewDiscountCode from "./AddNewDiscountCode";
-import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
+import AddNewDiscountCode from "@molecules/add-new-discount-code";
+import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
 import EditDiscountCodesModal from "@molecules/edit-discount-codes-modal";
-import TableDiscountCodes from "../discountCodes/TableDiscountCodes";
-import queryAllCustomers from "../../graphql/QueryAllCustomers";
-import queryDiscountCodes from "../../graphql/QueryDiscountCodes";
-import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
+import TableDiscountCodes from "@molecules/table-discount-codes";
+import queryAllCustomers from "@graphql/QueryAllCustomers";
+import queryDiscountCodes from "@graphql/QueryDiscountCodes";
+import { FiltersContext } from "@context/FiltersContext/FiltersContext";
 
 const DiscountCodesList = () => {
   const [currentElement, setCurrentElement] = useState({});

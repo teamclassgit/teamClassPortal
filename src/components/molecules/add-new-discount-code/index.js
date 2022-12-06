@@ -23,7 +23,7 @@ import {
 import Flatpickr from "react-flatpickr";
 
 // @scripts
-import mutationCreateDiscountCode from "../../graphql/MutationCreateDiscountCode";
+import mutationCreateDiscountCode from "@graphql/MutationCreateDiscountCode";
 import allTypes from "@data/all-types.json";
 
 // @styles

@@ -43,7 +43,7 @@ const Routes = [
   },
   {
     path: "/discount-codes",
-    component: lazy(() => import("../../views/discountCodes/DiscountCodesList"))
+    component: lazy(() => import("../../views/DiscountCodes"))
   },
   {
     path: "/gift-baskets",

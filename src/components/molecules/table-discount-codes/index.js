@@ -11,10 +11,10 @@ import { Edit2, ChevronDown } from "react-feather";
 import { useMutation } from "@apollo/client";
 
 // @scripts
-import mutationUpdateDiscountCode from "../../graphql/MutationUpdateDiscountCode";
+import mutationUpdateDiscountCode from "@graphql/MutationUpdateDiscountCode";
 
 // @styles
-import "../booking/TableBookings/TableBookings.scss";
+import "../../../views/booking/TableBookings/TableBookings.scss";
 
 const TableDiscountCodes = ({ 
   filteredData,
@@ -235,9 +235,7 @@ const TableDiscountCodes = ({
     <ReactPaginate
       activeClassName="active"
       breakClassName="page-item"
-      breakClassName="page-item"
       breakLabel="..."
-      breakLinkClassName="page-link"
       breakLinkClassName="page-link"
       containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
       forcePage={currentPage}
