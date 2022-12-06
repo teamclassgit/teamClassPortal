@@ -5,13 +5,13 @@ import { Col, Spinner } from "reactstrap";
 import { useQuery } from "@apollo/client";
 
 // @scripts
-import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
-import DataTablePrivateRequest from "./TablePrivateRequests";
-import FiltersModal from "../booking/BoardBookings/FiltersModal";
-import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
-import queryAllPrivateClassRequest from "../../graphql/QueryAllPrivateClassRequest";
-import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
-import { getCoordinatorName } from "../booking/common";
+import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
+import DataTablePrivateRequest from "@molecules/table-private-requests";
+import FiltersModal from "@molecules/filters-modal";
+import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
+import queryAllPrivateClassRequest from "@graphql/QueryAllPrivateClassRequest";
+import { FiltersContext } from "@context/FiltersContext/FiltersContext";
+import { getCoordinatorName } from "../../../views/booking/common";
 
 const PrivateRequestsList = () => {
   const [coordinators, setCoordinators] = useState([]);

@@ -8,10 +8,10 @@ import { Card } from "reactstrap";
 import { ChevronDown } from "react-feather";
 
 // @scripts
-import { getCoordinatorName } from "../booking/common";
+import { getCoordinatorName } from "../../../views/booking/common";
 
 // @styles
-import "../booking/TableBookings/TableBookings.scss";
+import "../../../views/booking/TableBookings/TableBookings.scss";
 
 const TablePrivateRequests = ({ filteredData, coordinators }) => {
   const [currentPage, setCurrentPage] = useState(0);

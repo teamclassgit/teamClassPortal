@@ -12,7 +12,7 @@ import queryAllBookings from "../../../graphql/QueryGetBookingsWithCriteria";
 import queryAllClasses from "../../../graphql/QueryAllClasses";
 import queryAllCoordinators from "../../../graphql/QueryAllEventCoordinators";
 import { FiltersContext } from "../../../context/FiltersContext/FiltersContext";
-import FiltersModal from "../../../views/booking/BoardBookings/FiltersModal";
+import FiltersModal from "@molecules/filters-modal";
 
 const BookingCalendarList = () => {
   const defaultFilter = [

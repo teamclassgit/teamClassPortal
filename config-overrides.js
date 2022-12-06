@@ -20,6 +20,7 @@ module.exports = function override (config, env) {
     "@hooks": path.resolve(__dirname, "src/utility/hooks"),
     "@utility": path.resolve(__dirname, "src/utility"),
     "@services": path.resolve(__dirname, "src/services"),
+    "@context": path.resolve(__dirname, "src/context"),
     "@graphql": path.resolve(__dirname, "src/graphql"),
     "@atoms": path.resolve(__dirname, "src/components/atoms"),
     "@molecules": path.resolve(__dirname, "src/components/molecules"),

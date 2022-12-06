@@ -9,7 +9,7 @@ import AddNewBooking from "@organisms/add-new-booking";
 import BoardBookings from "./BoardBookings/BoardBookings";
 import BookingsHeader from "./BookingsHeader/BookingsHeader";
 import EditBookingModal from "@organisms/edit-booking-modal";
-import FiltersModal from "./BoardBookings/FiltersModal";
+import FiltersModal from "@molecules/filters-modal";
 import queryAllBookings from "../../graphql/QueryGetBookingsWithCriteria";
 import queryAllClasses from "../../graphql/QueryAllClasses";
 import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";

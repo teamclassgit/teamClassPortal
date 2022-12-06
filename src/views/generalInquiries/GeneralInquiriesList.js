@@ -7,7 +7,7 @@ import { useState, useEffect, useContext } from "react";
 // @scripts
 import BookingsHeader from "../booking/BookingsHeader/BookingsHeader";
 import DataTableGeneralInquiries from "./TableGeneralInquiries";
-import FiltersModal from "../booking/BoardBookings/FiltersModal";
+import FiltersModal from "@molecules/filters-modal";
 import queryAllQuestions from "../../graphql/QueryAllQuestions";
 import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
 import { FiltersContext } from "../../context/FiltersContext/FiltersContext";

@@ -7,7 +7,7 @@ import { Modal, ModalHeader, ModalBody, FormGroup, Label, Button } from "reactst
 import closeBookingOptions from "@data/closed-booking-options.json";
 
 // @scripts
-import { FiltersContext } from "../../../context/FiltersContext/FiltersContext";
+import { FiltersContext } from "@context/FiltersContext/FiltersContext";
 
 const FiltersModal = ({
   classes,

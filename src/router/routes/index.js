@@ -39,7 +39,7 @@ const Routes = [
   },
   {
     path: "/privateRequests",
-    component: lazy(() => import("../../views/privateRequests/PrivateRequestsList"))
+    component: lazy(() => import("../../views/PrivateRequests"))
   },
   {
     path: "/discountCodes",
