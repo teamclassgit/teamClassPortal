@@ -1,6 +1,5 @@
 // @packages
 import Avatar from "@components/avatar";
-import CardLink from "reactstrap/lib/CardLink";
 import DataTable from "react-data-table-component";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
@@ -22,7 +21,7 @@ import {
   getDepositPaid,
   getFinalPaymentPaid,
   getLastPaymentDate
-} from "../common";
+} from "@utility/Common";
 import "./TableBookings.scss";
 
 const DataTableBookings = ({ calendarEvents, classes, coordinators, customers, filteredData, handleEditModal }) => {

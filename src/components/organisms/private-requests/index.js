@@ -11,7 +11,7 @@ import FiltersModal from "@molecules/filters-modal";
 import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
 import queryAllPrivateClassRequest from "@graphql/QueryAllPrivateClassRequest";
 import { FiltersContext } from "@context/FiltersContext/FiltersContext";
-import { getCoordinatorName } from "../../../views/booking/common";
+import { getCoordinatorName } from "@utility/Common";
 
 const PrivateRequestsList = () => {
   const [coordinators, setCoordinators] = useState([]);

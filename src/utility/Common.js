@@ -1,6 +1,6 @@
 import moment from "moment";
-import { toAmPm } from "../../utility/Utils";
-import { BOOKING_STATUS, DAYS_BEFORE_EVENT_REGISTRATION, DEFAULT_TIME_ZONE_LABEL } from "../../utility/Constants";
+import { toAmPm } from "./Utils";
+import { BOOKING_STATUS, DAYS_BEFORE_EVENT_REGISTRATION, DEFAULT_TIME_ZONE_LABEL } from "./Constants";
 
 export const getCustomerName = (customerId, customers) => {
   const result = customers.filter((element) => element._id === customerId);

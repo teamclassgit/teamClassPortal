@@ -8,7 +8,7 @@ import { Card } from "reactstrap";
 import { ChevronDown } from "react-feather";
 
 // @scripts
-import { getCoordinatorName } from "../../../views/booking/common";
+import { getCoordinatorName } from "@utility/Common";
 import EditGeneralInqueries from "@molecules/edit-general-inqueries";
 
 // @styles

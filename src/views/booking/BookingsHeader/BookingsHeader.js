@@ -22,7 +22,7 @@ import PropTypes from "prop-types";
 // @scripts
 import ExportToExcel from "@molecules/export-to-excel";
 import { FiltersContext } from "@context/FiltersContext/FiltersContext";
-import { getCustomerEmail, getCoordinatorName } from "../common";
+import { getCustomerEmail, getCoordinatorName } from "@utility/Common";
 import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
 
 const BookingsHeader = ({
