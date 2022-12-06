@@ -1,6 +1,5 @@
 // @packages
 import React, { useCallback, useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { Badge, DropdownItem, DropdownMenu, DropdownToggle, UncontrolledButtonDropdown } from "reactstrap";
 import { FileText, Share } from "react-feather";
 import ReactDataGrid from "@inovua/reactdatagrid-enterprise";
@@ -19,7 +18,7 @@ import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
 
 const gridStyle = { minHeight: 650, marginTop: 10 };
 
-const LateRequests = () => {
+const LateRequestsComponent = () => {
   const skin = useSelector((state) => state.bookingsBackground);
   const [dataSourceAttendees, setDataSourceAttendees] = useState([]);
   const [dataAllAttendees, setDataAllAttendees] = useState([]);
@@ -171,6 +170,4 @@ const LateRequests = () => {
   );
 };
 
-LateRequests.propTypes = {};
-
-export default LateRequests;
+export default LateRequestsComponent;

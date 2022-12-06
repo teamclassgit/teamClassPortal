@@ -3,10 +3,10 @@ import React from "react";
 // @scripts
 import PrivateRequestsList from "@organisms/private-requests";
 
-const Calendar = () => {
+const PrivateRequets = () => {
   return (
     <PrivateRequestsList />
   );
 };
 
-export default Calendar;
+export default PrivateRequets;

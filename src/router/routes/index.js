@@ -55,7 +55,7 @@ const Routes = [
   },
   {
     path: "/lateRequests",
-    component: lazy(() => import("../../views/lateRequests/LateRequests"))
+    component: lazy(() => import("../../views/LateRequests"))
   },
   {
     path: "/login",
