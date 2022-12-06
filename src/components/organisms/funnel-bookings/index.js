@@ -3,13 +3,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { apolloClient } from "../../utility/RealmApolloClient";
+import { apolloClient } from "@utility/RealmApolloClient";
 import { Calendar, Check, DollarSign, Edit2, User, Users } from "react-feather";
 import { Modal } from "reactstrap";
 import Avatar from "@components/avatar";
 import moment from "moment-timezone";
 window.moment = moment;
-import { getQueryFiltersFromFilterArray, getUserData, isNotEmptyArray } from "../../utility/Utils";
+import { getQueryFiltersFromFilterArray, getUserData, isNotEmptyArray } from "@utility/Utils";
 
 //@reactdatagrid packages
 import ReactDataGrid from "@inovua/reactdatagrid-enterprise";
@@ -30,12 +30,12 @@ import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
 import queryAllInstructors from "@graphql/QueryAllInstructors";
 import EditBookingModal from "@organisms/edit-booking-modal";
 import AddNewBooking from "@organisms/add-new-booking";
-import BookingsTableStatusCards from "./BookingsTableStatusCards";
+import BookingsTableStatusCards from "../../../views/booking/BookingsTableStatusCards";
 import RowDetails from "@molecules/booking-table-row-details";
 import TasksBar from "@molecules/task-bar";
 import { getAllDataToExport, getBookingAndCalendarEventById } from "@services/BookingService";
 import ConfirmBookingsToClose from "@molecules/confirm-bookings-to-close";
-import { DEFAULT_TIME_ZONE_LABEL } from "../../utility/Constants";
+import { DEFAULT_TIME_ZONE_LABEL } from "@utility/Constants";
 
 const renderRowDetails = ({ data }) => {
   return data ? <RowDetails data={data} /> : <></>;

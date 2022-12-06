@@ -17,7 +17,7 @@ const Routes = [
   },
   {
     path: "/pipeline",
-    component: lazy(() => import("../../views/booking/FunnelTable"))
+    component: lazy(() => import("../../views/FunnelBookings"))
   },
   {
     appLayout: true,
