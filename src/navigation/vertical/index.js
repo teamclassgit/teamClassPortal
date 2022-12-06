@@ -11,7 +11,7 @@ export default [
     id: "listBookingsAll",
     title: "All Bookings (Beta)",
     icon: <Database size={20} />,
-    navLink: "/allbookings"
+    navLink: "/all-bookings"
   },
   {
     id: "checkout1",
@@ -29,7 +29,7 @@ export default [
     id: "checkout3",
     title: "Private requests",
     icon: <Book size={20} />,
-    navLink: "/privateRequests"
+    navLink: "/private-requests"
   },
   {
     id: "checkout4",
@@ -41,24 +41,24 @@ export default [
     id: "checkout5",
     title: "Discount codes",
     icon: <Tag size={20} />,
-    navLink: "/discountCodes"
+    navLink: "/discount-codes"
   },
   {
     id: "checkout6",
     title: "Gift Baskets",
     icon: <Gift size={20} />,
-    navLink: "/giftBaskets"
+    navLink: "/gift-baskets"
   },
   {
     id: "checkout7",
     title: "Listing Prices",
     icon: <Edit2 size={20} />,
-    navLink: "/listingPrices"
+    navLink: "/listing-prices"
   },
   {
     id: "checkout8",
     title: "Late requests",
     icon: <User size={20} />,
-    navLink: "/lateRequests"
+    navLink: "/late-requests"
   }
 ];

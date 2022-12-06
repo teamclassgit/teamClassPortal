@@ -26,7 +26,7 @@ const Routes = [
     path: "/chat"
   },
   {
-    path: "/allbookings",
+    path: "/all-bookings",
     component: lazy(() => import("../../views/AllBookings"))
   },
   {
@@ -38,23 +38,23 @@ const Routes = [
     component: lazy(() => import("../../views/GeneralInquiries"))
   },
   {
-    path: "/privateRequests",
+    path: "/private-requests",
     component: lazy(() => import("../../views/PrivateRequests"))
   },
   {
-    path: "/discountCodes",
+    path: "/discount-codes",
     component: lazy(() => import("../../views/discountCodes/DiscountCodesList"))
   },
   {
-    path: "/giftBaskets",
+    path: "/gift-baskets",
     component: lazy(() => import("../../views/giftBaskets/GiftBasketsList"))
   },
   {
-    path: "/listingPrices",
+    path: "/listing-prices",
     component: lazy(() => import("../../views/ListingPrices"))
   },
   {
-    path: "/lateRequests",
+    path: "/late-requests",
     component: lazy(() => import("../../views/LateRequests"))
   },
   {
