@@ -13,7 +13,7 @@ const Routes = [
   },
   {
     path: "/bookings",
-    component: lazy(() => import("../../views/booking/BookingList"))
+    component: lazy(() => import("../../views/BookingStage"))
   },
   {
     path: "/pipeline",

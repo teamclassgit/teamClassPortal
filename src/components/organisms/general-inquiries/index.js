@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client";
 import { useState, useEffect, useContext } from "react";
 
 // @scripts
-import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
+import BookingsHeader from "@molecules/bookings-header";
 import DataTableGeneralInquiries from "@molecules/table-general-inquiries";
 import FiltersModal from "@molecules/filters-modal";
 import queryAllQuestions from "@graphql/QueryAllQuestions";

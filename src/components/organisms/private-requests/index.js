@@ -5,7 +5,7 @@ import { Col, Spinner } from "reactstrap";
 import { useQuery } from "@apollo/client";
 
 // @scripts
-import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
+import BookingsHeader from "@molecules/bookings-header";
 import DataTablePrivateRequest from "@molecules/table-private-requests";
 import FiltersModal from "@molecules/filters-modal";
 import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";

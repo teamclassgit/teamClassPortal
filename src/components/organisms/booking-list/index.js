@@ -6,17 +6,17 @@ import { useQuery } from "@apollo/client";
 
 // @scripts
 import AddNewBooking from "@organisms/add-new-booking";
-import BoardBookings from "./BoardBookings/BoardBookings";
-import BookingsHeader from "./BookingsHeader/BookingsHeader";
+import BoardBookings from "@molecules/board-bookings";
+import BookingsHeader from "@molecules/bookings-header";
 import EditBookingModal from "@organisms/edit-booking-modal";
 import FiltersModal from "@molecules/filters-modal";
-import queryAllBookings from "../../graphql/QueryGetBookingsWithCriteria";
-import queryAllClasses from "../../graphql/QueryAllClasses";
-import queryAllCoordinators from "../../graphql/QueryAllEventCoordinators";
-import queryAllCustomers from "../../graphql/QueryAllCustomers";
-import { FiltersContext } from "../../context/FiltersContext/FiltersContext";
-import { getAllDataToExport } from "../../services/BookingService";
-import QueryAllInstructors from "../../graphql/QueryAllInstructors";
+import queryAllBookings from "@graphql/QueryGetBookingsWithCriteria";
+import queryAllClasses from "@graphql/QueryAllClasses";
+import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
+import queryAllCustomers from "@graphql/QueryAllCustomers";
+import { FiltersContext } from "@context/FiltersContext/FiltersContext";
+import { getAllDataToExport } from "@services/BookingService";
+import QueryAllInstructors from "@graphql/QueryAllInstructors";
 
 const BookingList = () => {
   const defaultFilter = [];

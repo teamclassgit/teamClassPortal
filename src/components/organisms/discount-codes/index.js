@@ -7,7 +7,7 @@ import { useState, useEffect, useContext } from "react";
 
 // @scripts
 import AddNewDiscountCode from "@molecules/add-new-discount-code";
-import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
+import BookingsHeader from "@molecules/bookings-header";
 import EditDiscountCodesModal from "@molecules/edit-discount-codes-modal";
 import TableDiscountCodes from "@molecules/table-discount-codes";
 import queryAllCustomers from "@graphql/QueryAllCustomers";

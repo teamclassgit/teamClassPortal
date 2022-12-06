@@ -6,7 +6,7 @@ import { Spinner } from "reactstrap";
 import { useQuery } from "@apollo/client";
 
 // @scripts
-import BookingsHeader from "../../../views/booking/BookingsHeader/BookingsHeader";
+import BookingsHeader from "@molecules/bookings-header";
 import Calendar from "./calendar";
 import queryAllBookings from "../../../graphql/QueryGetBookingsWithCriteria";
 import queryAllClasses from "../../../graphql/QueryAllClasses";

@@ -4,20 +4,22 @@ import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
 import moment from "moment-timezone";
 import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video, Tag } from "react-feather";
-import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, CardLink, Badge } from "reactstrap";
+import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, Badge } from "reactstrap";
 import { useHistory } from "react-router";
+
 // @scripts
 import CopyClipboard from "@atoms/copy-clipboard";
-import { capitalizeString, isNotEmptyArray } from "../../../../utility/Utils";
-// @styles
-import "./BoardCard.scss";
+import { capitalizeString, isNotEmptyArray } from "@utility/Utils";
 import {
   DATE_AND_TIME_CONFIRMATION_STATUS,
   DATE_AND_TIME_REJECTED_STATUS,
   DAYS_BEFORE_EVENT_REGISTRATION,
   DEFAULT_TIME_ZONE_LABEL
-} from "../../../../utility/Constants";
-import { getBookingAndCalendarEventById } from "../../../../services/BookingService";
+} from "@utility/Constants";
+import { getBookingAndCalendarEventById } from "@services/BookingService";
+
+// @styles
+import "./BoardCard.scss";
 
 const BoardCard = ({
   handleEditModal,
@@ -26,19 +28,12 @@ const BoardCard = ({
     addons,
     attendees,
     bookingTags,
-    capRegistration,
-    classId,
     className,
     classVariant,
-    closedReason,
     createdAt,
-    customerCompany,
     customerEmail,
-    customerId,
     customerName,
     customerPhone,
-    customerTags,
-    eventCoordinatorId,
     eventCoordinatorName,
     eventDateTime,
     eventDateTimeStatus,
