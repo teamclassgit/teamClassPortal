@@ -28,7 +28,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       name: "actions",
       header: "Links",
       defaultWidth: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ cellProps }) => {
         if (cellProps.data) {
           return cellProps.data.status === "quote" ? (
             <small>
@@ -193,7 +193,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return moment(value).calendar(null, {
           lastDay: "[Yesterday]",
           sameDay: "LT",
@@ -209,7 +209,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return <span className="float-left">{value}</span>;
         }
@@ -223,7 +223,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       filterEditor: StringFilter,
       filterDelay: 1500,
       defaultWidth: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return <span className="float-left">{value}</span>;
         }
@@ -236,7 +236,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return moment(value).calendar(null, {
           lastDay: "[Yesterday]",
           sameDay: "LT",
@@ -329,7 +329,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       filterEditor: NumberFilter,
       filterDelay: 1500,
       defaultWidth: 112,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return <span className="float-right">{value}</span>;
         }
@@ -366,7 +366,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return `${moment(value)?.format("LLL")}`;
         }
@@ -380,7 +380,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       filterEditor: NumberFilter,
       filterDelay: 1500,
       defaultVisible: false,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
@@ -392,7 +392,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       defaultVisible: false,
       filterDelay: 1500,
       filterEditor: NumberFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
@@ -404,7 +404,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       defaultVisible: false,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
@@ -415,7 +415,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
@@ -426,7 +426,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
@@ -436,7 +436,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return moment(value).format("LLL");
         }
@@ -448,7 +448,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       type: "number",
       defaultWidth: 150,
       filterEditor: NumberFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
@@ -458,7 +458,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       type: "date",
       width: 250,
       filterEditor: DateFilter,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (value) {
           return moment(value).format("LLL");
         }
@@ -471,7 +471,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       defaultWidth: 150,
       filterEditor: NumberFilter,
       filterDelay: 1500,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         return <span className="float-right">{value?.toFixed(2)}</span>;
       }
     },
@@ -502,7 +502,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       },
       filterDelay: 1500,
       defaultWidth: 200,
-      render: ({ value, cellProps }) => {
+      render: ({ value }) => {
         if (isNotEmptyArray(value)) {
           return <span className="float-left">{value.join(",")}</span>;
         }
