@@ -42,6 +42,9 @@ export default gql`
         maximum
         duration
         pricePerson
+        instructorFlatFee
+        pricePersonInstructor
+        expectedProfit
         hasKit
         order
         active
