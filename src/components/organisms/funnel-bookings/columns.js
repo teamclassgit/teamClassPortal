@@ -1,7 +1,5 @@
 // @packages
 import { useHistory } from "react-router-dom";
-import { Calendar, Check, DollarSign, Edit2, User, Users } from "react-feather";
-import Avatar from "@components/avatar";
 import moment from "moment";
 
 // @scripts
@@ -14,6 +12,7 @@ import NumberFilter from "@inovua/reactdatagrid-community/NumberFilter";
 import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
+import { actionsLinkStage } from "../all-bookings/actionsLink";
 
 export const getColumns = (classes, coordinators, setCurrentElement, handleClickCurrentElement) => {
 
@@ -28,161 +27,12 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       name: "actions",
       header: "Links",
       defaultWidth: 200,
-      render: ({ cellProps }) => {
-        if (cellProps.data) {
-          return cellProps.data.status === "quote" ? (
-            <small>
-              <div className="d-flex">
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={"_blank"}
-                  title={"Select date and time link"}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                </a>
-              </div>
-            </small>
-          ) : cellProps.data.status === "date-requested" &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === "reserved" ? (
-            <small>
-              <div className="d-flex">
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={"_blank"}
-                  title={"Select date and time link"}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                </a>
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/booking/date-time-confirmation/${cellProps.data._id}`}
-                  target={"_blank"}
-                  title={"Approve/Reject link"}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Check />} />
-                </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                </a>
-              </div>
-            </small>
-          ) : cellProps.data.status === "date-requested" &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === "confirmed" ? (
-            <small>
-              <div className="d-flex">
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={"_blank"}
-                  title={"Select date and time link"}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                </a>
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
-                  target={"_blank"}
-                  title={"Deposit link"}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<DollarSign />} />
-                </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                </a>
-              </div>
-            </small>
-          ) : cellProps.data.status === "date-requested" &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === "rejected" ? (
-            <small>
-              <div className="d-flex">
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={"_blank"}
-                  title={"Select date and time link"}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} title={"Time / Attendees / Invoice Builder"}>
-                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                </a>
-              </div>
-            </small>
-          ) : cellProps.data.status === "confirmed" ? (
-            <small>
-              <div className="d-flex">
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                  target={"_blank"}
-                  title={"Select date and time link"}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                </a>
-                <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={"_blank"} title={"Sign-up link"}>
-                  <Avatar color="light-primary" size="sm" icon={<User />} />
-                </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
-                  <Avatar color="light-primary" size="sm" icon={<Users />} />
-                </a>
-                <a
-                  className="mr-1"
-                  href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
-                  target={"_blank"}
-                  title={"Final payment link"}
-                >
-                  <Avatar color="secondary" size="sm" icon={<DollarSign />} />
-                </a>
-                <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                  <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                </a>
-              </div>
-            </small>
-          ) : (
-            cellProps.data.status === "paid" && (
-              <small>
-                <div className="d-flex">
-                  <a
-                    className="mr-1"
-                    href={`https://www.teamclass.com/customers/select-date-time/${cellProps.data._id}`}
-                    target={"_blank"}
-                    title={"Select date and time link"}
-                  >
-                    <Avatar color="light-primary" size="sm" icon={<Calendar />} />
-                  </a>
-                  <a className="mr-1" href={`https://www.teamclass.com/event/${cellProps.data._id}`} target={"_blank"} title={"Sign-up link"}>
-                    <Avatar color="light-primary" size="sm" icon={<User />} />
-                  </a>
-                  <a
-                    className="mr-1"
-                    href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=registration`}
-                    target={"_blank"}
-                    title={"Sign-up status"}
-                  >
-                    <Avatar color="light-primary" size="sm" icon={<Users />} />
-                  </a>
-                  <a
-                    className="mr-1"
-                    href={`https://www.teamclass.com/customers/events/${cellProps.data._id}?type=payment`}
-                    target={"_blank"}
-                    title={"Final payment link"}
-                  >
-                    <Avatar color="secondary" size="sm" icon={<DollarSign />} />
-                  </a>
-                  <a className="mr-1" onClick={() => handleEdit(cellProps.data._id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                    <Avatar color="light-dark" size="sm" icon={<Edit2 />} />
-                  </a>
-                </div>
-              </small>
-            )
+      render: ({ data }) => {
+        if (data) {
+          return (
+            <div className="d-flex">
+              {actionsLinkStage(data._id, handleEdit)[data.bookingStage]}
+            </div>
           );
         }
       }
@@ -719,7 +569,6 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       filterDelay: 1500,
       defaultWidth: 220,
       render: ({ value }) => {
-        console.log("shippingTrackingLink", value);
         return (
           <span className="float-left">{ value }</span>
         );

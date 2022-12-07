@@ -9,15 +9,10 @@ import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
 
 // @scripts
-import BookingStepsEdit from "@atoms/booking-steps";
-import CalendarLink from "@atoms/calendar-link";
-import DateTimeConfirmationLink from "@atoms/date-time-confirmation-link";
-import PaymentLink from "@atoms/payment-link";
-import RegistrationLink from "@atoms/registration-link";
-import SignupLink from "@atoms/signup-link";
 import { isNotEmptyArray } from "@utility/Utils";
 import { DEFAULT_TIME_ZONE_LABEL } from "@utility/Constants";
 import { getBookingAndCalendarEventById } from "@services/BookingService";
+import { actionsLinkStage } from "./actionsLink";
 
 export const getColumns = (coordinators, classes, setCurrentElement, handleClickCurrentElement) => {
 
@@ -32,58 +27,12 @@ export const getColumns = (coordinators, classes, setCurrentElement, handleClick
       name: "actions",
       header: "Links",
       defaultWidth: 200,
-      render: ({ cellProps }) => {
-        if (cellProps.data) {
-          return cellProps.data.status === "quote" ? (
+      render: ({ data }) => {
+        if (data) {
+          return (
             <div className="d-flex">
-              <CalendarLink id={cellProps.data._id}/>
-              <BookingStepsEdit id={cellProps.data._id} handleEdit={handleEdit} />
+              {actionsLinkStage(data._id, handleEdit)[data.bookingStage]}
             </div>
-          ) : cellProps.data.status === "closed" ? (
-              <div className="d-flex">
-                <BookingStepsEdit id={cellProps.data._id} handleEdit={handleEdit} />
-              </div>
-          ) : cellProps.data.status === "date-requested" &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === "reserved" ? (
-              <div className="d-flex">
-                <CalendarLink id={cellProps.data._id}/>
-                <DateTimeConfirmationLink id={cellProps.data._id} />
-                <BookingStepsEdit id={cellProps.data._id} handleEdit={handleEdit} />
-              </div>
-          ) : cellProps.data.status === "date-requested" &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === "confirmed" ? (
-              <div className="d-flex">
-                <CalendarLink id={cellProps.data._id}/>
-                <PaymentLink id={cellProps.data._id} text="Deposit link" color="light-primary"/>
-                <BookingStepsEdit id={cellProps.data._id} handleEdit={handleEdit} />
-              </div>
-          ) : cellProps.data.status === "date-requested" &&
-            cellProps.data.eventDateTimeStatus &&
-            cellProps.data.eventDateTimeStatus === "rejected" ? (
-              <div className="d-flex">
-                <CalendarLink id={cellProps.data._id}/>
-                <BookingStepsEdit id={cellProps.data._id} handleEdit={handleEdit} />
-              </div>
-          ) : cellProps.data.status === "confirmed" ? (
-              <div className="d-flex">
-                <CalendarLink id={cellProps.data._id}/>
-                <SignupLink id={cellProps.data._id} />
-                <RegistrationLink id={cellProps.data._id} />
-                <PaymentLink id={cellProps.data._id} text="Final payment link" color="secondary"/>
-                <BookingStepsEdit id={cellProps.data._id} handleEdit={handleEdit} />
-              </div>
-          ) : (
-            cellProps.data.status === "paid" && (
-              <div className="d-flex">
-                <CalendarLink id={cellProps.data._id}/>
-                <SignupLink id={cellProps.data._id} />
-                <RegistrationLink id={cellProps.data._id} />
-                <PaymentLink id={cellProps.data._id} text="Final payment link" color="secondary"/>
-                <BookingStepsEdit id={cellProps.data._id} handleEdit={handleEdit} />
-              </div>
-            )
           );
         }
       }
