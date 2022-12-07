@@ -8,55 +8,13 @@ import { Mail, Phone, User, X } from "react-feather";
 import { v4 as uuid } from "uuid";
 
 // @scripts
-import countriesData from "../../../data/countries.json";
+import countriesData from "@data/countries.json";
 import { Alert, Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from "reactstrap";
-import { isValidEmail } from "../../../utility/Utils";
+import { isValidEmail } from "@utility/Utils";
+import noShippingAlcoholStates from "@data/no-shipping-alcohol-states.json";
 
 // @styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";
-
-const noShippingAlcoholStates = [
-  {
-    name: "utah",
-    abbreviation: "UT"
-  },
-  {
-    name: "oklahoma",
-    abbreviation: "OK"
-  },
-  {
-    name: "arkansas",
-    abbreviation: "AR"
-  },
-  {
-    name: "mississippi",
-    abbreviation: "MS"
-  },
-  {
-    name: "alabama",
-    abbreviation: "AL"
-  },
-  {
-    name: "Alaska",
-    abbreviation: "AK"
-  },
-  {
-    name: "delaware",
-    abbreviation: "DE"
-  },
-  {
-    name: "rhode Island",
-    abbreviation: "RI"
-  },
-  {
-    name: "Hawaii",
-    abbreviation: "HI"
-  },
-  {
-    name: "Kentucky",
-    abbreviation: "KY"
-  }
-];
 
 const AddNewAttendee = ({
   currentBookingId,

@@ -1,14 +1,8 @@
-// ** React Imports
+// @packages
 import React, { forwardRef, Fragment, useState } from "react";
-// ** Add New Modal Component
-import AddNewAttendee from "./AddNewAttendee";
-import UploadData from "./UploadData";
-// ** Custom Components
 import Avatar from "@components/avatar";
-// ** Third Party Components
 import ReactPaginate from "react-paginate";
 import DataTable from "react-data-table-component";
-import moment from "moment";
 import { ChevronDown, Edit, FileText, File, Grid, Plus, Share, Trash, X } from "react-feather";
 import {
   Badge,
@@ -28,10 +22,16 @@ import {
   Row,
   UncontrolledButtonDropdown
 } from "reactstrap";
+import moment from "moment";
+
+// @scripts
+import AddNewAttendee from "@molecules/add-new-attendee";
+import UploadData from "../../../views/booking/steps/UploadData";
 import ExportToCsv from "@molecules/export-to-csv";
-import { BOOKING_CLOSED_STATUS } from "../../../utility/Constants";
+import { BOOKING_CLOSED_STATUS } from "@utility/Constants";
 import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
 import "./TableAttendees.scss";
+
 // ** Bootstrap Checkbox Component
 const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
   <div className="custom-control custom-checkbox">
@@ -39,6 +39,7 @@ const BootstrapCheckbox = forwardRef(({ onClick, ...rest }, ref) => (
     <label className="custom-control-label" onClick={onClick} />
   </div>
 ));
+
 const DataTableAttendees = ({
   hasKit,
   booking,

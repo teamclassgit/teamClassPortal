@@ -9,7 +9,7 @@ import { useLazyQuery, useQuery } from "@apollo/client";
 import { useParams, useHistory } from "react-router-dom";
 
 // @scripts
-import Attendees from "../../../views/booking/steps/Attendees";
+import Attendees from "@molecules/attendees-step";
 import BookingCheckoutSummary from "../../../views/booking/steps/BookingCheckoutSummary";
 import DateTimeConfirmation from "../../../views/booking/steps/DateTimeConfirmation";
 import DistributorsInvoice from "../../../views/booking/steps/DistributorsInvoice";

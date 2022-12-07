@@ -1,0 +1,42 @@
+[
+  {
+    "name": "utah",
+    "abbreviation": "UT"
+  },
+  {
+    "name": "oklahoma",
+    "abbreviation": "OK"
+  },
+  {
+    "name": "arkansas",
+    "abbreviation": "AR"
+  },
+  {
+    "name": "mississippi",
+    "abbreviation": "MS"
+  },
+  {
+    "name": "alabama",
+    "abbreviation": "AL"
+  },
+  {
+    "name": "Alaska",
+    "abbreviation": "AK"
+  },
+  {
+    "name": "delaware",
+    "abbreviation": "DE"
+  },
+  {
+    "name": "rhode Island",
+    "abbreviation": "RI"
+  },
+  {
+    "name": "Hawaii",
+    "abbreviation": "HI"
+  },
+  {
+    "name": "Kentucky",
+    "abbreviation": "KY"
+  }
+]

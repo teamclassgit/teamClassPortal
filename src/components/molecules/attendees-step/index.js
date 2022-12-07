@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { Col, Form, Row } from "reactstrap";
-import TableAttendees from "./TableAttendees";
+import TableAttendees from "@molecules/table-attendees";
 import { useMutation } from "@apollo/client";
 import mutationUpsertAttendee from "../../../graphql/MutationUpsertAttendee";
 import mutationDeleteAttendee from "../../../graphql/MutationDeleteAttendee";
@@ -8,7 +8,7 @@ import mutationDeleteAttendee from "../../../graphql/MutationDeleteAttendee";
 // @styles
 import "@styles/react/libs/tables/react-dataTable-component.scss";
 
-const Attendees = ({ stepper, type, teamClass, booking, attendees, setRealCountAttendees, customer }) => {
+const Attendees = ({ teamClass, booking, attendees, setRealCountAttendees, customer }) => {
   const [upsertAttendee] = useMutation(mutationUpsertAttendee, {});
   const [removeAttendee] = useMutation(mutationDeleteAttendee, {});
 
