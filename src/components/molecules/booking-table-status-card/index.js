@@ -4,7 +4,7 @@ import { Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } fro
 import { DollarSign, TrendingUp } from "react-feather";
 import Avatar from "@components/avatar";
 import PropTypes from "prop-types";
-import { getTotalsUsingFilter } from "../../../services/BookingService";
+import { getTotalsUsingFilter } from "@services/BookingService";
 
 const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
   const [quoteTotals, setQuoteTotals] = useState({ count: 0, total: 0 });

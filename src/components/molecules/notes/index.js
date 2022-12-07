@@ -7,7 +7,7 @@ import { useMutation } from "@apollo/client";
 
 // @scripts
 import { getUserData } from "@utility/Utils";
-import mutationUpdateBookingNotes from "../../../graphql/MutationUpdateBookingNotes";
+import mutationUpdateBookingNotes from "@graphql/MutationUpdateBookingNotes";
 import { CornerUpRight, X } from "react-feather";
 
 const Notes = ({bookingNotes, setBookingNotes, currentElement}) => {

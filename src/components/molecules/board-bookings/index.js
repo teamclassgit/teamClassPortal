@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { Card, Row } from "reactstrap";
-import mutationUpdateBookingStatus from "../../../graphql/MutationUpdateBookingStatus";
+import mutationUpdateBookingStatus from "@graphql/MutationUpdateBookingStatus";
 import BoardCard from "@molecules/board-card";
 import Board from "@lourenci/react-kanban";
 import { BOOKING_STATUS } from "@utility/Constants";

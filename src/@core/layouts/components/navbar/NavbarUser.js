@@ -8,8 +8,8 @@ import { useDispatch } from "react-redux";
 
 // @scripts
 import UserDropdown from "./UserDropdown";
-import { getUserData } from "../../../../utility/Utils";
-import { themeDark } from "../../../../redux/actions/bookingsBackground";
+import { getUserData } from "@utility/Utils";
+import { themeDark } from "@redux/actions/bookingsBackground";
 
 const NavbarUser = ({ skin, setSkin, setMenuVisibility }) => {
   const [userData, setUserData] = useState(null);

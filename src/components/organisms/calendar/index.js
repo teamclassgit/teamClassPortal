@@ -8,10 +8,10 @@ import { useQuery } from "@apollo/client";
 // @scripts
 import BookingsHeader from "@molecules/bookings-header";
 import Calendar from "./calendar";
-import queryAllBookings from "../../../graphql/QueryGetBookingsWithCriteria";
-import queryAllClasses from "../../../graphql/QueryAllClasses";
-import queryAllCoordinators from "../../../graphql/QueryAllEventCoordinators";
-import { FiltersContext } from "../../../context/FiltersContext/FiltersContext";
+import queryAllBookings from "@graphql/QueryGetBookingsWithCriteria";
+import queryAllClasses from "@graphql/QueryAllClasses";
+import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
+import { FiltersContext } from "@context/FiltersContext/FiltersContext";
 import FiltersModal from "@molecules/filters-modal";
 
 const BookingCalendarList = () => {

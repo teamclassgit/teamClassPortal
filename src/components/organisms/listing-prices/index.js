@@ -14,10 +14,10 @@ import ReactDataGrid from "@inovua/reactdatagrid-enterprise";
 // @scripts
 import { isUserLoggedIn, getUserData } from "@utils";
 import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
-import mutationUpdateClassListingPrices from "../../../graphql/MutationUpdateClassListingPrices";
-import mutationUpdateClassListingTitle from "../../../graphql/MutationUpdateClassListingTitle";
-import queryAllClassesForListingPrice from "../../../graphql/QueryAllClassesForListingPrice";
-import queryAllInstructors from "../../../graphql/QueryAllInstructors";
+import mutationUpdateClassListingPrices from "@graphql/MutationUpdateClassListingPrices";
+import mutationUpdateClassListingTitle from "@graphql/MutationUpdateClassListingTitle";
+import queryAllClassesForListingPrice from "@graphql/QueryAllClassesForListingPrice";
+import queryAllInstructors from "@graphql/QueryAllInstructors";
 
 // @styles
 import "@inovua/reactdatagrid-enterprise/index.css";

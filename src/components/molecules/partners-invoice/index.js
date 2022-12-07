@@ -6,12 +6,12 @@ import { useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 
 // @scripts
-import mutationUpdateBookingInvoiceInstructor from "../../../graphql/MutationUpdateBookingInvoiceInstructor";
-import mutationPayEventToInstructor from "../../../graphql/MutationPayEventToInstructor";
-import queryInstructorById from "../../../graphql/QueryInstructorById";
-import DropZone from "../../../@core/components/drop-zone";
+import mutationUpdateBookingInvoiceInstructor from "@graphql/MutationUpdateBookingInvoiceInstructor";
+import mutationPayEventToInstructor from "@graphql/MutationPayEventToInstructor";
+import queryInstructorById from "@graphql/QueryInstructorById";
+import DropZone from "@components/drop-zone";
 import { uploadFile } from "@utility/Utils";
-import { getEventFullDate } from "../../../services/CalendarEventService";
+import { getEventFullDate } from "@services/CalendarEventService";
 
 // @styles
 import "./partners-invoice.scss";

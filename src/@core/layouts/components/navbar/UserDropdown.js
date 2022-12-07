@@ -7,7 +7,7 @@ import { Power } from "react-feather";
 import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from "reactstrap";
 
 // @scripts
-import { logoutUser } from "../../../../utility/RealmApolloClient";
+import { logoutUser } from "@utility/RealmApolloClient";
 
 const UserDropdown = ({ userData }) => {
   return (
