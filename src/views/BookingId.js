@@ -2,7 +2,7 @@
 import { Col, Row } from "reactstrap";
 
 // @scripts
-import WizardClassBooking from "./WizardClassBooking";
+import WizardClassBooking from "@organisms/wizard-class-booking";
 
 const Booking = () => (
   <Row>

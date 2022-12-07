@@ -7,21 +7,23 @@ import { Calendar, Users, DollarSign } from "react-feather";
 import { Col, Row, Spinner } from "reactstrap";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { useParams, useHistory } from "react-router-dom";
+
 // @scripts
-import Attendees from "./steps/Attendees";
-import BookingCheckoutSummary from "./steps/BookingCheckoutSummary";
-import DateTimeConfirmation from "./steps/DateTimeConfirmation";
-import DistributorsInvoice from "./steps/DistributorsInvoice";
-import InvoiceBuilder from "./steps/InvoiceBuilder";
-import PartnersInvoice from "./steps/PartnersInvoice";
-import Payments from "./steps/Payments";
-import queryAttendeesByBookingId from "../../graphql/QueryAttendeesByBookingId";
-import queryBookingById from "../../graphql/QueryBookingById";
-import queryCalendarEventsByClassId from "../../graphql/QueryCalendarEventsByClassId";
-import queryClassById from "../../graphql/QueryClassById";
-import queryCustomerById from "../../graphql/QueryCustomerById";
-import { RUSH_FEE } from "../../utility/Constants";
-import { getBookingTotals } from "../../services/BookingService";
+import Attendees from "../../../views/booking/steps/Attendees";
+import BookingCheckoutSummary from "../../../views/booking/steps/BookingCheckoutSummary";
+import DateTimeConfirmation from "../../../views/booking/steps/DateTimeConfirmation";
+import DistributorsInvoice from "../../../views/booking/steps/DistributorsInvoice";
+import InvoiceBuilder from "../../../views/booking/steps/InvoiceBuilder";
+import PartnersInvoice from "../../../views/booking/steps/PartnersInvoice";
+import Payments from "../../../views/booking/steps/Payments";
+import queryAttendeesByBookingId from "../../../graphql/QueryAttendeesByBookingId";
+import queryBookingById from "../../../graphql/QueryBookingById";
+import queryCalendarEventsByClassId from "../../../graphql/QueryCalendarEventsByClassId";
+import queryClassById from "../../../graphql/QueryClassById";
+import queryCustomerById from "../../../graphql/QueryCustomerById";
+import { RUSH_FEE } from "../../../utility/Constants";
+import { getBookingTotals } from "../../../services/BookingService";
+
 //@styles
 import "./wizard-class-booking.scss";
 
