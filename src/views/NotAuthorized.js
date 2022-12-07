@@ -1,7 +1,9 @@
+// @packages
 import {Button} from "reactstrap";
 import {Link} from "react-router-dom";
 import notAuthImg from "@src/assets/images/pages/not-authorized.svg";
 
+// @styles
 import "@styles/base/pages/page-misc.scss";
 
 const NotAuthorized = () => {

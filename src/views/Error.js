@@ -1,7 +1,8 @@
+// @packages
 import { Button } from "reactstrap";
 import { Link } from "react-router-dom";
-import errorImg from "@src/assets/images/pages/error.svg";
 
+// @styles
 import "@styles/base/pages/page-misc.scss";
 
 const Error = () => {

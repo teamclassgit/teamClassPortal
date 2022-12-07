@@ -1,5 +1,3 @@
-import React from "react";
-
 // @scripts
 import PrivateRequestsList from "@organisms/private-requests";
 

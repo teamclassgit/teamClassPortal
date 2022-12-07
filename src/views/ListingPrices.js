@@ -1,5 +1,3 @@
-import React from "react";
-
 // @scripts
 import ListingPricesList from "@organisms/listing-prices";
 

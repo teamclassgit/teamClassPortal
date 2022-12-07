@@ -1,5 +1,3 @@
-import React from "react";
-
 // @scripts
 import AllBookingsComponent from "@organisms/all-bookings";
 

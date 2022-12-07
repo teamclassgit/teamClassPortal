@@ -1,3 +1,4 @@
+// @packages
 import {Card, CardBody, CardHeader, CardText, CardTitle} from "reactstrap";
 
 const SecondPage = () => {
