@@ -6,7 +6,7 @@ import moment from "moment";
 import { useMutation } from "@apollo/client";
 
 // @scripts
-import { getUserData } from "../../../utility/Utils";
+import { getUserData } from "@utility/Utils";
 import mutationUpdateBookingNotes from "../../../graphql/MutationUpdateBookingNotes";
 import { CornerUpRight, X } from "react-feather";
 

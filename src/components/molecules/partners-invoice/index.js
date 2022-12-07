@@ -10,7 +10,7 @@ import mutationUpdateBookingInvoiceInstructor from "../../../graphql/MutationUpd
 import mutationPayEventToInstructor from "../../../graphql/MutationPayEventToInstructor";
 import queryInstructorById from "../../../graphql/QueryInstructorById";
 import DropZone from "../../../@core/components/drop-zone";
-import { uploadFile } from "../../../utility/Utils";
+import { uploadFile } from "@utility/Utils";
 import { getEventFullDate } from "../../../services/CalendarEventService";
 
 // @styles

@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 
 // @styles
 import "./MessagesBox.scss";
-import { getUserData } from "../../utility/Utils";
+import { getUserData } from "@utility/Utils";
 
 export async function loadMessages (conversation, currentMessages = [], addMessage) {
   const convoSid = conversation?.sid;

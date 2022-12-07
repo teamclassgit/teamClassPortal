@@ -14,8 +14,8 @@ import {
   updateCurrentConversation,
   updateParticipants,
   updateUnreadMessages
-} from "../../redux/actions/chat";
-import { getUserData } from "../../utility/Utils";
+} from "@redux/actions/chat";
+import { getUserData } from "@utility/Utils";
 
 const ConversationsList = ({ client, setSelectedBooking, selectedBooking, customersData }) => {
   const selectedCustomer = useSelector((state) => state.reducer.information.info);

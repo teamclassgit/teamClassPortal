@@ -4,11 +4,11 @@ import { Client } from "@twilio/conversations";
 import { useMutation } from "@apollo/client";
 import { createContext, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { apolloClient } from "../../utility/RealmApolloClient";
+import { apolloClient } from "@utility/RealmApolloClient";
 // @scripts
-import mutationTokenConversations from "../../graphql/MutationTokenConversations";
-import { handlePromiseRejection } from "../../views/chat/helpers";
-import { getConversationParticipants } from "../../views/chat/Apis";
+import mutationTokenConversations from "@graphql/MutationTokenConversations";
+import { handlePromiseRejection } from "@organisms/chat/helpers";
+import { getConversationParticipants } from "@organisms/chat/Apis";
 import {
   addMessages,
   addConversation,
@@ -25,7 +25,7 @@ import {
   updateUnreadMessages,
   setTotalUnreadMessagesCount,
   cleanUnreadMessages
-} from "../../redux/actions/chat";
+} from "@redux/actions/chat";
 
 export const TwilioContext = createContext();
 

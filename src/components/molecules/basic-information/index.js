@@ -9,7 +9,7 @@ import Cleave from "cleave.js/react";
 import Flatpickr from "react-flatpickr";
 
 // @scripts
-import { BOOKING_CLOSED_STATUS, BOOKING_DEPOSIT_CONFIRMATION_STATUS, BOOKING_PAID_STATUS, BOOKING_QUOTE_STATUS, DATE_AND_TIME_CANCELED_STATUS } from "../../../utility/Constants";
+import { BOOKING_CLOSED_STATUS, BOOKING_DEPOSIT_CONFIRMATION_STATUS, BOOKING_PAID_STATUS, BOOKING_QUOTE_STATUS, DATE_AND_TIME_CANCELED_STATUS } from "@utility/Constants";
 import { selectThemeColors } from "@utils";
 import mutationUpdateBooking from "@graphql/MutationUpdateBookingAndCustomer";
 import mutationOpenBooking from "@graphql/MutationOpenBooking";

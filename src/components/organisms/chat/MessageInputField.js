@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import MessageInput from "./MessageInput";
 import SendMessageButton from "./SendMessageButton";
 import { MAX_FILE_SIZE } from "./Constants";
-import { addMessages } from "../../redux/actions/chat";
+import { addMessages } from "@redux/actions/chat";
 
 // @styles
 import "./MessageInputField.scss";

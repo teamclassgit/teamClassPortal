@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Horizon from "./Horizon";
 import MessageFile from "./MessageFile";
 import MessageView from "./MessageView";
-import { addAttachment } from "../../redux/actions/chat/index";
+import { addAttachment } from "@redux/actions/chat/index";
 import { getBlobFile, getMessageStatus } from "./Apis";
 
 const getMessageTime = (message) => {

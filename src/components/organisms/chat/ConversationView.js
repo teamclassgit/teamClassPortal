@@ -6,13 +6,12 @@ import Avatar from "@components/avatar";
 
 //  @scripts
 import RenderList from "./RenderList";
-import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
 import { NOTIFICATION_LEVEL } from "./Constants";
 import { getMessageStatus } from "./Apis";
 
 // @styles
 import "./ConversationView.scss";
-import { capitalizeString } from "../../utility/Utils";
+import { capitalizeString } from "@utility/Utils";
 import moment from "moment";
 
 const calculateUnreadMessagesWidth = (count) => {

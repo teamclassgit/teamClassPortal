@@ -6,7 +6,7 @@ import moment from "moment-timezone";
 
 // @styles
 import "./RenderList.scss";
-import { DEFAULT_TIME_ZONE_LABEL } from "../../utility/Constants";
+import { DEFAULT_TIME_ZONE_LABEL } from "@utility/Constants";
 
 const RenderList = ({ booking, setSelectedBooking, isActive }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);

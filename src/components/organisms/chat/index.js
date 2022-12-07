@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import ConversationContainer from "./ConversationsContainer";
 import SidebarLeft from "./SidebarLeft";
 import SidebarRight from "./SidebarRight";
-import { TwilioContext } from "../../context/TwilioContext/TwilioContext";
+import { TwilioContext } from "@context/TwilioContext/TwilioContext";
 // @styles
 import "@styles/base/pages/app-chat-list.scss";
 import "@styles/base/pages/app-chat.scss";

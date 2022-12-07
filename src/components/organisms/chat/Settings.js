@@ -15,7 +15,7 @@ import {
   updateConversation, 
   addNotifications,
   informationId
-} from "../../redux/actions/chat";
+} from "@redux/actions/chat";
 import {
   SMS_PREFIX,
   WHATSAPP_PREFIX

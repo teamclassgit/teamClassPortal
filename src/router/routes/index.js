@@ -22,7 +22,7 @@ const Routes = [
   {
     appLayout: true,
     className: "chat-application",
-    component: lazy(() => import("../../views/chat")),
+    component: lazy(() => import("../../views/Chat")),
     path: "/chat"
   },
   {

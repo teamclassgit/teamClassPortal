@@ -8,11 +8,11 @@ import ConversationsDetails from "./ConversationsDetails";
 import MessageInputField from "./MessageInputField";
 import MessagesBox from "./MessagesBox";
 import StartConversation from "./StartConversation";
-import { pushMessages } from "../../redux/actions/chat";
+import { pushMessages } from "@redux/actions/chat";
 
 // @scripts
 import "./ConversationsContainer.scss";
-import { getUserData } from "../../utility/Utils";
+import { getUserData } from "@utility/Utils";
 
 const ConversationContainer = ({ client, conversation, status, customer }) => {
   const userData = getUserData();

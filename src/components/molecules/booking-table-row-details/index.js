@@ -6,7 +6,7 @@ import { Alert } from "reactstrap";
 
 // @scripts
 import CopyClipboard from "@atoms/copy-clipboard";
-import { capitalizeString } from "../../../utility/Utils";
+import { capitalizeString } from "@utility/Utils";
 
 const RowDetails = ({ data }) => {
   const previousEventDays = moment(data.eventDateTime).diff(moment(), "days");

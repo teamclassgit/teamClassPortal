@@ -7,11 +7,11 @@ import { useSelector } from "react-redux";
 
 // @scripts
 import MessageActions from "./MessageActions";
-import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
+import { MessageStatus } from "@redux/reducers/chat/messageListReducer";
 
 // @styles
 import "./MessageView.scss";
-import { getUserData } from "../../utility/Utils";
+import { getUserData } from "@utility/Utils";
 
 const statusStyle = {
   display: "inline-block",

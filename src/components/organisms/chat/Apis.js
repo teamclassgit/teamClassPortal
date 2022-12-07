@@ -1,7 +1,7 @@
 // @scripts
 import { CONVERSATION_PAGE_SIZE } from "./Constants";
-import { MessageStatus } from "../../redux/reducers/chat/messageListReducer";
-import { getUserData } from "../../utility/Utils";
+import { MessageStatus } from "@redux/reducers/chat/messageListReducer";
+import { getUserData } from "@utility/Utils";
 
 export const getConversationParticipants = async (conversation) => await conversation.getParticipants();
 

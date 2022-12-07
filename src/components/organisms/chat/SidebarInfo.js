@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 
 // @scripts
-import mutationUpdateAllUsers from "../../graphql/MutationUpdateAllUsers";
+import mutationUpdateAllUsers from "@graphql/MutationUpdateAllUsers";
 
 const SidebarInfo = ({
   handleUserSidebarLeft,

@@ -11,7 +11,7 @@ import ConvoModal from "./ConvoModal";
 
 // @styles
 import "./ManageParticipantsModal.scss";
-import { getUserData } from "../../utility/Utils";
+import { getUserData } from "@utility/Utils";
 
 const ManageParticipantsModal = ({ handleClose, isModalOpen, onClick, onParticipantRemove, participantsCount, participantsList, title }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);

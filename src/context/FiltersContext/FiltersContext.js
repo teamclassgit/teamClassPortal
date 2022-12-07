@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getUserData } from "../../utility/Utils";
+import { getUserData } from "@utility/Utils";
 
 export const FiltersContext = createContext();
 

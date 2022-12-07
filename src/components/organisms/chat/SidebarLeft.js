@@ -9,16 +9,16 @@ import classnames from "classnames";
 import { X, Search } from "react-feather";
 import { debounce } from "lodash";
 import { InputGroup, InputGroupAddon, InputGroupText, Input, Spinner } from "reactstrap";
-import queryGetCustomersForChat from "../../graphql/QueryGetCustomersForChat";
-import queryGetMostRecentInteractions from "../../graphql/conversations/QueryGetMostRecentInteractions";
+import queryGetCustomersForChat from "@graphql/QueryGetCustomersForChat";
+import queryGetMostRecentInteractions from "@graphql/conversations/QueryGetMostRecentInteractions";
 
 // @scripts
 import ConversationsList from "./ConversationsList";
 import SidebarInfo from "./SidebarInfo";
-import { informationId, updateCurrentConversation } from "../../redux/actions/chat";
+import { informationId, updateCurrentConversation } from "@redux/actions/chat";
 // @styles
 import "./SidebarLeft.scss";
-import { getUserData } from "../../utility/Utils";
+import { getUserData } from "@utility/Utils";
 
 const SidebarLeft = ({
   client,

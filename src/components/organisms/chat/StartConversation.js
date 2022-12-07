@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import { MessageSquare } from "react-feather";
 import { useDispatch } from "react-redux";
 import { useMutation } from "@apollo/client";
-import { informationId, updateCurrentConversation } from "../../redux/actions/chat";
+import { informationId, updateCurrentConversation } from "@redux/actions/chat";
 // @scripts
-import mutationCreateTwilioConversation from "../../graphql/conversations/MutationCreateConversation";
+import mutationCreateTwilioConversation from "@graphql/conversations/MutationCreateConversation";
 import { Spinner } from "reactstrap";
 
 const StartConversation = ({ client, customer }) => {

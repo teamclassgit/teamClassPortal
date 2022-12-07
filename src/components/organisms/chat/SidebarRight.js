@@ -5,13 +5,13 @@ import { useLazyQuery, useQuery } from "@apollo/client";
 import Proptypes from "prop-types";
 
 // @scripts
-import BookingCheckoutSummary from "../../components/molecules/booking-checkout-summary";
-import queryAttendeesByBookingId from "../../graphql/QueryAttendeesByBookingId";
-import queryBookingById from "../../graphql/QueryBookingById";
-import queryCalendarEventsByClassId from "../../graphql/QueryCalendarEventsByClassId";
-import queryClassById from "../../graphql/QueryClassById";
-import queryCustomerById from "../../graphql/QueryCustomerById";
-import { getBookingTotals } from "../../services/BookingService";
+import BookingCheckoutSummary from "@molecules/booking-checkout-summary";
+import queryAttendeesByBookingId from "@graphql/QueryAttendeesByBookingId";
+import queryBookingById from "@graphql/QueryBookingById";
+import queryCalendarEventsByClassId from "@graphql/QueryCalendarEventsByClassId";
+import queryClassById from "@graphql/QueryClassById";
+import queryCustomerById from "@graphql/QueryCustomerById";
+import { getBookingTotals } from "@services/BookingService";
 
 // @styles
 import "./SidebarRight.scss";

@@ -8,7 +8,7 @@ import Settings from "./Settings";
 
 // @styles
 import "./ConversationsDetails.scss";
-import { capitalizeString } from "../../utility/Utils";
+import { capitalizeString } from "@utility/Utils";
 
 const ConversationDetails = ({ convo, participants, customer }) => (
   <div className="conversations-details-container">
