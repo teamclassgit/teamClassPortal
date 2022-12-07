@@ -25,10 +25,10 @@ import {
   BOOKING_PAID_STATUS,
   CHARGE_OUTSIDE_SYSTEM,
   PAYMENT_STATUS_SUCCEEDED
-} from "../../../utility/Constants";
-import mutationUpdateBookingPayments from "../../../graphql/MutationUpdateBookingPayments";
-import paymentMethodOptions from "./PaymentMethodOptions.json";
-import { capitalizeString, isValidEmail } from "../../../utility/Utils";
+} from "@utility/Constants";
+import mutationUpdateBookingPayments from "@graphql/MutationUpdateBookingPayments";
+import paymentMethodOptions from "@data/PaymentMethodOptions.json";
+import { capitalizeString, isValidEmail } from "@utility/Utils";
 import { selectThemeColors } from "@utils";
 
 const AddPaymentModal = ({ 
@@ -245,7 +245,6 @@ const AddPaymentModal = ({
               <Label for="created">Created At*</Label>
               <InputGroup>
                 <Flatpickr
-                  className="small"
                   value={newPaymentCreationDate}
                   options={{
                     disable: [
@@ -258,7 +257,7 @@ const AddPaymentModal = ({
                   dateformat="Y-m-d H:i"
                   data-enable-time
                   id="signUpDateLine"
-                  className="form-control"
+                  className="form-control small"
                   placeholder="Select Date..."
                   onChange={(selectedDates, dateStr, instance) => {
                     setNewPaymentCreationDate(selectedDates);

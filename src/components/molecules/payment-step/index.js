@@ -17,9 +17,9 @@ import {
 } from "reactstrap";
 
 // @scripts
-import AddPaymentModal from "./AddPaymentModal";
-import mutationUpdateBookingPayments from "../../../graphql/MutationUpdateBookingPayments";
-import { capitalizeString } from "../../../utility/Utils";
+import AddPaymentModal from "@molecules/add-payment-modal";
+import mutationUpdateBookingPayments from "@graphql/MutationUpdateBookingPayments";
+import { capitalizeString } from "@utility/Utils";
 import {
   BOOKING_CLOSED_STATUS,
   BOOKING_DATE_REQUESTED_STATUS,
@@ -29,7 +29,7 @@ import {
   CHARGE_OUTSIDE_SYSTEM,
   PAYMENT_STATUS_CANCELED,
   PAYMENT_STATUS_SUCCEEDED
-} from "../../../utility/Constants";
+} from "@utility/Constants";
 
 const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);

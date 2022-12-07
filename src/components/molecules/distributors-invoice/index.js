@@ -6,15 +6,15 @@ import { useQuery, useMutation } from "@apollo/client";
 import moment from "moment";
 
 // @scripts
-import mutationUpdateBookingDistributorInvoice from "../../../graphql/MutationUpdateBookingDistributorInvoice";
-import mutationPayEventToDistributor from "../../../graphql/MutationPayEventToDistributor";
-import queryDistributorById from "../../../graphql/QueryDistributorById";
-import DropZone from "../../../@core/components/drop-zone";
-import { uploadFile } from "../../../utility/Utils";
-import { getEventFullDate } from "../../../services/CalendarEventService";
+import mutationUpdateBookingDistributorInvoice from "@graphql/MutationUpdateBookingDistributorInvoice";
+import mutationPayEventToDistributor from "@graphql/MutationPayEventToDistributor";
+import queryDistributorById from "@graphql/QueryDistributorById";
+import DropZone from "@components/drop-zone";
+import { uploadFile } from "@utility/Utils";
+import { getEventFullDate } from "@services/CalendarEventService";
 
 // @styles
-import "./partners-invoice.scss";
+import "@molecules/partners-invoice/partners-invoice.scss";
 
 const DistributorInvoice = ({ booking, calendarEvent }) => {
   const [totalInvoice, setTotalInvoice] = useState(0);

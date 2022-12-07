@@ -26,7 +26,7 @@ import moment from "moment";
 
 // @scripts
 import AddNewAttendee from "@molecules/add-new-attendee";
-import UploadData from "../../../views/booking/steps/UploadData";
+import UploadData from "@molecules/upload-data-attendees";
 import ExportToCsv from "@molecules/export-to-csv";
 import { BOOKING_CLOSED_STATUS } from "@utility/Constants";
 import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";

@@ -1,9 +1,15 @@
+// @packages
 import React, { Fragment } from "react";
-import { AlertCircle, ArrowLeft, ArrowRight } from "react-feather";
+import { AlertCircle } from "react-feather";
 import { Alert, Button, Col, Form, FormGroup, Row, Badge } from "reactstrap";
 import Flatpickr from "react-flatpickr";
 import moment from "moment";
-import { toAmPm } from "../../../utility/Utils";
+import { useMutation } from "@apollo/client";
+import { v4 as uuid } from "uuid";
+
+// @scripts
+import { toAmPm } from "@utility/Utils";
+import mutationRequestPreferredTime from "@graphql/MutationRequestPreferredTime";
 import {
   DEFAULT_AVAILABILITY_ALWAYS,
   DEFAULT_AVAILABILITY,
@@ -16,12 +22,9 @@ import {
   RUSH_FEE,
   DEFAULT_TIME_ZONE,
   DEFAULT_TIME_ZONE_LABEL
-} from "../../../utility/Constants";
-import { useMutation } from "@apollo/client";
-import mutationRequestPreferredTime from "../../../graphql/MutationRequestPreferredTime";
-import { v4 as uuid } from "uuid";
+} from "@utility/Constants";
 
-const DateTimeConfirmation = ({ stepper, type, classRushFee, availableEvents, calendarEvent, setCalendarEvent, booking, setBooking, teamClass }) => {
+const DateTimeConfirmation = ({ classRushFee, availableEvents, calendarEvent, setCalendarEvent, booking, setBooking, teamClass }) => {
   const [date, setDate] = React.useState(null);
   const [time, setTime] = React.useState(null);
   const [availableTimes, setAvailableTimes] = React.useState(null);

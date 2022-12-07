@@ -11,7 +11,7 @@ import { ChevronDown } from "react-feather";
 import { getCoordinatorName } from "@utility/Common";
 
 // @styles
-import "../../../views/booking/TableBookings/TableBookings.scss";
+import "@molecules/table-discount-codes/TableBookings.scss";
 
 const TablePrivateRequests = ({ filteredData, coordinators }) => {
   const [currentPage, setCurrentPage] = useState(0);

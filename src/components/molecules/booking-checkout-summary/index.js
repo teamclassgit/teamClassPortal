@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardBody, CardFooter, FormText, Media, Badge, Row, Col, CardHeader } from "reactstrap";
 import {
-  BOOKING_DATE_REQUESTED_STATUS,
   BOOKING_PAID_STATUS,
   CREDIT_CARD_FEE,
-  DATE_AND_TIME_CONFIRMATION_STATUS,
-  DATE_AND_TIME_RESERVED_STATUS,
   DEFAULT_TIME_ZONE_LABEL,
   DEFAULT_TIME_ZONE_LABEL_DESCRIPTION,
   RUSH_FEE
-} from "../../../utility/Constants";
+} from "@utility/Constants";
 
 import moment from "moment";
-import { capitalizeString } from "../../../utility/Utils";
-import StatusSelector from "../TableBookings/StatusSelector";
+import StatusSelector from "@atoms/status-selector";
 
+// @scripts
 import styles from "./BookingCheckoutSummary.module.scss";
 
 const BookingCheckoutSummary = ({
@@ -40,7 +37,6 @@ const BookingCheckoutSummary = ({
   finalPayment,
   showFinalPaymentLine,
   attendeesToInvoice,
-  isRushDate,
   totalRushFee
 }) => {
   return (

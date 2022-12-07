@@ -14,7 +14,7 @@ import { useMutation } from "@apollo/client";
 import mutationUpdateDiscountCode from "@graphql/MutationUpdateDiscountCode";
 
 // @styles
-import "../../../views/booking/TableBookings/TableBookings.scss";
+import "@molecules/table-discount-codes/TableBookings.scss";
 
 const TableDiscountCodes = ({ 
   filteredData,
