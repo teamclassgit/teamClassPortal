@@ -10,6 +10,7 @@ import validator from "validator";
 import { selectThemeColors } from "@utils";
 import sendEmailConferenceLinkChangedByCoordinatorMutation from "@graphql/email/sendEmailConferenceLinkChangedByCoordinator";
 import MutationUpdateSettingsBooking from "@graphql/MutationUpdateSettingsBooking";
+import tagsList from "@data/tags-list.json";
 
 const SettingsComponent = ({ currentElement, editMode, closedBookingReason, cancel, onEditCompleted }) => {
 
@@ -75,16 +76,6 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
   const handleDelete = (i) => {
     setClassOptionsTags(classOptionsTags.filter((_, index) => index !== i));
   };
-
-  const tagsList = [
-    { value: "spam", label: "Manual (spam)" },
-    { value: "drift", label: "Manual (drift)" },
-    { value: "referral", label: "Manual (referral)" },
-    { value: "repeat", label: "Manual (repeat)" },
-    { value: "demo event", label: "Demo Event" },
-    { value: "newsletter", label: "Newsletter" },
-    { value: "outbound email", label: "Outbound Email" }
-  ];
 
   const handleUpdateBooking = async () => {
     setProcessing(true);

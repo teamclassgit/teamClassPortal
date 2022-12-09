@@ -22,7 +22,7 @@ const Notes = ({bookingNotes, setBookingNotes, currentElement}) => {
       content: note.note,
       color: "secondary",
       meta: moment(note.date).fromNow(),
-      customContent: userData?.customData?.name === note.author ?
+      customContent: userData?.customData?.name === note.author &&
         (note?.shared ? (
           <small>
             <a href="#" onClick={() => handleUpdateSharedNote(index)}>
@@ -37,7 +37,7 @@ const Notes = ({bookingNotes, setBookingNotes, currentElement}) => {
               <CornerUpRight width={20} />
             </a>
           </small>
-        )) : null
+        ))
     }
   )) : null;
 
