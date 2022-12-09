@@ -44,7 +44,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [indexPayment, setIndexPayment] = useState(null);
   const [updateBooking] = useMutation(mutationUpdateBookingPayments, {});
-  const [showRefoundModal, setShowRefoundModal] = useState(false);
+  const [showRefundModal, setShowRefundModal] = useState(false);
 
   const handleModal = () => setModal(!modal);
 
@@ -421,7 +421,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                                 setIndexPayment(index);
                                 setCurrentPayment({ ...element, index });
                                 setMode("refund");
-                                setShowRefoundModal(true);
+                                setShowRefundModal(true);
                               }}
                               href="#"
                               title="Add refund to this payment"
@@ -459,8 +459,8 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
       <RefundPaymentModal
         booking={booking}
         currentPayment={currentPayment}
-        showRefoundModal={showRefoundModal}
-        setShowRefoundModal={setShowRefoundModal}
+        showRefundModal={showRefundModal}
+        setShowRefundModal={setShowRefundModal}
         mode={mode}
         payments={payments}
         setPayments={setPayments}

@@ -8,7 +8,7 @@ import Flatpickr from 'react-flatpickr';
 // @scripts
 import MutationUpdateBookingRefund from "../graphql/MutationUpdateBookingRefund";
 
-const RefundPaymentModal = ({booking, showRefoundModal, setShowRefoundModal, currentPayment, mode, payments, setPayments, indexPayment}) => {
+const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, currentPayment, mode, payments, setPayments, indexPayment}) => {
   const [refundAmount, setRefundAmount] = useState(0.0);
   const [refundReasons, setRefundReasons] = useState("");
   const [refundId, setRefundId] = useState("");
@@ -23,7 +23,7 @@ const RefundPaymentModal = ({booking, showRefoundModal, setShowRefoundModal, cur
     }
   }, [currentPayment]);
 
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={e => setShowRefoundModal(false)} />;
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={e => setShowRefundModal(false)} />;
 
   const saveRefund = async () => {
     setProcessing(true);
@@ -53,12 +53,12 @@ const RefundPaymentModal = ({booking, showRefoundModal, setShowRefoundModal, cur
       console.log('Error saving refund:', error);
     }
     setProcessing(false);
-    setShowRefoundModal(false);
+    setShowRefundModal(false);
   };
 
   return (
-      <Modal className="sidebar-sm" contentClassName="pt-0"isOpen={showRefoundModal} modalClassName="modal-slide-in">
-        <ModalHeader className="mb-3" toggle={e => setShowRefoundModal(!showRefoundModal) } close={CloseBtn} tag="div">
+      <Modal className="sidebar-sm" contentClassName="pt-0"isOpen={showRefundModal} modalClassName="modal-slide-in">
+        <ModalHeader className="mb-3" toggle={e => setShowRefundModal(!showRefundModal) } close={CloseBtn} tag="div">
           <h5 className="modal-title">Refund Payment</h5>
         </ModalHeader>
         <ModalBody className="flex-grow-1">
@@ -115,9 +115,9 @@ const RefundPaymentModal = ({booking, showRefoundModal, setShowRefoundModal, cur
         <Row>
           <Col md={6}>
             <FormGroup>
-              <Label for="refound">Refound Amount*</Label>
+              <Label for="refund">Refund Amount*</Label>
               <Input
-                id="refound"
+                id="refund"
                 type="number"
                 invalid={refundAmount >= currentPayment?.amount / 100 || refundAmount < 0}
                 min="1"
@@ -135,7 +135,7 @@ const RefundPaymentModal = ({booking, showRefoundModal, setShowRefoundModal, cur
         <Row>
           <Col md={12}>
             <FormGroup>
-              <Label for="reason">Reason to refound*</Label>
+              <Label for="reason">Reason to refund*</Label>
               <Input
                 id="reason"
                 type="textarea"
@@ -151,8 +151,8 @@ const RefundPaymentModal = ({booking, showRefoundModal, setShowRefoundModal, cur
         <Row>
           <Col md={12}>
             <FormGroup>
-            <Label for="refound-id">Refound ID</Label>
-            <Input id="refound-id" 
+            <Label for="refund-id">Refund ID</Label>
+            <Input id="refund-id" 
               placeholder="" 
               value={refundId}
               onChange={(e) => setRefundId(e.target.value)}
@@ -171,7 +171,7 @@ const RefundPaymentModal = ({booking, showRefoundModal, setShowRefoundModal, cur
           >
             {processing ? 'Saving...' : 'Save'}
           </Button>
-          <Button className="mt-1" color="secondary" outline onClick={e => setShowRefoundModal(false)}>
+          <Button className="mt-1" color="secondary" outline onClick={e => setShowRefundModal(false)}>
             Cancel
           </Button>
         </ModalBody>
