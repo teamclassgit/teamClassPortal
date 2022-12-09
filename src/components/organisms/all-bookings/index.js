@@ -6,7 +6,7 @@ import { apolloClient } from "@utility/RealmApolloClient";
 
 import moment from "moment-timezone";
 window.moment = moment;
-import { getQueryFiltersFromFilterArray, getUserData, isNotEmptyArray } from "@utility/Utils";
+import { getQueryFiltersFromFilterArray } from "@utility/Utils";
 import { Modal } from "reactstrap";
 
 //@reactdatagrid packages

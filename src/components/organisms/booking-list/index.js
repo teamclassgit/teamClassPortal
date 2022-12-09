@@ -20,11 +20,10 @@ import QueryAllInstructors from "@graphql/QueryAllInstructors";
 
 const BookingList = () => {
   const defaultFilter = [];
-  const defaultSort = { dir: -1, id: "updatedAt", name: "updatedAt", type: "date" };
+  const sortInfo = { dir: -1, id: "updatedAt", name: "updatedAt", type: "date" };
   const defaultOrFilter = [];
   const [bookingsFilter, setBookingsFilter] = useState([...defaultOrFilter]);
   const [mainFilter, setMainFilter] = useState([]);
-  const [sortInfo, setSortInfo] = useState(defaultSort);
   const [limit, setLimit] = useState(50);
   const [customers, setCustomers] = useState([]);
   const [coordinators, setCoordinators] = useState([]);

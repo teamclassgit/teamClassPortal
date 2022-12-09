@@ -1,12 +1,12 @@
 // @packages
 import Breadcrumbs from "@components/breadcrumbs";
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import Wizard from "@components/wizard";
 import moment from "moment";
 import { Calendar, Users, DollarSign } from "react-feather";
 import { Col, Row, Spinner } from "reactstrap";
 import { useLazyQuery, useQuery } from "@apollo/client";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 // @scripts
 import Attendees from "@molecules/attendees-step";
@@ -50,7 +50,6 @@ const WizardClassBooking = () => {
   const [totalRushFee, setTotalRushFee] = useState(0);
   const [totalServiceFee, setTotalServiceFee] = useState(0);
   const [totalTax, setTotalTax] = useState(0);
-  const [totalUnderGroupFee, setTotalUnderGroupFee] = useState(0);
   const [totalWithoutFee, setTotalWithoutFee] = useState(0);
   const [membershipDiscount, setMembershipDiscount] = useState(0);
   const [totalMembershipDiscount, setTotalMembershipDiscount] = useState(0);
@@ -61,9 +60,8 @@ const WizardClassBooking = () => {
 
   const ref = useRef(null);
   const { id } = useParams();
-  const { history } = useHistory();
 
-  const result = useQuery(queryBookingById, {
+  useQuery(queryBookingById, {
     variables: {
       bookingId: id
     },
@@ -122,7 +120,6 @@ const WizardClassBooking = () => {
     setTotalWithoutFee(bookingTotals.withoutFee.toFixed(2));
     setTotalServiceFee(bookingTotals.fee.toFixed(2));
     setTotalRushFee(bookingTotals.rushFee.toFixed(2));
-    setTotalUnderGroupFee(bookingTotals.underGroupFee.toFixed(2));
     setTotal(bookingTotals.finalValue.toFixed(2));
     setTotalAddons(bookingTotals.addons.toFixed(2));
     setTotalCardFee(bookingTotals.cardFee.toFixed(2));
@@ -270,7 +267,7 @@ const WizardClassBooking = () => {
     return calendarEvent && calendarEvent.rushFee;
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (bookingInfo) getTotals();
   }, [bookingInfo, calendarEvent, tax]);
 

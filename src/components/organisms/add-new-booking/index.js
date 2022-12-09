@@ -47,7 +47,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
     setEmailValid(isValidEmail(email));
   };
 
-  const phoneValidation = (phone) => {
+  const phoneValidation = () => {
     setPhoneValid(true);
   };
 

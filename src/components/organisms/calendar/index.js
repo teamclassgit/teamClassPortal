@@ -77,7 +77,7 @@ const BookingCalendarList = () => {
     }
   });
 
-  const { ...allClasses } = useQuery(queryAllClasses, {
+  useQuery(queryAllClasses, {
     fetchPolicy: "cache-and-network",
     variables: {
       filter: {}
@@ -89,7 +89,7 @@ const BookingCalendarList = () => {
     }
   });
 
-  const { ...allCoordinatorResult } = useQuery(queryAllCoordinators, {
+  useQuery(queryAllCoordinators, {
     variables: {
       filter: {}
     },

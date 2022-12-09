@@ -1,5 +1,5 @@
 // @packages
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import moment from "moment";
 import { Col, Spinner } from "reactstrap";
 import { useQuery } from "@apollo/client";
