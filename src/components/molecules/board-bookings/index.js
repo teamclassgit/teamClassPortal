@@ -1,14 +1,17 @@
+// @packages
 import React, { useEffect, useState } from "react";
-import { useMutation } from "@apollo/client";
 import { Card, Row } from "reactstrap";
-import mutationUpdateBookingStatus from "@graphql/MutationUpdateBookingStatus";
 import BoardCard from "@molecules/board-card";
 import Board from "@lourenci/react-kanban";
-import { BOOKING_STATUS } from "@utility/Constants";
-import "./BoardBookings.scss";
-import "@lourenci/react-kanban/dist/styles.css";
 import Avatar from "@components/avatar";
 import { DollarSign, TrendingUp } from "react-feather";
+
+// @scripts
+import { BOOKING_STATUS } from "@utility/Constants";
+
+// @styles
+import "./BoardBookings.scss";
+import "@lourenci/react-kanban/dist/styles.css";
 
 const BoardBookings = ({
   filteredBookingsQuote = [],
@@ -18,7 +21,6 @@ const BoardBookings = ({
   filteredBookingsPaid = [],
   handleEditModal
 }) => {
-  const [updateBookingStatus] = useMutation(mutationUpdateBookingStatus, {});
   const [loading, setLoading] = useState(true);
 
   const getEmptyBoard = () => {
@@ -39,38 +41,6 @@ const BoardBookings = ({
         cards: []
       }))
     };
-  };
-
-  const getColumnData = (bookingCards, column) => {
-    if (column === "quote") return bookingCards.filter(({ status }) => status.indexOf(column) > -1);
-
-    if (column === "date-requested") {
-      return bookingCards.filter(({ status, eventDateTimeStatus }) => {
-        return status.indexOf(column) > -1 && (eventDateTimeStatus === "reserved" || eventDateTimeStatus === "rejected");
-      });
-    }
-
-    if (column === "accepted") {
-      return bookingCards.filter(({ status, eventDateTimeStatus }) => {
-        return status.indexOf("date-requested") > -1 && eventDateTimeStatus === "confirmed";
-      });
-    }
-
-    if (column === "confirmed") {
-      return bookingCards.filter(({ status, payments }) => {
-        const depositPayment = payments && payments.find((element) => element.paymentName === "deposit" && element.status === "succeeded");
-        return status.indexOf(column) > -1 && depositPayment;
-      });
-    }
-
-    if (column === "paid") {
-      return bookingCards.filter(({ status, payments }) => {
-        const finalPayment = payments && payments.find((element) => element.paymentName === "final" && element.status === "succeeded");
-        return status.indexOf(column) > -1 && finalPayment;
-      });
-    }
-
-    return [];
   };
 
   const getBoard = () => {
@@ -126,7 +96,7 @@ const BoardBookings = ({
     };
   };
 
-  const [loadingBoard, setLoadingBoard] = useState(getLoadingBoard());
+  const [loadingBoard] = useState(getLoadingBoard());
   const [board, setBoard] = useState(getEmptyBoard());
 
   useEffect(() => {

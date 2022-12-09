@@ -20,6 +20,9 @@ import { getBookingAndCalendarEventById } from "@services/BookingService";
 
 // @styles
 import "./BoardCard.scss";
+import { actionsLinkStageBookingBoard } from "./actionsLink";
+import TruckLink from "../../atoms/shipping-tracking-link";
+import MeetingLink from "../../atoms/join-meeting-link";
 
 const BoardCard = ({
   handleEditModal,
@@ -43,11 +46,11 @@ const BoardCard = ({
     rescheduleDateTime,
     shippingTrackingLink,
     signUpDeadline,
-    status,
     timezone,
     timezoneLabel,
     totalInvoice,
-    updatedAt
+    updatedAt,
+    bookingStage
   }
 }) => {
   const [date, setDate] = useState(null);
@@ -315,124 +318,9 @@ const BoardCard = ({
         </CardHeader>
         <CardBody className="p-1 ">{flippedCard ? cardBack() : cardFront()}</CardBody>
         <CardFooter className="card-board-footer justify-content-end">
-          {status === "quote" ? (
-            <div align="right">
-              <a
-                className="mr-1"
-                href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
-                target={"_blank"}
-                title={"Select date and time link"}
-              >
-                <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
-              </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </a>
-            </div>
-          ) : status === "date-requested" && eventDateTimeStatus === "reserved" ? (
-            <div align="right">
-              <a
-                className="mr-1"
-                href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
-                target={"_blank"}
-                title={"Select date and time link"}
-              >
-                <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
-              </a>
-              <a
-                className="mr-1"
-                href={`https://www.teamclass.com/booking/date-time-confirmation/${_id}`}
-                target={"_blank"}
-                title={"Approve/Reject link"}
-              >
-                <Avatar color="light-primary" size="sm" icon={<Check size={18} />} />
-              </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </a>
-            </div>
-          ) : status === "date-requested" && eventDateTimeStatus === "confirmed" ? (
-            <div>
-              <a
-                className="mr-1"
-                href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
-                target={"_blank"}
-                title={"Select date and time link"}
-              >
-                <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={"_blank"} title={"Sign-up link"}>
-                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
-                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Deposit link"}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-              </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </a>
-            </div>
-          ) : status === "date-requested" && eventDateTimeStatus === "rejected" ? (
-            <div align="right">
-              <a
-                className="mr-1"
-                href={`https://www.teamclass.com/customers/select-date-time/${_id}`}
-                target={"_blank"}
-                title={"Select date and time link"}
-              >
-                <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
-              </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </a>
-            </div>
-          ) : status === "confirmed" ? (
-            <div align="right">
-              <a className="mr-1" href={`https://www.teamclass.com/customers/select-date-time/${_id}`} target={"_blank"} title={"Reschedule link"}>
-                <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={"_blank"} title={"Sign-up link"}>
-                <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
-                <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Deposit link"}>
-                <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-              </a>
-              <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Final payment link"}>
-                <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
-              </a>
-              <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-              </a>
-            </div>
-          ) : (
-            status === "paid" && (
-              <div align="right">
-                <a className="mr-1" href={`https://www.teamclass.com/customers/select-date-time/${_id}`} target={"_blank"} title={"Reschedule link"}>
-                  <Avatar color="light-primary" size="sm" icon={<Calendar size={18} />} />
-                </a>
-                <a className="mr-1" href={`https://www.teamclass.com/event/${_id}`} target={"_blank"} title={"Sign-up link"}>
-                  <Avatar color="light-primary" size="sm" icon={<User size={18} />} />
-                </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=registration`} target={"_blank"} title={"Sign-up status"}>
-                  <Avatar color="light-primary" size="sm" icon={<Users size={18} />} />
-                </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Deposit link"}>
-                  <Avatar color="light-primary" size="sm" icon={<DollarSign size={18} />} />
-                </a>
-                <a className="mr-1" href={`https://www.teamclass.com/customers/events/${_id}?type=payment`} target={"_blank"} title={"Final payment link"}>
-                  <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} />
-                </a>
-                <a className="mr-1" onClick={() => handleEdit(_id)} target={"_blank"} title={"Time / Attendees / Invoice Builder"}>
-                  <Avatar color="light-dark" size="sm" icon={<Edit2 size={18} />} />
-                </a>
-              </div>
-            )
-          )}
+          <div align="right">
+            {actionsLinkStageBookingBoard(_id, handleEdit)[bookingStage]}
+          </div>
         </CardFooter>
 
         {showFinalPaymentLabel && (
@@ -441,42 +329,28 @@ const BoardCard = ({
           >
             <div className="ml-1">
               {classVariant && classVariant?.hasKit && (shippingTrackingLink ? (
-                <a
-                  className="mr-1"
+                <TruckLink
+                  color="light-primary"
                   href={shippingTrackingLink}
-                  target={"_blank"}
-                  rel="noopener noreferrer"
-                  title={"Shipping Tracking"}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Truck size={18} />} />
-                </a>
+                  title="Shipping Tracking"
+                />
               ) : (
-                <a
-                  className="mr-1"
-                  href="#"
-                  title={"Tracking link has not been provided"}
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <Avatar color="light-danger" size="sm" icon={<Truck size={18} />} />
-                </a>
+                <TruckLink
+                  color="light-danger"
+                  title="Tracking link has not been provided"
+                />
               ))}
               {joinInfo && joinInfo?.joinUrl ? (
-                <a
+                <MeetingLink
+                  color="light-primary"
                   href={joinInfo?.joinUrl}
-                  target={"_blank"}
-                  rel="noopener noreferrer"
-                  title={`password: ${joinInfo.password}`}
-                >
-                  <Avatar color="light-primary" size="sm" icon={<Video size={18} />} />
-                </a>
+                  title={`password: ${joinInfo.password}`} 
+                />
               ) : (
-                <a
-                  href="#"
-                  title={"Conference link has not been provided"}
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <Avatar color="light-danger" size="sm" icon={<Video size={18} />} />
-                </a>
+                <MeetingLink
+                  color="light-danger"
+                  title="Conference link has not been provided"
+                />
               )}
             </div>
             <Badge size="sm" color={`light-${showFinalPaymentLabel}`} pill>
