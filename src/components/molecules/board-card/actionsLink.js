@@ -1,10 +1,3 @@
-// @scripts
-import BookingStepsEdit from "@atoms/booking-steps";
-import DateTimeConfirmationLink from "@atoms/date-time-confirmation-link";
-import PaymentLink from "@atoms/payment-link";
-import RegistrationLink from "@atoms/registration-link";
-import SignupLink from "@atoms/signup-link";
-
 // @packages
 import { Calendar, Check, DollarSign, Edit2, User, Users } from "react-feather";
 
