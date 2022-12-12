@@ -3,11 +3,12 @@ import Avatar from "@components/avatar";
 import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
 import moment from "moment-timezone";
-import { Calendar, Edit2, Repeat, User, Users, Check, DollarSign, Mail, Phone, Truck, Video, Tag } from "react-feather";
+import { Calendar, Repeat, Mail, Phone, Truck, Video, Tag } from "react-feather";
 import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, Badge } from "reactstrap";
 import { useHistory } from "react-router";
 
 // @scripts
+import BookingActionLink from "@atoms/booking-action-link";
 import CopyClipboard from "@atoms/copy-clipboard";
 import { capitalizeString, isNotEmptyArray } from "@utility/Utils";
 import {
@@ -17,12 +18,10 @@ import {
   DEFAULT_TIME_ZONE_LABEL
 } from "@utility/Constants";
 import { getBookingAndCalendarEventById } from "@services/BookingService";
+import { actionsLinkStageBookingBoard } from "./actionsLink";
 
 // @styles
 import "./BoardCard.scss";
-import { actionsLinkStageBookingBoard } from "./actionsLink";
-import TruckLink from "../../atoms/shipping-tracking-link";
-import MeetingLink from "../../atoms/join-meeting-link";
 
 const BoardCard = ({
   handleEditModal,
@@ -329,27 +328,31 @@ const BoardCard = ({
           >
             <div className="ml-1">
               {classVariant && classVariant?.hasKit && (shippingTrackingLink ? (
-                <TruckLink
+                <BookingActionLink
                   color="light-primary"
-                  href={shippingTrackingLink}
+                  link={shippingTrackingLink}
                   title="Shipping Tracking"
+                  icon={<Truck size={18} />}
                 />
               ) : (
-                <TruckLink
+                <BookingActionLink
                   color="light-danger"
                   title="Tracking link has not been provided"
+                  icon={<Truck size={18} />}
                 />
               ))}
               {joinInfo && joinInfo?.joinUrl ? (
-                <MeetingLink
+                <BookingActionLink
                   color="light-primary"
-                  href={joinInfo?.joinUrl}
-                  title={`password: ${joinInfo.password}`} 
+                  link={joinInfo?.joinUrl}
+                  title={`password: ${joinInfo?.password}`} 
+                  icon={<Video size={18} />}
                 />
               ) : (
-                <MeetingLink
+                <BookingActionLink
                   color="light-danger"
                   title="Conference link has not been provided"
+                  icon={<Video size={18} />}
                 />
               )}
             </div>
