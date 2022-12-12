@@ -159,7 +159,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
     AddressLine1: {
       prop: 'addressLine1',
       type: String,
-      required: false
+      required: booking?.classVariant?.hasKit
     },
     AddressLine2: {
       prop: 'addressLine2',
@@ -169,22 +169,22 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
     City: {
       prop: 'city',
       type: String,
-      required: false
+      required: booking?.classVariant?.hasKit
     },
     State: {
       prop: 'state',
       type: String,
-      required: false
+      required: booking?.classVariant?.hasKit
     },
     Zip: {
       prop: 'zip',
       type: String,
-      required: false
+      required: booking?.classVariant?.hasKit
     },
     Country: {
       prop: 'country',
       type: String,
-      required: false
+      required: booking?.classVariant?.hasKit
     }
   };
 
@@ -235,7 +235,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
       });
     }
   });
-
+  
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="mb-3" toggle={handleModal} close={CloseBtn} tag="div">
@@ -263,7 +263,7 @@ const UploadData = ({ open, handleModal, currentBookingId, saveAttendee, data, s
                   {errors.length > 0 && (
                     <textarea
                       className="form-control"
-                      value={errors.map(({ row, column, error, value }) => `Row ${row} (${column}): ${error} ${value} `)}
+                      value={errors.map(({ row, column, error, value }) => `Row ${row} (${column}): ${error} -> ${value} `)}
                     ></textarea>
                   )}
                 </div>
