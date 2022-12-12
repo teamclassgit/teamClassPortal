@@ -1,9 +1,9 @@
-// @scripts
-import BookingStepsEdit from "@atoms/booking-steps";
+// @packages
+import { Calendar, Check, DollarSign, Edit2, User, Users } from "react-feather";
 
+// @scripts
 import BookingActionLink from "@atoms/booking-action-link";
 import { getBookingLinks } from "@utility/Utils";
-import { Calendar, Check, DollarSign, Edit2, User, Users } from "react-feather";
 
 export const actionsLinkStage = (bookingId, handleEdit) => {
   const stages = {
