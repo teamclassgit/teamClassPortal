@@ -413,7 +413,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                           </div>
                         )}
                         {booking &&
-                          (booking.status !== BOOKING_CLOSED_STATUS && !element?.refund) && (
+                          (booking.status !== BOOKING_CLOSED_STATUS && element.status === "succeeded" && !element?.refund) && (
                           <div className="d-flex align-items-center justify-content-between">
                             <a
                               onClick={(e) => {
