@@ -104,3 +104,12 @@ export const DEFAULT_TIME_ZONE_LABEL_DESCRIPTION = "Central Time";
 export const CHARGE_OUTSIDE_SYSTEM = "outside-of-system";
 export const PAYMENT_STATUS_SUCCEEDED = "succeeded";
 export const PAYMENT_STATUS_CANCELED = "canceled";
+
+export const BOOKING_LINKS = {
+  selectDateAndTime: "customers/select-date-time/:bookingId",
+  dateTimeConfirmation: "booking/date-time-confirmation/:bookingId",
+  deposit: "customers/events/:bookingId?type=payment",
+  finalPayment: "customers/events/:bookingId?type=payment",
+  signUp: "event/:bookingId",
+  signUpStatus: "customers/events/:bookingId?type=registration"
+};
