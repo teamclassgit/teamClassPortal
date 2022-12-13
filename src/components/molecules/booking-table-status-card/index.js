@@ -64,7 +64,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
               <h6>Quote</h6>
             </CardTitle>
             <CardText tag="div" className="booking-table-status-card-content">
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3">
+              <div className="d-flex justify-content-start align-items-center font-small-3">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
                 </div>
@@ -75,7 +75,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                   <div className="font-small-1">Events</div>
                 </div>
               </div>
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3">
+              <div className="d-flex justify-content-start align-items-center font-small-3">
                 <div>
                   <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
                 </div>
@@ -109,7 +109,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
               <h6>Requested </h6>
             </CardTitle>
             <CardText tag="div" className="booking-table-status-card-content">
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
+              <div className="d-flex justify-content-start align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
                 </div>
@@ -120,7 +120,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                   <div className="font-small-1">Events</div>
                 </div>
               </div>
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3">
+              <div className="d-flex justify-content-start align-items-center font-small-3">
                 <div>
                   <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
                 </div>
@@ -154,7 +154,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
               <h6>Rejected</h6>
             </CardTitle>
             <CardText tag="div" className="booking-table-status-card-content">
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
+              <div className="d-flex justify-content-start align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
                 </div>
@@ -165,7 +165,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                   <div className="font-small-1">Events</div>
                 </div>
               </div>
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3">
+              <div className="d-flex justify-content-start align-items-center font-small-3">
                 <div>
                   <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
                 </div>
@@ -200,7 +200,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
               <h6>Accepted</h6>
             </CardTitle>
             <CardText tag="div" className="booking-table-status-card-content">
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
+              <div className="d-flex justify-content-start align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
                 </div>
@@ -211,7 +211,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                   <div className="font-small-1">Events</div>
                 </div>
               </div>
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3">
+              <div className="d-flex justify-content-start align-items-center font-small-3">
                 <div>
                   <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
                 </div>
@@ -246,7 +246,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
               <h6>Deposit paid</h6>
             </CardTitle>
             <CardText tag="div" className="booking-table-status-card-content">
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
+              <div className="d-flex justify-content-start align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
                 </div>
@@ -257,7 +257,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                   <div className="font-small-1">Events</div>
                 </div>
               </div>
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3">
+              <div className="d-flex justify-content-start align-items-center font-small-3">
                 <div>
                   <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
                 </div>
@@ -292,7 +292,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
               <h6>Paid</h6>
             </CardTitle>
             <CardText tag="div" className="booking-table-status-card-content">
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
+              <div className="d-flex justify-content-start align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
                 </div>
@@ -303,7 +303,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
                   <div className="font-small-1">Events</div>
                 </div>
               </div>
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3">
+              <div className="d-flex justify-content-start align-items-center font-small-3">
                 <div>
                   <Avatar className="" color="light-primary" icon={<DollarSign size={18} />} />
                 </div>
