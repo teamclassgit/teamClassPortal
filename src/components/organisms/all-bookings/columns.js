@@ -13,6 +13,7 @@ import { isNotEmptyArray } from "@utility/Utils";
 import { DEFAULT_TIME_ZONE_LABEL } from "@utility/Constants";
 import { getBookingAndCalendarEventById } from "@services/BookingService";
 import { actionsLinkStage } from "./actionsLink";
+import { Fragment } from "react";
 
 export const getColumns = (coordinators, classes, setCurrentElement, handleClickCurrentElement) => {
 
@@ -31,7 +32,11 @@ export const getColumns = (coordinators, classes, setCurrentElement, handleClick
         if (data) {
           return (
             <div className="d-flex">
-              {actionsLinkStage(data._id, handleEdit)[data.bookingStage]}
+              {actionsLinkStage(data._id, handleEdit)[data.bookingStage].map((action, idx) => (
+                <Fragment key={`${data.bookingStage}${idx}`}>
+                  {action}
+                </Fragment>
+              ))}
             </div>
           );
         }

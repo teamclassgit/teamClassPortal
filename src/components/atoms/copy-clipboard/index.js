@@ -17,7 +17,12 @@ const CopyClipboard = ({ text, className }) => {
 
   return (
     <CopyToClipboard text={text} onCopy={onCopyText}>
-      <Button color="link" className={`${className} btn-copy p-0`} title="Copy to clipboard" onClick={(e) => e.preventDefault()}>
+      <Button
+        color="link"
+        className={`${className} btn-copy p-0`}
+        title="Copy to clipboard"
+        onClick={(e) => e.preventDefault()}
+      >
         <Copy className=" text-muted" size={12} />
         <small className="text-secondary text-lowercase">{isCopied ? " Copied!" : ""}</small>
       </Button>

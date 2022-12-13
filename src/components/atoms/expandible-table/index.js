@@ -1,3 +1,6 @@
+// @packages
+import { PropTypes } from "prop-types";
+
 const ExpandableTable = ({ data }) => (
   <>
     <div className="expandable-content p-2">
@@ -25,3 +28,8 @@ const ExpandableTable = ({ data }) => (
 );
 
 export default ExpandableTable;
+
+ExpandableTable.propTypes = {
+  text: PropTypes.string.isRequired,
+  className: PropTypes.string
+};

@@ -1,4 +1,5 @@
 // @packages
+import { Fragment } from "react";
 import { useHistory } from "react-router-dom";
 import moment from "moment";
 
@@ -31,7 +32,11 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
         if (data) {
           return (
             <div className="d-flex">
-              {actionsLinkStage(data._id, handleEdit)[data.bookingStage]}
+              {actionsLinkStage(data._id, handleEdit)[data.bookingStage].map((action, idx) => (
+                <Fragment key={`${data.bookingStage}${idx}`}>
+                  {action}
+                </Fragment>
+              ))}
             </div>
           );
         }

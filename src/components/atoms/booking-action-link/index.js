@@ -1,6 +1,7 @@
 // @packages
 import React from "react";
 import Avatar from "@components/avatar";
+import PropTypes from "prop-types";
 
 const BookingActionLink = ({ color, icon, link, title, onClick }) => ( 
   <a
@@ -16,3 +17,11 @@ const BookingActionLink = ({ color, icon, link, title, onClick }) => (
 );
 
 export default BookingActionLink;
+
+BookingActionLink.propTypes = {
+  color: PropTypes.string,
+  icon: PropTypes.object,
+  link: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  onClick: PropTypes.func
+};
