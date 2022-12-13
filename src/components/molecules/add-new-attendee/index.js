@@ -476,12 +476,13 @@ export default AddNewAttendee;
 AddNewAttendee.propTypes = {
   currentBookingId: PropTypes.string,
   currentElement: PropTypes.object,
-  data: PropTypes.object,
+  data: PropTypes.array,
   handleModal: PropTypes.func,
   mode: PropTypes.string,
-  openModal: PropTypes.bool,
+  open: PropTypes.bool,
   saveAttendee: PropTypes.func,
   setData: PropTypes.func,
   teamClassInfo: PropTypes.object,
-  updateAttendeesCount: PropTypes.func
+  updateAttendeesCount: PropTypes.func,
+  booking: PropTypes.object
 };
