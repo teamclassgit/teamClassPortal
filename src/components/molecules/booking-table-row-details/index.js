@@ -60,7 +60,9 @@ const RowDetails = ({ data }) => {
             <td>
               <strong>Booking ID</strong>
             </td>
-            <td>{data._id}</td> <CopyClipboard className="z-index-2" text={data._id} />
+            <td>
+              {data._id} <CopyClipboard className="z-index-2" text={data._id} />
+            </td>
           </tr>
           <tr>
             <td>Class:</td>
