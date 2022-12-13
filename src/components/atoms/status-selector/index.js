@@ -1,4 +1,5 @@
-import React from "react";
+// @packages
+import { PropTypes } from "prop-types";
 
 function StatusSelector ({ row, calendarEvent }) {
   const getColumnData = () => {
@@ -33,3 +34,8 @@ function StatusSelector ({ row, calendarEvent }) {
 }
 
 export default StatusSelector;
+
+StatusSelector.propTypes = {
+  row: PropTypes.object,
+  calendarEvent: PropTypes.object
+};
