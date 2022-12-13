@@ -14,9 +14,9 @@ const ExpandableTable = ({ data }) => (
       <p className="mb-0 pb-0">
         <span className="font-weight-bold">Personalizations: </span>
       </p>
-      {data.personalizations.map((item2) => {
+      {data.personalizations.map((item2, index) => {
         return (
-          <ul className="m-0 p-0 ml-2">
+          <ul className="m-0 p-0 ml-2" key={index}>
             <li>
               {item2.name}: {item2.value}
             </li>
@@ -30,6 +30,5 @@ const ExpandableTable = ({ data }) => (
 export default ExpandableTable;
 
 ExpandableTable.propTypes = {
-  text: PropTypes.string.isRequired,
-  className: PropTypes.string
+  data: PropTypes.object.isRequired
 };
