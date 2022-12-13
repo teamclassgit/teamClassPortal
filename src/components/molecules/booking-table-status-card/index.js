@@ -6,6 +6,9 @@ import Avatar from "@components/avatar";
 import PropTypes from "prop-types";
 import { getTotalsUsingFilter } from "@services/BookingService";
 
+// @styles
+import "./booking-table-status-card.scss";
+
 const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
   const [quoteTotals, setQuoteTotals] = useState({ count: 0, total: 0 });
   const [requestedTotals, setRequestedTotals] = useState({ count: 0, total: 0 });
@@ -60,8 +63,8 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
             <CardTitle className="text-center mb-0 ">
               <h6>Quote</h6>
             </CardTitle>
-            <CardText>
-              <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
+            <CardText tag="div" className="booking-table-status-card-content">
+              <div className="d-flex justify-content-start d-flex align-items-center font-small-3">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
                 </div>
@@ -105,7 +108,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
             <CardTitle className="text-center mb-0">
               <h6>Requested </h6>
             </CardTitle>
-            <CardText>
+            <CardText tag="div" className="booking-table-status-card-content">
               <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
@@ -150,7 +153,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
             <CardTitle className="text-center mb-0">
               <h6>Rejected</h6>
             </CardTitle>
-            <CardText>
+            <CardText tag="div" className="booking-table-status-card-content">
               <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
@@ -196,7 +199,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
             <CardTitle className="text-center mb-0">
               <h6>Accepted</h6>
             </CardTitle>
-            <CardText>
+            <CardText tag="div" className="booking-table-status-card-content">
               <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
@@ -242,7 +245,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
             <CardTitle className="text-center mb-0">
               <h6>Deposit paid</h6>
             </CardTitle>
-            <CardText>
+            <CardText tag="div" className="booking-table-status-card-content">
               <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
@@ -288,7 +291,7 @@ const BookingsTableStatusCards = ({ status, setStatus, filters }) => {
             <CardTitle className="text-center mb-0">
               <h6>Paid</h6>
             </CardTitle>
-            <CardText>
+            <CardText tag="div" className="booking-table-status-card-content">
               <div className="d-flex justify-content-start d-flex align-items-center font-small-3 ">
                 <div>
                   <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
