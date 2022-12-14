@@ -1,7 +1,7 @@
 // @packages
 import Avatar from "@components/avatar";
 import PropTypes from "prop-types";
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import moment from "moment-timezone";
 import { Calendar, Repeat, Mail, Phone, Truck, Video, Tag } from "react-feather";
 import { Alert, Card, CardBody, CardHeader, CardFooter, Button, Media, Badge } from "reactstrap";
@@ -318,7 +318,11 @@ const BoardCard = ({
         <CardBody className="p-1 ">{flippedCard ? cardBack() : cardFront()}</CardBody>
         <CardFooter className="card-board-footer justify-content-end">
           <div align="right">
-            {actionsLinkStageBookingBoard(_id, handleEdit)[bookingStage]}
+            {actionsLinkStageBookingBoard(_id, handleEdit)[bookingStage].map((action, index) => (
+                <Fragment key={`${bookingStage}${_id}${index}`}>
+                  {action}
+                </Fragment>
+              ))}
           </div>
         </CardFooter>
 
