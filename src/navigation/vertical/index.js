@@ -60,5 +60,11 @@ export default [
     title: "Late requests",
     icon: <User size={20} />,
     navLink: "/late-requests"
+  },
+  {
+    id: "checkout9",
+    title: "Instructors",
+    icon: <User size={20} />,
+    navLink: "/instructors"
   }
 ];

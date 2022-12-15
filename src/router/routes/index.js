@@ -58,6 +58,10 @@ const Routes = [
     component: lazy(() => import("../../views/LateRequests"))
   },
   {
+    path: "/instructors",
+    component: lazy(() => import("../../views/Instructors"))
+  },
+  {
     path: "/login",
     component: lazy(() => import("../../views/Login")),
     layout: "BlankLayout",
