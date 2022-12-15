@@ -2,7 +2,7 @@
 import { Edit, Trash2 } from "react-feather";
 import { CustomInput } from "reactstrap";
 
-export const getColumns = (handleModal, setIsModeEdit, setDataIntructor) => {
+export const getColumns = (handleModal, setIsModeEdit, setCurrentIntructor, handleModalDelete, updateIsActiveInstructor, proccesing) => {
   const columns = [
     {
       name: "NAME",
@@ -26,23 +26,40 @@ export const getColumns = (handleModal, setIsModeEdit, setDataIntructor) => {
     {
       name: "ACTIVE",
       selector: "active",
-      cell: (row) => <CustomInput type="switch" id="active" value={row.active}>Active</CustomInput>
+      cell: (row) => (
+        <CustomInput
+          id={row._id}
+          type="switch"
+          checked={row.active}
+          onChange={(e) => updateIsActiveInstructor(e.target.checked, row._id)}
+          disabled={proccesing}
+        >
+          Active
+        </CustomInput>
+      )
     },
     {
-      name: "EDIT",
+      name: "",
       selector: "edit",
       cell: (row) => (
         <>
-        <Trash2 className="cursor-pointer mr-1" size={20}/>
-        <Edit
-          className="cursor-pointer"
-          size={20}
-          onClick={() => {
-            setIsModeEdit(true);
-            setDataIntructor(row);
-            handleModal();
-          }}
-        />
+          <Trash2
+            className="cursor-pointer mr-1"
+            size={20}
+            onClick={() => {
+              setCurrentIntructor(row);
+              handleModalDelete();
+            }}
+          />
+          <Edit
+            className="cursor-pointer"
+            size={20}
+            onClick={() => {
+              setIsModeEdit(true);
+              setCurrentIntructor(row);
+              handleModal();
+            }}
+          />
         </>
       )
     }

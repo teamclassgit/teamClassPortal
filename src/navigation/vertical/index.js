@@ -1,4 +1,4 @@
-import { BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, Inbox, User } from "react-feather";
+import { Airplay, BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, TrendingUp, Database, Filter, User, UserX, Users } from "react-feather";
 
 export default [
   {
@@ -58,13 +58,48 @@ export default [
   {
     id: "checkout8",
     title: "Late requests",
-    icon: <User size={20} />,
+    icon: <UserX size={20} />,
     navLink: "/late-requests"
   },
   {
     id: "checkout9",
     title: "Instructors",
-    icon: <User size={20} />,
+    icon: <Users size={20} />,
     navLink: "/instructors"
+  },
+  {
+    id: "checkout10",
+    title: "Coordinators",
+    icon: <Users size={20} />,
+    navLink: "/coordinators"
+  },
+  {
+    id: "checkout11",
+    title: "Distributors",
+    icon: <Users size={20} />,
+    navLink: "/distributors"
+  },
+  {
+    id: "checkout12",
+    title: "Reviews",
+    icon: <BookOpen size={20} />,
+    navLink: "/reviews"
   }
+  // {
+  //   id: "dashboards50",
+  //   title: "Dashboards",
+  //   icon: <BookOpen size={20} />,
+  //   badge: "light-warning",
+  //   badgeText: "2",
+  //   children: [
+  //     // This is array of menu items or menu groups
+  //     // NOTE: You can"t use menu header as children
+  //     {
+  //       id: "uidnh1-223165dff",
+  //       title: "Reviews",
+  //       icon: <BookOpen size={20} />,
+  //       navLink: "/reviews"
+  //     }
+  //   ]
+  // }
 ];
