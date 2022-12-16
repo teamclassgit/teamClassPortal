@@ -1,4 +1,4 @@
-import { Airplay, BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, TrendingUp, Database, Filter, User, UserX, Users } from "react-feather";
+import { BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, User, UserX, Users } from "react-feather";
 
 export default [
   {
@@ -38,22 +38,10 @@ export default [
     navLink: "/general-inquiries"
   },
   {
-    id: "checkout5",
-    title: "Discount codes",
-    icon: <Tag size={20} />,
-    navLink: "/discount-codes"
-  },
-  {
     id: "checkout6",
     title: "Gift Baskets",
     icon: <Gift size={20} />,
     navLink: "/gift-baskets"
-  },
-  {
-    id: "checkout7",
-    title: "Listing Prices",
-    icon: <Edit2 size={20} />,
-    navLink: "/listing-prices"
   },
   {
     id: "checkout8",
@@ -62,22 +50,42 @@ export default [
     navLink: "/late-requests"
   },
   {
-    id: "checkout9",
-    title: "Instructors",
-    icon: <Users size={20} />,
-    navLink: "/instructors"
-  },
-  {
-    id: "checkout10",
-    title: "Coordinators",
-    icon: <Users size={20} />,
-    navLink: "/coordinators"
-  },
-  {
-    id: "checkout11",
-    title: "Distributors",
-    icon: <Users size={20} />,
-    navLink: "/distributors"
+    id: "masterData",
+    title: "Master Data",
+    icon: <Briefcase size={20} />,
+    badge: "light-warning",
+    children: [
+      {
+        id: "checkout7",
+        title: "Listing Prices",
+        icon: <Edit2 size={20} />,
+        navLink: "/listing-prices"
+      },
+      {
+        id: "checkout5",
+        title: "Discount codes",
+        icon: <Tag size={20} />,
+        navLink: "/discount-codes"
+      },
+      {
+        id: "instructors",
+        title: "Instructors",
+        icon: <Users size={20} />,
+        navLink: "/instructors"
+      },
+      {
+        id: "coordinators",
+        title: "Coordinators",
+        icon: <Users size={20} />,
+        navLink: "/coordinators"
+      },
+      {
+        id: "checkout11",
+        title: "Distributors",
+        icon: <Users size={20} />,
+        navLink: "/distributors"
+      }
+    ]
   },
   {
     id: "checkout12",
@@ -85,21 +93,4 @@ export default [
     icon: <BookOpen size={20} />,
     navLink: "/reviews"
   }
-  // {
-  //   id: "dashboards50",
-  //   title: "Dashboards",
-  //   icon: <BookOpen size={20} />,
-  //   badge: "light-warning",
-  //   badgeText: "2",
-  //   children: [
-  //     // This is array of menu items or menu groups
-  //     // NOTE: You can"t use menu header as children
-  //     {
-  //       id: "uidnh1-223165dff",
-  //       title: "Reviews",
-  //       icon: <BookOpen size={20} />,
-  //       navLink: "/reviews"
-  //     }
-  //   ]
-  // }
 ];
