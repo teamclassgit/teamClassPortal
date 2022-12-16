@@ -151,6 +151,7 @@ const InstructorsList = () => {
     <>
       <Container>
         <TasksBar
+          setElementToAdd={function () {}}
           titleView={"Instructors"}
           titleBadge={` ${allInstructors.length} records found`}
           showAddModal={handleModal}
