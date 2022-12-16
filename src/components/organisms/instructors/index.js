@@ -20,7 +20,7 @@ import "@styles/react/libs/tables/react-dataTable-component.scss";
 
 const InstructorsList = () => {
   const [allInstructors, setAllInstructors] = useState([]);
-  const [elementToAdd, setElementToAdd] = useState({});
+  const [instructorDataToExport, setInstructorDataToExport] = useState(null);
   const [isModeEdit, setIsModeEdit] = useState(false);
   const [currentInstructor, setCurrentIntructor] = useState({});
   const [allTeamClassesData, setAllTeamClassData] = useState([]);
@@ -85,6 +85,40 @@ const InstructorsList = () => {
     }
   }, [openModalDelete, currentInstructor]);
 
+  useEffect(() => {
+    if (allInstructors) {
+      const instructors = [...allInstructors];
+      const instructorsArray = [];
+      const headers = [
+        "Id",
+        "Name",
+        "Email",
+        "Phone",
+        "Company",
+        "Special Features",
+        "Active"
+      ];
+
+      instructorsArray.push(headers);
+
+      instructors.forEach((element) => {
+        const row = [
+          element._id,
+          element.name,
+          element.email,
+          element.phone,
+          element.company,
+          element.specialFeatures?.invoicing.toString(),
+          element.active.toString()
+        ];
+        instructorsArray.push(row);
+      });
+      setInstructorDataToExport(instructorsArray);
+    }
+  }, [allInstructors]);
+
+  const getDataInstructorsToExport = () => instructorDataToExport;
+
   const handleDeleteInstructor = () => {
     if (!allTeamClassesData.map(({instructorId}) => instructorId).includes(currentInstructor._id)) {
       deleteInstructor();
@@ -113,16 +147,14 @@ const InstructorsList = () => {
 
   const columns = getColumns(handleModal, setIsModeEdit, setCurrentIntructor, handleModalDelete, updateIsActiveInstructor, proccesing);
 
-
   return (
     <>
       <Container>
         <TasksBar
-          setElementToAdd={setElementToAdd}
           titleView={"Instructors"}
           titleBadge={` ${allInstructors.length} records found`}
           showAddModal={handleModal}
-          // getDataToExport={getDataToExport}
+          getDataToExport={getDataInstructorsToExport}
         />
         <DataTable
           columns={columns}
