@@ -8,6 +8,9 @@ export default gql`
       email
       default
       crmId
+      phone
+      twilioPhone
+      calendlyLink
     }
   }
 `;

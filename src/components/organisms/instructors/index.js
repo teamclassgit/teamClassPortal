@@ -1,13 +1,13 @@
 // @packages
 import { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import DataTable from "react-data-table-component";
 import InstructorsModal from "@molecules/instructor-modal";
 
 // @scripts
 import TasksBar from "@molecules/task-bar";
 import queryAllInstructors from "@graphql/QueryAllInstructors";
-import queryAllTeamClasses from "@graphql/QueryAllClasses";
+import queryAllTeamClassesByInstructor from "@graphql/QueryAllClasses";
 import { getColumns } from "./columns";
 import { ChevronDown } from "react-feather";
 import { Container } from "reactstrap";
@@ -23,13 +23,12 @@ const InstructorsList = () => {
   const [instructorDataToExport, setInstructorDataToExport] = useState(null);
   const [isModeEdit, setIsModeEdit] = useState(false);
   const [currentInstructor, setCurrentIntructor] = useState({});
-  const [allTeamClassesData, setAllTeamClassData] = useState([]);
   const [openModalInstructor, setOpenModalInstructor] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [isDeleteInstructorError, setIsDeleteInstructorError] = useState(false);
   const [isMutationError, setIsMutarionError] = useState(false);
   const [proccesing, setProccesing] = useState(false);
-  const [teamClassesByInstructor, setTeamClassesByInstructor] = useState(false);
+  const [teamClassesByInstructor, setTeamClassesByInstructor] = useState([]);
 
   const handleModal = () => setOpenModalInstructor(!openModalInstructor);
   const handleModalDelete = () => setOpenModalDelete(!openModalDelete);
@@ -45,13 +44,15 @@ const InstructorsList = () => {
     }
   });
 
-  useQuery(queryAllTeamClasses, {
+  const [getClassesByInstructor] = useLazyQuery(queryAllTeamClassesByInstructor, {
     variables: {
-      filter: {}
+      filter: {
+        instructorId: currentInstructor._id
+      }
     },
     fetchPolicy: "cache-and-network",
-    onCompleted: (teamClassInstructorIdResultData) => {
-      setAllTeamClassData(teamClassInstructorIdResultData.teamClasses);
+    onCompleted: (data) => {
+      setTeamClassesByInstructor(data?.teamClasses || []);
     }
   });
 
@@ -76,9 +77,7 @@ const InstructorsList = () => {
 
   useEffect(() => {
     if (openModalDelete) {
-      setTeamClassesByInstructor(allTeamClassesData && allTeamClassesData.filter(({ instructorId }) => (
-        instructorId === currentInstructor._id)
-      ).map(({title}) => title));
+      getClassesByInstructor();
     } else {
       setIsDeleteInstructorError(false);
       setIsMutarionError(false);
@@ -120,7 +119,7 @@ const InstructorsList = () => {
   const getDataInstructorsToExport = () => instructorDataToExport;
 
   const handleDeleteInstructor = () => {
-    if (!allTeamClassesData.map(({instructorId}) => instructorId).includes(currentInstructor._id)) {
+    if (!teamClassesByInstructor.length) {
       deleteInstructor();
       return;
     }
@@ -145,7 +144,14 @@ const InstructorsList = () => {
     setProccesing(false);
   };
 
-  const columns = getColumns(handleModal, setIsModeEdit, setCurrentIntructor, handleModalDelete, updateIsActiveInstructor, proccesing);
+  const columns = getColumns(
+    handleModal,
+    setIsModeEdit,
+    setCurrentIntructor,
+    handleModalDelete,
+    updateIsActiveInstructor,
+    proccesing
+  );
 
   return (
     <>
@@ -179,7 +185,7 @@ const InstructorsList = () => {
             toggleModalDelete={handleModalDelete}
             handleDeleteItem={handleDeleteInstructor}
             isDeleteInstructorError={isDeleteInstructorError}
-            titleClasses={teamClassesByInstructor}
+            titleClasses={teamClassesByInstructor.map(({title}) => title)}
             isMutationError={isMutationError}
             proccesing={proccesing}
           />

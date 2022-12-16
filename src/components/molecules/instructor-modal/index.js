@@ -157,7 +157,6 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
       className="sidebar-sm" 
       contentClassName="pt-0"
       isOpen={open}
-      onClosed={() => alert("modal is closed")}
       modalClassName="modal-slide-in"
     >
       <ModalHeader toggle={handleModalClose}>
