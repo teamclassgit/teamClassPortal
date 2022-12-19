@@ -17,6 +17,7 @@ import mutationUpdateActiveInstructor from "@graphql/MutationUpdateActiveInstruc
 
 // @styles
 import "@styles/react/libs/tables/react-dataTable-component.scss";
+import QueryBookingRouting from "../../../graphql/QueryBookingRouting";
 
 const InstructorsList = () => {
   const [allInstructors, setAllInstructors] = useState([]);
