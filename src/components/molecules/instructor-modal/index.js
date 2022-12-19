@@ -2,6 +2,7 @@
 import { Briefcase, Mail, Phone, Plus, User } from "react-feather";
 import { Alert, Button, CustomInput, Form, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import Cleave from "cleave.js/react";
+import CleavePhone from "cleave.js/dist/addons/cleave-phone.us";
 import { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { v4 as uuid } from "uuid";
@@ -211,6 +212,7 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
               className="form-control"
               placeholder="Phone"
               id="phone"
+              options={{ phone: true, phoneRegionCode: "US"}}
               value={instructor && instructor.phone}
               onChange={(e) => handleChange(e.target.value, "phone")}
             />

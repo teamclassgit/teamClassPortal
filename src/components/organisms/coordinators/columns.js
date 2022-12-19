@@ -2,7 +2,19 @@
 import { Edit, Trash2 } from "react-feather";
 import { CustomInput } from "reactstrap";
 
-export const getColumns = (handleModal, setIsModeEdit, setCurrentCoordinator, handleModalDelete, proccesing) => {
+export const getColumns = (
+  handleModal,
+  setIsModeEdit,
+  setCurrentCoordinator,
+  handleModalDelete,
+  processingRouting,
+  bookingRoutingEventCoordinators,
+  updateBookingRoutingEventCoordinators,
+  processingLargeEventRouting,
+  updateBookingRoutingEventCoordinatorsLargeEvents,
+  updateLargeEventsCoodinator,
+  bookingRoutingEventCoordinatorsLargeEvents
+) => {
   const columns = [
     {
       name: "NAME",
@@ -16,9 +28,9 @@ export const getColumns = (handleModal, setIsModeEdit, setCurrentCoordinator, ha
     },
     {
       name: "DEFAULT?",
-      selector: "active",
+      selector: "default",
       cell: (row) => (
-        <span>{row.active ? "Yes" : "No"}</span>
+        <span>{row.default ? "Yes" : "No"}</span>
       )
     },
     {
@@ -28,11 +40,37 @@ export const getColumns = (handleModal, setIsModeEdit, setCurrentCoordinator, ha
         <CustomInput
           id={row._id}
           type="switch"
-          checked={false}
-          // onChange={(e) => updateIsActiveInstructor(e.target.checked, row._id)}
-          disabled={proccesing}
+          checked={
+            bookingRoutingEventCoordinators &&
+            bookingRoutingEventCoordinators.includes(row._id)
+          }
+          onChange={(e) => {
+            updateBookingRoutingEventCoordinators(e.target.checked, row._id);
+          }}
+          disabled={processingRouting}
         >
-          <span>{row.active ? "Yes" : "No"}</span>
+          <span>{bookingRoutingEventCoordinators.includes(row._id) ? "Yes" : "No"}</span>
+        </CustomInput>
+      )
+    },
+    {
+      name: "LARGE EVENT ROUTING?",
+      selector: "largeEventRouting",
+      cell: (row) => (
+        <CustomInput
+          id={`${row._id}largeEventRouting`}
+          type="switch"
+          checked={
+            bookingRoutingEventCoordinatorsLargeEvents &&
+            bookingRoutingEventCoordinatorsLargeEvents.includes(row._id)
+          }
+          onChange={(e) => {
+            updateBookingRoutingEventCoordinatorsLargeEvents(e.target.checked, row._id);
+            updateLargeEventsCoodinator(e.target.checked, row._id);
+          }}
+          disabled={processingLargeEventRouting}
+        >
+          <span>{bookingRoutingEventCoordinatorsLargeEvents.includes(row._id) ? "Yes" : "No"}</span>
         </CustomInput>
       )
     },

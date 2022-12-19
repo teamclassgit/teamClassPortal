@@ -1,32 +1,123 @@
 // @packages
-import { Briefcase, Mail, Phone, Plus, User } from "react-feather";
+import { Briefcase, Link, Mail, Phone, User } from "react-feather";
 import { Alert, Button, CustomInput, Form, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import Cleave from "cleave.js/react";
+import CleavePhone from "cleave.js/dist/addons/cleave-phone.us";
 import { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { v4 as uuid } from "uuid";
 import validator from "validator";
 
 // @scripts
-import mutationInsertInstructor from "@graphql/MutationInsertInstructor";
-import mutationUpdateInstructor from "@graphql/MutationUpdateInstructor";
+import mutationInsertCoordinator from "@graphql/MutationInsertCoordinator";
+import mutationUpdateCoordinator from "@graphql/MutationUpdateCoordinator";
 
 const CoordinatorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) => {
+
+  const [coordinator, setCoordinator] = useState({
+    default: false,
+    email: "",
+    name: "",
+    phone: "",
+    twilioPhone: "",
+    calendlyLink: ""
+  });
+  const [createOneEventCoordinator] = useMutation(mutationInsertCoordinator);
+  const [updateEventCoordinator] = useMutation(mutationUpdateCoordinator);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isMutationError, setIsMutarionError] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(true);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const emailValidation = value => setIsEmailValid(value !== "" ? validator.isEmail(value) : true);
 
-    // if (isModeEdit) {
-    //   updateInstructor();
-    // } else {
-    //   insertInstructor();
-    // }
-  };
+  useEffect(() => {
+    if (data) {
+      setCoordinator(data);
+    }
+  }, [data]);
 
   const handleModalClose = () => {
     setIsModeEdit(false);
     handleModal();
+  };
+
+  const handleChange = (data, field) => {
+    setCoordinator({...coordinator, [field]: data});
+  };
+
+  const insertCoordinator = async () => {
+    try {
+      setIsProcessing(true);
+
+      const createCoordinator = {
+        id: uuid(),
+        default: coordinator.default,
+        email: coordinator?.email?.toLowerCase().trim(),
+        name: coordinator.name,
+        phone: coordinator.phone,
+        twilioPhone: coordinator.twilioPhone,
+        calendlyLink: coordinator.calendlyLink
+      };
+
+      await createOneEventCoordinator({
+        variables: {
+          ...createCoordinator
+        },
+        optimisticResponse: {
+          createEventCoordinator: {
+            ...createCoordinator,
+            __typename:"EventCoordinator"
+          }
+        }
+      });
+      handleModalClose();
+    } catch (ex) {
+      setIsMutarionError(true);
+      console.log("Something went wrong. Please try again.", ex);
+    }
+    setIsProcessing(false);
+  };
+
+  const updateCoordinator = async () => {
+    try {
+      setIsProcessing(true);
+      const dataToUpdate = {
+        default: coordinator.default,
+        email: coordinator?.email?.toLowerCase().trim(),
+        name: coordinator.name,
+        phone: coordinator.phone,
+        twilioPhone: coordinator.twilioPhone,
+        calendlyLink: coordinator.calendlyLink
+      };
+
+      await updateEventCoordinator({
+        variables: {
+          id: coordinator._id,
+          ...dataToUpdate
+        },
+        optimisticResponse: {
+          updateEventCoordinator: {
+            id: coordinator._id,
+            __typename: "EventCoordinator",
+            ...dataToUpdate
+          }
+        }
+      });
+      handleModalClose();
+    } catch (error) {
+      setIsMutarionError(true);
+      console.error("Something went wrong. Please try again.", error);
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (isModeEdit) {
+      updateCoordinator();
+    } else {
+      insertCoordinator();
+    }
   };
 
   return (
@@ -52,9 +143,9 @@ const CoordinatorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
               <Input
                 id="name"
                 placeholder="Full Name *"
-                required={true}
-                // value={coordinator && coordinator.name}
-                // onChange={(e) => handleChange(e.target.value, "name")}
+                required
+                value={coordinator.name}
+                onChange={(e) => handleChange(e.target.value, "name")}
               />
             </InputGroup>
           </FormGroup>
@@ -69,11 +160,11 @@ const CoordinatorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
                 type="email"
                 id="email"
                 placeholder="Email *"
-                required={true}
-                // invalid={!isEmailValid.email}
-                // value={coordinator && coordinator.email}
-                // onChange={(e) => handleChange(e.target.value, "email")}
-                // onBlur={(e) => validationEmail(e.target.value, "email")}
+                required
+                invalid={!isEmailValid}
+                value={coordinator.email}
+                onChange={(e) => handleChange(e.target.value, "email")}
+                onBlur={(e) => emailValidation(e.target.value, "email")}
               />
             </InputGroup>
           </FormGroup>
@@ -88,8 +179,9 @@ const CoordinatorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
                 className="form-control"
                 placeholder="Phone"
                 id="phone"
-                // value={coordinator && coordinator.phone}
-                // onChange={(e) => handleChange(e.target.value, "phone")}
+                options={{ phone: true, phoneRegionCode: "US"}}
+                value={coordinator.phone}
+                onChange={(e) => handleChange(e.target.value, "phone")}
               />
             </InputGroup>
           </FormGroup>
@@ -100,11 +192,13 @@ const CoordinatorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
                   <Briefcase size={15} />
                 </InputGroupText>
               </InputGroupAddon>
-              <Input
-                id="twilioPhone"
+              <Cleave
+                className="form-control"
                 placeholder="Twilio phone"
-                // value={coordinator && coordinator.company}
-                // onChange={(e) => handleChange(e.target.value, "company")}
+                id="twilioPhone"
+                options={{ phone: true }}
+                value={coordinator.twilioPhone}
+                onChange={(e) => handleChange(e.target.value, "twilioPhone")}
               />
             </InputGroup>
           </FormGroup>
@@ -112,24 +206,34 @@ const CoordinatorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
             <InputGroup size="sm">
               <InputGroupAddon addonType="prepend">
                 <InputGroupText>
-                  <Briefcase size={15} />
+                  <Link size={15} />
                 </InputGroupText>
               </InputGroupAddon>
               <Input
                 id="calendlyLink"
                 placeholder="Calendly link"
-                // value={coordinator && coordinator.company}
-                // onChange={(e) => handleChange(e.target.value, "company")}
+                value={coordinator.calendlyLink}
+                onChange={(e) => handleChange(e.target.value, "calendlyLink")}
+                pattern="https?://.+"
+              />
+            </InputGroup>
+            <small className="text-muted">
+              Include https://
+            </small>
+          </FormGroup>
+          <FormGroup>
+            <Label>Default Coordinator?</Label>
+            <InputGroup size="sm">
+              <CustomInput
+                id="default"
+                type="switch"
+                checked={coordinator.default}
+                onChange={(e) => handleChange(e.target.checked, "default")}
               />
             </InputGroup>
           </FormGroup>
         </ModalBody>
         <ModalFooter className="justify-content-center border-top-0">
-          {/* {isMutationError && (
-            <Alert className="text-sm-left" color="secondary">
-              Something went wrong. Please try again.
-            </Alert>
-          )} */}
           <Button color="secondary" size="sm" onClick={handleModalClose}>
             Cancel
           </Button>
@@ -137,12 +241,17 @@ const CoordinatorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
             color="primary"
             size="sm"
             type="submit"
-            // disabled={isProcessing || !coordinator.name ||
-            //   !coordinator.email || !isEmailValid.email
-            // }
+            disabled={isProcessing || !coordinator.name ||
+              !coordinator.email || !isEmailValid
+            }
           >
             {isProcessing ? "Saving..." : isModeEdit ? "Update" : "Create"}
           </Button>
+          {isMutationError && (
+            <Alert className="text-sm-left" color="danger">
+              Something went wrong. Please try again.
+            </Alert>
+          )}
         </ModalFooter>
       </Form>
     </Modal>
