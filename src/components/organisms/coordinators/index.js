@@ -271,6 +271,7 @@ const CoordinatorsList = () => {
           handleDeleteItem={deleteCoordinator}
           isMutationError={isMutationError}
           proccesing={proccesing}
+          itemName="Coordinator"
         />
       )}
     </Container>

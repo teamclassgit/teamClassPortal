@@ -188,6 +188,7 @@ const DistributorsList = () => {
             titleClasses={teamClassesByDistributor.map(({title}) => title)}
             isMutationError={isMutationError}
             proccesing={proccesing}
+            itemName="Distributor"
           />
         )}
       </Container>
