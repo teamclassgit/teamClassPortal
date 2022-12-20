@@ -7,7 +7,7 @@ const ModalDeleteConfirmation = ({
   toggleModalDelete,
   handleDeleteItem,
   itemName,
-  isDeleteInstructorError,
+  isDeletingGetError,
   titleClasses,
   isMutationError,
   proccesing
@@ -41,7 +41,7 @@ const ModalDeleteConfirmation = ({
           Something went wrong. Please try again.
         </Alert>
       )}
-      {isDeleteInstructorError && (
+      {isDeletingGetError && (
         <Alert className="text-sm-left p-1" color="danger">
           {`Instructor is currently assigned to ${titleClasses.join(", ")} ${titleClasses.length > 1 ? " classes" : " class"}.`}
         </Alert>
