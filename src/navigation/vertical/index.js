@@ -80,7 +80,7 @@ export default [
         navLink: "/coordinators"
       },
       {
-        id: "checkout11",
+        id: "distributors",
         title: "Distributors",
         icon: <Users size={20} />,
         navLink: "/distributors"
@@ -88,7 +88,7 @@ export default [
     ]
   },
   {
-    id: "checkout12",
+    id: "reviews",
     title: "Reviews",
     icon: <BookOpen size={20} />,
     navLink: "/reviews"

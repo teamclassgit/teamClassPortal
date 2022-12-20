@@ -71,7 +71,7 @@ const Routes = [
   },
   {
     path: "/reviews",
-    component: lazy(() => import("../../views/Instructors"))
+    component: lazy(() => import("../../views/Reviews"))
   },
   {
     path: "/login",
