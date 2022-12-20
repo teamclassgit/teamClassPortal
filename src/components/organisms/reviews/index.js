@@ -1,5 +1,5 @@
 // @packages
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 import { Badge, Button, ButtonGroup, Col, Container, CustomInput, DropdownItem, DropdownMenu, DropdownToggle, Row, Spinner, UncontrolledButtonDropdown } from "reactstrap";
@@ -8,13 +8,14 @@ import Rating from "react-rating";
 
 // @scripts
 import Stars from "@atoms/stars";
-import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
 import ExportToExcel from "@molecules/export-to-excel";
 import QueryAllReviews from "@graphql/QueryAllReviews";
 import QueryAllClass from "@graphql/QueryAllClassForReviews";
 import MutationUpdateReviewVisible from "@graphql/MutationUpdateReviewVisible";
 import MutationUpdateReviewTestimonial from "@graphql/MutationUpdateReviewTestimonial";
 import { Filter, Share } from "react-feather";
+import FiltersModal from "@molecules/filters-modal";
+import { FiltersContext } from "@context/FiltersContext/FiltersContext";
 
 const ReviewsList = () => {
   const [filter, setFilter] = useState({ classId_ne: "", status: "done" });
@@ -24,10 +25,10 @@ const ReviewsList = () => {
   const [updateReviewTestimonial] = useMutation(MutationUpdateReviewTestimonial);
   const [getReviewsToExport, setGetReviewsToExport] = useState([]);
   const [isExporting, setIsExporting] = useState(false);
-  const [selectedClass, setSelectedClass] = useState({
-    label: "All",
-    value: "All"
-  });
+  const [filterModal, setFilterModal] = useState(false);
+  const { classFilterContext } = useContext(FiltersContext);
+
+  const handleFilterModal = () => setFilterModal(!filterModal);
 
   useQuery(QueryAllReviews, {
     fetchPolicy: "cache-and-network",
@@ -108,12 +109,12 @@ const ReviewsList = () => {
   };
 
   useEffect(() => {
-    if (selectedClass.value === "All") {
+    if (!classFilterContext) {
       setFilter({ classId_ne: "", status: "done" });
     } else {
-      setFilter({ classId: selectedClass.value, status: "done" });
+      setFilter({ classId: classFilterContext.value, status: "done" });
     }
-  }, [selectedClass]);
+  }, [classFilterContext]);
 
   const flipReviewVisibility = async (reviewId, visible) => updateReviewVisible({
     variables: {
@@ -185,13 +186,22 @@ const ReviewsList = () => {
                 )}
             </UncontrolledButtonDropdown>
             <Button
-              outline
+              outline={!filterModal}
               color="primary"
-              // onClick={() => setShowFiltersModal(true)}
+              onClick={handleFilterModal}
               title="Filters"
             >
               <Filter size={13} />
             </Button>
+            <FiltersModal
+              classes={classes}
+              handleModal={handleFilterModal}
+              isFilterByClass={true}
+              isFilterByCoordinator={false}
+              isFilterByCreationDate={false}
+              isFilterByClosedReason={false}
+              open={filterModal}
+            />
           </ButtonGroup>
         </div>
         {allReviews.loading ? (
