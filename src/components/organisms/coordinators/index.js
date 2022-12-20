@@ -51,8 +51,8 @@ const CoordinatorsList = () => {
 
   useEffect(() => {
     if (allCoordinators) {
-      const corrdonators = [...allCoordinators];
-      const corrdonatorsArray = [];
+      const coordinators = [...allCoordinators];
+      const coordinatorsArray = [];
       const headers = [
         "Id",
         "Name",
@@ -65,9 +65,9 @@ const CoordinatorsList = () => {
         "Calendly Link"
       ];
 
-      corrdonatorsArray.push(headers);
+      coordinatorsArray.push(headers);
 
-      corrdonators.forEach((element) => {
+      coordinators.forEach((element) => {
         const row = [
           element._id,
           element.name,
@@ -79,9 +79,9 @@ const CoordinatorsList = () => {
           element.twilioPhone,
           element.calendlyLink
         ];
-        corrdonatorsArray.push(row);
+        coordinatorsArray.push(row);
       });
-      setCoordinatorsDataToExport(corrdonatorsArray);
+      setCoordinatorsDataToExport(coordinatorsArray);
     }
   }, [allCoordinators]);
 
