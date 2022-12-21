@@ -41,7 +41,7 @@ const ReviewsList = () => {
     setCurrentPage(selected + 1);
   };
 
-  useQuery(QueryAllReviews, {
+  const { loading } = useQuery(QueryAllReviews, {
     fetchPolicy: "cache-and-network",
     variables: {
       filter
@@ -111,12 +111,12 @@ const ReviewsList = () => {
       setGetReviewsToExport(reviewsArray);
     }
   }, [allReviews]);
-  
+
   const getDataToExport = () => getReviewsToExport;
 
   const getClassName = (classId) => {
-    const result = classes.filter((element) => element.value === classId);
-    return result && result.length > 0 ? result[0].label : "";
+    const result = classes.find(({_id}) => _id === classId);
+    return result?.title ?? "";
   };
 
   useEffect(() => {
@@ -216,8 +216,8 @@ const ReviewsList = () => {
             />
           </ButtonGroup>
         </div>
-        {allReviews.loading ? (
-          <span>Loading...</span>
+        {loading ? (
+            <div align="center">Loading...</div>
           ) : (
             <>
             <div className="list-group">
