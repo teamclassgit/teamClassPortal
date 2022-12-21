@@ -38,8 +38,8 @@ const Routes = [
     component: lazy(() => import("../../views/GeneralInquiries"))
   },
   {
-    path: "/private-requests",
-    component: lazy(() => import("../../views/PrivateRequests"))
+    path: "/large-events",
+    component: lazy(() => import("../../views/LargeEvents"))
   },
   {
     path: "/discount-codes",

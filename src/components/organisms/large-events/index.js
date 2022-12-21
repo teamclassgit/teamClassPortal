@@ -13,7 +13,7 @@ import queryAllPrivateClassRequest from "@graphql/QueryAllPrivateClassRequest";
 import { FiltersContext } from "@context/FiltersContext/FiltersContext";
 import { getCoordinatorName } from "@utility/Common";
 
-const PrivateRequestsList = () => {
+const LargeEventsList = () => {
   const [coordinators, setCoordinators] = useState([]);
   const [filteredPrivateClassRequests, setFilteredPrivateClassRequests] = useState([]);
   const [limit, setLimit] = useState(200);
@@ -111,7 +111,7 @@ const PrivateRequestsList = () => {
         showFilter={true}
         showLimit={true}
         showView={false}
-        titleView={"Private Requests "}
+        titleView={"Large Events "}
       />
       {allPrivateRequests.loading || allCoordinatorResult.loading ? (
         <>
@@ -142,5 +142,4 @@ const PrivateRequestsList = () => {
   );
 };
 
-export default PrivateRequestsList;
-
+export default LargeEventsList;

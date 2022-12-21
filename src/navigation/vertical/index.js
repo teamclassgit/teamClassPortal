@@ -1,4 +1,4 @@
-import { BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, User, UserX, Users } from "react-feather";
+import { BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, UserX, Users, Star } from "react-feather";
 
 export default [
   {
@@ -27,9 +27,9 @@ export default [
   },
   {
     id: "checkout3",
-    title: "Private requests",
+    title: "Large events",
     icon: <Book size={20} />,
-    navLink: "/private-requests"
+    navLink: "/large-events"
   },
   {
     id: "checkout4",
@@ -90,7 +90,7 @@ export default [
   {
     id: "reviews",
     title: "Reviews",
-    icon: <BookOpen size={20} />,
+    icon: <Star size={20} />,
     navLink: "/reviews"
   }
 ];
