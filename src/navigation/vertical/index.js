@@ -3,19 +3,19 @@ import { BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Data
 export default [
   {
     id: "listBookings",
-    title: "Funnel (Beta)",
+    title: "Funnel",
     icon: <Filter size={20} />,
     navLink: "/pipeline"
   },
   {
     id: "listBookingsAll",
-    title: "All Bookings (Beta)",
+    title: "All bookings",
     icon: <Database size={20} />,
     navLink: "/all-bookings"
   },
   {
     id: "checkout1",
-    title: "In progress",
+    title: "Bookings board",
     icon: <BookOpen size={20} />,
     navLink: "/bookings"
   },
@@ -50,14 +50,20 @@ export default [
     navLink: "/late-requests"
   },
   {
+    id: "reviews",
+    title: "Reviews",
+    icon: <Star size={20} />,
+    navLink: "/reviews"
+  },
+  {
     id: "masterData",
-    title: "Master Data",
+    title: "Master data",
     icon: <Briefcase size={20} />,
     badge: "light-warning",
     children: [
       {
         id: "checkout7",
-        title: "Listing Prices",
+        title: "Listing prices",
         icon: <Edit2 size={20} />,
         navLink: "/listing-prices"
       },
@@ -86,11 +92,5 @@ export default [
         navLink: "/distributors"
       }
     ]
-  },
-  {
-    id: "reviews",
-    title: "Reviews",
-    icon: <Star size={20} />,
-    navLink: "/reviews"
   }
 ];
