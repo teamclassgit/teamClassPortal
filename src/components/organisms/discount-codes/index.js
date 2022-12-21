@@ -113,7 +113,7 @@ const DiscountCodesList = () => {
         showAddModal={() => handleModal()}
         showExport
         showLimit
-        titleView={"Discount Codes "}
+        titleView={"Discount codes "}
       />
       {allDiscountCodes.loading ? (
         <div>

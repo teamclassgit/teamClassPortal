@@ -254,7 +254,7 @@ const AllBookingsTable = () => {
     <div>
       <TasksBar
         setElementToAdd={setElementToAdd}
-        titleView={"ALL Time Bookings (Beta)"}
+        titleView={"All time bookings"}
         titleBadge={` ${totalRows} records found`}
         showAddModal={() => handleModal()}
         getDataToExport={getDataToExport}

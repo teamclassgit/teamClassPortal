@@ -166,7 +166,7 @@ const BookingCalendarList = () => {
         showAdd={false}
         showFilter={true}
         showView={false}
-        titleView={"Events Calendar "}
+        titleView={"Events calendar "}
         isClosedBookings={false}
       />
       <FiltersModal

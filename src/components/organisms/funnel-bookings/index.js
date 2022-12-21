@@ -255,7 +255,7 @@ const FunnelTable = () => {
           setStatus(defaultStatus);
           setElementToAdd(element);
         }}
-        titleView={"Bookings Funnel (Beta)"}
+        titleView={"Bookings funnel"}
         titleBadge={status && status.label}
         showAddModal={() => handleModal()}
         getDataToExport={getDataToExport}
