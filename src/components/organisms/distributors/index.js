@@ -162,6 +162,8 @@ const DistributorsList = () => {
           titleBadge={` ${allDistributors.length} records found`}
           showAddModal={handleModal}
           getDataToExport={getDataDistributorsToExport}
+          fileExportedName={"Distributors"}
+          buttonTitle={"Add distributor"}
         />
         <DataTable
           columns={columns}

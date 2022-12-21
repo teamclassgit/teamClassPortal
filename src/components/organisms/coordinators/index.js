@@ -247,6 +247,8 @@ const CoordinatorsList = () => {
         titleBadge={` ${allCoordinators.length} records found`}
         showAddModal={handleModal}
         getDataToExport={getDataCoordinatorsToExport}
+        fileExportedName={"Coordinators"}
+        buttonTitle={"Add coordinator"}
       />
       <DataTable
         columns={columns}

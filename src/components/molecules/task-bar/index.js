@@ -5,7 +5,7 @@ import { Share, Plus } from "react-feather";
 import PropTypes from "prop-types";
 import ExportToExcel from "@molecules/export-to-excel";
 
-const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDataToExport }) => {
+const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDataToExport, fileExportedName, buttonTitle }) => {
   const [isExporting, setIsExporting] = useState(false);
 
   return (
@@ -34,7 +34,7 @@ const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDat
                         apiDataFunc={async () => {
                           return await getDataToExport();
                         }}
-                        fileName={"Bookings"}
+                        fileName={fileExportedName}
                         setIsExporting={setIsExporting}
                       />
                     </DropdownItem>
@@ -61,7 +61,7 @@ const TasksBar = ({ titleView, titleBadge, setElementToAdd, showAddModal, getDat
                 setElementToAdd(newElement);
                 showAddModal();
               }}
-              title="Add Booking"
+              title={buttonTitle}
             >
               <Plus size={13} />
             </Button>
@@ -79,5 +79,12 @@ TasksBar.propTypes = {
   titleBadge: PropTypes.string.isRequired,
   setElementToAdd: PropTypes.func.isRequired,
   showAddModal: PropTypes.func.isRequired,
-  getDataToExport: PropTypes.func.isRequired
+  getDataToExport: PropTypes.func.isRequired,
+  fileExportedName: PropTypes.string,
+  buttonTitle: PropTypes.string
+};
+
+TasksBar.defaultProps = {
+  fileExportedName: "Bookings",
+  buttonTitle: "Add Booking"
 };

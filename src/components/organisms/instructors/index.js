@@ -162,6 +162,8 @@ const InstructorsList = () => {
           titleBadge={` ${allInstructors.length} records found`}
           showAddModal={handleModal}
           getDataToExport={getDataInstructorsToExport}
+          fileExportedName={"Instructors"}
+          buttonTitle={"Add instructor"}
         />
         <DataTable
           columns={columns}
