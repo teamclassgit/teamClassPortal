@@ -2,9 +2,10 @@
 import { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
-import { Badge, Button, ButtonGroup, Col, Container, CustomInput, DropdownItem, DropdownMenu, DropdownToggle, Row, Spinner, UncontrolledButtonDropdown } from "reactstrap";
+import { Badge, Button, ButtonGroup, Col, Container, CustomInput, DropdownItem, DropdownMenu, DropdownToggle, Pagination, PaginationItem, PaginationLink, Row, Spinner, UncontrolledButtonDropdown } from "reactstrap";
 import { Icon } from "@iconify/react";
 import Rating from "react-rating";
+import ReactPaginate from "react-paginate";
 
 // @scripts
 import Stars from "@atoms/stars";
@@ -26,9 +27,19 @@ const ReviewsList = () => {
   const [getReviewsToExport, setGetReviewsToExport] = useState([]);
   const [isExporting, setIsExporting] = useState(false);
   const [filterModal, setFilterModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reviewsPerPage] = useState(30);
   const { classFilterContext } = useContext(FiltersContext);
 
   const handleFilterModal = () => setFilterModal(!filterModal);
+
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = allReviews.slice(indexOfFirstReview, indexOfLastReview);
+ 
+  const paginate = ({ selected }) => {
+    setCurrentPage(selected + 1);
+  };
 
   useQuery(QueryAllReviews, {
     fetchPolicy: "cache-and-network",
@@ -113,6 +124,7 @@ const ReviewsList = () => {
       setFilter({ classId_ne: "", status: "done" });
     } else {
       setFilter({ classId: classFilterContext.value, status: "done" });
+      paginate({selected: 0});
     }
   }, [classFilterContext]);
 
@@ -206,106 +218,128 @@ const ReviewsList = () => {
         </div>
         {allReviews.loading ? (
           <span>Loading...</span>
-        ) : (
-          <div className="list-group">
-            {allReviews && allReviews.map((review) => (
-              <Row key={review._id} className="list-group-item list-group-item-action d-flex py-3">
-                <Col lg={3}>
-                  <div className="d-flex align-items-center mb-1">
-                    <h5>
-                      {review.title}
-                      <span className="text-muted">
-                        {review?.company && (
-                          <>
-                            <span className="mx-1">-</span>
-                            <small>
-                              <span>{review.company}</span>
-                            </small>
-                          </>
-                        )}
-                      </span>
-                      <br />
-                      <a href={`mailto:${review.attendeeEmail}`}>
-                        <small>
-                          {review.attendeeEmail}
-                        </small>
-                      </a>
-                    </h5>
-                  </div>
-                  <h6>
-                    <Badge pill color="primary" className="mr-1">
-                      Class rating
-                    </Badge>
-                    <Stars stars={review.classRating} />
-                  </h6>
-                  <h6>
-                    <Badge pill color="secondary" className="mr-1">
-                      Kit rating
-                    </Badge>
-                    <Stars stars={review.kitRating} />
-                  </h6>
-                  {review.nps && (
-                    <Rating
-                      stop={10}
-                      className="mt-1"
-                      initialRating={review.nps}
-                      readonly={true}
-                      emptySymbol={<Icon icon="material-symbols:circle" className="text-gray" width="20"/>}
-                      fullSymbol={<Icon icon="material-symbols:circle" className="text-primary" width="20"/>}
-                      placeholderSymbol={<Icon icon="material-symbols:circle" className="text-primary" width="20"/>}
-                    />
-                  )}
-                </Col>
-                <Col>
-                  <Row>
-                    <Col md="9">
-                      <a
-                        className="text-primary text-wrap"
-                        href={`${process.env.REACT_APP_PUBLIC_MAIN_WEBSITE_URL}/classes/${review.classId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {getClassName(review.classId)}
-                      </a>
-                      <span className="text-muted">
-                        ({moment(review.date).format("LL")})
-                      </span>
-                      <p className="mt-2">{review.reviewText}</p>
-                    </Col>
-                    <Col md="3" className="pt-3">
-                      <CustomInput
-                        id={review._id}
-                        type="switch"
-                        checked={review.visible}
-                        label="Published"
-                        onChange={(e) => {
-                          e.preventDefault();
-                          flipReviewVisibility(
-                            review._id,
-                            !review.visible
-                          );
-                        }}
-                      />
-                      <CustomInput
-                        id={`${review._id}testimonial`}
-                        type="switch"
+          ) : (
+            <>
+            <div className="list-group">
+              {currentReviews && currentReviews.map((review) => (
+                <Row key={review._id} className="list-group-item list-group-item-action d-flex py-3">
+                  <Col lg={3}>
+                    <div className="d-flex align-items-center mb-1">
+                      <h5>
+                        {review.title}
+                        <span className="text-muted">
+                          {review?.company && (
+                            <>
+                              <span className="mx-1">-</span>
+                              <small>
+                                <span>{review.company}</span>
+                              </small>
+                            </>
+                          )}
+                        </span>
+                        <br />
+                        <a href={`mailto:${review.attendeeEmail}`}>
+                          <small>
+                            {review.attendeeEmail}
+                          </small>
+                        </a>
+                      </h5>
+                    </div>
+                    <h6>
+                      <Badge pill color="primary" className="mr-1">
+                        Class rating
+                      </Badge>
+                      <Stars stars={review.classRating} />
+                    </h6>
+                    <h6>
+                      <Badge pill color="secondary" className="mr-1">
+                        Kit rating
+                      </Badge>
+                      <Stars stars={review.kitRating} />
+                    </h6>
+                    {review.nps && (
+                      <Rating
+                        stop={10}
                         className="mt-1"
-                        checked={review.testimonial}
-                        label="Testimonial"
-                        onChange={(e) => {
-                          e.preventDefault();
-                          flipReviewTestimonial(
-                            review._id,
-                            !review.testimonial
-                          );
-                        }}
+                        initialRating={review.nps}
+                        readonly={true}
+                        emptySymbol={<Icon icon="material-symbols:circle" className="text-gray" width="20"/>}
+                        fullSymbol={<Icon icon="material-symbols:circle" className="text-primary" width="20"/>}
+                        placeholderSymbol={<Icon icon="material-symbols:circle" className="text-primary" width="20"/>}
                       />
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-              ))}
-          </div>
+                    )}
+                  </Col>
+                  <Col>
+                    <Row>
+                      <Col md="9">
+                        <a
+                          className="text-primary text-wrap"
+                          href={`${process.env.REACT_APP_PUBLIC_MAIN_WEBSITE_URL}/classes/${review.classId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {getClassName(review.classId)}
+                        </a>
+                        <span className="text-muted">
+                          ({moment(review.date).format("LL")})
+                        </span>
+                        <p className="mt-2">{review.reviewText}</p>
+                      </Col>
+                      <Col md="3" className="pt-3">
+                        <CustomInput
+                          id={review._id}
+                          type="switch"
+                          checked={review.visible}
+                          label="Published"
+                          onChange={(e) => {
+                            e.preventDefault();
+                            flipReviewVisibility(
+                              review._id,
+                              !review.visible
+                            );
+                          }}
+                        />
+                        <CustomInput
+                          id={`${review._id}testimonial`}
+                          type="switch"
+                          className="mt-1"
+                          checked={review.testimonial}
+                          label="Testimonial"
+                          onChange={(e) => {
+                            e.preventDefault();
+                            flipReviewTestimonial(
+                              review._id,
+                              !review.testimonial
+                            );
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                ))}
+            </div>
+
+            <ReactPaginate
+              previousLabel={"Prev"}
+              nextLabel={"Next"}
+              onPageChange={paginate}
+              pageCount={Math.ceil(allReviews.length / reviewsPerPage)}
+              breakLabel="..."
+              pageRangeDisplayed={2}
+              marginPagesDisplayed={2}
+              activeClassName="active"
+              pageClassName="page-item"
+              breakClassName="page-item"
+              breakLinkClassName="page-link"
+              nextLinkClassName="page-link"
+              nextClassName="page-item next"
+              previousClassName="page-item prev"
+              previousLinkClassName="page-link"
+              pageLinkClassName="page-link"
+              containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pr-1 mt-1"
+            />
+          </>
         )}
     </Container>
   );
