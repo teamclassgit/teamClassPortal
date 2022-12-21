@@ -38,12 +38,6 @@ export default [
     navLink: "/general-inquiries"
   },
   {
-    id: "checkout6",
-    title: "Gift Baskets",
-    icon: <Gift size={20} />,
-    navLink: "/gift-baskets"
-  },
-  {
     id: "checkout8",
     title: "Late requests",
     icon: <UserX size={20} />,
