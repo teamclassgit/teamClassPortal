@@ -24,6 +24,8 @@ const CoordinatorsList = () => {
   const [currentCoordinator, setCurrentCoordinator] = useState({});
   const [isModeEdit, setIsModeEdit] = useState(false);
   const [allCoordinators, setAllCoordinators] = useState([]);
+  const [allCoordinatorSearchFiltersApply, setAllCoordinatorSearchFiltersApply] = useState([]);
+  const [searchCoordinators, setSearchCoordinators] = useState("");
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [coordinatorsDataToExport, setCoordinatorsDataToExport] = useState([]);
   const [proccesing, setProccesing] = useState(false);
@@ -239,20 +241,31 @@ const CoordinatorsList = () => {
     setProccesing(false);
   };
 
+  useEffect(() => {
+    const coordinatorsFiltered = [...allCoordinators] || [];
+    setAllCoordinatorSearchFiltersApply(coordinatorsFiltered.filter((coordinator) => (
+      coordinator?.name.toLowerCase().includes(searchCoordinators.toLowerCase()) || 
+      coordinator?.email.toLowerCase().includes(searchCoordinators.toLowerCase())
+    )));
+  }, [searchCoordinators, allCoordinators]);
+
   return (
     <Container>
       <TasksBar
         setElementToAdd={function () {}}
         titleView={"Coordinators"}
-        titleBadge={` ${allCoordinators.length} records found`}
+        titleBadge={` ${allCoordinatorSearchFiltersApply.length} records found`}
         showAddModal={handleModal}
         getDataToExport={getDataCoordinatorsToExport}
         fileExportedName={"Coordinators"}
         buttonTitle={"Add coordinator"}
+        isSearchFilter={true}
+        searchValue={searchCoordinators}
+        setSearchValue={setSearchCoordinators}
       />
       <DataTable
         columns={columns}
-        data={allCoordinators}
+        data={allCoordinatorSearchFiltersApply}
         noHeader
         sortIcon={<ChevronDown size={10}/>}
         className="react-dataTable my-2"

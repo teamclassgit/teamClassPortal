@@ -30,7 +30,7 @@ const InstructorsList = () => {
   const [isMutationError, setIsMutarionError] = useState(false);
   const [proccesing, setProccesing] = useState(false);
   const [teamClassesByInstructor, setTeamClassesByInstructor] = useState([]);
-  const [searchIntructor, setSearchInstructor] = useState("");
+  const [searchIntructors, setSearchInstructors] = useState("");
 
   const handleModal = () => setOpenModalInstructor(!openModalInstructor);
   const handleModalDelete = () => setOpenModalDelete(!openModalDelete);
@@ -158,10 +158,10 @@ const InstructorsList = () => {
   useEffect(() => {
     const instructorsFiltered = [...allInstructors] || [];
     setAllInstructorsSearchFiltersApply(instructorsFiltered.filter((instructor) => (
-      instructor.name.toLowerCase().includes(searchIntructor.toLowerCase()) || 
-      instructor.email.toLowerCase().includes(searchIntructor.toLowerCase())
+      instructor?.name.toLowerCase().includes(searchIntructors.toLowerCase()) || 
+      instructor?.email.toLowerCase().includes(searchIntructors.toLowerCase())
     )));
-  }, [searchIntructor, allInstructors]);
+  }, [searchIntructors, allInstructors]);
 
   return (
     <>
@@ -175,8 +175,8 @@ const InstructorsList = () => {
           fileExportedName={"Instructors"}
           buttonTitle={"Add instructor"}
           isSearchFilter={true}
-          searchValue={searchIntructor}
-          setSearchValue={setSearchInstructor}
+          searchValue={searchIntructors}
+          setSearchValue={setSearchInstructors}
         />
         <DataTable
           columns={columns}
