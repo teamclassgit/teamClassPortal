@@ -164,8 +164,8 @@ const ReviewsList = () => {
             Attendees feedback
           </Button>
         </div>
-        <div className="d-flex justify-content-between align-items-center flex-column flex-lg-row mb-5">
-          <div className="mr-3">
+        <div className="d-flex justify-content-between align-items-center flex-column flex-lg-row mb-2">
+          <div>
             {allReviews && (
               <p className="mb-3 mb-lg-0">
                 You have{" "}
@@ -222,7 +222,7 @@ const ReviewsList = () => {
             <>
             <div className="list-group">
               {currentReviews && currentReviews.map((review) => (
-                <Row key={review._id} className="list-group-item list-group-item-action d-flex py-3">
+                <div key={review._id} className="list-group-item list-group-item-action d-flex py-3">
                   <Col lg={3}>
                     <div className="d-flex align-items-center mb-1">
                       <h5>
@@ -316,7 +316,7 @@ const ReviewsList = () => {
                       </Col>
                     </Row>
                   </Col>
-                </Row>
+                </div>
                 ))}
             </div>
 
