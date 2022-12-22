@@ -20,6 +20,7 @@ import "@styles/react/libs/tables/react-dataTable-component.scss";
 
 const InstructorsList = () => {
   const [allInstructors, setAllInstructors] = useState([]);
+  const [allInstructorSearchFiltersApply, setAllInstructorsSearchFiltersApply] = useState([]);
   const [instructorDataToExport, setInstructorDataToExport] = useState(null);
   const [isModeEdit, setIsModeEdit] = useState(false);
   const [currentInstructor, setCurrentIntructor] = useState({});
@@ -29,6 +30,7 @@ const InstructorsList = () => {
   const [isMutationError, setIsMutarionError] = useState(false);
   const [proccesing, setProccesing] = useState(false);
   const [teamClassesByInstructor, setTeamClassesByInstructor] = useState([]);
+  const [searchIntructor, setSearchInstructor] = useState("");
 
   const handleModal = () => setOpenModalInstructor(!openModalInstructor);
   const handleModalDelete = () => setOpenModalDelete(!openModalDelete);
@@ -153,21 +155,32 @@ const InstructorsList = () => {
     proccesing
   );
 
+  useEffect(() => {
+    const instructorsFiltered = [...allInstructors] || [];
+    setAllInstructorsSearchFiltersApply(instructorsFiltered.filter((instructor) => (
+      instructor.name.toLowerCase().includes(searchIntructor.toLowerCase()) || 
+      instructor.email.toLowerCase().includes(searchIntructor.toLowerCase())
+    )));
+  }, [searchIntructor, allInstructors]);
+
   return (
     <>
       <Container>
         <TasksBar
           setElementToAdd={function () {}}
           titleView={"Instructors"}
-          titleBadge={` ${allInstructors.length} records found`}
+          titleBadge={` ${allInstructorSearchFiltersApply.length} records found`}
           showAddModal={handleModal}
           getDataToExport={getDataInstructorsToExport}
           fileExportedName={"Instructors"}
           buttonTitle={"Add instructor"}
+          isSearchFilter={true}
+          searchValue={searchIntructor}
+          setSearchValue={setSearchInstructor}
         />
         <DataTable
           columns={columns}
-          data={allInstructors}
+          data={allInstructorSearchFiltersApply}
           noHeader
           sortIcon={<ChevronDown size={10}/>}
           className="react-dataTable my-2"
