@@ -20,7 +20,7 @@ import "@styles/react/libs/tables/react-dataTable-component.scss";
 
 const InstructorsList = () => {
   const [allInstructors, setAllInstructors] = useState([]);
-  const [allInstructorSearchFiltersApply, setAllInstructorsSearchFiltersApply] = useState([]);
+  const [allInstructorSearchFiltersApply, setAllInstructorSearchFiltersApply] = useState([]);
   const [instructorDataToExport, setInstructorDataToExport] = useState(null);
   const [isModeEdit, setIsModeEdit] = useState(false);
   const [currentInstructor, setCurrentIntructor] = useState({});
@@ -30,7 +30,7 @@ const InstructorsList = () => {
   const [isMutationError, setIsMutarionError] = useState(false);
   const [proccesing, setProccesing] = useState(false);
   const [teamClassesByInstructor, setTeamClassesByInstructor] = useState([]);
-  const [searchIntructors, setSearchInstructors] = useState("");
+  const [searchInstructors, setSearchInstructors] = useState("");
 
   const handleModal = () => setOpenModalInstructor(!openModalInstructor);
   const handleModalDelete = () => setOpenModalDelete(!openModalDelete);
@@ -157,11 +157,11 @@ const InstructorsList = () => {
 
   useEffect(() => {
     const instructorsFiltered = [...allInstructors] || [];
-    setAllInstructorsSearchFiltersApply(instructorsFiltered.filter((instructor) => (
-      instructor?.name.toLowerCase().includes(searchIntructors.toLowerCase()) || 
-      instructor?.email.toLowerCase().includes(searchIntructors.toLowerCase())
+    setAllInstructorSearchFiltersApply(instructorsFiltered.filter((instructor) => (
+      instructor?.name.toLowerCase().includes(searchInstructors.toLowerCase()) || 
+      instructor?.email.toLowerCase().includes(searchInstructors.toLowerCase())
     )));
-  }, [searchIntructors, allInstructors]);
+  }, [searchInstructors, allInstructors]);
 
   return (
     <>
@@ -175,7 +175,7 @@ const InstructorsList = () => {
           fileExportedName={"Instructors"}
           buttonTitle={"Add instructor"}
           isSearchFilter={true}
-          searchValue={searchIntructors}
+          searchValue={searchInstructors}
           setSearchValue={setSearchInstructors}
         />
         <DataTable

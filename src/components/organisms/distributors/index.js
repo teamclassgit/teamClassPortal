@@ -20,6 +20,7 @@ import "@styles/react/libs/tables/react-dataTable-component.scss";
 
 const DistributorsList = () => {
   const [allDistributors, setAllDistributors] = useState([]);
+  const [allDistributorSearchFiltersApply, setAllDistributorSearchFiltersApply] = useState([]);
   const [distributorDataToExport, setDistributorDataToExport] = useState(null);
   const [isModeEdit, setIsModeEdit] = useState(false);
   const [currentDistributor, setCurrentDistributor] = useState({});
@@ -29,6 +30,7 @@ const DistributorsList = () => {
   const [isMutationError, setIsMutarionError] = useState(false);
   const [proccesing, setProccesing] = useState(false);
   const [teamClassesByDistributor, setTeamClassesByDistributor] = useState([]);
+  const [searchDistributors, setSearchDistributors] = useState("");
 
   const handleModal = () => setOpenModalDistributor(!openModalDistributor);
   const handleModalDelete = () => setOpenModalDelete(!openModalDelete);
@@ -153,21 +155,32 @@ const DistributorsList = () => {
     proccesing
   );
 
+  useEffect(() => {
+    const distributorsFiltered = [...allDistributors] || [];
+    setAllDistributorSearchFiltersApply(distributorsFiltered.filter((instructor) => (
+      instructor?.name.toLowerCase().includes(searchDistributors.toLowerCase()) || 
+      instructor?.email.toLowerCase().includes(searchDistributors.toLowerCase())
+    )));
+  }, [searchDistributors, allDistributors]);
+
   return (
     <>
       <Container>
         <TasksBar
           setElementToAdd={function () {}}
           titleView={"Distributors"}
-          titleBadge={` ${allDistributors.length} records found`}
+          titleBadge={` ${allDistributorSearchFiltersApply.length} records found`}
           showAddModal={handleModal}
           getDataToExport={getDataDistributorsToExport}
           fileExportedName={"Distributors"}
           buttonTitle={"Add distributor"}
+          isSearchFilter={true}
+          searchValue={searchDistributors}
+          setSearchValue={setSearchDistributors}
         />
         <DataTable
           columns={columns}
-          data={allDistributors}
+          data={allDistributorSearchFiltersApply}
           noHeader
           sortIcon={<ChevronDown size={10}/>}
           className="react-dataTable my-2"
