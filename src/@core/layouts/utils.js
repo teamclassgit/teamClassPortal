@@ -1,15 +1,15 @@
 // ** React Imports
-import { useContext } from 'react';
-import { AbilityContext } from '@src/utility/context/Can';
+import { useContext } from "react";
+import { AbilityContext } from "@src/utility/context/Can";
 
 /**
  * Return which component to render based on it's data/context
  * @param {Object} item nav menu item
  */
 export const resolveVerticalNavMenuItemComponent = item => {
-  if (item.header) return 'VerticalNavMenuSectionHeader';
-  if (item.children) return 'VerticalNavMenuGroup';
-  return 'VerticalNavMenuLink';
+  if (item.header) return "VerticalNavMenuSectionHeader";
+  if (item.children) return "VerticalNavMenuGroup";
+  return "VerticalNavMenuLink";
 };
 
 /**
@@ -17,8 +17,8 @@ export const resolveVerticalNavMenuItemComponent = item => {
  * @param {Object} item nav menu item
  */
 export const resolveHorizontalNavMenuItemComponent = item => {
-  if (item.children) return 'HorizontalNavMenuGroup';
-  return 'HorizontalNavMenuLink';
+  if (item.children) return "HorizontalNavMenuGroup";
+  return "HorizontalNavMenuLink";
 };
 
 /**
@@ -126,7 +126,7 @@ export const getAllParents = (obj, match) => {
     for (const key in obj) {
       const value = obj[key];
       if (value !== undefined) {
-        if (value && typeof value === 'object') {
+        if (value && typeof value === "object") {
           recurse(value, key);
         } else if (key === match) {
           res.push(value);

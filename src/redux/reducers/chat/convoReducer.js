@@ -2,12 +2,12 @@ const initialState = [];
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'LIST_CONVERSATIONS':
+    case "LIST_CONVERSATIONS":
       return action.payload.sort((a, b) => {
         return (b.lastMessage?.dateCreated || b.dateUpdated) - (a.lastMessage?.dateCreated || a.dateUpdated);
       });
 
-    case 'ADD_CONVERSATION': {
+    case "ADD_CONVERSATION": {
       const target = state.find((convo) => convo.sid === action.payload.sid);
       if (target) return state;
 
@@ -18,7 +18,7 @@ const reducer = (state = initialState, action) => {
       });
     }
 
-    case 'UPDATE_CONVERSATION': {
+    case "UPDATE_CONVERSATION": {
       const stateCopy = [...state];
       let target = stateCopy.find((convo) => convo.sid === action.payload.channelSid);
 
@@ -29,7 +29,7 @@ const reducer = (state = initialState, action) => {
 
       return stateCopy;
     }
-    case 'REMOVE_CONVERSATION': {
+    case "REMOVE_CONVERSATION": {
       const stateCopy = [...state];
 
       return stateCopy.filter((convo) => convo?.sid !== action?.payload);

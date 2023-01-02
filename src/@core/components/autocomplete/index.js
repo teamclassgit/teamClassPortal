@@ -1,20 +1,20 @@
 // ** React Imports
-import { Fragment, useEffect, useState, useRef } from 'react';
-import ReactDOM from 'react-dom';
-import { useHistory } from 'react-router-dom';
+import { Fragment, useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
+import { useHistory } from "react-router-dom";
 
 // ** Third Party Components
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import { AlertCircle } from 'react-feather';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import PropTypes from "prop-types";
+import classnames from "classnames";
+import { AlertCircle } from "react-feather";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 // ** Custom Hooks
-import { useOnClickOutside } from '@hooks/useOnClickOutside';
+import { useOnClickOutside } from "@hooks/useOnClickOutside";
 
 // ** Styles
-import '@styles/base/bootstrap-extended/_include.scss';
-import './autocomplete.scss';
+import "@styles/base/bootstrap-extended/_include.scss";
+import "./autocomplete.scss";
 
 const Autocomplete = props => {
   // ** Refs
@@ -26,7 +26,7 @@ const Autocomplete = props => {
   const [focused, setFocused] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(0);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [userInput, setUserInput] = useState(props.value ? props.value : '');
+  const [userInput, setUserInput] = useState(props.value ? props.value : "");
 
   // ** Vars
   const history = useHistory();
@@ -89,7 +89,7 @@ const Autocomplete = props => {
     } else if (e.keyCode === 27) {
       // ** User Pressed ESC
       setShowSuggestions(false);
-      setUserInput('');
+      setUserInput("");
     } else if (e.keyCode === 13 && showSuggestions) {
       // ** User Pressed ENTER
       onSuggestionItemClick(filteredData[activeSuggestion].link, e);
@@ -114,7 +114,7 @@ const Autocomplete = props => {
         const suggestionURL = item.link !== undefined && item.link !== null ? item.link : null;
         return (
           <li
-            className={classnames('suggestion-item', {
+            className={classnames("suggestion-item", {
               active: filteredData.indexOf(item) === activeSuggestion
             })}
             key={item[filterKey]}
@@ -171,7 +171,7 @@ const Autocomplete = props => {
         if (!customRender) {
           return (
             <li
-              className={classnames('suggestion-item', {
+              className={classnames("suggestion-item", {
                 active: filteredData.indexOf(suggestion) === activeSuggestion
               })}
               key={suggestion[filterKey]}
@@ -292,7 +292,7 @@ const Autocomplete = props => {
   if (showSuggestions) {
     suggestionsListComponent = (
       <PerfectScrollbar
-        className={classnames('suggestions-list', {
+        className={classnames("suggestions-list", {
           [props.wrapperClass]: props.wrapperClass
         })}
         ref={suggestionsListRef}
@@ -316,7 +316,7 @@ const Autocomplete = props => {
         }}
         onKeyDown={e => onKeyDown(e)}
         value={userInput}
-        className={`autocomplete-search ${props.className ? props.className : ''}`}
+        className={`autocomplete-search ${props.className ? props.className : ""}`}
         placeholder={props.placeholder}
         onClick={onInputClick}
         ref={inputElRef}

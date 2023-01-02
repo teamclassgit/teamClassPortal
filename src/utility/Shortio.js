@@ -9,10 +9,10 @@ export const createShortLink = async (originalLink) => {
       originalURL: originalLink
     };
     const result = await fetch(shortioURL, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
         authorization: PUBLIC_API_KEY
       },
       body: JSON.stringify(data)

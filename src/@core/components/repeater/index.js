@@ -1,5 +1,5 @@
 // ** Third Party Components
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const Repeater = props => {
   // ** Props
@@ -27,7 +27,7 @@ Repeater.propTypes = {
 
 // ** Default Props
 Repeater.defaultProps = {
-  tag: 'div'
+  tag: "div"
 };
 
 export default Repeater;

@@ -2,9 +2,9 @@ const initialState = [];
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-  case 'ADD_NOTIFICATIONS':
+  case "ADD_NOTIFICATIONS":
     return [...state, ...action.payload];
-  case 'REMOVE_NOTIFICATIONS': {
+  case "REMOVE_NOTIFICATIONS": {
     const removeCount = action.payload;
     if (removeCount + 1 > state.length) {
       return [];

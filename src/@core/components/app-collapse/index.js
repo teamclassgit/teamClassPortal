@@ -1,11 +1,11 @@
 // ** React Imports
-import { useState } from 'react';
+import { useState } from "react";
 
 // ** Third Party Components
-import Proptypes from 'prop-types';
-import classnames from 'classnames';
-import { ChevronUp } from 'react-feather';
-import { Collapse, Card, CardHeader, CardBody, CardTitle } from 'reactstrap';
+import Proptypes from "prop-types";
+import classnames from "classnames";
+import { ChevronUp } from "react-feather";
+import { Collapse, Card, CardHeader, CardBody, CardTitle } from "reactstrap";
 
 const AppCollapse = props => {
   // ** Props
@@ -54,14 +54,14 @@ const AppCollapse = props => {
 
       return (
         <Card
-          className={classnames('app-collapse', {
+          className={classnames("app-collapse", {
             [item.className]: item.className,
-            open: accordion ? openCollapse === index : openCollapse.includes(index) && type === 'shadow'
+            open: accordion ? openCollapse === index : openCollapse.includes(index) && type === "shadow"
           })}
           key={index}
         >
           <CardHeader
-            className={classnames('align-items-center', {
+            className={classnames("align-items-center", {
               collapsed: accordion ? openCollapse !== index : !openCollapse.includes(index)
             })}
             /*eslint-disable */
@@ -87,12 +87,12 @@ const AppCollapse = props => {
 
   return (
     <div
-      className={classnames('collapse-icon', {
+      className={classnames("collapse-icon", {
         [className]: className,
-        'collapse-default': !type,
-        'collapse-shadow': type === 'shadow',
-        'collapse-border': type === 'border',
-        'collapse-margin': type === 'margin'
+        "collapse-default": !type,
+        "collapse-shadow": type === "shadow",
+        "collapse-border": type === "border",
+        "collapse-margin": type === "margin"
       })}
     >
       {renderData()}
@@ -106,7 +106,7 @@ export default AppCollapse;
 AppCollapse.propTypes = {
   data: Proptypes.array.isRequired,
   accordion: Proptypes.bool,
-  type: Proptypes.oneOf(['shadow', 'border', 'margin']),
+  type: Proptypes.oneOf(["shadow", "border", "margin"]),
   active: Proptypes.oneOfType([Proptypes.array, Proptypes.number]),
   titleKey: Proptypes.string,
   contentKey: Proptypes.string,
@@ -116,5 +116,5 @@ AppCollapse.propTypes = {
 // ** Default Props
 AppCollapse.defaultProps = {
   active: [],
-  toggle: 'click'
+  toggle: "click"
 };

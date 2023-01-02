@@ -1,5 +1,5 @@
-import axios from 'axios';
-import jwtDefaultConfig from './jwtDefaultConfig';
+import axios from "axios";
+import jwtDefaultConfig from "./jwtDefaultConfig";
 
 export default class JwtService {
   // ** jwtConfig <= Will be used by this service

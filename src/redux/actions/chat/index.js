@@ -1,7 +1,7 @@
 export const login = (token) => {
   return (dispatch) => {
     dispatch({
-      type: 'LOGIN',
+      type: "LOGIN",
       payload: token
     });
   };
@@ -10,7 +10,7 @@ export const login = (token) => {
 export const logout = () => {
   return (dispatch) => {
     dispatch({
-      type: 'LOGOUT'
+      type: "LOGOUT"
     });
   };
 };
@@ -18,7 +18,7 @@ export const logout = () => {
 export const listConversations = (convos) => {
   return (dispatch) => {
     dispatch({
-      type: 'LIST_CONVERSATIONS',
+      type: "LIST_CONVERSATIONS",
       payload: convos
     });
   };
@@ -27,7 +27,7 @@ export const listConversations = (convos) => {
 export const updateCurrentConversation = (sid) => {
   return (dispatch) => {
     dispatch({
-      type: 'UPDATE_CURRENT_CONVERSATION',
+      type: "UPDATE_CURRENT_CONVERSATION",
       payload: sid
     });
   };
@@ -36,7 +36,7 @@ export const updateCurrentConversation = (sid) => {
 export const addConversation = (convo) => {
   return (dispatch) => {
     dispatch({
-      type: 'ADD_CONVERSATION',
+      type: "ADD_CONVERSATION",
       payload: convo
     });
   };
@@ -45,7 +45,7 @@ export const addConversation = (convo) => {
 export const setLastReadIndex = (index) => {
   return (dispatch) => {
     dispatch({
-      type: 'CONVERSATION_LAST_READ_INDEX',
+      type: "CONVERSATION_LAST_READ_INDEX",
       payload: index
     });
   };
@@ -54,7 +54,7 @@ export const setLastReadIndex = (index) => {
 export const setTotalUnreadMessagesCount = (count) => {
   return (dispatch) => {
     dispatch({
-      type: 'CONVERSATION_TOTAL_UNREAD_MESSAGES_COUNT',
+      type: "CONVERSATION_TOTAL_UNREAD_MESSAGES_COUNT",
       payload: count
     });
   };
@@ -63,7 +63,7 @@ export const setTotalUnreadMessagesCount = (count) => {
 export const removeConversation = (sid) => {
   return (dispatch) => {
     dispatch({
-      type: 'REMOVE_CONVERSATION',
+      type: "REMOVE_CONVERSATION",
       payload: sid
     });
   };
@@ -72,7 +72,7 @@ export const removeConversation = (sid) => {
 export const addMessages = (channelSid, messages) => {
   return (dispatch) => {
     dispatch({
-      type: 'ADD_MESSAGES',
+      type: "ADD_MESSAGES",
       payload: { channelSid, messages }
     });
   };
@@ -81,7 +81,7 @@ export const addMessages = (channelSid, messages) => {
 export const pushMessages = (channelSid, messages) => {
   return (dispatch) => {
     dispatch({
-      type: 'PUSH_MESSAGES',
+      type: "PUSH_MESSAGES",
       payload: { channelSid, messages }
     });
   };
@@ -90,7 +90,7 @@ export const pushMessages = (channelSid, messages) => {
 export const removeMessages = (channelSid, messages) => {
   return (dispatch) => {
     dispatch({
-      type: 'REMOVE_MESSAGES',
+      type: "REMOVE_MESSAGES",
       payload: { channelSid, messages }
     });
   };
@@ -99,7 +99,7 @@ export const removeMessages = (channelSid, messages) => {
 export const updateLoadingState = (loadingStatus) => {
   return (dispatch) => {
     dispatch({
-      type: 'UPDATE_LOADING_STATE',
+      type: "UPDATE_LOADING_STATE",
       payload: loadingStatus
     });
   };
@@ -108,7 +108,7 @@ export const updateLoadingState = (loadingStatus) => {
 export const updateParticipants = (participants, sid) => {
   return (dispatch) => {
     dispatch({
-      type: 'UPDATE_PARTICIPANTS',
+      type: "UPDATE_PARTICIPANTS",
       payload: { participants, sid }
     });
   };
@@ -117,7 +117,7 @@ export const updateParticipants = (participants, sid) => {
 export const updateUnreadMessages = (channelSid, unreadCount) => {
   return (dispatch) => {
     dispatch({
-      type: 'UPDATE_UNREAD_MESSAGES',
+      type: "UPDATE_UNREAD_MESSAGES",
       payload: { channelSid, unreadCount }
     });
   };
@@ -126,7 +126,7 @@ export const updateUnreadMessages = (channelSid, unreadCount) => {
 export const cleanUnreadMessages = () => {
   return (dispatch) => {
     dispatch({
-      type: 'CLEAN_UNREAD_MESSAGES',
+      type: "CLEAN_UNREAD_MESSAGES",
       payload: {}
     });
   };
@@ -135,7 +135,7 @@ export const cleanUnreadMessages = () => {
 export const updateConversation = (channelSid, parameters) => {
   return (dispatch) => {
     dispatch({
-      type: 'UPDATE_CONVERSATION',
+      type: "UPDATE_CONVERSATION",
       payload: { channelSid, parameters }
     });
   };
@@ -144,7 +144,7 @@ export const updateConversation = (channelSid, parameters) => {
 export const addAttachment = (channelSid, messageIndex, attachment) => {
   return (dispatch) => {
     dispatch({
-      type: 'ADD_ATTACHMENT',
+      type: "ADD_ATTACHMENT",
       payload: { channelSid, messageIndex, attachment }
     });
   };
@@ -153,7 +153,7 @@ export const addAttachment = (channelSid, messageIndex, attachment) => {
 export const startTyping = (channelSid, participant) => {
   return (dispatch) => {
     dispatch({
-      type: 'TYPING_STARTED',
+      type: "TYPING_STARTED",
       payload: { channelSid, participant }
     });
   };
@@ -162,7 +162,7 @@ export const startTyping = (channelSid, participant) => {
 export const endTyping = (channelSid, participant) => {
   return (dispatch) => {
     dispatch({
-      type: 'TYPING_ENDED',
+      type: "TYPING_ENDED",
       payload: { channelSid, participant }
     });
   };
@@ -171,7 +171,7 @@ export const endTyping = (channelSid, participant) => {
 export const addNotifications = (notifications) => {
   return (dispatch) => {
     dispatch({
-      type: 'ADD_NOTIFICATIONS',
+      type: "ADD_NOTIFICATIONS",
       payload: notifications
     });
   };
@@ -180,7 +180,7 @@ export const addNotifications = (notifications) => {
 export const removeNotifications = (toIndex) => {
   return (dispatch) => {
     dispatch({
-      type: 'REMOVE_NOTIFICATIONS',
+      type: "REMOVE_NOTIFICATIONS",
       payload: toIndex
     });
   };
@@ -189,7 +189,7 @@ export const removeNotifications = (toIndex) => {
 export const informationId = (infoId) => {
   return (dispatch) => {
     dispatch({
-      type: 'CONVERSATION_INFO',
+      type: "CONVERSATION_INFO",
       payload: infoId
     });
   };

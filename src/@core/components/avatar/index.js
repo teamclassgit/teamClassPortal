@@ -1,10 +1,10 @@
 // ** React Imports
-import {forwardRef} from 'react';
+import {forwardRef} from "react";
 
 // ** Third Party Components
-import Proptypes from 'prop-types';
-import {Badge} from 'reactstrap';
-import classnames from 'classnames';
+import Proptypes from "prop-types";
+import {Badge} from "reactstrap";
+import classnames from "classnames";
 
 const Avatar = forwardRef((props, ref) => {
   // ** Props
@@ -30,18 +30,18 @@ const Avatar = forwardRef((props, ref) => {
 
   // ** Function to extract initials from content
   const getInitials = str => {
-    if (!str) return '';
+    if (!str) return "";
     const results = [];
-    const wordArray = str.split(' ');
+    const wordArray = str.split(" ");
     wordArray.forEach(e => {
       results.push(e[0]);
     });
-    return results.join('');
+    return results.join("");
   };
 
   return (
     <Tag
-      className={classnames('avatar', {
+      className={classnames("avatar", {
         [className]: className,
         [`bg-${color}`]: color,
         [`avatar-${size}`]: size
@@ -51,8 +51,8 @@ const Avatar = forwardRef((props, ref) => {
     >
       {img === false || img === undefined ? (
         <span
-          className={classnames('avatar-content', {
-            'position-relative': badgeUp
+          className={classnames("avatar-content", {
+            "position-relative": badgeUp
           })}
           style={contentStyles}
         >
@@ -60,8 +60,8 @@ const Avatar = forwardRef((props, ref) => {
 
           {icon ? icon : null}
           {badgeUp ? (
-            <Badge color={badgeColor ? badgeColor : 'primary'} className='badge-sm badge-up' pill>
-              {badgeText ? badgeText : '0'}
+            <Badge color={badgeColor ? badgeColor : "primary"} className='badge-sm badge-up' pill>
+              {badgeText ? badgeText : "0"}
             </Badge>
           ) : null}
         </span>
@@ -103,54 +103,54 @@ Avatar.propTypes = {
   badgeText: Proptypes.string,
   imgHeight: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
   imgWidth: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
-  size: Proptypes.oneOf(['sm', 'lg', 'xl']),
-  status: Proptypes.oneOf(['online', 'offline', 'away', 'busy']),
+  size: Proptypes.oneOf(["sm", "lg", "xl"]),
+  status: Proptypes.oneOf(["online", "offline", "away", "busy"]),
   badgeColor: Proptypes.oneOf([
-    'primary',
-    'secondary',
-    'success',
-    'danger',
-    'info',
-    'warning',
-    'dark',
-    'light-primary',
-    'light-secondary',
-    'light-success',
-    'light-danger',
-    'light-info',
-    'light-warning',
-    'light-dark'
+    "primary",
+    "secondary",
+    "success",
+    "danger",
+    "info",
+    "warning",
+    "dark",
+    "light-primary",
+    "light-secondary",
+    "light-success",
+    "light-danger",
+    "light-info",
+    "light-warning",
+    "light-dark"
   ]),
   color: Proptypes.oneOf([
-    'primary',
-    'secondary',
-    'success',
-    'danger',
-    'info',
-    'warning',
-    'dark',
-    'light-primary',
-    'light-secondary',
-    'light-success',
-    'light-danger',
-    'light-info',
-    'light-warning',
-    'light-dark'
+    "primary",
+    "secondary",
+    "success",
+    "danger",
+    "info",
+    "warning",
+    "dark",
+    "light-primary",
+    "light-secondary",
+    "light-success",
+    "light-danger",
+    "light-info",
+    "light-warning",
+    "light-dark"
   ]),
   initials (props) {
-    if (props['initials'] && props['content'] === undefined) {
-      return new Error('content prop is required with initials prop.');
+    if (props["initials"] && props["content"] === undefined) {
+      return new Error("content prop is required with initials prop.");
     }
-    if (props['initials'] && typeof props['content'] !== 'string') {
-      return new Error('content prop must be a string.');
+    if (props["initials"] && typeof props["content"] !== "string") {
+      return new Error("content prop must be a string.");
     }
-    if (typeof props['initials'] !== 'boolean' && props['initials'] !== undefined) {
-      return new Error('initials must be a boolean!');
+    if (typeof props["initials"] !== "boolean" && props["initials"] !== undefined) {
+      return new Error("initials must be a boolean!");
     }
   }
 };
 
 // ** Default Props
 Avatar.defaultProps = {
-  tag: 'div'
+  tag: "div"
 };

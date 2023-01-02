@@ -1,36 +1,36 @@
 // ** React Imports
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 // ** Store & Actions
-import { useSelector, useDispatch } from 'react-redux';
-import { handleMenuCollapsed, handleContentWidth, handleMenuHidden } from '@store/actions/layout';
+import { useSelector, useDispatch } from "react-redux";
+import { handleMenuCollapsed, handleContentWidth, handleMenuHidden } from "@store/actions/layout";
 
 // ** Third Party Components
-import classnames from 'classnames';
-import { ArrowUp } from 'react-feather';
-import ScrollToTop from 'react-scroll-up';
-import { Navbar, Button } from 'reactstrap';
+import classnames from "classnames";
+import { ArrowUp } from "react-feather";
+import ScrollToTop from "react-scroll-up";
+import { Navbar, Button } from "reactstrap";
 
 // ** Configs
-import themeConfig from '@configs/themeConfig';
+import themeConfig from "@configs/themeConfig";
 
 // ** Custom Components
-import Customizer from '@components/customizer';
-import FooterComponent from './components/footer';
-import NavbarComponent from './components/navbar';
-import SidebarComponent from './components/menu/vertical-menu';
+import Customizer from "@components/customizer";
+import FooterComponent from "./components/footer";
+import NavbarComponent from "./components/navbar";
+import SidebarComponent from "./components/menu/vertical-menu";
 
 // ** Custom Hooks
-import { useRTL } from '@hooks/useRTL';
-import { useSkin } from '@hooks/useSkin';
-import { useNavbarType } from '@hooks/useNavbarType';
-import { useFooterType } from '@hooks/useFooterType';
-import { useNavbarColor } from '@hooks/useNavbarColor';
+import { useRTL } from "@hooks/useRTL";
+import { useSkin } from "@hooks/useSkin";
+import { useNavbarType } from "@hooks/useNavbarType";
+import { useFooterType } from "@hooks/useFooterType";
+import { useNavbarColor } from "@hooks/useNavbarColor";
 
 // ** Styles
-import '@styles/base/core/menu/menu-types/vertical-menu.scss';
-import '@styles/base/core/menu/menu-types/vertical-overlay-menu.scss';
+import "@styles/base/core/menu/menu-types/vertical-menu.scss";
+import "@styles/base/core/menu/menu-types/vertical-overlay-menu.scss";
 
 const VerticalLayoutNoTopBar = props => {
   // ** Props
@@ -82,7 +82,7 @@ const VerticalLayoutNoTopBar = props => {
   //** Sets Window Size & Layout Props
   useEffect(() => {
     if (window !== undefined) {
-      window.addEventListener('resize', handleWindowWidth);
+      window.addEventListener("resize", handleWindowWidth);
     }
   }, [windowWidth]);
 
@@ -94,26 +94,26 @@ const VerticalLayoutNoTopBar = props => {
 
   // ** Vars
   const footerClasses = {
-    static: 'footer-static',
-    sticky: 'footer-fixed',
-    hidden: 'footer-hidden'
+    static: "footer-static",
+    sticky: "footer-fixed",
+    hidden: "footer-hidden"
   };
 
   const navbarWrapperClasses = {
-    floating: 'navbar-floating',
-    sticky: 'navbar-sticky',
-    static: 'navbar-static',
-    hidden: 'navbar-hidden'
+    floating: "navbar-floating",
+    sticky: "navbar-sticky",
+    static: "navbar-static",
+    hidden: "navbar-hidden"
   };
 
   const navbarClasses = {
-    floating: 'floating-nav',
-    sticky: 'fixed-top',
-    static: 'navbar-static-top',
-    hidden: 'd-none'
+    floating: "floating-nav",
+    sticky: "fixed-top",
+    static: "navbar-static-top",
+    hidden: "d-none"
   };
 
-  const bgColorCondition = navbarColor !== '' && navbarColor !== 'light' && navbarColor !== 'white';
+  const bgColorCondition = navbarColor !== "" && navbarColor !== "light" && navbarColor !== "white";
 
   if (!isMounted) {
     return null;
@@ -121,31 +121,31 @@ const VerticalLayoutNoTopBar = props => {
   return (
     <div
       className={classnames(
-        `wrapper vertical-layout ${navbarWrapperClasses[navbarType] || 'navbar-floating'} ${
-          footerClasses[footerType] || 'footer-static'
+        `wrapper vertical-layout ${navbarWrapperClasses[navbarType] || "navbar-floating"} ${
+          footerClasses[footerType] || "footer-static"
         }`,
         {
           // Modern Menu
-          'vertical-menu-modern': windowWidth >= 1200,
-          'menu-collapsed': menuCollapsed && windowWidth >= 1200,
-          'menu-expanded': !menuCollapsed && windowWidth > 1200,
+          "vertical-menu-modern": windowWidth >= 1200,
+          "menu-collapsed": menuCollapsed && windowWidth >= 1200,
+          "menu-expanded": !menuCollapsed && windowWidth > 1200,
 
           // Overlay Menu
-          'vertical-overlay-menu': windowWidth < 1200,
-          'menu-hide': !menuVisibility && windowWidth < 1200,
-          'menu-open': menuVisibility && windowWidth < 1200
+          "vertical-overlay-menu": windowWidth < 1200,
+          "menu-hide": !menuVisibility && windowWidth < 1200,
+          "menu-open": menuVisibility && windowWidth < 1200
         }
       )}
-      {...({ 'data-col': '1-column' })}
+      {...({ "data-col": "1-column" })}
     >
 
       <Navbar
         expand='lg'
-        light={skin !== 'dark'}
-        dark={skin === 'dark' || bgColorCondition}
+        light={skin !== "dark"}
+        dark={skin === "dark" || bgColorCondition}
         color={bgColorCondition ? navbarColor : undefined}
         className={classnames(
-          `header-navbar navbar align-items-center ${navbarClasses[navbarType] || 'floating-nav'} navbar-shadow`
+          `header-navbar navbar align-items-center ${navbarClasses[navbarType] || "floating-nav"} navbar-shadow`
         )}
       >
         <div className='navbar-container d-flex content'>
@@ -156,7 +156,7 @@ const VerticalLayoutNoTopBar = props => {
 
       {/* Vertical Nav Menu Overlay */}
       <div
-        className={classnames('sidenav-overlay', {
+        className={classnames("sidenav-overlay", {
           show: menuVisibility
         })}
         onClick={() => setMenuVisibility(false)}
@@ -189,8 +189,8 @@ const VerticalLayoutNoTopBar = props => {
         />
       ) : null}
       <footer
-        className={classnames(`footer footer-light ${footerClasses[footerType] || 'footer-static'}`, {
-          'd-none': footerType === 'hidden'
+        className={classnames(`footer footer-light ${footerClasses[footerType] || "footer-static"}`, {
+          "d-none": footerType === "hidden"
         })}
       >
         {footer ? footer : <FooterComponent footerType={footerType} footerClasses={footerClasses} />}
@@ -198,7 +198,7 @@ const VerticalLayoutNoTopBar = props => {
 
       {themeConfig.layout.scrollTop === true ? (
         <div className='scroll-to-top'>
-          <ScrollToTop showUnder={300} style={{ bottom: '5%' }}>
+          <ScrollToTop showUnder={300} style={{ bottom: "5%" }}>
             <Button className='btn-icon' color='primary'>
               <ArrowUp size={14} />
             </Button>

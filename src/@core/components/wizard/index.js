@@ -1,13 +1,13 @@
 // @packages
-import Stepper from 'bs-stepper';
-import classnames from 'classnames';
-import { Fragment, useEffect, useState, forwardRef } from 'react';
-import {ChevronRight} from 'react-feather';
-import {PropTypes} from 'prop-types';
+import Stepper from "bs-stepper";
+import classnames from "classnames";
+import { Fragment, useEffect, useState, forwardRef } from "react";
+import {ChevronRight} from "react-feather";
+import {PropTypes} from "prop-types";
 
 // ** Styles
-import 'bs-stepper/dist/css/bs-stepper.min.css';
-import '../../../@core/scss/base/plugins/forms/form-wizard.scss';
+import "bs-stepper/dist/css/bs-stepper.min.css";
+import "../../../@core/scss/base/plugins/forms/form-wizard.scss";
 
 const Wizard = forwardRef(({
   type,
@@ -27,7 +27,7 @@ const Wizard = forwardRef(({
   useEffect(() => {
     stepper = new Stepper(ref.current, options);
 
-    ref.current.addEventListener('shown.bs-stepper', function (event) {
+    ref.current.addEventListener("shown.bs-stepper", function (event) {
       setActiveIndex(event.detail.indexStep);
     });
 
@@ -43,7 +43,7 @@ const Wizard = forwardRef(({
         <Fragment key={step.id}>
           {index !== 0 && index !== steps.length ? <div className='line'>{separator}</div> : null}
           <div
-            className={classnames('step', {
+            className={classnames("step", {
               crossed: activeIndex > index,
               active: index === activeIndex
             })}
@@ -66,8 +66,8 @@ const Wizard = forwardRef(({
     return steps.map((step, index) => {
       return (
         <div
-          className={classnames('content', {
-            'active dstepper-block': activeIndex === index
+          className={classnames("content", {
+            "active dstepper-block": activeIndex === index
           })}
           id={step.id}
           key={step.id}
@@ -81,11 +81,11 @@ const Wizard = forwardRef(({
   return (
     <div
       ref={ref}
-      className={classnames('bs-stepper', {
+      className={classnames("bs-stepper", {
         [className]: className,
-        vertical: type === 'vertical',
-        'vertical wizard-modern': type === 'modern-vertical',
-        'wizard-modern': type === 'modern-horizontal'
+        vertical: type === "vertical",
+        "vertical wizard-modern": type === "modern-vertical",
+        "wizard-modern": type === "modern-horizontal"
       })}
     > 
       <div className='bs-stepper-header'>{renderHeader()}</div>
@@ -97,7 +97,7 @@ const Wizard = forwardRef(({
 export default Wizard;
 
 Wizard.defaultProps = {
-  type: 'horizontal',
+  type: "horizontal",
   separator: <ChevronRight size={17}/>,
   options: {},
   steps: []

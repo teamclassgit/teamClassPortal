@@ -1,13 +1,14 @@
-import { useState, useContext } from 'react';
-import InputPasswordToggle from '@components/input-password-toggle';
+// @packages
+import { useState, useContext } from "react";
+import InputPasswordToggle from "@components/input-password-toggle";
 // ** Configs
-import themeConfig from '@configs/themeConfig';
-import { Button, CardText, CardTitle, Col, CustomInput, Form, FormGroup, Input, Label, Row, Alert } from 'reactstrap';
-import '@styles/base/pages/page-auth.scss';
-import { loginWithEmailAndPassword, logoutUser } from '../utility/RealmApolloClient';
-import { FiltersContext } from '../context/FiltersContext/FiltersContext';
-import { getUserData } from '../utility/Utils';
-import { TwilioContext } from '../context/TwilioContext/TwilioContext';
+import themeConfig from "@configs/themeConfig";
+import { Button, CardText, CardTitle, Col, CustomInput, Form, FormGroup, Input, Label, Row, Alert } from "reactstrap";
+import "@styles/base/pages/page-auth.scss";
+import { loginWithEmailAndPassword, logoutUser } from "../utility/RealmApolloClient";
+import { FiltersContext } from "../context/FiltersContext/FiltersContext";
+import { getUserData } from "../utility/Utils";
+import { TwilioContext } from "../context/TwilioContext/TwilioContext";
 
 const Login = (props) => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ const Login = (props) => {
   const setDefaultFilters = (userData) => {
     if (userData && userData.customData && userData.customData.coordinatorId) {
       setCoordinatorFilterContext({
-        type: 'coordinator',
+        type: "coordinator",
         value: [userData.customData.coordinatorId],
         label: [userData.customData.name]
       });
@@ -40,7 +41,7 @@ const Login = (props) => {
           setDefaultFilters(userData);
           setLoading(false);
           setChatUser(userData.customData);
-          props.history.push('/');
+          props.history.push("/");
         }
       } catch (ex) {
         setLoading(false);

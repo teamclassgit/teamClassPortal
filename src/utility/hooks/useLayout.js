@@ -1,8 +1,8 @@
 //** React Imports
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 // ** Configs
-import themeConfig from '@configs/themeConfig';
+import themeConfig from "@configs/themeConfig";
 
 export const useLayout = () => {
   // ** States
@@ -33,13 +33,13 @@ export const useLayout = () => {
 
   const handleLayout = () => {
     // ** If layout is horizontal & screen size is equals to or below 1200
-    if (layout === 'horizontal' && window.innerWidth <= 1200) {
-      setLayout('vertical');
-      setLastLayout('horizontal');
+    if (layout === "horizontal" && window.innerWidth <= 1200) {
+      setLayout("vertical");
+      setLastLayout("horizontal");
     }
     // ** If lastLayout is horizontal & screen size is equals to or above 1200
-    if (lastLayout === 'horizontal' && window.innerWidth >= 1200) {
-      setLayout('horizontal');
+    if (lastLayout === "horizontal" && window.innerWidth >= 1200) {
+      setLayout("horizontal");
     }
   };
 
@@ -50,7 +50,7 @@ export const useLayout = () => {
 
   useEffect(() => {
     // ** Window Resize Event
-    window.addEventListener('resize', handleLayout);
+    window.addEventListener("resize", handleLayout);
   }, [layout, lastLayout]);
 
   return [layout, setValue];

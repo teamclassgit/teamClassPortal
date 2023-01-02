@@ -1,15 +1,15 @@
 // ** React Imports
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
 // ** Third Party Components
-import classnames from 'classnames';
-import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
+import classnames from "classnames";
+import { Dropdown, DropdownMenu, DropdownToggle } from "reactstrap";
 
 // ** Utils
-import { isNavGroupActive } from '@layouts/utils';
+import { isNavGroupActive } from "@layouts/utils";
 
 // ** Horizontal Menu Items Component
-import HorizontalNavMenuItems from './HorizontalNavMenuItems';
+import HorizontalNavMenuItems from "./HorizontalNavMenuItems";
 
 const HorizontalNavMenuGroup = props => {
   // ** Props
@@ -46,7 +46,7 @@ const HorizontalNavMenuGroup = props => {
           maxHeight = pageHeight - ddTop - 25;
           stylesObj = {
             maxHeight,
-            overflowY: 'auto'
+            overflowY: "auto"
           };
         }
 
@@ -54,7 +54,7 @@ const HorizontalNavMenuGroup = props => {
 
         // ** If there is not space left to open sub menu open it to the right
         if (ddRef.left + ddRef.width - (window.innerWidth - 16) >= 0) {
-          data.instance.popper.closest('.dropdown').classList.add('openLeft');
+          data.instance.popper.closest(".dropdown").classList.add("openLeft");
         }
 
         return {
@@ -70,9 +70,9 @@ const HorizontalNavMenuGroup = props => {
     <Dropdown
       tag='li'
       className={classnames({
-        'nav-item': submenu === false,
-        'dropdown-submenu': submenu === true,
-        'sidebar-group-active active':
+        "nav-item": submenu === false,
+        "dropdown-submenu": submenu === true,
+        "sidebar-group-active active":
           isNavGroupActive(item.children, currentURL, routerProps) || groupActive.includes(item.id)
       })}
       isOpen={openDropdown.includes(item.id)}
@@ -83,9 +83,9 @@ const HorizontalNavMenuGroup = props => {
       <DropdownToggle
         to='/'
         tag={Link}
-        className={classnames('dropdown-toggle d-flex align-items-center', {
-          'dropdown-item': submenu === true,
-          'nav-link': submenu === false
+        className={classnames("dropdown-toggle d-flex align-items-center", {
+          "dropdown-item": submenu === true,
+          "nav-link": submenu === false
         })}
         onClick={e => e.preventDefault()}
       >

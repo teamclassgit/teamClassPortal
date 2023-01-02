@@ -1,5 +1,5 @@
 // @packages
-import { MoreHorizontal } from 'react-feather';
+import { MoreHorizontal } from "react-feather";
 
 const VerticalNavMenuSectionHeader = ({ item }) => {
   return (

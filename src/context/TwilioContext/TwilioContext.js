@@ -1,13 +1,14 @@
+/* eslint-disable no-undef */
 // @packages
-import { Client } from '@twilio/conversations';
-import { useMutation } from '@apollo/client';
-import { createContext, useEffect, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { apolloClient } from '../../utility/RealmApolloClient';
+import { Client } from "@twilio/conversations";
+import { useMutation } from "@apollo/client";
+import { createContext, useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { apolloClient } from "@utility/RealmApolloClient";
 // @scripts
-import mutationTokenConversations from '../../graphql/MutationTokenConversations';
-import { handlePromiseRejection } from '../../views/chat/helpers';
-import { getConversationParticipants } from '../../views/chat/Apis';
+import mutationTokenConversations from "@graphql/MutationTokenConversations";
+import { handlePromiseRejection } from "@organisms/chat/helpers";
+import { getConversationParticipants } from "@organisms/chat/Apis";
 import {
   addMessages,
   addConversation,
@@ -24,7 +25,7 @@ import {
   updateUnreadMessages,
   setTotalUnreadMessagesCount,
   cleanUnreadMessages
-} from '../../redux/actions/chat';
+} from "@redux/actions/chat";
 
 export const TwilioContext = createContext();
 
@@ -37,7 +38,7 @@ const TwilioClientContextProvider = (props) => {
   const dispatch = useDispatch();
   const sid = useSelector((state) => state.reducer.sid.sid);
   const unreadMessages = useSelector((state) => state.reducer.unreadMessages.unreadMessages);
-  const sidRef = useRef('');
+  const sidRef = useRef("");
   sidRef.current = sid;
 
   const getToken = async () => {
@@ -57,84 +58,84 @@ const TwilioClientContextProvider = (props) => {
         console.log("Token can't be created/updated ", error);
         return;
       }
-      const clientOptions = { logLevel: 'debug' };
+      const clientOptions = { logLevel: "debug" };
       const client = new Client(newToken);
       setTwilioClient(client);
-      client.on('stateChanged', (state) => {
+      client.on("stateChanged", (state) => {
         console.log(state);
-        if (state === 'initialized') {
+        if (state === "initialized") {
         }
       });
 
-      client.on('conversationAdded', async (conversation) => {
-        conversation.on('typingStarted', (participant) => {
+      client.on("conversationAdded", async (conversation) => {
+        conversation.on("typingStarted", (participant) => {
           handlePromiseRejection(() => updateTypingIndicator(participant, conversation.sid, startTyping), addNotifications);
         });
 
-        conversation.on('typingEnded', (participant) => {
+        conversation.on("typingEnded", (participant) => {
           handlePromiseRejection(() => updateTypingIndicator(participant, conversation.sid, endTyping), addNotifications);
         });
 
         handlePromiseRejection(async () => {
-          if (conversation.status === 'joined') {
+          if (conversation.status === "joined") {
             const result = await getConversationParticipants();
             dispatch(updateParticipants(result, conversation.sid));
           }
 
-          updateConvoList('conversationAdded', client, conversation, listConversations, addMessages, updateUnreadMessages);
+          updateConvoList("conversationAdded", client, conversation, listConversations, addMessages, updateUnreadMessages);
         }, dispatch(addNotifications));
       });
 
-      client.on('conversationRemoved', (conversation) => {
-        dispatch(updateCurrentConversation(''));
-        dispatch(informationId(''));
+      client.on("conversationRemoved", (conversation) => {
+        dispatch(updateCurrentConversation(""));
+        dispatch(informationId(""));
         handlePromiseRejection(() => {
           dispatch(removeConversation(conversation.sid));
           dispatch(updateParticipants([], conversation.sid));
         }, dispatch(addNotifications));
       });
 
-      client.on('conversationUpdated', async ({ conversation, updateReasons }) => {
+      client.on("conversationUpdated", async ({ conversation, updateReasons }) => {
         handlePromiseRejection(
-          () => updateConvoList('conversationUpdated', client, conversation, listConversations, addMessages, updateUnreadMessages),
+          () => updateConvoList("conversationUpdated", client, conversation, listConversations, addMessages, updateUnreadMessages),
           addNotifications
         );
       });
 
-      client.on('messageAdded', (event) => {
+      client.on("messageAdded", (event) => {
         addMessage(event, addMessages, updateUnreadMessages);
       });
 
-      client.on('participantLeft', (participant) => {
+      client.on("participantLeft", (participant) => {
         handlePromiseRejection(() => handleParticipantsUpdate(participant, updateParticipants), addNotifications);
       });
 
-      client.on('participantUpdated', (event) => {
+      client.on("participantUpdated", (event) => {
         handlePromiseRejection(() => handleParticipantsUpdate(event.participant, updateParticipants), addNotifications);
       });
 
-      client.on('participantJoined', (participant) => {
+      client.on("participantJoined", (participant) => {
         handlePromiseRejection(() => handleParticipantsUpdate(participant, updateParticipants), addNotifications);
       });
 
-      client.on('messageUpdated', ({ message }) => {
+      client.on("messageUpdated", ({ message }) => {
         handlePromiseRejection(
-          () => updateConvoList('messageUpdated', client, message.conversation, listConversations, addMessages, updateUnreadMessages),
+          () => updateConvoList("messageUpdated", client, message.conversation, listConversations, addMessages, updateUnreadMessages),
           addNotifications
         );
       });
 
-      client.on('messageRemoved', (message) => {
+      client.on("messageRemoved", (message) => {
         handlePromiseRejection(() => removeMessagesUpdate(message.conversation.sid, message, dispatch, removeMessages), addNotifications);
       });
 
-      client.on('tokenExpired', async () => {
-        console.log('token expired');
+      client.on("tokenExpired", async () => {
+        console.log("token expired");
         client.updateToken(await getToken());
       });
 
-      client.on('tokenAboutToExpire', async () => {
-        console.log('tokenExpired');
+      client.on("tokenAboutToExpire", async () => {
+        console.log("tokenExpired");
         client.updateToken(await getToken());
       });
 
@@ -157,7 +158,7 @@ const TwilioClientContextProvider = (props) => {
     if (identity === chatUser?.email) {
       return;
     }
-    callback(sid, identity || friendlyName || '');
+    callback(sid, identity || friendlyName || "");
   };
 
   const removeMessagesUpdate = (convo, messages, dispatch, removeMessages) => {

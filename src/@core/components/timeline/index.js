@@ -1,48 +1,50 @@
 // ** Third Party Components
-import Proptypes from 'prop-types';
-import classnames from 'classnames';
+import Proptypes from "prop-types";
+import classnames from "classnames";
 
 const Timeline = props => {
   // ** Props
   const { data, tag, className } = props;
 
   // ** Custom Tagg
-  const Tag = tag ? tag : 'ul';
+  const Tag = tag ? tag : "ul";
 
   return (
     <Tag
-      className={classnames('timeline', {
+      className={classnames("timeline", {
         [className]: className
       })}
     >
       {data.map((item, i) => {
-        const ItemTag = item.tag ? item.tag : 'li';
+        const ItemTag = item.tag ? item.tag : "li";
 
         return (
           <ItemTag
             key={i}
-            className={classnames('timeline-item', {
+            className={classnames("timeline-item", {
               [item.className]: className
             })}
           >
             <span
-              className={classnames('timeline-point', {
+              className={classnames("timeline-point", {
                 [`timeline-point-${item.color}`]: item.color,
-                'timeline-point-indicator': !item.icon
+                "timeline-point-indicator": !item.icon
               })}
             >
               {item.icon ? item.icon : null}
             </span>
             <div className='timeline-event'>
               <div
-                className={classnames('d-flex justify-content-between flex-sm-row flex-column', {
-                  'mb-sm-0 mb-1': item.meta
+                className={classnames("d-flex justify-content-between flex-sm-row flex-column", {
+                  "mb-sm-0 mb-1": item.meta
                 })}
               >
-                <h6>{item.title}</h6>
+                <small>
+                  <strong>{item.title}</strong>
+                </small>
                 {item.meta ? (
                   <span
-                    className={classnames('timeline-event-time', {
+                    className={classnames("timeline-event-time", {
                       [item.metaClassName]: item.metaClassName
                     })}
                   >
@@ -50,13 +52,11 @@ const Timeline = props => {
                   </span>
                 ) : null}
               </div>
-              <p
-                className={classnames({
-                  'mb-0': i === data.length - 1 && !item.customContent
-                })}
-              >
-                {item.content}
-              </p>
+              <small>
+                <p className='mb-0'>
+                  {item.content}
+                </p>
+              </small>
               {item.customContent ? item.customContent : null}
             </div>
           </ItemTag>

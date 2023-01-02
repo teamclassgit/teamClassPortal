@@ -1,12 +1,12 @@
 // @packages
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import classnames from 'classnames';
-import navigation from '@src/navigation/vertical';
-import { useState, useRef } from 'react';
+import PerfectScrollbar from "react-perfect-scrollbar";
+import classnames from "classnames";
+import navigation from "@src/navigation/vertical";
+import { useState, useRef } from "react";
 
 // @scripts
-import VerticalMenuHeader from './VerticalMenuHeader';
-import VerticalNavMenuItems from './VerticalNavMenuItems';
+import VerticalMenuHeader from "./VerticalMenuHeader";
+import VerticalNavMenuItems from "./VerticalNavMenuItems";
 
 const Sidebar = props => {
   // ** Props
@@ -33,21 +33,21 @@ const Sidebar = props => {
   // ** Scroll Menu
   const scrollMenu = container => {
     if (shadowRef && container.scrollTop > 0) {
-      if (!shadowRef.current.classList.contains('d-block')) {
-        shadowRef.current.classList.add('d-block');
+      if (!shadowRef.current.classList.contains("d-block")) {
+        shadowRef.current.classList.add("d-block");
       }
-    } else if (shadowRef.current.classList.contains('d-block')) {
-      shadowRef.current.classList.remove('d-block');
+    } else if (shadowRef.current.classList.contains("d-block")) {
+      shadowRef.current.classList.remove("d-block");
     }
   };
 
   return (
     <>
       <div
-        className={classnames('main-menu menu-fixed menu-accordion menu-shadow', {
+        className={classnames("main-menu menu-fixed menu-accordion menu-shadow", {
           expanded: menuHover || menuCollapsed === false,
-          'menu-light': skin !== 'semi-dark' && skin !== 'dark',
-          'menu-dark': skin === 'semi-dark' || skin === 'dark'
+          "menu-light": skin !== "semi-dark" && skin !== "dark",
+          "menu-dark": skin === "semi-dark" || skin === "dark"
         })}
         onMouseEnter={onMouseEnter}
         onMouseLeave={() => setMenuHover(false)}

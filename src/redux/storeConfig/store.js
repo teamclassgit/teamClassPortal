@@ -1,8 +1,8 @@
 // ** Redux, Thunk & Root Reducer Imports
-import thunk from 'redux-thunk';
-import createDebounce from 'redux-debounced';
-import rootReducer from '../reducers/rootReducer';
-import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from "redux-thunk";
+import createDebounce from "redux-debounced";
+import rootReducer from "../reducers/rootReducer";
+import { createStore, applyMiddleware, compose } from "redux";
 
 // ** init middleware
 const middleware = [thunk, createDebounce()];
