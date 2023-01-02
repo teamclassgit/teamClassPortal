@@ -38,16 +38,12 @@ const Routes = [
     component: lazy(() => import("../../views/GeneralInquiries"))
   },
   {
-    path: "/private-requests",
-    component: lazy(() => import("../../views/PrivateRequests"))
+    path: "/large-events",
+    component: lazy(() => import("../../views/LargeEvents"))
   },
   {
     path: "/discount-codes",
     component: lazy(() => import("../../views/DiscountCodes"))
-  },
-  {
-    path: "/gift-baskets",
-    component: lazy(() => import("../../views/GiftBaskets"))
   },
   {
     path: "/listing-prices",
@@ -56,6 +52,22 @@ const Routes = [
   {
     path: "/late-requests",
     component: lazy(() => import("../../views/LateRequests"))
+  },
+  {
+    path: "/instructors",
+    component: lazy(() => import("../../views/Instructors"))
+  },
+  {
+    path: "/coordinators",
+    component: lazy(() => import("../../views/Coordinators"))
+  },
+  {
+    path: "/distributors",
+    component: lazy(() => import("../../views/Distributors"))
+  },
+  {
+    path: "/reviews",
+    component: lazy(() => import("../../views/Reviews"))
   },
   {
     path: "/login",

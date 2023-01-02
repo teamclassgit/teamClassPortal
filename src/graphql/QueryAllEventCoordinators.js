@@ -7,7 +7,11 @@ export default gql`
       name
       email
       default
+      largeEvents
       crmId
+      phone
+      twilioPhone
+      calendlyLink
     }
   }
 `;

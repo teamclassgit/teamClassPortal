@@ -80,7 +80,7 @@ const FiltersModal = ({
   return (
     <Modal isOpen={open} toggle={handleModal} className="sidebar-sm" modalClassName="modal-slide-in" contentClassName="pt-0">
       <ModalHeader className="" toggle={handleModal} tag="div">
-        <h5 className="modal-title mt-1">Filter opportunities</h5>
+        <h5 className="modal-title mt-1">Filter options</h5>
       </ModalHeader>
       <ModalBody className="flex-grow-1 mt-2">
         <Button color="link" className="pl-0" onClick={() => handleApplyFilters()}>

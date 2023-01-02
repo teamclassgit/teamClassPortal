@@ -1,21 +1,21 @@
-import { BookOpen, Book, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, Inbox, User } from "react-feather";
+import { BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, UserX, Users, Star } from "react-feather";
 
 export default [
   {
     id: "listBookings",
-    title: "Funnel (Beta)",
+    title: "Funnel",
     icon: <Filter size={20} />,
     navLink: "/pipeline"
   },
   {
     id: "listBookingsAll",
-    title: "All Bookings (Beta)",
+    title: "All bookings",
     icon: <Database size={20} />,
     navLink: "/all-bookings"
   },
   {
     id: "checkout1",
-    title: "In progress",
+    title: "Bookings board",
     icon: <BookOpen size={20} />,
     navLink: "/bookings"
   },
@@ -27,9 +27,9 @@ export default [
   },
   {
     id: "checkout3",
-    title: "Private requests",
+    title: "Large events",
     icon: <Book size={20} />,
-    navLink: "/private-requests"
+    navLink: "/large-events"
   },
   {
     id: "checkout4",
@@ -38,27 +38,53 @@ export default [
     navLink: "/general-inquiries"
   },
   {
-    id: "checkout5",
-    title: "Discount codes",
-    icon: <Tag size={20} />,
-    navLink: "/discount-codes"
-  },
-  {
-    id: "checkout6",
-    title: "Gift Baskets",
-    icon: <Gift size={20} />,
-    navLink: "/gift-baskets"
-  },
-  {
-    id: "checkout7",
-    title: "Listing Prices",
-    icon: <Edit2 size={20} />,
-    navLink: "/listing-prices"
-  },
-  {
     id: "checkout8",
     title: "Late requests",
-    icon: <User size={20} />,
+    icon: <UserX size={20} />,
     navLink: "/late-requests"
+  },
+  {
+    id: "reviews",
+    title: "Reviews",
+    icon: <Star size={20} />,
+    navLink: "/reviews"
+  },
+  {
+    id: "masterData",
+    title: "Master data",
+    icon: <Briefcase size={20} />,
+    badge: "light-warning",
+    children: [
+      {
+        id: "checkout7",
+        title: "Listing prices",
+        icon: <Edit2 size={20} />,
+        navLink: "/listing-prices"
+      },
+      {
+        id: "checkout5",
+        title: "Discount codes",
+        icon: <Tag size={20} />,
+        navLink: "/discount-codes"
+      },
+      {
+        id: "instructors",
+        title: "Instructors",
+        icon: <Users size={20} />,
+        navLink: "/instructors"
+      },
+      {
+        id: "coordinators",
+        title: "Coordinators",
+        icon: <Users size={20} />,
+        navLink: "/coordinators"
+      },
+      {
+        id: "distributors",
+        title: "Distributors",
+        icon: <Users size={20} />,
+        navLink: "/distributors"
+      }
+    ]
   }
 ];

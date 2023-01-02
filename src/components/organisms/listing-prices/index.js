@@ -288,7 +288,7 @@ const ListingPricesList = () => {
   return (
     <div>
       <div className="d-flex justify-content-between mb-2">
-        <h4>All Classes</h4>
+        <h4>All classes</h4>
         <UncontrolledButtonDropdown>
           <DropdownToggle color="primary" caret outline title="Export">
             <Share size={13} />
