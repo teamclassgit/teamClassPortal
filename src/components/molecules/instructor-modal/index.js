@@ -40,11 +40,13 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
 
   useEffect(() => {
     if (data, isModeEdit) {
-      if (!data?.specialFeatures) {
-        setInstructor({...data, specialFeatures: {invoicing: false, fulfillment: false}});
-      } else {
-        setInstructor(data);
-      }
+      setInstructor({
+        ...data,
+        specialFeatures: {
+          invoicing: data?.specialFeatures?.invoicing || false,
+          fulfillment: data?.specialFeatures?.fulfillment || false
+        }
+      });
     }
     if (data?.emailCCList) {
       setEmailListToCC(data.emailCCList.split(";"));
