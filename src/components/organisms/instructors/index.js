@@ -96,7 +96,8 @@ const InstructorsList = () => {
         "Email",
         "Phone",
         "Company",
-        "Special Features",
+        "Special Features Invoicing",
+        "Special Features fulfillment",
         "Active"
       ];
 
@@ -109,7 +110,8 @@ const InstructorsList = () => {
           element.email,
           element.phone,
           element.company,
-          element.specialFeatures?.invoicing.toString(),
+          element.specialFeatures?.invoicing?.toString(),
+          element.specialFeatures?.fulfillment?.toString(),
           element.active.toString()
         ];
         instructorsArray.push(row);
