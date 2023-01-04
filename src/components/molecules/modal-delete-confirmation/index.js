@@ -43,7 +43,11 @@ const ModalDeleteConfirmation = ({
       )}
       {isDeletingGetError && (
         <Alert className="text-sm-left p-1" color="danger">
-          {`Instructor is currently assigned to ${titleClasses.join(", ")} ${titleClasses.length > 1 ? " classes" : " class"}.`}
+          {
+            itemName === "Coordinator" ?
+              `${itemName} is currently assigned to one or more bookings` :
+              `${itemName} is currently assigned to ${titleClasses.join(", ")} ${titleClasses.length > 1 ? " classes" : " class"}.`
+          }
         </Alert>
       )}
     </ModalFooter>

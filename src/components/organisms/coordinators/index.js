@@ -13,11 +13,12 @@ import CoordinatorsModal from "@molecules/coordinators-modal";
 import mutationDeleteOneCoordinator from "@graphql/MutationDeleteOneCoordinator";
 import ModalDeleteConfirmation from "@molecules/modal-delete-confirmation";
 import mutationUpdateLargeEventCoordinator from "@graphql/MutationUpdateCoordinator";
+import queryAllBookingsByCoordinator from "@graphql/QueryGetBookingsWithCriteria";
+import QueryBookingRouting from "@graphql/QueryBookingRouting";
+import mutationUpdateBookingRouting from "@graphql/MutationUpdateBookingRouting";
 
 // @styles
 import "@styles/react/libs/tables/react-dataTable-component.scss";
-import QueryBookingRouting from "@graphql/QueryBookingRouting";
-import mutationUpdateBookingRouting from "@graphql/MutationUpdateBookingRouting";
 
 const CoordinatorsList = () => {
   const [openModalCoordinator, setOpenModalCoordinator] = useState(false);
@@ -34,6 +35,8 @@ const CoordinatorsList = () => {
   const [bookingRoutingEventCoordinators, setBookingRoutingEventCoordinators] = useState([]);
   const [processingLargeEventRouting, setProcessingLargeEventRouting] = useState(false);
   const [bookingRoutingEventCoordinatorsLargeEvents, setBookingRoutingEventCoordinatorsLargeEvents] = useState([]);
+  const [bookingsByCoordinator, setBookingsByCoordinator] = useState([]);
+  const [isDeleteCoordinatorError, setIsDeleteCoordinatorError] = useState(false);
 
   const [deleteOneCoordinator] = useMutation(mutationDeleteOneCoordinator);
 
@@ -118,6 +121,27 @@ const CoordinatorsList = () => {
       }
     });
   }, [allCoordinators]);
+
+  const [getBookingsByCoordinator] = useLazyQuery(queryAllBookingsByCoordinator, {
+    variables: {
+      filterBy: [{name: "eventCoordinatorId", type: "string", operator: "eq", value: currentCoordinator._id}],
+      offset: 0,
+      limit: 10
+    },
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setBookingsByCoordinator(data?.getBookingsWithCriteria || []);
+    }
+  });
+
+  useEffect(() => {
+    if (openModalDelete) {
+      getBookingsByCoordinator();
+    } else {
+      setIsDeleteCoordinatorError(false);
+      setIsMutarionError(false);
+    }
+  }, [openModalDelete, currentCoordinator]);
 
   const getDataCoordinatorsToExport = () => coordinatorsDataToExport;
 
@@ -241,6 +265,14 @@ const CoordinatorsList = () => {
     setProccesing(false);
   };
 
+  const handleDeleteCoordinator = () => {
+    if (!bookingsByCoordinator.count) {
+      deleteCoordinator();
+      return;
+    }
+    setIsDeleteCoordinatorError(true);
+  };
+
   useEffect(() => {
     const coordinatorsFiltered = [...allCoordinators] || [];
     setAllCoordinatorSearchFiltersApply(coordinatorsFiltered.filter((coordinator) => (
@@ -283,7 +315,8 @@ const CoordinatorsList = () => {
         <ModalDeleteConfirmation
           isOpenModalDelete={openModalDelete}
           toggleModalDelete={handleModalDelete}
-          handleDeleteItem={deleteCoordinator}
+          handleDeleteItem={handleDeleteCoordinator}
+          isDeletingGetError={isDeleteCoordinatorError}
           isMutationError={isMutationError}
           proccesing={proccesing}
           itemName="Coordinator"
