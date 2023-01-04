@@ -14,6 +14,7 @@ import { getColumns } from "./columns";
 import ModalDeleteConfirmation from "@molecules/modal-delete-confirmation";
 import mutationDeleteOneDistributor from "@graphql/MutationDeleteOneDistributor";
 import mutationUpdateActiveDistributor from "@graphql/MutationUpdateActiveDistributor";
+import queryAllBookingsByDistributor from "@graphql/QueryGetBookingsWithCriteria";
 
 // @styles
 import "@styles/react/libs/tables/react-dataTable-component.scss";
@@ -31,6 +32,7 @@ const DistributorsList = () => {
   const [proccesing, setProccesing] = useState(false);
   const [teamClassesByDistributor, setTeamClassesByDistributor] = useState([]);
   const [searchDistributors, setSearchDistributors] = useState("");
+  const [bookingByDistributor, setBookingsByDistributor] = useState({});
 
   const handleModal = () => setOpenModalDistributor(!openModalDistributor);
   const handleModalDelete = () => setOpenModalDelete(!openModalDelete);
@@ -58,6 +60,18 @@ const DistributorsList = () => {
     }
   });
 
+  const [getBookingsByDistributor] = useLazyQuery(queryAllBookingsByDistributor, {
+    variables: {
+      filterBy: [{name: "distributorId", type: "string", operator: "eq", value: currentDistributor._id}],
+      offset: 0,
+      limit: 10
+    },
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setBookingsByDistributor(data?.getBookingsWithCriteria || []);
+    }
+  });
+
   const deleteDistributor = async () => {
     setProccesing(true);
     try {
@@ -80,6 +94,7 @@ const DistributorsList = () => {
   useEffect(() => {
     if (openModalDelete) {
       getClassesByDistributor();
+      getBookingsByDistributor();
     } else {
       setIsDeleteDistributorError(false);
       setIsMutarionError(false);
@@ -123,7 +138,7 @@ const DistributorsList = () => {
   const getDataDistributorsToExport = () => distributorDataToExport;
 
   const handleDeleteDistributor = () => {
-    if (!teamClassesByDistributor.length) {
+    if (!teamClassesByDistributor.length && !bookingByDistributor.count) {
       deleteDistributor();
       return;
     }
@@ -166,50 +181,49 @@ const DistributorsList = () => {
   }, [searchDistributors, allDistributors]);
 
   return (
-    <>
-      <Container>
-        <TasksBar
-          setElementToAdd={function () {}}
-          titleView={"Distributors"}
-          titleBadge={` ${allDistributorSearchFiltersApply.length} records found`}
-          showAddModal={handleModal}
-          getDataToExport={getDataDistributorsToExport}
-          fileExportedName={"Distributors"}
-          buttonTitle={"Add distributor"}
-          isSearchFilter={true}
-          searchValue={searchDistributors}
-          setSearchValue={setSearchDistributors}
+    <Container>
+      <TasksBar
+        setElementToAdd={function () {}}
+        titleView={"Distributors"}
+        titleBadge={` ${allDistributorSearchFiltersApply.length} records found`}
+        showAddModal={handleModal}
+        getDataToExport={getDataDistributorsToExport}
+        fileExportedName={"Distributors"}
+        buttonTitle={"Add distributor"}
+        isSearchFilter={true}
+        searchValue={searchDistributors}
+        setSearchValue={setSearchDistributors}
+      />
+      <DataTable
+        columns={columns}
+        data={allDistributorSearchFiltersApply}
+        noHeader
+        sortIcon={<ChevronDown size={10}/>}
+        className="react-dataTable my-2"
+      />
+      {openModalDistributor && (
+        <DistributorsModal
+          open={openModalDistributor}
+          isModeEdit={isModeEdit}
+          handleModal={handleModal}
+          setIsModeEdit={setIsModeEdit}
+          data={isModeEdit ? currentDistributor : null}
         />
-        <DataTable
-          columns={columns}
-          data={allDistributorSearchFiltersApply}
-          noHeader
-          sortIcon={<ChevronDown size={10}/>}
-          className="react-dataTable my-2"
+      )}
+      {openModalDelete && (
+        <ModalDeleteConfirmation
+          isOpenModalDelete={openModalDelete}
+          toggleModalDelete={handleModalDelete}
+          handleDeleteItem={handleDeleteDistributor}
+          isDeletingGetError={isDeleteDistributorError}
+          titleClasses={teamClassesByDistributor.map(({title}) => title)}
+          isMutationError={isMutationError}
+          proccesing={proccesing}
+          hasBookingsAssigned={!!bookingByDistributor.count}
+          itemName="Distributor"
         />
-        {openModalDistributor && (
-          <DistributorsModal
-            open={openModalDistributor}
-            isModeEdit={isModeEdit}
-            handleModal={handleModal}
-            setIsModeEdit={setIsModeEdit}
-            data={isModeEdit ? currentDistributor : null}
-          />
-        )}
-        {openModalDelete && (
-          <ModalDeleteConfirmation
-            isOpenModalDelete={openModalDelete}
-            toggleModalDelete={handleModalDelete}
-            handleDeleteItem={handleDeleteDistributor}
-            isDeletingGetError={isDeleteDistributorError}
-            titleClasses={teamClassesByDistributor.map(({title}) => title)}
-            isMutationError={isMutationError}
-            proccesing={proccesing}
-            itemName="Distributor"
-          />
-        )}
-      </Container>
-    </>
+      )}
+    </Container>
   );
 };
 

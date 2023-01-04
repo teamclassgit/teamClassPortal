@@ -10,7 +10,8 @@ const ModalDeleteConfirmation = ({
   isDeletingGetError,
   titleClasses,
   isMutationError,
-  proccesing
+  proccesing,
+  hasBookingsAssigned
 }) => (
   <Modal
     isOpen={isOpenModalDelete}
@@ -44,9 +45,10 @@ const ModalDeleteConfirmation = ({
       {isDeletingGetError && (
         <Alert className="text-sm-left p-1" color="danger">
           {
-            itemName === "Coordinator" ?
+            itemName === "Coordinator" || !titleClasses.length ?
               `${itemName} is currently assigned to one or more bookings.` :
-              `${itemName} is currently assigned to ${titleClasses.join(", ")} ${titleClasses.length > 1 ? " classes" : " class"}.`
+              `${itemName} is currently assigned to ${titleClasses.join(", ")} ${titleClasses.length > 1 ? " classes" : " class"}
+              ${hasBookingsAssigned ? " and assigned to one or more bookings." : ""}`
           }
         </Alert>
       )}
