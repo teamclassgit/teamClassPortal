@@ -30,8 +30,10 @@ import {
   PAYMENT_STATUS_CANCELED,
   PAYMENT_STATUS_SUCCEEDED
 } from "@utility/Constants";
-import RefundPaymentModal from '../../../components/RefundPaymentModal';
-import RefundImage from "../../../@core/assets/images/refund.png";
+import RefundPaymentModal from "@molecules/refund-payment-modal";
+import RefundImage from "@assets/images/refund.png";
+
+// @atyles
 import "./payment.scss";
 
 const Payments = ({ booking, setBooking, calendarEvent }) => {
@@ -45,6 +47,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [indexPayment, setIndexPayment] = useState(null);
   const [updateBooking] = useMutation(mutationUpdateBookingPayments, {});
+  const [showRefundModal, setShowRefundModal] = useState(false);
 
   const handleModal = () => setModal(!modal);
 
@@ -376,7 +379,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                         </div>
                       </td>
                       <td align="center">
-                        <div className={`text-default'}`}>
+                        <div className={"text-default'}"}>
                           <span>{element?.refund ? `$${element?.refund?.refundAmount / 100}` : ""}</span>
                         </div>
                       </td>

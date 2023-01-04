@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { User, X } from "react-feather";
 import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from "reactstrap";
 import { useMutation } from "@apollo/client";
-import Flatpickr from 'react-flatpickr';
+import Flatpickr from "react-flatpickr";
 
 // @scripts
 import MutationUpdateBookingRefund from "@graphql/MutationUpdateBookingRefund";
@@ -50,7 +50,7 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
       });
       setPayments(newPaymentsArray);
     } catch (error) {
-      console.log('Error saving refund:', error);
+      console.log("Error saving refund:", error);
     }
     setProcessing(false);
     setShowRefundModal(false);
@@ -169,7 +169,7 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
               !refundAmount || !refundReasons || refundAmount >= currentPayment?.amount / 100 || refundAmount < 0
             }
           >
-            {processing ? 'Saving...' : 'Save'}
+            {processing ? "Saving..." : "Save"}
           </Button>
           <Button className="mt-1" color="secondary" outline onClick={e => setShowRefundModal(false)}>
             Cancel
