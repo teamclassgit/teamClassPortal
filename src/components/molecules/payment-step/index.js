@@ -2,7 +2,7 @@
 // @packages
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { Edit, Plus, X, XSquare } from "react-feather";
+import { DollarSign, Edit, Plus, X, XSquare } from "react-feather";
 import { useMutation } from "@apollo/client";
 import { 
   Badge,
@@ -30,6 +30,9 @@ import {
   PAYMENT_STATUS_CANCELED,
   PAYMENT_STATUS_SUCCEEDED
 } from "@utility/Constants";
+import RefundPaymentModal from '../../../components/RefundPaymentModal';
+import RefundImage from "../../../@core/assets/images/refund.png";
+import "./payment.scss";
 
 const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
@@ -208,6 +211,9 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                     <div align="center">Status</div>
                   </th>
                   <th>
+                    <div align="center">Refunded</div>
+                  </th>
+                  <th>
                     <div align="center">Actions</div>
                   </th>
                 </tr>
@@ -370,11 +376,16 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                         </div>
                       </td>
                       <td align="center">
+                        <div className={`text-default'}`}>
+                          <span>{element?.refund ? `$${element?.refund?.refundAmount / 100}` : ""}</span>
+                        </div>
+                      </td>
+                      <td className="d-flex justify-content-between" align="center"> 
                         {booking &&
                           booking.status !== BOOKING_CLOSED_STATUS &&
                           element.chargeUrl === CHARGE_OUTSIDE_SYSTEM &&
                           element.status === PAYMENT_STATUS_SUCCEEDED && (
-                          <div align="center">
+                          <div className="d-flex justify-content-between">
                             <a
                               className="mr-1"
                               onClick={(e) => {
@@ -401,6 +412,24 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                             </a>
                           </div>
                         )}
+                        {booking &&
+                          (booking.status !== BOOKING_CLOSED_STATUS && element.status === "succeeded" && !element?.refund) && (
+                          <div className="d-flex align-items-center justify-content-between">
+                            <a
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setIndexPayment(index);
+                                setCurrentPayment({ ...element, index });
+                                setMode("refund");
+                                setShowRefundModal(true);
+                              }}
+                              href="#"
+                              title="Add refund to this payment"
+                            >
+                              <img className="refund-icon" src={RefundImage} width={30} height={27}/>
+                            </a>
+                          </div>
+                          )}
                       </td>
                     </tr>
                   ))
@@ -425,6 +454,16 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
         setBooking={setBooking}
         setCurrentPayment={setCurrentPayment}
         setPayments={setPayments}
+      />
+      <RefundPaymentModal
+        booking={booking}
+        currentPayment={currentPayment}
+        showRefundModal={showRefundModal}
+        setShowRefundModal={setShowRefundModal}
+        mode={mode}
+        payments={payments}
+        setPayments={setPayments}
+        indexPayment={indexPayment}
       />
       <Modal
         isOpen={deleteModal}
