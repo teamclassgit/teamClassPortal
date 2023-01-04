@@ -45,7 +45,7 @@ const ModalDeleteConfirmation = ({
         <Alert className="text-sm-left p-1" color="danger">
           {
             itemName === "Coordinator" ?
-              `${itemName} is currently assigned to one or more bookings` :
+              `${itemName} is currently assigned to one or more bookings.` :
               `${itemName} is currently assigned to ${titleClasses.join(", ")} ${titleClasses.length > 1 ? " classes" : " class"}.`
           }
         </Alert>
