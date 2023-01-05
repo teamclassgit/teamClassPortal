@@ -24,7 +24,8 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
     company:"",
     IndividualEmailToCC: "",
     specialFeatures: {
-      invoicing: false
+      invoicing: false,
+      fulfillment: false
     }
   });
   const [isProcessing, setIsProcessing] = useState(false);
@@ -39,11 +40,13 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
 
   useEffect(() => {
     if (data, isModeEdit) {
-      if (!data?.specialFeatures?.invoicing) {
-        setInstructor({...data, specialFeatures: {invoicing: false}});
-      } else {
-        setInstructor(data);
-      }
+      setInstructor({
+        ...data,
+        specialFeatures: {
+          invoicing: data?.specialFeatures?.invoicing || false,
+          fulfillment: data?.specialFeatures?.fulfillment || false
+        }
+      });
     }
     if (data?.emailCCList) {
       setEmailListToCC(data.emailCCList.split(";"));
@@ -65,7 +68,8 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
         company: instructor.company,
         updatedAt: new Date(),
         emailCCList: emailListToCC.join(";"),
-        invoicing: instructor.specialFeatures.invoicing
+        invoicing: instructor.specialFeatures.invoicing,
+        fulfillment: instructor.specialFeatures.fulfillment
       };
 
       await updateOneInstructor({
@@ -102,7 +106,8 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
         createdAt: new Date(),
         emailCCList: emailListToCC.join(";"),
         active: true,
-        invoicing: instructor.specialFeatures.invoicing
+        invoicing: instructor.specialFeatures.invoicing,
+        fulfillment: instructor.specialFeatures.fulfillment
       };
 
       await createOneInstructor({
@@ -124,8 +129,9 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
   };
 
   const handleChange = (data, field) => {
-    if (field === "invoicing") {
-      setInstructor({...instructor, specialFeatures: {[field]: data}});
+    const specialFeatures = ["invoicing", "fulfillment"];
+    if (specialFeatures.includes(field)) {
+      setInstructor({...instructor, specialFeatures: {...instructor.specialFeatures, [field]: data}});
     } else {
       setInstructor({...instructor, [field]: data});
     }
@@ -268,13 +274,25 @@ const InstructorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data}) 
             </div>
           </FormGroup>
           <FormGroup>
-            <Label>Special feature invoicing</Label>
-            <CustomInput
-              id="invoicing"
-              type="switch"
-              checked={instructor?.specialFeatures?.invoicing}
-              onChange={(e) => handleChange(e.target.checked, "invoicing")}
-            />
+            <Label>Special features</Label>
+            <FormGroup>
+              <CustomInput
+                id="invoicing"
+                label="Invoicing"
+                type="switch"
+                checked={instructor?.specialFeatures?.invoicing}
+                onChange={(e) => handleChange(e.target.checked, "invoicing")}
+              />
+            </FormGroup>
+            <FormGroup>
+              <CustomInput
+                id="fulfillment"
+                label="Fulfillment"
+                type="switch"
+                checked={instructor?.specialFeatures?.fulfillment}
+                onChange={(e) => handleChange(e.target.checked, "fulfillment")}
+              />
+            </FormGroup>
           </FormGroup>
         </ModalBody>
         <ModalFooter className="justify-content-center border-top-0">
