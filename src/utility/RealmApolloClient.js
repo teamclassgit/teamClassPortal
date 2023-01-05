@@ -19,7 +19,8 @@ export const app = new Realm.App(APP_ID);
 async function getValidAccessToken () {
   // Guarantee that there's a logged in user with a valid access token
   if (!app.currentUser) {
-    await loginAnonymous();
+    debugger;
+    //await loginAnonymous();
   } else {
     // An already logged in user's access token might be stale. To guarantee that the token is
     // valid, we refresh the user's custom data which also refreshes their access token.
