@@ -67,6 +67,7 @@ export default gql`
         state
         status
       }
+      membershipDiscount
       instructorId
       instructorName
       customerId
