@@ -11,6 +11,7 @@ export default gql`
       $updatedAt: DateTime
       $emailCCList: String
       $invoicing: Boolean
+      $fulfillment: Boolean
       $active: Boolean
     ){
       insertOneDistributor(
@@ -26,6 +27,7 @@ export default gql`
           active: $active
           specialFeatures: {
               invoicing: $invoicing
+              fulfillment: $fulfillment
           }
         }
       ){
@@ -40,6 +42,7 @@ export default gql`
         active
         specialFeatures {
           invoicing
+          fulfillment
         }
       }
     }

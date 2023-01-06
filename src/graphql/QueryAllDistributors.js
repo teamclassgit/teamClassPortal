@@ -14,6 +14,7 @@ export default gql`
         active
         specialFeatures {
           invoicing
+          fulfillment
         }
     }
   }

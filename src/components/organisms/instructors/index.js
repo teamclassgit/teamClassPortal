@@ -14,6 +14,7 @@ import { Container } from "reactstrap";
 import ModalDeleteConfirmation from "@molecules/modal-delete-confirmation";
 import mutationDeleteOneInstructor from "@graphql/MutationDeleteOneInstructor";
 import mutationUpdateActiveInstructor from "@graphql/MutationUpdateActiveInstructor";
+import queryAllBookingsByInstructor from "@graphql/QueryGetBookingsWithCriteria";
 
 // @styles
 import "@styles/react/libs/tables/react-dataTable-component.scss";
@@ -31,6 +32,7 @@ const InstructorsList = () => {
   const [proccesing, setProccesing] = useState(false);
   const [teamClassesByInstructor, setTeamClassesByInstructor] = useState([]);
   const [searchInstructors, setSearchInstructors] = useState("");
+  const [bookingByInstructor, setBookingsByInstructor] = useState({});
 
   const handleModal = () => setOpenModalInstructor(!openModalInstructor);
   const handleModalDelete = () => setOpenModalDelete(!openModalDelete);
@@ -58,6 +60,18 @@ const InstructorsList = () => {
     }
   });
 
+  const [getBookingsByInstructor] = useLazyQuery(queryAllBookingsByInstructor, {
+    variables: {
+      filterBy: [{name: "instructorId", type: "string", operator: "eq", value: currentInstructor._id}],
+      offset: 0,
+      limit: 10
+    },
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setBookingsByInstructor(data?.getBookingsWithCriteria || []);
+    }
+  });
+
   const deleteInstructor = async () => {
     setProccesing(true);
     try {
@@ -80,6 +94,7 @@ const InstructorsList = () => {
   useEffect(() => {
     if (openModalDelete) {
       getClassesByInstructor();
+      getBookingsByInstructor();
     } else {
       setIsDeleteInstructorError(false);
       setIsMutarionError(false);
@@ -96,7 +111,8 @@ const InstructorsList = () => {
         "Email",
         "Phone",
         "Company",
-        "Special Features",
+        "Special Features Invoicing",
+        "Special Features fulfillment",
         "Active"
       ];
 
@@ -109,7 +125,8 @@ const InstructorsList = () => {
           element.email,
           element.phone,
           element.company,
-          element.specialFeatures?.invoicing.toString(),
+          element.specialFeatures?.invoicing?.toString(),
+          element.specialFeatures?.fulfillment?.toString(),
           element.active.toString()
         ];
         instructorsArray.push(row);
@@ -121,7 +138,7 @@ const InstructorsList = () => {
   const getDataInstructorsToExport = () => instructorDataToExport;
 
   const handleDeleteInstructor = () => {
-    if (!teamClassesByInstructor.length) {
+    if (!teamClassesByInstructor.length && !bookingByInstructor.count) {
       deleteInstructor();
       return;
     }
@@ -203,6 +220,7 @@ const InstructorsList = () => {
             titleClasses={teamClassesByInstructor.map(({title}) => title)}
             isMutationError={isMutationError}
             proccesing={proccesing}
+            hasBookingsAssigned={!!bookingByInstructor.count}
           />
         )}
       </Container>

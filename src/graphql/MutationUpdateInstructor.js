@@ -10,6 +10,7 @@ export default gql`
     $updatedAt: DateTime
     $emailCCList: String
     $invoicing: Boolean
+    $fulfillment: Boolean
   ) {
     updateOneInstructor(
       query: {_id: $id},
@@ -23,6 +24,7 @@ export default gql`
         emailCCList: $emailCCList
         specialFeatures: {
           invoicing: $invoicing
+          fulfillment: $fulfillment
         }
       }) {
         _id
@@ -35,6 +37,7 @@ export default gql`
         active
         specialFeatures {
           invoicing
+          fulfillment
         }
     }
 }`;

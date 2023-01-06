@@ -24,7 +24,8 @@ const DistributorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
     company:"",
     IndividualEmailToCC: "",
     specialFeatures: {
-      invoicing: false
+      invoicing: false,
+      fulfillment: false
     }
   });
   const [isProcessing, setIsProcessing] = useState(false);
@@ -39,11 +40,13 @@ const DistributorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
 
   useEffect(() => {
     if (data, isModeEdit) {
-      if (!data?.specialFeatures?.invoicing) {
-        setDistributor({...data, specialFeatures: {invoicing: false}});
-      } else {
-        setDistributor(data);
-      }
+      setDistributor({
+        ...data,
+        specialFeatures: {
+          invoicing: data?.specialFeatures?.invoicing || false,
+          fulfillment: data?.specialFeatures?.fulfillment || false
+        }
+      });
     }
     if (data?.emailCCList) {
       setEmailListToCC(data.emailCCList.split(";"));
@@ -65,7 +68,8 @@ const DistributorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
         company: distributor.company,
         updatedAt: new Date(),
         emailCCList: emailListToCC.join(";"),
-        invoicing: distributor.specialFeatures.invoicing
+        invoicing: distributor.specialFeatures.invoicing,
+        fulfillment: distributor.specialFeatures.fulfillment
       };
 
       await updateOneDistributor({
@@ -102,7 +106,8 @@ const DistributorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
         createdAt: new Date(),
         emailCCList: emailListToCC.join(";"),
         active: true,
-        invoicing: distributor.specialFeatures.invoicing
+        invoicing: distributor.specialFeatures.invoicing,
+        fulfillment: distributor.specialFeatures.fulfillment
       };
 
       await createOneDistributor({
@@ -124,8 +129,9 @@ const DistributorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
   };
 
   const handleChange = (data, field) => {
-    if (field === "invoicing") {
-      setDistributor({...distributor, specialFeatures: {[field]: data}});
+    const specialFeatures = ["invoicing", "fulfillment"];
+    if (specialFeatures.includes(field)) {
+      setDistributor({...distributor, specialFeatures: {...distributor.specialFeatures, [field]: data}});
     } else {
       setDistributor({...distributor, [field]: data});
     }
@@ -268,13 +274,25 @@ const DistributorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
             </div>
           </FormGroup>
           <FormGroup>
-            <Label>Special feature invoicing</Label>
-            <CustomInput
-              id="invoicing"
-              type="switch"
-              checked={distributor?.specialFeatures?.invoicing}
-              onChange={(e) => handleChange(e.target.checked, "invoicing")}
-            />
+            <Label>Special features</Label>
+            <FormGroup>
+              <CustomInput
+                id="invoicing"
+                type="switch"
+                label="Invoicing"
+                checked={distributor?.specialFeatures?.invoicing}
+                onChange={(e) => handleChange(e.target.checked, "invoicing")}
+              />
+            </FormGroup>
+            <FormGroup>
+              <CustomInput
+                id="fulfillment"
+                label="Fulfillment"
+                type="switch"
+                checked={distributor?.specialFeatures?.fulfillment}
+                onChange={(e) => handleChange(e.target.checked, "fulfillment")}
+              />
+            </FormGroup>
           </FormGroup>
         </ModalBody>
         <ModalFooter className="justify-content-center border-top-0">
