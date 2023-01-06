@@ -122,6 +122,7 @@ export default gql`
       salesTax
       salesTaxState
       discount
+      membershipDiscount
       status
       eventLink
       signUpStatusLink
