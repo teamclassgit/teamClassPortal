@@ -33,7 +33,8 @@ const Login = (props) => {
         setError(false);
         await loginWithEmailAndPassword(event.target.email.value, event.target.password.value);
         const userData = getUserData();
-        if (!userData || !userData.customData || !userData.customData.role) {
+        const allowedRoles = ["Admin", "Coordinator"];
+        if (!userData || !userData.customData || !userData.customData.role || !allowedRoles.includes(userData.customData.role)) {
           await logoutUser();
           setError(true);
         } else {
