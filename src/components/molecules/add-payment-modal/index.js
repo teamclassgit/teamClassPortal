@@ -1,5 +1,6 @@
 // @packages
 import Flatpickr from "react-flatpickr";
+import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { 
@@ -377,6 +378,18 @@ const AddPaymentModal = ({
       </ModalBody>
     </Modal>
   );
+};
+
+AddPaymentModal.propTypes = {
+  booking: PropTypes.object.isRequired,
+  currentPayment: PropTypes.object,
+  handleModal: PropTypes.func.isRequired,
+  mode: PropTypes.string,
+  open: PropTypes.bool.isRequired,
+  payments: PropTypes.array.isRequired,
+  setBooking: PropTypes.func.isRequired,
+  setCurrentPayment: PropTypes.func.isRequired,
+  setPayments: PropTypes.func.isRequired
 };
 
 export default AddPaymentModal;

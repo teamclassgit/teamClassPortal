@@ -1,7 +1,11 @@
+// @packages
 import { Fragment } from "react";
 import { Col, Form, Row } from "reactstrap";
+import PropTypes from "prop-types";
 import TableAttendees from "@molecules/table-attendees";
 import { useMutation } from "@apollo/client";
+
+// @scripts
 import mutationUpsertAttendee from "@graphql/MutationUpsertAttendee";
 import mutationDeleteAttendee from "@graphql/MutationDeleteAttendee";
 
@@ -61,6 +65,14 @@ const Attendees = ({ teamClass, booking, attendees, setRealCountAttendees, custo
       </Form>
     </Fragment>
   );
+};
+
+Attendees.propTypes = {
+  booking: PropTypes.object,
+  teamClass: PropTypes.object,
+  attendees: PropTypes.array.isRequired,
+  setRealCountAttendees: PropTypes.func.isRequired,
+  customer: PropTypes.object
 };
 
 export default Attendees;
