@@ -4,6 +4,7 @@ import { Card, Row } from "reactstrap";
 import BoardCard from "@molecules/board-card";
 import Board from "@lourenci/react-kanban";
 import Avatar from "@components/avatar";
+import PropTypes from "prop-types";
 import { DollarSign, TrendingUp } from "react-feather";
 
 // @scripts
@@ -159,6 +160,15 @@ const BoardBookings = ({
       </Row>
     </>
   );
+};
+
+BoardBookings.propTypes = {
+  filteredBookingsQuote: PropTypes.object,
+  filteredBookingsRequested: PropTypes.object,
+  filteredBookingsAccepted: PropTypes.object,
+  filteredBookingsDeposit: PropTypes.object,
+  filteredBookingsPaid: PropTypes.object,
+  handleEditModal: PropTypes.func
 };
 
 export default BoardBookings;

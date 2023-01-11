@@ -5,6 +5,7 @@ import { DollarSign, MinusCircle, PlusCircle } from "react-feather";
 import { Input, Button, Card, Col, Row, Table, CardLink, CustomInput, CardText } from "reactstrap";
 import { useMutation } from "@apollo/client";
 import Avatar from "@components/avatar";
+import PropTypes from "prop-types";
 
 // @scripts
 import { BOOKING_CLOSED_STATUS, BOOKING_PAID_STATUS, RUSH_FEE, SALES_TAX, SALES_TAX_STATE } from "@utility/Constants";
@@ -395,6 +396,13 @@ const InvoiceBuilder = ({ realCountAttendees, booking, setBooking, calendarEvent
       )}
     </Fragment>
   );
+};
+
+InvoiceBuilder.propTypes = {
+  realCountAttendees: PropTypes.number.isRequired,
+  booking: PropTypes.object,
+  setBooking: PropTypes.func,
+  calendarEvent: PropTypes.object
 };
 
 export default InvoiceBuilder;

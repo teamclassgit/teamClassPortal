@@ -2,11 +2,12 @@
 import { Briefcase, Link, Mail, Phone, User } from "react-feather";
 import { Alert, Button, CustomInput, Form, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import Cleave from "cleave.js/react";
-import CleavePhone from "cleave.js/dist/addons/cleave-phone.us";
+import "cleave.js/dist/addons/cleave-phone.us";
 import { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { v4 as uuid } from "uuid";
 import validator from "validator";
+import PropTypes from "prop-types";
 
 // @scripts
 import mutationInsertCoordinator from "@graphql/MutationInsertCoordinator";
@@ -256,6 +257,14 @@ const CoordinatorsModal = ({open, handleModal, isModeEdit, setIsModeEdit, data})
       </Form>
     </Modal>
   );
+};
+
+CoordinatorsModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleModal: PropTypes.func.isRequired,
+  isModeEdit: PropTypes.bool,
+  setIsModeEdit: PropTypes.func,
+  data: PropTypes.object
 };
 
 export default CoordinatorsModal;

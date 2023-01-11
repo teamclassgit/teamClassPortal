@@ -4,6 +4,7 @@ import { Alert, Button, Card, CardBody, Col, Input, FormGroup, Label, Modal, Mod
 import { Icon } from "@iconify/react";
 import { useQuery, useMutation } from "@apollo/client";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 // @scripts
 import mutationUpdateBookingDistributorInvoice from "@graphql/MutationUpdateBookingDistributorInvoice";
@@ -550,6 +551,11 @@ const DistributorInvoice = ({ booking, calendarEvent }) => {
       </div>
     </Fragment>
   );
+};
+
+DistributorInvoice.propTypes = {
+  booking: PropTypes.object.isRequired,
+  calendarEvent: PropTypes.string.isRequired
 };
 
 export default DistributorInvoice;

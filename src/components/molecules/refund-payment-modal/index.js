@@ -4,6 +4,7 @@ import { User, X } from "react-feather";
 import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader, Row } from "reactstrap";
 import { useMutation } from "@apollo/client";
 import Flatpickr from "react-flatpickr";
+import PropTypes from "prop-types";
 
 // @scripts
 import MutationUpdateBookingRefund from "@graphql/MutationUpdateBookingRefund";
@@ -177,6 +178,17 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
         </ModalBody>
       </Modal>
     );
+};
+
+RefundPaymentModal.propTypes = {
+  booking: PropTypes.object.isRequired,
+  showRefundModal: PropTypes.bool.isRequired,
+  setShowRefundModal: PropTypes.func,
+  currentPayment: PropTypes.object,
+  mode: PropTypes.string,
+  payments: PropTypes.array,
+  setPayments: PropTypes.func,
+  indexPayment: PropTypes.number
 };
 
 export default RefundPaymentModal;

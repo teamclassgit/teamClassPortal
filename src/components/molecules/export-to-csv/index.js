@@ -1,4 +1,6 @@
+// @packages
 import React from "react";
+import PropTypes from "prop-types";
 
 const ExportToCsv = ({ array, title, smallText, name, teamClassInfo }) => {
   // ** Converts table to CSV
@@ -60,6 +62,14 @@ const ExportToCsv = ({ array, title, smallText, name, teamClassInfo }) => {
       <small>{smallText}</small>
     </a>
   );
+};
+
+ExportToCsv.propTypes = {
+  array: PropTypes.array,
+  title: PropTypes.object,
+  smallText: PropTypes.object,
+  name: PropTypes.string,
+  teamClassInfo: PropTypes.object
 };
 
 export default ExportToCsv;

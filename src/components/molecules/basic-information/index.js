@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Briefcase, Mail, Phone, User } from "react-feather";
 import { Alert, Button, CustomInput, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, ModalBody } from "reactstrap";
+import PropTypes from "prop-types";
 import Select from "react-select";
 import validator from "validator";
 import { useMutation } from "@apollo/client";
@@ -859,6 +860,19 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
       )}
     </ModalBody>
   );
+};
+
+BasicInformation.propTypes = {
+  currentElement: PropTypes.object,
+  allInstructors: PropTypes.array,
+  allClasses: PropTypes.array,
+  allCoordinators: PropTypes.array,
+  editMode: PropTypes.bool,
+  closedBookingReason: PropTypes.string,
+  setClosedBookingReason: PropTypes.func,
+  calendarEvent: PropTypes.object,
+  closeModal: PropTypes.func,
+  onEditCompleted: PropTypes.func
 };
 
 export default BasicInformation;

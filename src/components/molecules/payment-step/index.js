@@ -15,6 +15,7 @@ import {
   Row,
   Table
 } from "reactstrap";
+import PropTypes from "prop-types";
 
 // @scripts
 import AddPaymentModal from "@molecules/add-payment-modal";
@@ -502,6 +503,12 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
       </Modal>
     </>
   );
+};
+
+Payments.propTypes = {
+  booking: PropTypes.object,
+  setBooking: PropTypes.func.isRequired,
+  calendarEvent: PropTypes.object
 };
 
 export default Payments;

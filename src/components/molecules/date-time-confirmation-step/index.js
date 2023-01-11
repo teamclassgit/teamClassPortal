@@ -6,6 +6,7 @@ import Flatpickr from "react-flatpickr";
 import moment from "moment";
 import { useMutation } from "@apollo/client";
 import { v4 as uuid } from "uuid";
+import PropTypes from "prop-types";
 
 // @scripts
 import { toAmPm } from "@utility/Utils";
@@ -271,6 +272,16 @@ const DateTimeConfirmation = ({ classRushFee, availableEvents, calendarEvent, se
       </Form>
     </Fragment>
   );
+};
+
+DateTimeConfirmation.propTypes = {
+  classRushFee: PropTypes.number.isRequired,
+  availableEvents: PropTypes.array,
+  calendarEvent: PropTypes.object,
+  setCalendarEvent: PropTypes.func.isRequired,
+  booking: PropTypes.object,
+  setBooking: PropTypes.func.isRequired,
+  teamClass: PropTypes.object
 };
 
 export default DateTimeConfirmation;

@@ -7,11 +7,13 @@ import {
   DEFAULT_TIME_ZONE_LABEL_DESCRIPTION,
   RUSH_FEE
 } from "@utility/Constants";
-
+import PropTypes from "prop-types";
 import moment from "moment";
-import StatusSelector from "@atoms/status-selector";
 
 // @scripts
+import StatusSelector from "@atoms/status-selector";
+
+// @styles
 import styles from "./BookingCheckoutSummary.module.scss";
 
 const BookingCheckoutSummary = ({
@@ -245,6 +247,32 @@ const BookingCheckoutSummary = ({
       </Card>
     </div>
   );
+};
+
+BookingCheckoutSummary.propTypes = {
+  teamClass: PropTypes.object,
+  bookingInfo: PropTypes.object,
+  priceToInvoice: PropTypes.number,
+  requestEventDate:  PropTypes.object,
+  calendarEvent: PropTypes.object,
+  totalWithoutFee: PropTypes.string,
+  chat: PropTypes.bool,
+  totalAddons: PropTypes.string,
+  totalServiceFee: PropTypes.string,
+  changeSpace: PropTypes.bool,
+  totalCardFee: PropTypes.string,
+  tax: PropTypes.number,
+  totalTax: PropTypes.string,
+  discount: PropTypes.number,
+  totalDiscount: PropTypes.string,
+  membershipDiscount: PropTypes.number,
+  totalMembershipDiscount: PropTypes.string,
+  total: PropTypes.string,
+  deposit: PropTypes.string,
+  finalPayment: PropTypes.string,
+  showFinalPaymentLine: PropTypes.bool,
+  attendeesToInvoice: PropTypes.number,
+  totalRushFee: PropTypes.string
 };
 
 export default BookingCheckoutSummary;

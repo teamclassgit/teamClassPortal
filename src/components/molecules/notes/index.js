@@ -4,6 +4,7 @@ import Timeline from "@atoms/timeline";
 import { Button, Card, CardBody, Input } from "reactstrap";
 import moment from "moment";
 import { useMutation } from "@apollo/client";
+import PropTypes from "prop-types";
 
 // @scripts
 import { getUserData } from "@utility/Utils";
@@ -109,6 +110,12 @@ const Notes = ({bookingNotes, setBookingNotes, currentElement}) => {
       </div>
     </>
   );
+};
+
+Notes.propTypes = {
+  bookingNotes: PropTypes.array,
+  setBookingNotes: PropTypes.func.isRequired,
+  currentElement: PropTypes.object.isRequired
 };
 
 export default Notes;

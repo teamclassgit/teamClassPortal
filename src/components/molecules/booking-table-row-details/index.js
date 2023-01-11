@@ -3,6 +3,7 @@ import React from "react";
 import moment from "moment";
 import { Briefcase, Calendar, Mail, Phone } from "react-feather";
 import { Alert } from "reactstrap";
+import PropTypes from "prop-types";
 
 // @scripts
 import CopyClipboard from "@atoms/copy-clipboard";
@@ -139,6 +140,10 @@ const RowDetails = ({ data }) => {
       </table>
     </div>
   );
+};
+
+RowDetails.propTypes = {
+  data: PropTypes.object.isRequired
 };
 
 export default RowDetails;

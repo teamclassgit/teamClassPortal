@@ -59,7 +59,15 @@ const ModalDeleteConfirmation = ({
 export default ModalDeleteConfirmation;
 
 ModalDeleteConfirmation.propTypes = {
-  itemName: PropTypes.oneOf(["Instructor", "Coordinator", "Distributor"])
+  itemName: PropTypes.oneOf(["Instructor", "Coordinator", "Distributor"]),
+  isOpenModalDelete: PropTypes.bool,
+  toggleModalDelete: PropTypes.func,
+  handleDeleteItem: PropTypes.func,
+  isDeletingGetError: PropTypes.bool,
+  titleClasses: PropTypes.array,
+  isMutationError: PropTypes.bool,
+  proccesing: PropTypes.bool,
+  hasBookingsAssigned: PropTypes.bool
 };
 
 ModalDeleteConfirmation.defaultProps = {

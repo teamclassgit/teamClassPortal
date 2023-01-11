@@ -23,6 +23,7 @@ import {
   UncontrolledButtonDropdown
 } from "reactstrap";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 // @scripts
 import AddNewAttendee from "@molecules/add-new-attendee";
@@ -475,4 +476,17 @@ const DataTableAttendees = ({
     </Fragment>
   );
 };
+
+DataTableAttendees.propTypes = {
+  hasKit: PropTypes.bool,
+  booking: PropTypes.object,
+  currentBookingId: PropTypes.string,
+  attendees: PropTypes.number,
+  saveAttendee: PropTypes.func,
+  deleteAttendee: PropTypes.func,
+  updateAttendeesCount: PropTypes.func,
+  teamClassInfo: PropTypes.object,
+  customer: PropTypes.object
+};
+
 export default DataTableAttendees;

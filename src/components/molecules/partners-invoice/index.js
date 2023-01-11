@@ -4,6 +4,7 @@ import { Alert, Button, Card, CardBody, Col, Input, FormGroup, Label, Modal, Mod
 import { Icon } from "@iconify/react";
 import { useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 // @scripts
 import mutationUpdateBookingInvoiceInstructor from "@graphql/MutationUpdateBookingInvoiceInstructor";
@@ -550,6 +551,11 @@ const PartnersInvoice = ({ booking, calendarEvent }) => {
       </div>
     </Fragment>
   );
+};
+
+PartnersInvoice.propTypes = {
+  booking: PropTypes.object.isRequired,
+  calendarEvent: PropTypes.object.isRequired
 };
 
 export default PartnersInvoice;

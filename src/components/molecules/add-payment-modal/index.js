@@ -229,7 +229,7 @@ const AddPaymentModal = ({
               <Input
                 id="amount"
                 type="number"
-                invalid={newAmount && newAmount <= 0}
+                invalid={!!newAmount && newAmount <= 0}
                 min="1"
                 step="any"
                 placeholder=""

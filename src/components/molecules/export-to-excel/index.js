@@ -1,7 +1,9 @@
+// @packages
 import React from "react";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { FileText } from "react-feather";
+import PropTypes from "prop-types";
 
 const ExportToExcel = ({ apiDataFunc, fileName, setIsExporting }) => {
   const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
@@ -40,6 +42,12 @@ const ExportToExcel = ({ apiDataFunc, fileName, setIsExporting }) => {
       </small>
     </a>
   );
+};
+
+ExportToExcel.propTypes = {
+  apiDataFunc: PropTypes.func,
+  fileName: PropTypes.string,
+  setIsExporting: PropTypes.func
 };
 
 export default ExportToExcel;

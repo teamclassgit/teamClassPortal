@@ -5,6 +5,7 @@ import { Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, 
 import { useMutation } from "@apollo/client";
 import Select from "react-select";
 import validator from "validator";
+import PropTypes from "prop-types";
 
 // @scripts
 import { selectThemeColors } from "@utils";
@@ -281,6 +282,14 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
       )}
     </ModalBody>
   );
+};
+
+SettingsComponent.propTypes = {
+  currentElement: PropTypes.object,
+  editMode: PropTypes.bool,
+  closedBookingReason: PropTypes.string,
+  cancel: PropTypes.func,
+  onEditCompleted: PropTypes.func
 };
 
 export default SettingsComponent;
