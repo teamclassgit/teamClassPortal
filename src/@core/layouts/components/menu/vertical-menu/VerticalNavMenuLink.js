@@ -1,12 +1,12 @@
 // @packages
-import { useEffect } from 'react';
-import { NavLink, useLocation, matchPath } from 'react-router-dom';
+import { useEffect } from "react";
+import { NavLink, useLocation, matchPath } from "react-router-dom";
 
 // @scripts
-import classnames from 'classnames';
-import navigation from '@src/navigation/vertical';
-import { Badge } from 'reactstrap';
-import { search, getAllParents } from '@layouts/utils';
+import classnames from "classnames";
+import navigation from "@src/navigation/vertical";
+import { Badge } from "reactstrap";
+import { search, getAllParents } from "@layouts/utils";
 
 const VerticalNavMenuLink = ({
   item,
@@ -22,7 +22,7 @@ const VerticalNavMenuLink = ({
   currentActiveItem
 }) => {
   // ** Conditional Link Tag, if item has newTab or externalLink props use <a> tag else use NavLink
-  const LinkTag = item.externalLink ? 'a' : NavLink;
+  const LinkTag = item.externalLink ? "a" : NavLink;
 
   // ** URL Vars
   const location = useLocation();
@@ -38,7 +38,7 @@ const VerticalNavMenuLink = ({
   // ** Search for current item parents
   const searchParents = (navigation, currentURL) => {
     const parents = search(navigation, currentURL, routerProps); // Search for parent object
-    const allParents = getAllParents(parents, 'id'); // Parents Object to Parents Array
+    const allParents = getAllParents(parents, "id"); // Parents Object to Parents Array
     return allParents;
   };
 
@@ -66,14 +66,14 @@ const VerticalNavMenuLink = ({
   return (
     <li
       className={classnames({
-        'nav-item': !item.children,
+        "nav-item": !item.children,
         disabled: item.disabled,
         active: item.navLink === activeItem
       })}
     >
       <LinkTag
         className='d-flex align-items-center'
-        target={item.newTab ? '_blank' : undefined}
+        target={item.newTab ? "_blank" : undefined}
         /*eslint-disable */
         {...(item.externalLink === true
           ? {

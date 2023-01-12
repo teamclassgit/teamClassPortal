@@ -1,8 +1,8 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 // ** Custom Hooks
-import { useSkin } from '@hooks/useSkin';
+import { useSkin } from "@hooks/useSkin";
 
 const BlankLayout = ({ children, ...rest }) => {
   // ** Hooks

@@ -1,12 +1,12 @@
 // ** React Imports
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from "react";
 
 // ** Third Party Components
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import UiLoader from '@components/ui-loader';
-import { ChevronDown, RotateCw, X } from 'react-feather';
-import { Card, CardHeader, CardTitle, Collapse, Spinner } from 'reactstrap';
+import PropTypes from "prop-types";
+import classnames from "classnames";
+import UiLoader from "@components/ui-loader";
+import { ChevronDown, RotateCw, X } from "react-feather";
+import { Card, CardHeader, CardTitle, Collapse, Spinner } from "reactstrap";
 
 const CardActions = props => {
   // ** Props
@@ -29,11 +29,11 @@ const CardActions = props => {
   // ** Action to call
   const callAction = action => {
     switch (action) {
-    case 'collapse':
+    case "collapse":
       return setCollapse(!collapse);
-    case 'remove':
+    case "remove":
       return setVisibility(false);
-    case 'reload':
+    case "reload":
       return setReload(true);
     default:
     }
@@ -52,8 +52,8 @@ const CardActions = props => {
         return (
           <Tag
             key={i}
-            className={classnames('cursor-pointer', {
-              'mr-50': i < actions.length - 1
+            className={classnames("cursor-pointer", {
+              "mr-50": i < actions.length - 1
             })}
             size={15}
             onClick={() => callAction(action)}
@@ -79,10 +79,10 @@ const CardActions = props => {
   });
 
   // ** If user passes collapse action then return <Collapse> as Wrapper else return <Fragment>
-  const CollapseWrapper = actions === 'collapse' || actions.includes('collapse') ? Collapse : Fragment;
+  const CollapseWrapper = actions === "collapse" || actions.includes("collapse") ? Collapse : Fragment;
 
   // ** If user passes reload action then return <BlockUi> as Wrapper else return <Fragment>
-  const BlockUiWrapper = actions === 'reload' || actions.includes('reload') ? UiLoader : Fragment;
+  const BlockUiWrapper = actions === "reload" || actions.includes("reload") ? UiLoader : Fragment;
 
   return (
     <BlockUiWrapper
@@ -95,15 +95,15 @@ const CardActions = props => {
       /*eslint-enable */
     >
       <Card
-        className={classnames('card-action', {
-          'd-none': !visibility
+        className={classnames("card-action", {
+          "d-none": !visibility
         })}
       >
         <CardHeader>
           <CardTitle tag='h4'>{title}</CardTitle>
           <div className='action-icons'>{renderIcons()}</div>
         </CardHeader>
-        <CollapseWrapper {...(actions === 'collapse' || actions.includes('collapse') ? { isOpen: collapse } : {})}>
+        <CollapseWrapper {...(actions === "collapse" || actions.includes("collapse") ? { isOpen: collapse } : {})}>
           {children}
         </CollapseWrapper>
       </Card>
@@ -123,10 +123,10 @@ CardActions.propTypes = {
   endReload (props) {
     // ** User passes reload action and doesn't pass endReload then return Error
     if (
-      (props['actions'] === 'reload' && props['endReload'] === undefined) ||
-      (props['actions'].includes('reload') && props['endReload'] === undefined)
+      (props["actions"] === "reload" && props["endReload"] === undefined) ||
+      (props["actions"].includes("reload") && props["endReload"] === undefined)
     ) {
-      return new Error('Please provide a function to end reload!');
+      return new Error("Please provide a function to end reload!");
     }
   }
 };

@@ -1,6 +1,6 @@
 // @packages
-import NavbarUser from './NavbarUser';
-import PropTypes from 'prop-types';
+import NavbarUser from "./NavbarUser";
+import PropTypes from "prop-types";
 
 const ThemeNavbar = ({ skin, setSkin, setMenuVisibility }) => <NavbarUser skin={skin} setSkin={setSkin} setMenuVisibility={setMenuVisibility} />;
 

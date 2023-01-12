@@ -1,15 +1,8 @@
 // @packages
-import moment from "moment";
 import { v4 as uuid } from "uuid";
 
 // @scripts
-import {
-  CREDIT_CARD_FEE,
-  DEPOSIT,
-  RUSH_FEE,
-  SALES_TAX,
-  SERVICE_FEE
-} from "./Constants";
+import { BOOKING_LINKS } from "./Constants";
 import { isAnon, userData } from "./RealmApolloClient";
 
 // ** Checks if an object is empty (returns boolean)
@@ -238,3 +231,11 @@ const uploadFileToS3 = async (key, file) => {
 };
 
 export const isNotEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
+
+export const getBookingLinks = (bookingId, baseUrl = "") => {
+  const result = {};
+  Object.entries(BOOKING_LINKS).forEach(([key, value]) => {
+    result[key] = `${baseUrl}/${value.replace(":bookingId", bookingId)}`;
+  });
+  return result;
+};

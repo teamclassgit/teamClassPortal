@@ -1,6 +1,6 @@
 // ** React Imports
-import Proptypes from 'prop-types';
-import { Row, Col } from 'reactstrap';
+import Proptypes from "prop-types";
+import { Row, Col } from "reactstrap";
 
 const ExtensionsHeader = props => {
   return (

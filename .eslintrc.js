@@ -37,6 +37,7 @@ module.exports = {
     "no-multiple-empty-lines": ["error", { max: 2, maxEOF: 1 }],
     "no-return-assign": "error",
     "no-tabs": "error",
+    "no-undef": ["error", { typeof: true }],
     "no-unused-expressions": ["error", { allowTernary: true }],
     "no-useless-concat": "error",
     "no-useless-return": "error",
@@ -61,6 +62,7 @@ module.exports = {
       "error",
       { properties: "never", ignoreDestructuring: true, ignoreImports: true }
     ],
+    quotes: ["error", "double", { avoidEscape: true }],
     eqeqeq: "error",
     indent: "off",
     semi: "error"

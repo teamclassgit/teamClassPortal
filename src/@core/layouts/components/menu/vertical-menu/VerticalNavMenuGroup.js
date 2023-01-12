@@ -1,15 +1,15 @@
 // ** React Imports
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
 // ** Third Party Components
-import classnames from 'classnames';
-import { Collapse, Badge } from 'reactstrap';
+import classnames from "classnames";
+import { Collapse, Badge } from "reactstrap";
 
 // ** Vertical Menu Items Component
-import VerticalNavMenuItems from './VerticalNavMenuItems';
+import VerticalNavMenuItems from "./VerticalNavMenuItems";
 
 // ** Utils
-import { isNavGroupActive, getAllParents } from '@layouts/utils';
+import { isNavGroupActive, getAllParents } from "@layouts/utils";
 
 const VerticalNavMenuGroup = ({
   item,
@@ -34,7 +34,7 @@ const VerticalNavMenuGroup = ({
     let allParents;
 
     if (parentItem) {
-      allParents = getAllParents(parentItem, 'id');
+      allParents = getAllParents(parentItem, "id");
       allParents.pop();
     }
 
@@ -58,7 +58,7 @@ const VerticalNavMenuGroup = ({
     let allParents;
 
     if (parentItem) {
-      allParents = getAllParents(parentItem, 'id');
+      allParents = getAllParents(parentItem, "id");
       activeArr = allParents;
     } else {
       activeArr.includes(item) ? activeArr.splice(activeArr.indexOf(item), 1) : activeArr.push(item);
@@ -98,10 +98,10 @@ const VerticalNavMenuGroup = ({
 
   return (
     <li
-      className={classnames('nav-item has-sub', {
+      className={classnames("nav-item has-sub", {
         open: openClassCondition(item.id),
-        'menu-collapsed-open': groupActive.includes(item.id),
-        'sidebar-group-active': groupActive.includes(item.id) || groupOpen.includes(item.id)
+        "menu-collapsed-open": groupActive.includes(item.id),
+        "sidebar-group-active": groupActive.includes(item.id) || groupOpen.includes(item.id)
       })}
     >
       <Link className='d-flex align-items-center' to='/' onClick={e => onCollapseClick(e, item)}>

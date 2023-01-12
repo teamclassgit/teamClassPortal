@@ -1,6 +1,6 @@
-import * as Realm from 'realm-web';
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
-import { ApolloLink } from 'apollo-link';
+import * as Realm from "realm-web";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloLink } from "apollo-link";
 
 export const APP_ID = `${process.env.REACT_APP_GQL_APP_ID}`;
 const API_KEY = `${process.env.REACT_APP_GQL_API_KEY}`;
@@ -38,7 +38,7 @@ const omitDeep = (obj, key) => {
       const val = obj[i];
       if (val instanceof Date) newObj[i] = val;
       else if (Array.isArray(val)) newObj[i] = omitDeepArrayWalk(val, key);
-      else if (typeof val === 'object' && val !== null) newObj[i] = omitDeep(val, key);
+      else if (typeof val === "object" && val !== null) newObj[i] = omitDeep(val, key);
       else newObj[i] = val;
     }
   });
@@ -51,7 +51,7 @@ const omitDeep = (obj, key) => {
 const omitDeepArrayWalk = (arr, key) => {
   return arr.map((val) => {
     if (Array.isArray(val)) return omitDeepArrayWalk(val, key);
-    else if (typeof val === 'object') return omitDeep(val, key);
+    else if (typeof val === "object") return omitDeep(val, key);
     return val;
   });
 };

@@ -1,74 +1,86 @@
 // @packages
-import { lazy } from 'react';
+import { lazy } from "react";
 
 // @constants
-const TemplateTitle = '%s - TeamClass Ops Dashboard';
-const DefaultRoute = '/pipeline';
+const TemplateTitle = "%s - TeamClass Ops Dashboard";
+const DefaultRoute = "/pipeline";
 
 // @routes
 const Routes = [
   {
-    path: '/calendar',
-    component: lazy(() => import('../../views/calendar/bookingCalendarList'))
+    path: "/calendar",
+    component: lazy(() => import("../../views/Calendar"))
   },
   {
-    path: '/bookings',
-    component: lazy(() => import('../../views/booking/BookingList'))
+    path: "/bookings",
+    component: lazy(() => import("../../views/BookingStage"))
   },
   {
-    path: '/pipeline',
-    component: lazy(() => import('../../views/booking/FunnelTable'))
+    path: "/pipeline",
+    component: lazy(() => import("../../views/FunnelBookings"))
   },
   {
     appLayout: true,
-    className: 'chat-application',
-    component: lazy(() => import('../../views/chat')),
-    path: '/chat'
+    className: "chat-application",
+    component: lazy(() => import("../../views/Chat")),
+    path: "/chat"
   },
   {
-    path: '/allbookings',
-    component: lazy(() => import('../../views/booking/AllBookingsTable'))
+    path: "/all-bookings",
+    component: lazy(() => import("../../views/AllBookings"))
   },
   {
-    path: '/booking/:id',
-    component: lazy(() => import('../../views/booking'))
+    path: "/booking/:id",
+    component: lazy(() => import("../../views/BookingId"))
   },
   {
-    path: '/generalInquiries',
-    component: lazy(() => import('../../views/generalInquiries/GeneralInquiriesList'))
+    path: "/general-inquiries",
+    component: lazy(() => import("../../views/GeneralInquiries"))
   },
   {
-    path: '/privateRequests',
-    component: lazy(() => import('../../views/privateRequests/PrivateRequestsList'))
+    path: "/large-events",
+    component: lazy(() => import("../../views/LargeEvents"))
   },
   {
-    path: '/discountCodes',
-    component: lazy(() => import('../../views/discountCodes/DiscountCodesList'))
+    path: "/discount-codes",
+    component: lazy(() => import("../../views/DiscountCodes"))
   },
   {
-    path: '/giftBaskets',
-    component: lazy(() => import('../../views/giftBaskets/GiftBasketsList'))
+    path: "/listing-prices",
+    component: lazy(() => import("../../views/ListingPrices"))
   },
   {
-    path: '/listingPrices',
-    component: lazy(() => import('../../views/listingPrices/ListingPricesList'))
+    path: "/late-requests",
+    component: lazy(() => import("../../views/LateRequests"))
   },
   {
-    path: '/lateRequests',
-    component: lazy(() => import('../../views/lateRequests/LateRequests'))
+    path: "/instructors",
+    component: lazy(() => import("../../views/Instructors"))
   },
   {
-    path: '/login',
-    component: lazy(() => import('../../views/Login')),
-    layout: 'BlankLayout',
+    path: "/coordinators",
+    component: lazy(() => import("../../views/Coordinators"))
+  },
+  {
+    path: "/distributors",
+    component: lazy(() => import("../../views/Distributors"))
+  },
+  {
+    path: "/reviews",
+    component: lazy(() => import("../../views/Reviews"))
+  },
+  {
+    path: "/login",
+    component: lazy(() => import("../../views/Login")),
+    layout: "BlankLayout",
     meta: {
       authRoute: true
     }
   },
   {
-    path: '/error',
-    component: lazy(() => import('../../views/Error')),
-    layout: 'BlankLayout'
+    path: "/error",
+    component: lazy(() => import("../../views/Error")),
+    layout: "BlankLayout"
   }
 ];
 

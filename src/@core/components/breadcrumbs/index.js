@@ -1,9 +1,9 @@
 // ** React Imports
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory } from "react-router-dom";
 
 // ** Third Party Components
-import Proptypes from 'prop-types';
-import { Grid, CheckSquare, MessageSquare, Mail, Calendar } from 'react-feather';
+import Proptypes from "prop-types";
+import { Grid, CheckSquare, MessageSquare, Mail, Calendar } from "react-feather";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +11,7 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownToggle
-} from 'reactstrap';
+} from "reactstrap";
 
 const BreadCrumbs = props => {
   // ** Props
@@ -28,13 +28,13 @@ const BreadCrumbs = props => {
       <div className='content-header-left col-md-9 col-12 mb-2'>
         <div className='row breadcrumbs-top'>
           <div className='col-12'>
-            {breadCrumbTitle ? <h4 className='content-header-title float-left mb-0'>{breadCrumbTitle}</h4> : ''}
+            {breadCrumbTitle ? <h4 className='content-header-title float-left mb-0'>{breadCrumbTitle}</h4> : ""}
             <div className='breadcrumb-wrapper vs-breadcrumbs d-sm-block d-none col-12'>
               <Breadcrumb>
-                {noHome ? '' : <BreadcrumbItem><Link to='/'>Home</Link></BreadcrumbItem>}
+                {noHome ? "" : <BreadcrumbItem><Link to='/'>Home</Link></BreadcrumbItem>}
                 <BreadcrumbItem tag='li' className='text-primary'>
                   <Link onClick={handleBack} style={{
-                    lineHeight: '1.2'
+                    lineHeight: "1.2"
                   }}>
                     <small>
                       {breadCrumbParent}
@@ -46,18 +46,18 @@ const BreadCrumbs = props => {
                     {breadCrumbParent2}
                   </BreadcrumbItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {breadCrumbParent3 ? (
                   <BreadcrumbItem tag='li' className='text-primary'>
                     {breadCrumbParent3}
                   </BreadcrumbItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 <BreadcrumbItem tag='li' active>
                   <small style={{
-                    lineHeight: '1.6'
+                    lineHeight: "1.6"
                   }}>
                     {breadCrumbActive}
                   </small>

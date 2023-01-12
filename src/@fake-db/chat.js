@@ -1,4 +1,4 @@
-import mock from './mock';
+import mock from "./mock";
 /*eslint-disable */
 const previousDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
 const dayBeforePreviousDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 2)
@@ -208,7 +208,7 @@ const data = {
 // ------------------------------------------------
 // GET: Return Chats Contacts and Contacts
 // ------------------------------------------------
-mock.onGet('/chat/chats-and-contacts').reply(() => {
+mock.onGet("/chat/chats-and-contacts").reply(() => {
   const chatsContacts = data.chats.map(chat => {
     const contact = data.contacts.find(c => c.id === chat.userId);
     contact.chat = { id: chat.id, unseenMsgs: chat.unseenMsgs, lastMessage: chat.chat[chat.chat.length - 1] };
@@ -226,12 +226,12 @@ mock.onGet('/chat/chats-and-contacts').reply(() => {
 // ------------------------------------------------
 // GET: Return User Profile
 // ------------------------------------------------
-mock.onGet('/chat/users/profile-user').reply(() => [200, data.profileUser]);
+mock.onGet("/chat/users/profile-user").reply(() => [200, data.profileUser]);
 
 // ------------------------------------------------
 // GET: Return Single Chat
 // ------------------------------------------------
-mock.onGet('/chat/get-chat').reply(config => {
+mock.onGet("/chat/get-chat").reply(config => {
   // Get event id from URL
 
   let userId = config.id;
@@ -249,7 +249,7 @@ mock.onGet('/chat/get-chat').reply(config => {
 // ------------------------------------------------
 // POST: Add new chat message
 // ------------------------------------------------
-mock.onPost('/chat/send-msg').reply(config => {
+mock.onPost("/chat/send-msg").reply(config => {
   // Get event from post data
   const { obj } = JSON.parse(config.data);
 

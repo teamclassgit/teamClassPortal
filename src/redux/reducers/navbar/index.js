@@ -2,16 +2,16 @@
 const initialState = {
   suggestions: [],
   bookmarks: [],
-  query: ''
+  query: ""
 };
 
 const navbarReducer = (state = initialState, action) => {
   switch (action.type) {
-  case 'HANDLE_SEARCH_QUERY':
+  case "HANDLE_SEARCH_QUERY":
     return { ...state, query: action.val };
-  case 'GET_BOOKMARKS':
+  case "GET_BOOKMARKS":
     return { ...state, suggestions: action.data, bookmarks: action.bookmarks };
-  case 'UPDATE_BOOKMARKED':
+  case "UPDATE_BOOKMARKED":
     let objectToUpdate;
 
     // ** find & update object

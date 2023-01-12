@@ -2,7 +2,7 @@ const initialState = {};
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-  case 'ADD_ATTACHMENT':
+  case "ADD_ATTACHMENT":
     const { channelSid, messageIndex, attachment } = action.payload;
     return {
       ...state,

@@ -1,15 +1,15 @@
 // ** React Imports
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect } from "react";
 
 // ** Third Party Components
-import classnames from 'classnames';
+import classnames from "classnames";
 
 // ** Store & Actions
-import { useSelector, useDispatch } from 'react-redux';
-import { handleContentWidth, handleMenuCollapsed, handleMenuHidden } from '@store/actions/layout';
+import { useSelector, useDispatch } from "react-redux";
+import { handleContentWidth, handleMenuCollapsed, handleMenuHidden } from "@store/actions/layout";
 
 // ** Styles
-import 'animate.css/animate.css';
+import "animate.css/animate.css";
 
 const LayoutWrapper = props => {
   // ** Props
@@ -22,13 +22,13 @@ const LayoutWrapper = props => {
   const contentWidth = store.layout.contentWidth;
 
   //** Vars
-  const Tag = layout === 'HorizontalLayout' && !appLayout ? 'div' : Fragment;
+  const Tag = layout === "HorizontalLayout" && !appLayout ? "div" : Fragment;
 
   // ** Clean Up Function
   const cleanUp = () => {
     if (routeMeta) {
       if (routeMeta.contentWidth) {
-        dispatch(handleContentWidth('full'));
+        dispatch(handleContentWidth("full"));
       }
       if (routeMeta.menuCollapsed) {
         dispatch(handleMenuCollapsed(!routeMeta.menuCollapsed));
@@ -57,19 +57,19 @@ const LayoutWrapper = props => {
 
   return (
     <div
-      className={classnames('app-content content overflow-hidden', {
+      className={classnames("app-content content overflow-hidden", {
         [wrapperClass]: wrapperClass,
-        'show-overlay': navbarStore.query.length
+        "show-overlay": navbarStore.query.length
       })}
     >
       <div className='content-overlay'></div>
       <div className='header-navbar-shadow' />
       <div
         className={classnames({
-          'content-wrapper': !appLayout,
-          'content-area-wrapper': appLayout,
-          'container p-0': contentWidth === 'boxed',
-          [`animate__animated animate__${transition}`]: transition !== 'none' && transition.length
+          "content-wrapper": !appLayout,
+          "content-area-wrapper": appLayout,
+          "container p-0": contentWidth === "boxed",
+          [`animate__animated animate__${transition}`]: transition !== "none" && transition.length
         })}
       >
         <Tag

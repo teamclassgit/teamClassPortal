@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export default gql`
   mutation updateBookingNotes($id: String!, $notes: [BookingNoteUpdateInput!], $updatedAt: DateTime!) {

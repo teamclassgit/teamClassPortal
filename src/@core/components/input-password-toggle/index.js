@@ -1,11 +1,11 @@
 // ** React Imports
-import { Fragment, useState } from 'react';
+import { Fragment, useState } from "react";
 
 // ** Third Party Components
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import { Eye, EyeOff } from 'react-feather';
-import { InputGroup, InputGroupAddon, Input, InputGroupText, Label, inputClassName } from 'reactstrap';
+import PropTypes from "prop-types";
+import classnames from "classnames";
+import { Eye, EyeOff } from "react-feather";
+import { InputGroup, InputGroupAddon, Input, InputGroupText, Label, inputClassName } from "reactstrap";
 
 const InputPasswordToggle = props => {
   // ** Props
@@ -45,8 +45,8 @@ const InputPasswordToggle = props => {
         })}
       >
         <Input
-          type={inputVisibility === false ? 'password' : 'text'}
-          placeholder={placeholder ? placeholder : '············'}
+          type={inputVisibility === false ? "password" : "text"}
+          placeholder={placeholder ? placeholder : "············"}
           className={classnames({
             [inputClassName]: inputClassName
           })}
@@ -80,14 +80,14 @@ InputPasswordToggle.propTypes = {
   inputClassName: PropTypes.string,
   label (props, propName, componentName) {
     // ** If label is defined and htmlFor is undefined throw error
-    if (props[propName] && props['htmlFor'] === 'undefined') {
-      throw new Error('htmlFor prop is required when label prop is present');
+    if (props[propName] && props["htmlFor"] === "undefined") {
+      throw new Error("htmlFor prop is required when label prop is present");
     }
   },
   htmlFor (props, propName, componentName) {
     // ** If htmlFor is defined and label is undefined throw error
-    if (props[propName] && props['label'] === 'undefined') {
-      throw new Error('label prop is required when htmlFor prop is present');
+    if (props[propName] && props["label"] === "undefined") {
+      throw new Error("label prop is required when htmlFor prop is present");
     }
   }
 };

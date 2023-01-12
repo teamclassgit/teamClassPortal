@@ -1,12 +1,12 @@
 // @packages
-import Proptypes from 'prop-types';
-import React, { useContext } from 'react';
-import { Badge } from 'reactstrap';
-import { Inbox } from 'react-feather';
+import Proptypes from "prop-types";
+import React, { useContext } from "react";
+import { Badge } from "reactstrap";
+import { Inbox } from "react-feather";
 
 // @styles
-import './messageNotification.scss';
-import { TwilioContext } from '../../../context/TwilioContext/TwilioContext';
+import "./messageNotification.scss";
+import { TwilioContext } from "../../../context/TwilioContext/TwilioContext";
 
 const MessageNotifications = () => {
   // Twillio Chat

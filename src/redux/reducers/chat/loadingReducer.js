@@ -4,7 +4,7 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-  case 'UPDATE_LOADING_STATE':
+  case "UPDATE_LOADING_STATE":
     return {...state, loading: action.payload};
   default:
     return state;

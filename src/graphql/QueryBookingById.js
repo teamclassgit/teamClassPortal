@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export default gql`
   query GetBooking($bookingId: String!) {
@@ -83,6 +83,12 @@ export default gql`
         phone
         state
         status
+        refund {
+          createdAt
+          refundAmount
+          refundId
+          refundReasons
+        }
       }
       instructorId
       instructorTeamMemberId

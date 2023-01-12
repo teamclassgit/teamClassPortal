@@ -1,0 +1,20 @@
+@import '../../../@core/scss/base/bootstrap-extended/include';
+@import '../../../@core/scss/base/components/include';
+@import '@inovua/reactdatagrid-enterprise/theme/default-dark.css';
+
+.InovuaReactDataGrid {
+    font-size: 13px;
+}
+
+.card-tags {
+    position: absolute;
+    top: 0px;
+    margin-left: 0px;
+    font-size: 10px;
+}
+
+.btn-download-excel {
+    
+    padding: 0;
+    color: white !important;
+}

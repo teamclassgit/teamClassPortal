@@ -11,16 +11,16 @@ export const areaChartOptions = {
   grid: {
     show: false
   },
-  colors: ['#7367F0'],
+  colors: ["#7367F0"],
   dataLabels: {
     enabled: false
   },
   stroke: {
-    curve: 'smooth',
+    curve: "smooth",
     width: 2.5
   },
   fill: {
-    type: 'gradient',
+    type: "gradient",
     gradient: {
       shadeIntensity: 0.9,
       opacityFrom: 0.7,
@@ -66,19 +66,19 @@ export const lineChartOptions = {
   grid: {
     show: false
   },
-  colors: ['#7367F0'],
+  colors: ["#7367F0"],
   dataLabels: {
     enabled: false
   },
   stroke: {
-    curve: 'smooth',
+    curve: "smooth",
     width: 5
   },
   fill: {
-    type: 'gradient',
+    type: "gradient",
     gradient: {
       shadeIntensity: 1,
-      gradientToColors: ['#A9A2F6'],
+      gradientToColors: ["#A9A2F6"],
       opacityFrom: 1,
       opacityTo: 1,
       stops: [0, 100, 100, 100]

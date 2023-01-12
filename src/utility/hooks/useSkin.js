@@ -1,13 +1,13 @@
 // @packages
-import themeConfig from '@configs/themeConfig';
-import { useState, useEffect } from 'react';
+import themeConfig from "@configs/themeConfig";
+import { useState, useEffect } from "react";
 
 export const useSkin = () => {
   // ** State
   const [skin, setSkin] = useState(() => {
     try {
       // ** Get from local storage by key
-      const item = window.localStorage.getItem('skin');
+      const item = window.localStorage.getItem("skin");
       // ** Parse stored json or if none return initialValue
       return item ? JSON.parse(item) : themeConfig.layout.skin;
     } catch (error) {
@@ -25,7 +25,7 @@ export const useSkin = () => {
       // ** Set state
       setSkin(valueToStore);
       // ** Save to local storage
-      window.localStorage.setItem('skin', JSON.stringify(valueToStore));
+      window.localStorage.setItem("skin", JSON.stringify(valueToStore));
     } catch (error) {
       // ** A more advanced implementation would handle the error case
       console.log(error);
@@ -38,16 +38,16 @@ export const useSkin = () => {
 
     // ** Define classnames for skins
     const classNames = {
-      dark: 'dark-layout',
-      bordered: 'bordered-layout',
-      'semi-dark': 'semi-dark-layout'
+      dark: "dark-layout",
+      bordered: "bordered-layout",
+      "semi-dark": "semi-dark-layout"
     };
 
     // ** Remove all classes from Body on mount
     element.classList.remove(...element.classList);
 
     // ** If skin is not light add skin class
-    if (skin !== 'light') {
+    if (skin !== "light") {
       element.classList.add(classNames[skin]);
     }
   }, [skin]);
