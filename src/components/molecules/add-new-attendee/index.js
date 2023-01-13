@@ -299,7 +299,7 @@ const AddNewAttendee = ({
             />
           </InputGroup>
         </FormGroup>
-        {booking.classVariant.hasKit && (
+        {booking.classVariant?.hasKit && (
           <FormGroup>
             <FormGroup>
               <Label for="addressLine1">Shipping Address</Label>
