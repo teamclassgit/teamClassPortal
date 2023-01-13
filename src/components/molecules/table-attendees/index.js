@@ -72,6 +72,7 @@ const DataTableAttendees = ({
   React.useEffect(() => {
     setData(attendees);
   }, [attendees]);
+
   // ** Vars
   const states = ["success", "danger", "warning", "info", "dark", "primary", "secondary"];
   const status = {
@@ -117,11 +118,16 @@ const DataTableAttendees = ({
       sortable: true,
       maxWidth: "250px",
       cell: (row) => {
+        let isInternational = false;
+        if (row.country !== "United States of America" && row.country !== "US" && row.country !== "USA"
+         && row.country !== "usa" && row.country !== "us" && row.country !== "United states") {
+          isInternational = true;
+        } 
         return (
           <div style={{ color: "#868E96", fontWeight: "400", fontSize: "12px", lineHeight: "18px" }}>
               {row?.addressLine1 ? row?.addressLine1 : ""} {row?.addressLine2 ? row?.addressLine2 : ""}
-              {row?.city ? row?.city.concat(",") : ""} {row?.state ? row?.state : ""} {row?.country ? row?.country : ""}{" "}
-              {row?.zip ? row?.zip : ""}
+              {row?.city ? row?.city.concat(",") : ""} {row?.state ? row?.state : ""} {row?.country ? row.country : ""}{" "}
+              {row?.zip ? row?.zip : ""}{" "}{isInternational && <Badge color="primary">International</Badge>}
             </div>
         );
       }
