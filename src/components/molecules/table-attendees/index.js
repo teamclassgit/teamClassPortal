@@ -119,8 +119,9 @@ const DataTableAttendees = ({
       maxWidth: "250px",
       cell: (row) => {
         let isInternational = false;
-        if (row.country !== "United States of America" && row.country !== "US" && row.country !== "USA"
-         && row.country !== "usa" && row.country !== "us" && row.country !== "United states") {
+        if (row.country && row.country !== "United States of America" && row.country !== "US" && row.country !== "USA" && row.country !== "Usa"
+         && row.country !== "usa" && row.country !== "us" && row.country !== "United states" && row.country !== "United States"
+         && row.country !== "UNITED STATES" && row.country !== "united states" && booking?.classVariant.hasKit) {
           isInternational = true;
         } 
         return (
