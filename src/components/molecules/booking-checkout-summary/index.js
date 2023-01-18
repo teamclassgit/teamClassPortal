@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback }  from "react";
 import { Card, CardBody, CardFooter, FormText, Media, Badge, Row, Col, CardHeader } from "reactstrap";
 import {
   BOOKING_PAID_STATUS,
@@ -41,6 +41,20 @@ const BookingCheckoutSummary = ({
   attendeesToInvoice,
   totalRushFee
 }) => {
+
+  const getAttendeeToInvoiceDescription = useCallback(() => {
+
+    const price = priceToInvoice || bookingInfo.classVariant.pricePerson;
+    const attendees = bookingInfo.classVariant.groupEvent ? ` (${bookingInfo.classVariant.minimum} to ${bookingInfo.classVariant.maximum})`
+      : `${attendeesToInvoice < bookingInfo.classVariant.minimum ?
+        bookingInfo.classVariant.minimum : attendeesToInvoice}`;
+
+    const type = bookingInfo.onDemand ? "kits" : "attendees";
+
+    return `$${price} x ${attendees} ${type}`;
+
+  }, [attendeesToInvoice, bookingInfo, priceToInvoice]);
+
   return (
     <div className={chat && styles.container}>
       <Card className={chat && styles.subContainer}>
@@ -149,8 +163,7 @@ const BookingCheckoutSummary = ({
             <tbody>
               <tr>
                 <th className="font-weight-normal pt-1">
-                  ${priceToInvoice || bookingInfo.classVariant?.pricePerson} x
-                  {` ${attendeesToInvoice < bookingInfo.classVariant.minimum ? bookingInfo.classVariant.minimum : attendeesToInvoice} `} attendees
+                  {getAttendeeToInvoiceDescription()}
                   {attendeesToInvoice < bookingInfo.classVariant.minimum && (
                     <FormText color="muted">Under {bookingInfo.classVariant.minimum} group fee</FormText>
                   )}

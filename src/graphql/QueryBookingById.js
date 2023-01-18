@@ -9,6 +9,7 @@ export default gql`
       teamClassId
       eventCoordinatorId
       hasInternationalAttendees
+      onDemand
       classVariant {
         title
         notes
