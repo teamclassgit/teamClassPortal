@@ -120,7 +120,7 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
               <Input
                 id="refund"
                 type="number"
-                invalid={refundAmount >= currentPayment?.amount / 100 || refundAmount < 0}
+                invalid={refundAmount > currentPayment?.amount / 100 || refundAmount < 0}
                 min="1"
                 step="any"
                 placeholder=""
@@ -167,7 +167,7 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
             color="primary"
             onClick={saveRefund}
             disabled={
-              !refundAmount || !refundReasons || refundAmount >= currentPayment?.amount / 100 || refundAmount < 0
+              !refundAmount || !refundReasons || refundAmount > currentPayment?.amount / 100 || refundAmount < 0
             }
           >
             {processing ? "Saving..." : "Save"}
