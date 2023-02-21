@@ -40,10 +40,9 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   
   let totalNoTaxableAdditionalItems = 0;
   
-  let customDeposit = 0, customAttendees = undefined;
+  let customAttendees = undefined;
 
   if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
-    customDeposit = bookingInfo.invoiceDetails[0].unitPrice;
     customAttendees = bookingInfo.invoiceDetails[1].units;
     price = bookingInfo.invoiceDetails[1].unitPrice;
 
@@ -138,7 +137,6 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
     addons,
     finalValue,
     initialDeposit,
-    customDeposit,
     customAttendees,
     customPrice: price,
     totalTaxableAdditionalItems,

@@ -2,19 +2,9 @@
 // @packages
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { DollarSign, Edit, Plus, X, XSquare } from "react-feather";
+import { Edit, Plus, X, XSquare } from "react-feather";
 import { useMutation } from "@apollo/client";
-import { 
-  Badge,
-  Button,
-  Card,
-  Col,
-  Modal,
-  ModalHeader,
-  ModalFooter,
-  Row,
-  Table
-} from "reactstrap";
+import { Badge, Button, Card, Col, Modal, ModalHeader, ModalFooter, Row, Table } from "reactstrap";
 import PropTypes from "prop-types";
 
 // @scripts
@@ -99,6 +89,10 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
 
     const newPayment = { ...payment };
     newPayment.paymentName = "final";
+    // when converting to final payment any refund will be substrated from the amount of the payment.
+    // The result would be the amount of the final payment
+    newPayment.amount = payment.amount - (payment?.refund?.refundAmount || 0);
+    newPayment.refund = undefined;
     const newPaymentsArray = [...payments];
     newPaymentsArray[indexPayment] = newPayment;
 
@@ -135,10 +129,10 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
     const newBookingStatus = finalPayment
       ? BOOKING_PAID_STATUS
       : depositPayment
-        ? BOOKING_DEPOSIT_CONFIRMATION_STATUS
-        : calendarEvent
-          ? BOOKING_DATE_REQUESTED_STATUS
-          : BOOKING_QUOTE_STATUS;
+      ? BOOKING_DEPOSIT_CONFIRMATION_STATUS
+      : calendarEvent
+      ? BOOKING_DATE_REQUESTED_STATUS
+      : BOOKING_QUOTE_STATUS;
 
     try {
       const result = await updateBooking({
@@ -239,68 +233,72 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                       <td align="left">
                         <div className={"text-default'}"}>
                           {capitalizeString(element.paymentName)}
-                          {booking && booking.status !== BOOKING_CLOSED_STATUS && <span>
-                            {processing && index === indexPayment && (
-                              <small>
-                                <br />
-                                <span>Converting...</span>
-                              </small>
-                            )}
-                            {!processing && element.paymentName === "final" && element.status === PAYMENT_STATUS_SUCCEEDED ? (
-                              !clickedConvert ? (
+                          {booking && booking.status !== BOOKING_CLOSED_STATUS && (
+                            <span>
+                              {processing && index === indexPayment && (
                                 <small>
                                   <br />
-                                  <a
-                                    href="#"
-                                    title="Convert this payment to deposit will move this booking to deposit-paid status"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setClickedConvert(true);
-                                    }}
-                                  >
-                                    Convert to deposit
-                                  </a>
+                                  <span>Converting...</span>
                                 </small>
-                              ) : (
-                                <div>
-                                  <p className="mt-1">
-                                    <small className="text text-danger text-justify">Are you sure to convert this payment to deposit?</small>
-                                  </p>
-                                  <small className="ml-1">
-                                    <div className="d-flex justify-content-start">
-                                      <a
-                                        className="btn btn-primary btn-sm"
-                                        href="#"
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          convertFinalPaymentToDeposit(element);
-                                        }}
-                                      >
-                                        Yes
-                                      </a>{" "}
-                                      <a
-                                        className="btn btn-secondary btn-sm"
-                                        href="#"
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          setClickedConvert(false);
-                                        }}
-                                      >
-                                        No
-                                      </a>
-                                    </div>
+                              )}
+                              {!processing && element.paymentName === "final" && element.status === PAYMENT_STATUS_SUCCEEDED ? (
+                                !clickedConvert ? (
+                                  <small>
+                                    <br />
+                                    <a
+                                      href="#"
+                                      title="Convert this payment to deposit will move this booking to deposit-paid status"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        setClickedConvert(true);
+                                      }}
+                                    >
+                                      Convert to deposit
+                                    </a>
                                   </small>
-                                  <br />
-                                  <small className="ml-2"></small>
-                                </div>
-                              )
-                            ) : (
-                              <></>
-                            )}
-                            {/* Deposit payment to final */}
-                            {payments && !payments.filter(item => item.paymentName === "final" && item.status === "succeeded").length > 0 && (
-                              !processing && element.paymentName === "deposit" && element.status === PAYMENT_STATUS_SUCCEEDED && (
-                                !clickedConvertToFinal ? (
+                                ) : (
+                                  <div>
+                                    <p className="mt-1">
+                                      <small className="text text-danger text-justify">Are you sure to convert this payment to deposit?</small>
+                                    </p>
+                                    <small className="ml-1">
+                                      <div className="d-flex justify-content-start">
+                                        <a
+                                          className="btn btn-primary btn-sm"
+                                          href="#"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            convertFinalPaymentToDeposit(element);
+                                          }}
+                                        >
+                                          Yes
+                                        </a>{" "}
+                                        <a
+                                          className="btn btn-secondary btn-sm"
+                                          href="#"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            setClickedConvert(false);
+                                          }}
+                                        >
+                                          No
+                                        </a>
+                                      </div>
+                                    </small>
+                                    <br />
+                                    <small className="ml-2"></small>
+                                  </div>
+                                )
+                              ) : (
+                                <></>
+                              )}
+                              {/* Deposit payment to final */}
+                              {payments &&
+                                !payments.filter((item) => item.paymentName === "final" && item.status === "succeeded").length > 0 &&
+                                !processing &&
+                                element.paymentName === "deposit" &&
+                                element.status === PAYMENT_STATUS_SUCCEEDED &&
+                                (!clickedConvertToFinal ? (
                                   <small>
                                     <br />
                                     <a
@@ -315,42 +313,43 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                                       Convert to final
                                     </a>
                                   </small>
-                                ) : index === indexPayment && (
-                                  <div>
-                                    <p className="mt-1">
-                                      <small className="text text-danger text-justify">Are you sure to convert this payment to final?</small>
-                                    </p>
-                                    <small className="ml-1">
-                                      <div className="d-flex justify-content-start">
-                                        <a
-                                          className="btn btn-primary btn-sm"
-                                          href="#"
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            convertDepositPaymentToFinal(element);
-                                          }}
-                                        >
-                                          Yes
-                                        </a>{" "}
-                                        <a
-                                          className="btn btn-secondary btn-sm"
-                                          href="#"
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            setClickedConvertToFinal(false);
-                                          }}
-                                        >
-                                          No
-                                        </a>
-                                      </div>
-                                    </small>
-                                    <br />
-                                    <small className="ml-2"></small>
-                                  </div>
-                                )
-                              )
-                            )}
-                          </span>}
+                                ) : (
+                                  index === indexPayment && (
+                                    <div>
+                                      <p className="mt-1">
+                                        <small className="text text-danger text-justify">Are you sure to convert this payment to final?</small>
+                                      </p>
+                                      <small className="ml-1">
+                                        <div className="d-flex justify-content-start">
+                                          <a
+                                            className="btn btn-primary btn-sm"
+                                            href="#"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              convertDepositPaymentToFinal(element);
+                                            }}
+                                          >
+                                            Yes
+                                          </a>{" "}
+                                          <a
+                                            className="btn btn-secondary btn-sm"
+                                            href="#"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              setClickedConvertToFinal(false);
+                                            }}
+                                          >
+                                            No
+                                          </a>
+                                        </div>
+                                      </small>
+                                      <br />
+                                      <small className="ml-2"></small>
+                                    </div>
+                                  )
+                                ))}
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td align="left">
@@ -384,60 +383,62 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                           <span>{element?.refund ? `$${element?.refund?.refundAmount / 100}` : ""}</span>
                         </div>
                       </td>
-                      <td className="d-flex justify-content-between" align="center"> 
+                      <td className="d-flex justify-content-between" align="center">
                         {booking &&
                           booking.status !== BOOKING_CLOSED_STATUS &&
                           element.chargeUrl === CHARGE_OUTSIDE_SYSTEM &&
                           element.status === PAYMENT_STATUS_SUCCEEDED && (
-                          <div className="d-flex justify-content-between">
-                            <a
-                              className="mr-1"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setIndexPayment(index);
-                                setDeleteModal(!deleteModal);
-                              }}
-                              href="#"
-                              title="Cancel payment"
-                            >
-                              <XSquare size={18} />
-                            </a>
-                            <a
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setCurrentPayment({ ...element, index });
-                                setMode("edit");
-                                handleModal();
-                              }}
-                              href="#"
-                              title="Edit payment"
-                            >
-                              <Edit size={18} title="Edit" />
-                            </a>
-                          </div>
-                        )}
+                            <div className="d-flex justify-content-between">
+                              <a
+                                className="mr-1"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setIndexPayment(index);
+                                  setDeleteModal(!deleteModal);
+                                }}
+                                href="#"
+                                title="Cancel payment"
+                              >
+                                <XSquare size={18} />
+                              </a>
+                              <a
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setCurrentPayment({ ...element, index });
+                                  setMode("edit");
+                                  handleModal();
+                                }}
+                                href="#"
+                                title="Edit payment"
+                              >
+                                <Edit size={18} title="Edit" />
+                              </a>
+                            </div>
+                          )}
                         {booking &&
-                          (booking.status !== BOOKING_CLOSED_STATUS && element.status === "succeeded" && !element?.refund) && (
-                          <div className="d-flex align-items-center justify-content-between">
-                            <a
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setIndexPayment(index);
-                                setCurrentPayment({ ...element, index });
-                                setMode("refund");
-                                setShowRefundModal(true);
-                              }}
-                              href="#"
-                              title="Add refund to this payment"
-                            >
-                              <img className="refund-icon" src={RefundImage} width={30} height={27}/>
-                            </a>
-                          </div>
+                          booking.status !== BOOKING_CLOSED_STATUS &&
+                          element.paymentName === "deposit" &&
+                          element.status === "succeeded" &&
+                          !element?.refund && (
+                            <div className="d-flex align-items-center justify-content-between">
+                              <a
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setIndexPayment(index);
+                                  setCurrentPayment({ ...element, index });
+                                  setMode("refund");
+                                  setShowRefundModal(true);
+                                }}
+                                href="#"
+                                title="Add refund to this payment"
+                              >
+                                <img className="refund-icon" src={RefundImage} width={30} height={27} />
+                              </a>
+                            </div>
                           )}
                       </td>
                     </tr>
-                  ))
-                }
+                  ))}
               </tbody>
             </Table>
           </Card>
@@ -461,6 +462,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
       />
       <RefundPaymentModal
         booking={booking}
+        setBooking={setBooking}
         currentPayment={currentPayment}
         showRefundModal={showRefundModal}
         setShowRefundModal={setShowRefundModal}
@@ -469,11 +471,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
         setPayments={setPayments}
         indexPayment={indexPayment}
       />
-      <Modal
-        isOpen={deleteModal}
-        backdrop={false}
-        className="modal-dialog-centered border-0"
-      >
+      <Modal isOpen={deleteModal} backdrop={false} className="modal-dialog-centered border-0">
         <ModalHeader toggle={() => setDeleteModal(!deleteModal)} close={CloseBtn}>
           Cancel payment?
         </ModalHeader>

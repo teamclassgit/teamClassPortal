@@ -69,7 +69,7 @@ export const getDepositPaid = (bookingInfo) => {
     bookingInfo.payments.filter((element) => element.paymentName === "deposit" && element.status === "succeeded");
 
   const initialDepositPaid =
-    depositsPaid && depositsPaid.length > 0 ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100 : 0; //amount is in cents
+    depositsPaid?.length > 0 ? depositsPaid.reduce((previous, current) => previous + current.amount - (current?.refund?.refundAmount || 0), 0) / 100 : 0; //amount is in cents
 
   return initialDepositPaid.toFixed(2);
 };
