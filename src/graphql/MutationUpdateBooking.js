@@ -111,6 +111,12 @@ export default gql`
         phone
         state
         status
+        refund {
+          createdAt
+          refundAmount
+          refundId
+          refundReasons
+        }
       }
       instructorId
       instructorName

@@ -4,6 +4,45 @@ export default gql`
   mutation updateBookingRefund($bookingId: String!, $payments: [BookingPaymentUpdateInput], $updatedAt: DateTime!) {
     updateOneBooking(query: { _id: $bookingId }, set: { payments: $payments, updatedAt: $updatedAt }) {
       _id
+      date
+      expirationHours
+      teamClassId
+      eventCoordinatorId
+      classVariant {
+        title
+        notes
+        minimum
+        maximum
+        duration
+        pricePerson
+        pricePersonInstructor
+        expectedProfit
+        hasKit
+        order
+        active
+        groupEvent
+        instructorFlatFee
+        registrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
+      }
+      addons {
+        icon
+        color
+        name
+        description
+        multipleUnits
+        unitPrice
+        unit
+        order
+        active
+      }
       payments {
         addressLine1
         addressLine2
@@ -34,6 +73,37 @@ export default gql`
           refundReasons
         }
       }
+      membershipDiscount
+      instructorId
+      instructorName
+      customerId
+      customerName
+      eventDate
+      eventDurationHours
+      attendees
+      classMinimum
+      pricePerson
+      serviceFee
+      rushFee
+      salesTax
+      salesTaxState
+      discount
+      status
+      eventLink
+      signUpStatusLink
+      checkoutLink
+      taxExempt
+      invoiceDetails {
+        item
+        unitPrice
+        units
+        priceEditable
+        unitsEditable
+        taxable
+        readOnly
+      }
+      createdAt
+      createdAt
       updatedAt
     }
   }

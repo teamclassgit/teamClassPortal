@@ -9,7 +9,17 @@ import PropTypes from "prop-types";
 // @scripts
 import MutationUpdateBookingRefund from "@graphql/MutationUpdateBookingRefund";
 
-const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, currentPayment, mode, payments, setPayments, indexPayment}) => {
+const RefundPaymentModal = ({
+  booking,
+  showRefundModal,
+  setShowRefundModal,
+  currentPayment,
+  mode,
+  payments,
+  setPayments,
+  setBooking,
+  indexPayment
+}) => {
   const [refundAmount, setRefundAmount] = useState(0.0);
   const [refundReasons, setRefundReasons] = useState("");
   const [refundId, setRefundId] = useState("");
@@ -24,7 +34,7 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
     }
   }, [currentPayment]);
 
-  const CloseBtn = <X className="cursor-pointer" size={15} onClick={e => setShowRefundModal(false)} />;
+  const CloseBtn = <X className="cursor-pointer" size={15} onClick={(e) => setShowRefundModal(false)} />;
 
   const saveRefund = async () => {
     setProcessing(true);
@@ -37,7 +47,7 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
       refundId,
       createdAt: new Date()
     };
-    const newCurrentPayment = {...currentPayment, refund};
+    const newCurrentPayment = { ...currentPayment, refund };
     delete newCurrentPayment.index;
     newPaymentsArray[indexPayment] = newCurrentPayment;
 
@@ -49,7 +59,10 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
           updatedAt: new Date()
         }
       });
-      setPayments(newPaymentsArray);
+      if (result?.data?.updateOneBooking) {
+        setPayments(newPaymentsArray);
+        setBooking(result?.data?.updateOneBooking);
+      }
     } catch (error) {
       console.log("Error saving refund:", error);
     }
@@ -58,27 +71,23 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
   };
 
   return (
-      <Modal className="sidebar-sm" contentClassName="pt-0"isOpen={showRefundModal} modalClassName="modal-slide-in">
-        <ModalHeader className="mb-3" toggle={e => setShowRefundModal(!showRefundModal) } close={CloseBtn} tag="div">
-          <h5 className="modal-title">Refund Payment</h5>
-        </ModalHeader>
-        <ModalBody className="flex-grow-1">
-          <FormGroup>
-            <InputGroup>
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  <User size={15} />
-                </InputGroupText>
-              </InputGroupAddon>
-              <Input id="name" 
-                placeholder="Full Name*" 
-                disabled={mode === "refund"} 
-                required={true}  
-                value={currentPayment?.name}/>
-            </InputGroup>
-          </FormGroup>
+    <Modal className="sidebar-sm" contentClassName="pt-0" isOpen={showRefundModal} modalClassName="modal-slide-in">
+      <ModalHeader className="mb-3" toggle={(e) => setShowRefundModal(!showRefundModal)} close={CloseBtn} tag="div">
+        <h5 className="modal-title">Refund Payment</h5>
+      </ModalHeader>
+      <ModalBody className="flex-grow-1">
+        <FormGroup>
+          <InputGroup>
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                <User size={15} />
+              </InputGroupText>
+            </InputGroupAddon>
+            <Input id="name" placeholder="Full Name*" disabled={mode === "refund"} required={true} value={currentPayment?.name} />
+          </InputGroup>
+        </FormGroup>
 
-          <Row>
+        <Row>
           <Col md={6}>
             <FormGroup>
               <Label for="amount">Payment Amount</Label>
@@ -152,32 +161,26 @@ const RefundPaymentModal = ({booking, showRefundModal, setShowRefundModal, curre
         <Row>
           <Col md={12}>
             <FormGroup>
-            <Label for="refund-id">Refund ID</Label>
-            <Input id="refund-id" 
-              placeholder="" 
-              value={refundId}
-              onChange={(e) => setRefundId(e.target.value)}
-            />
-            <small>ID of the payment platform.</small>
-           </FormGroup>
+              <Label for="refund-id">Refund ID</Label>
+              <Input id="refund-id" placeholder="" value={refundId} onChange={(e) => setRefundId(e.target.value)} />
+              <small>ID of the payment platform.</small>
+            </FormGroup>
           </Col>
         </Row>
-          <Button
-            className="mr-1 mt-1"
-            color="primary"
-            onClick={saveRefund}
-            disabled={
-              !refundAmount || !refundReasons || refundAmount > currentPayment?.amount / 100 || refundAmount < 0
-            }
-          >
-            {processing ? "Saving..." : "Save"}
-          </Button>
-          <Button className="mt-1" color="secondary" outline onClick={e => setShowRefundModal(false)}>
-            Cancel
-          </Button>
-        </ModalBody>
-      </Modal>
-    );
+        <Button
+          className="mr-1 mt-1"
+          color="primary"
+          onClick={saveRefund}
+          disabled={!refundAmount || !refundReasons || refundAmount > currentPayment?.amount / 100 || refundAmount < 0}
+        >
+          {processing ? "Saving..." : "Save"}
+        </Button>
+        <Button className="mt-1" color="secondary" outline onClick={(e) => setShowRefundModal(false)}>
+          Cancel
+        </Button>
+      </ModalBody>
+    </Modal>
+  );
 };
 
 RefundPaymentModal.propTypes = {

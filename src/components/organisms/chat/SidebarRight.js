@@ -115,10 +115,8 @@ const SidebarRight = ({ client, id }) => {
       bookingInfo.payments &&
       bookingInfo.payments.filter((element) => element.paymentName === "deposit" && element.status === "succeeded");
 
-    const initialDepositPaid = !isNaN(bookingTotals.customDeposit)
-      ? bookingTotals.customDeposit
-      : depositsPaid && depositsPaid.length > 0
-      ? depositsPaid.reduce((previous, current) => previous + current.amount, 0) / 100
+    const initialDepositPaid = depositsPaid?.length > 0
+      ? depositsPaid.reduce((previous, current) => previous + current.amount - (current?.refund?.refundAmount || 0), 0) / 100
       : 0;
 
     const finalPayment = bookingTotals.finalValue - initialDepositPaid;

@@ -27,6 +27,12 @@ export default gql`
         paymentId
         paymentName
         status
+        refund {
+          createdAt
+          refundAmount
+          refundId
+          refundReasons
+        }
       }
       notes {
         note
