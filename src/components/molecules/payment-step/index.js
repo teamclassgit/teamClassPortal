@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 // @packages
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import moment from "moment";
 import { Edit, Plus, X, XSquare } from "react-feather";
 import { useMutation } from "@apollo/client";
@@ -23,9 +24,11 @@ import {
 } from "@utility/Constants";
 import RefundPaymentModal from "@molecules/refund-payment-modal";
 import RefundImage from "@assets/images/refund.png";
+import RefundDarkImage from "@assets/images/refund-dark.jpg";
 
 // @atyles
 import "./payment.scss";
+
 
 const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [currentPayment, setCurrentPayment] = useState(null);
@@ -39,6 +42,7 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
   const [indexPayment, setIndexPayment] = useState(null);
   const [updateBooking] = useMutation(mutationUpdateBookingPayments, {});
   const [showRefundModal, setShowRefundModal] = useState(false);
+  const skin = useSelector((state) => state.bookingsBackground);
 
   const handleModal = () => setModal(!modal);
 
@@ -432,7 +436,11 @@ const Payments = ({ booking, setBooking, calendarEvent }) => {
                                 href="#"
                                 title="Add refund to this payment"
                               >
-                                <img className="refund-icon" src={RefundImage} width={30} height={27} />
+                              {skin === "dark" ? (
+                                <img className="refund-icon" src={RefundDarkImage} width={30} height={25}/>
+                              ) : (
+                                <img className="refund-icon" src={RefundImage} width={30} height={25}/>
+                              )}
                               </a>
                             </div>
                           )}
