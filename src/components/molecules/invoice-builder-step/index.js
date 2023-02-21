@@ -18,7 +18,7 @@ const InvoiceBuilder = ({ realCountAttendees, booking, setBooking, calendarEvent
       item: "Initial Deposit",
       unitPrice: 0,
       units: 1,
-      priceEditable: true,
+      priceEditable: false,
       unitsEditable: false,
       taxable: true,
       readOnly: true
@@ -46,44 +46,36 @@ const InvoiceBuilder = ({ realCountAttendees, booking, setBooking, calendarEvent
   const [updateBooking, { ...updateBookingResult }] = useMutation(mutationUpdateBookingInvoiceDetails, {});
 
   React.useEffect(() => {
-    if (booking && booking.invoiceDetails) {
-      setInvoiceItems(
-        booking.invoiceDetails.map(({ ...element }) => {
-          return {
-            ...element
-          };
-        })
-      );
-      const currentDiscount = booking.discount > 0 ? booking.discount * 100 : 0;
-      setDiscount(currentDiscount);
-    } else if (booking) {
-      const depositsPaid =
-        booking && booking.payments && booking.payments.filter((element) => element.paymentName === "deposit" && element.status === "succeeded");
+    if (booking) {
+      const depositsPaid = booking.payments?.filter((element) => element.paymentName === "deposit" && element.status === "succeeded");
+      const depositAmountPaid = depositsPaid?.reduce((previous, current) => previous + current.amount - (current?.refund?.refundAmount || 0), 0) || 0;
+      defaultInvoiceItems[0].unitPrice = depositAmountPaid / 100;
 
-      if (depositsPaid && depositsPaid.length > 0) {
-        const depositAmountPaid = depositsPaid.reduce((previous, current) => previous + current.amount, 0);
-        defaultInvoiceItems[0].unitPrice = depositAmountPaid / 100;
+      if (booking?.invoiceDetails?.length > 0) {
+        setInvoiceItems(
+          booking.invoiceDetails.map((invoiceItem, index) => {
+            return index === 0 ? { ...defaultInvoiceItems[0] } : { ...invoiceItem };
+          })
+        );
+        const currentDiscount = booking.discount > 0 ? booking.discount * 100 : 0;
+        setDiscount(currentDiscount);
+      } else {
+        const minimum = booking.classVariant ? booking.classVariant.minimum : booking.classMinimum;
+        //pricePerson is currently in use for group based pricing too
+        const price = booking.classVariant ? booking.classVariant.pricePerson : booking.pricePerson;
+        const attendees = realCountAttendees > 0 ? realCountAttendees : booking.attendees;
+        defaultInvoiceItems[1].unitPrice = price;
+        defaultInvoiceItems[1].units = attendees > minimum ? attendees : minimum;
+        setInvoiceItems(defaultInvoiceItems);
       }
 
-      const minimum = booking.classVariant ? booking.classVariant.minimum : booking.classMinimum;
-      //pricePerson is currently in use for group based pricing too
-      const price = booking.classVariant ? booking.classVariant.pricePerson : booking.pricePerson;
-      const attendees = realCountAttendees > 0 ? realCountAttendees : booking.attendees;
-
-      defaultInvoiceItems[1].unitPrice = price;
-      defaultInvoiceItems[1].units = attendees > minimum ? attendees : minimum;
-
-      setInvoiceItems(defaultInvoiceItems);
+      const finalPaymentPaid = booking?.payments?.find((element) => element.paymentName === "final" && element.status === "succeeded");
+      setHasFinalPayment(finalPaymentPaid ? true : false);
+      setTaxExempt(booking.taxExempt ? true : false);
+      setCcFeeExempt(booking.ccFeeExempt ? true : false);
+      setRushFee(calendarEvent && calendarEvent.rushFee ? true : false);
+      setClassMinimum(booking.classVariant ? booking.classVariant.minimum : 1);
     }
-
-    const finalPaymentPaid =
-      booking && booking.payments && booking.payments.find((element) => element.paymentName === "final" && element.status === "succeeded");
-
-    setHasFinalPayment(finalPaymentPaid ? true : false);
-    setTaxExempt(booking && booking.taxExempt ? true : false);
-    setCcFeeExempt(booking && booking.ccFeeExempt ? true : false);
-    setRushFee(calendarEvent && calendarEvent.rushFee ? true : false);
-    setClassMinimum(booking && booking.classVariant ? booking.classVariant.minimum : 1);
   }, [booking, calendarEvent]);
 
   React.useEffect(() => {
@@ -378,7 +370,11 @@ const InvoiceBuilder = ({ realCountAttendees, booking, setBooking, calendarEvent
         <div>
           <div className="d-flex justify-content-between">
             <span>
-              <CardLink href={`https://www.teamclass.com/customers/events/${booking._id}?type=payment`} target={"_blank"} title={"Final payment link"}>
+              <CardLink
+                href={`https://www.teamclass.com/customers/events/${booking._id}?type=payment`}
+                target={"_blank"}
+                title={"Final payment link"}
+              >
                 <Avatar color="secondary" size="sm" icon={<DollarSign size={18} />} /> <small>Final payment link</small>
               </CardLink>
             </span>
