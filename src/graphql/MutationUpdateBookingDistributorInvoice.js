@@ -30,6 +30,7 @@ export default gql`
       expirationHours
       teamClassId
       eventCoordinatorId
+      onDemand
       classVariant {
         title
         notes

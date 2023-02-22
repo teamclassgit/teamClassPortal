@@ -114,6 +114,7 @@ export default gql`
           refundReasons
         }
       }
+      onDemand
       instructorId
       instructorName
       customerId

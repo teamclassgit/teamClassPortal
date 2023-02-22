@@ -9,6 +9,7 @@ export default gql`
       teamClassId
       instructorId
       instructorName
+      onDemand
       customerId
       customerName
       eventDate

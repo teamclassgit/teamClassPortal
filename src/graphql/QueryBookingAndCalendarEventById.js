@@ -28,6 +28,7 @@ export default gql`
       eventCoordinatorId
       instructorTeamMemberId
       hasInternationalAttendees
+      onDemand
       classVariant {
         title
         notes

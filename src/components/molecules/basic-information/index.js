@@ -10,7 +10,13 @@ import Cleave from "cleave.js/react";
 import Flatpickr from "react-flatpickr";
 
 // @scripts
-import { BOOKING_CLOSED_STATUS, BOOKING_DEPOSIT_CONFIRMATION_STATUS, BOOKING_PAID_STATUS, BOOKING_QUOTE_STATUS, DATE_AND_TIME_CANCELED_STATUS } from "@utility/Constants";
+import {
+  BOOKING_CLOSED_STATUS,
+  BOOKING_DEPOSIT_CONFIRMATION_STATUS,
+  BOOKING_PAID_STATUS,
+  BOOKING_QUOTE_STATUS,
+  DATE_AND_TIME_CANCELED_STATUS
+} from "@utility/Constants";
 import { selectThemeColors } from "@utils";
 import mutationUpdateBooking from "@graphql/MutationUpdateBookingAndCustomer";
 import mutationOpenBooking from "@graphql/MutationOpenBooking";
@@ -21,8 +27,18 @@ import closeBookingOptions from "@data/closed-booking-options.json";
 import { calculateVariantPrice } from "@services/BookingService";
 import mutationDeleteOneCalendarEventByBookingId from "@graphql/MutationDeleteOneCalendarEventById";
 
-const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordinators, editMode, closedBookingReason, setClosedBookingReason, calendarEvent, closeModal, onEditCompleted}) => {
-
+const BasicInformation = ({
+  currentElement,
+  allInstructors,
+  allClasses,
+  allCoordinators,
+  editMode,
+  closedBookingReason,
+  setClosedBookingReason,
+  calendarEvent,
+  closeModal,
+  onEditCompleted
+}) => {
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     email: "",
@@ -39,6 +55,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
   const [bookingTeamClassId, setBookingTeamClassId] = useState("");
   const [bookingTeamClassName, setBookingTeamClassName] = useState("");
   const [distributorId, setDistributorId] = useState("");
+  const [onDemand, setOnDemand] = useState(false);
   const [upgrades, setUpgrades] = useState([]);
   const [classUpgrades, setClassUpgrades] = useState([]);
   const [classVariant, setClassVariant] = useState({});
@@ -68,6 +85,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
     const filteredClass = allClasses.find((element) => element._id === teamClass?._id);
 
     setBookingSignUpDeadline([currentElement.signUpDeadline]);
+    setOnDemand(currentElement.onDemand);
     setBookingTeamClassId(teamClass._id);
     setBookingTeamClassName(teamClass.title);
     setClassVariant(currentElement.classVariant);
@@ -88,13 +106,12 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
     setIsOpenBookingRequested(false);
     setInstructorAndAdditionals(
       teamClass?.additionalInstructors ? [...teamClass?.additionalInstructors, teamClass?.instructorId] : [teamClass?.instructorId]
-      );
+    );
     if (currentElement.classVariant?.groupEvent) {
       setSelectedVariant(currentElement.classVariant.order);
     }
     setUpgrades(currentElement?.addons || []);
     setHasInternationalAttendees(currentElement?.hasInternationalAttendees || false);
-
     setClassUpgrades(filteredClass?.addons || []);
     setClassVariantsOptions(filteredClass?.variants);
   }, [currentElement]);
@@ -140,16 +157,20 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
   };
 
   const handleChangeCustomerInfo = (field, value) => {
-    setCustomerInfo({...customerInfo, [field]: value});
+    setCustomerInfo({ ...customerInfo, [field]: value });
   };
 
   const saveChangesBooking = async () => {
     setProcessing(true);
 
     try {
-      const bookingVariant = {...classVariant};
+      const bookingVariant = { ...classVariant };
 
-      if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)) {
+      if (
+        !bookingVariant.groupEvent &&
+        currentElement.status !== BOOKING_PAID_STATUS &&
+        (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)
+      ) {
         const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
         bookingVariant.pricePerson = byPersonPrices.price;
       }
@@ -159,6 +180,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
           bookingId: currentElement._id,
           date: new Date(),
           teamClassId: bookingTeamClassId,
+          onDemand,
           classVariant: bookingVariant,
           addons: upgrades,
           instructorId,
@@ -280,9 +302,8 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
     const currentPayments = currentElement.payments;
 
     if (currentPayments && currentPayments.length > 0) {
-      const depositPayment =
-        currentPayments && currentPayments.find((element) => element.paymentName === "deposit" && element.status === "succeeded");
-      const finalPayment = currentPayments && currentPayments.find((element) => element.paymentName === "final" && element.status === "succeeded");
+      const depositPayment = currentPayments.find((element) => element.paymentName === "deposit" && element.status === "succeeded");
+      const finalPayment = currentPayments.find((element) => element.paymentName === "final" && element.status === "succeeded");
       if (finalPayment) {
         return BOOKING_PAID_STATUS;
       } else if (depositPayment) {
@@ -296,9 +317,13 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
   const openBooking = async () => {
     setProcessing(true);
 
-    const bookingVariant = {...classVariant};
+    const bookingVariant = { ...classVariant };
 
-    if (!bookingVariant.groupEvent && currentElement.status !== BOOKING_PAID_STATUS && (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)) {
+    if (
+      !bookingVariant.groupEvent &&
+      currentElement.status !== BOOKING_PAID_STATUS &&
+      (currentElement.classVariant.title !== bookingVariant.title || currentElement.attendees !== groupSize)
+    ) {
       const byPersonPrices = calculateVariantPrice(bookingVariant, groupSize);
       bookingVariant.pricePerson = byPersonPrices.price;
     }
@@ -311,6 +336,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
           updatedAt: new Date(),
           status: reOpenBookingStatus,
           teamClassId: bookingTeamClassId,
+          onDemand,
           instructorId,
           instructorName,
           distributorId,
@@ -492,10 +518,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
         <Label for="full-name">Event Details*</Label>
         <Select
           styles={selectStyles}
-          isDisabled={
-            (currentElement.status === BOOKING_CLOSED_STATUS ||
-              currentElement.status !== BOOKING_QUOTE_STATUS)
-            && !isOpenBookingRequested}
+          isDisabled={(currentElement.status === BOOKING_CLOSED_STATUS || currentElement.status !== BOOKING_QUOTE_STATUS) && !isOpenBookingRequested}
           theme={selectThemeColors}
           className="react-select edit-booking-select-class"
           classNamePrefix="select"
@@ -515,7 +538,10 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
           }}
           onChange={(option) => {
             const filteredClass = allClasses.find((element) => element._id === option.value);
-            if (filteredClass) setDistributorId(filteredClass?.distributorId);
+            if (!filteredClass) return;
+
+            setDistributorId(filteredClass?.distributorId);
+            setOnDemand(filteredClass?.onDemand || false);
             setClassVariantsOptions(filteredClass.variants);
             setClassVariant(null);
             setClassUpgrades(filteredClass?.addons || []);
@@ -534,24 +560,21 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
           className="react-select edit-booking-select-upgrade"
           classNamePrefix="select"
           placeholder="Select upgrades"
-          value={
-            upgrades && upgrades.map(upgrade => (
-              { value: upgrade, label: `${upgrade.name} (by ${upgrade.unit})`}
-            ))
-          }
+          value={upgrades && upgrades.map((upgrade) => ({ value: upgrade, label: `${upgrade.name} (by ${upgrade.unit})` }))}
           isMulti
           closeMenuOnSelect={false}
           styles={selectStylesTags}
           options={
-            classUpgrades && classUpgrades.map(upgrade => {
+            classUpgrades &&
+            classUpgrades.map((upgrade) => {
               if (upgrade.active) {
-                return (
-                  { value: upgrade, label: `${upgrade.name} (by ${upgrade.unit})` }
-                );
+                return { value: upgrade, label: `${upgrade.name} (by ${upgrade.unit})` };
               }
-          })
+            })
           }
-          onChange={(upgrade) => { setUpgrades(upgrade.map(({value}) => value)); } }
+          onChange={(upgrade) => {
+            setUpgrades(upgrade.map(({ value }) => value));
+          }}
         />
       </FormGroup>
       <FormGroup>
@@ -567,9 +590,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
             classVariant
               ? {
                   value: classVariant,
-                  label: classVariant.groupEvent
-                    ? `${classVariant.title} /group`
-                    : `${classVariant.title} /person`
+                  label: classVariant.groupEvent ? `${classVariant.title} /group` : `${classVariant.title} /person`
                 }
               : null
           }
@@ -593,9 +614,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
               };
               return {
                 value: variant,
-                label: element.groupEvent
-                  ? `${element.title} /group`
-                  : `${element.title} /person`
+                label: element.groupEvent ? `${element.title} /group` : `${element.title} /person`
               };
             })
           }
@@ -767,9 +786,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
 
       {isOpenBookingRequested && (
         <Alert color="danger">
-          <p className="mx-1">
-            Please confirm event details and class variant.
-          </p>
+          <p className="mx-1">Please confirm event details and class variant.</p>
         </Alert>
       )}
 
@@ -806,12 +823,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
               ? "Saving..."
               : "Close booking?"}
           </Button>
-          <Button
-            color="secondary"
-            size="sm"
-            onClick={closeModal}
-            outline
-          >
+          <Button color="secondary" size="sm" onClick={closeModal} outline>
             Cancel
           </Button>
         </div>
@@ -821,7 +833,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
           <Button
             className="mr-1"
             size="sm"
-            color={(isOpenBookingRequested || processing) ? "primary" : "danger"}
+            color={isOpenBookingRequested || processing ? "primary" : "danger"}
             onClick={() => {
               if (!isOpenBookingRequested && BOOKING_QUOTE_STATUS === getStatusToReOpenBooking()) {
                 setIsOpenBookingRequested(true);
@@ -848,12 +860,7 @@ const BasicInformation = ({currentElement, allInstructors, allClasses, allCoordi
           >
             {processing ? "Opening..." : isOpenBookingRequested ? "Save" : "Back to open status"}
           </Button>
-          <Button
-            color="secondary"
-            size="sm"
-            onClick={closeModal}
-            outline
-          >
+          <Button color="secondary" size="sm" onClick={closeModal} outline>
             Cancel
           </Button>
         </div>

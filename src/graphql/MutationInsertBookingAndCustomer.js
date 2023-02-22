@@ -34,6 +34,7 @@ export default gql`
     $utm_source: String
     $hasInternationalAttendees: Boolean
     $membershipDiscount: Float
+    $onDemand: Boolean
   ) {
     upsertOneCustomer(
       query: { _id: $customerId }
@@ -94,6 +95,7 @@ export default gql`
         utm_source: $utm_source
         hasInternationalAttendees: $hasInternationalAttendees
         membershipDiscount: $membershipDiscount
+        onDemand: $onDemand
       }
     ) {
       _id
@@ -119,6 +121,7 @@ export default gql`
       distributorId
       hasInternationalAttendees
       membershipDiscount
+      onDemand
       payments {
         amount
         paymentId
