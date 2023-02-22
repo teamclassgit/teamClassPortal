@@ -36,6 +36,7 @@ export default gql`
     $additionalClassOptions: [BookingAdditionalClassOptionUpdateInput]
     $tags: [String]
     $hasInternationalAttendees: Boolean
+    $onDemand: Boolean
   ) {
     updateOneCustomer(
       query: { _id: $customerId }
@@ -106,10 +107,12 @@ export default gql`
         tags: $tags
         addons: $addons
         hasInternationalAttendees: $hasInternationalAttendees
+        onDemand: $onDemand
       }
     ) {
       _id
       teamClassId
+      onDemand
       customerId
       customerName
       attendees

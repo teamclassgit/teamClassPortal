@@ -91,6 +91,7 @@ export default gql`
       customerId
       customerName
       eventDate
+      onDemand
       eventDurationHours
       attendees
       classMinimum

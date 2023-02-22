@@ -68,6 +68,7 @@ export default gql`
         instructorTeamMemberId
         instructorTeamMemberName
         instructorTeamMemberPhone
+        onDemand
         payments {
           amount
           createdAt

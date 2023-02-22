@@ -14,6 +14,7 @@ export default gql`
     $instructorId: String
     $instructorName: String
     $closedReason_unset: Boolean
+    $onDemand: Boolean
   ) {
     updateOneBooking(
       query: { _id: $bookingId },
@@ -29,6 +30,7 @@ export default gql`
         addons: $addons
         attendees: $attendees
         closedReason_unset: $closedReason_unset
+        onDemand: $onDemand
       }
     ) {
       _id
@@ -37,6 +39,7 @@ export default gql`
       customerName
       attendees
       classMinimum
+      onDemand
       eventDurationHours
       eventCoordinatorId
       pricePerson

@@ -13,6 +13,7 @@ export default gql`
       hasKit
       minimum
       distributorId
+      onDemand
       variants {
         title
         notes

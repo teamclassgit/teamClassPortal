@@ -6,7 +6,20 @@ import { Mail, Phone, User, X, Briefcase } from "react-feather";
 import { selectThemeColors } from "@utils";
 import { useMutation } from "@apollo/client";
 import { v4 as uuid } from "uuid";
-import { Alert, Button, CustomInput, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalHeader } from "reactstrap";
+import {
+  Alert,
+  Button,
+  CustomInput,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader
+} from "reactstrap";
 
 // @styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";
@@ -109,7 +122,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
 
       const membershipDiscount = await getUserMembershipDataByEmail(emailMembership);
 
-      const bookingVariant = {...classVariant};
+      const bookingVariant = { ...classVariant };
       if (!bookingVariant.groupEvent) {
         const byPersonPrices = calculateVariantPrice(bookingVariant, newAttendees);
         bookingVariant.pricePerson = byPersonPrices.price;
@@ -120,6 +133,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
       const resultCreateBooking = await createBooking({
         variables: {
           bookingId: newId,
+          onDemand: teamClass.onDemand,
           date: new Date(),
           teamClassId: selectedClass,
           classVariant: bookingVariant,
@@ -394,9 +408,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                 classVariant
                   ? {
                       value: classVariant,
-                      label: classVariant.groupEvent
-                        ? `${classVariant.title} /group`
-                        : `${classVariant.title} /person`
+                      label: classVariant.groupEvent ? `${classVariant.title} /group` : `${classVariant.title} /person`
                     }
                   : null
               }
@@ -421,9 +433,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
 
                   return {
                     value: variant,
-                    label: element.groupEvent
-                      ? `${element.title} /group`
-                      : `${element.title} /person`
+                    label: element.groupEvent ? `${element.title} /group` : `${element.title} /person`
                   };
                 })
               }

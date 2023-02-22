@@ -36,6 +36,7 @@ export default gql`
       additionalCategories
       firstTimeCustomerRequestQuoteCampaignId
       requestQuoteTemplateId
+      onDemand
       addons {
         icon
         color

@@ -8,6 +8,7 @@ export default gql`
       instructorId
       instructorName
       isActive
+      onDemand
       variants {
         title
         notes

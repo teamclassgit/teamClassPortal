@@ -127,6 +127,7 @@ export default gql`
       eventLink
       signUpStatusLink
       checkoutLink
+      onDemand
       hasInternationalAttendees
       taxExempt
       distributorId

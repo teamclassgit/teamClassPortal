@@ -23,6 +23,7 @@ export default gql`
       signUpStatusLink
       checkoutLink
       taxExempt
+      onDemand
       payments {
         amount
         paymentId
