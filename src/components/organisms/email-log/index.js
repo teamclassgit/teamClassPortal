@@ -1,5 +1,5 @@
 // @packages
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useLayoutEffect} from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { apolloClient } from "@utility/RealmApolloClient";
@@ -17,14 +17,17 @@ import "@organisms/all-bookings/BookingsTable.scss";
 
 // @scripts
 import queryGetBookingsWithCriteria from "@graphql/QueryGetBookingsWithCriteria";
+import queryEmailsNotificationsDeliveredWithCriteria from "@graphql/QueryEmailsNotificationsDeliveredWithCriteria";
+import queryEmailsNotificationsErrorWithCriteria from "@graphql/QueryEmailsNotificationsErrorWithCriteria";
+import queryEmailsNotificationsRequestWithCriteria from "@graphql/QueryEmailsNotificationsRequestWithCriteria";
 import queryAllClasses from "@graphql/QueryAllClasses";
 import queryAllCustomers from "@graphql/QueryAllCustomers";
 import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
 import queryAllInstructors from "@graphql/QueryAllInstructors";
 import EditBookingModal from "@organisms/edit-booking-modal";
 import AddNewBooking from "@organisms/add-new-booking";
-import BookingsTableStatusCards from "@molecules/booking-table-status-card";
-import RowDetails from "@molecules/booking-table-row-details";
+import EmailLogTableStatusCards from "@molecules/email-log-table-status-card";
+import RowDetailsEmailLog from "@molecules/email-log-table-row-details";
 import TasksBar from "@molecules/task-bar";
 import { getAllDataToExport } from "@services/BookingService";
 import ConfirmBookingsToClose from "@molecules/confirm-bookings-to-close";
@@ -32,7 +35,7 @@ import { getColumns } from "./columns";
 import { applyFilters } from "./filters";
 
 const renderRowDetails = ({ data }) => {
-  return data ? <RowDetails data={data} /> : <></>;
+  return data ? <RowDetailsEmailLog data={data} /> : <></>;
 };
 
 const onRenderRow = (rowProps) => {
@@ -49,8 +52,8 @@ const onRenderRow = (rowProps) => {
   }
 };
 
-const FunnelTable = () => {
-  const defaultStatus = { value: "quote", label: "Quote", calendarEventStatus: "" };
+const EmailLogTable = () => {
+  const defaultStatus = { value: "sent", label: "Sent" };
   const skin = useSelector((state) => state.bookingsBackground);
   const genericFilter = {};
   const [status, setStatus] = useState(defaultStatus);
@@ -63,8 +66,11 @@ const FunnelTable = () => {
   const [coordinators, setCoordinators] = useState([]);
   const [instructors, setInstructors] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
+  const [filterValueDelivered, setFilterValueDelivered] = useState([]);
+  const [filterValueError, setFilterValueError] = useState([]);
+  const [filterValueRequest, setFilterValueRequest] = useState([]);
   const [orFilters, setOrFilters] = useState([]);
-  const [sortInfo, setSortInfo] = useState({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
+  const [sortInfo, setSortInfo] = useState({ dir: -1, id: "createAt", name: "createAt", type: "date" });
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [selected, setSelected] = useState({});
@@ -79,13 +85,13 @@ const FunnelTable = () => {
 
   const toggle = () => {
     setOrFilters([]);
-    setSortInfo({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
+    setSortInfo({ dir: -1, id: "createAt", name: "createAt", type: "date" });
     setIsOpenModal(!isOpenModal);
   };
 
   const handleClickCurrentElement = () => {
     setOrFilters([]);
-    setSortInfo({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
+    setSortInfo({ dir: -1, id: "createAt", name: "createAt", type: "date" });
     handleEditModal();
   };
 
@@ -135,9 +141,13 @@ const FunnelTable = () => {
 
   useEffect(() => {
     if (!status) return;
-    applyFilters(filterValue, setFilterValue, status);    
-    console.log("Filter Value Delivered:", filterValue);
+    applyFilters(filterValue, setFilterValue, status);
+    applyFilters(filterValueDelivered, setFilterValueDelivered, status);
+    applyFilters(filterValueError, setFilterValueError, status);
+    applyFilters(filterValueRequest, setFilterValueRequest, status);
+    console.log("STATUS 1: ", status.value);
   }, [status]);
+
 
   const onEditCompleted = (bookingId) => {
     const sortEditedData = { dir: -1, id: "updatedAt", name: "updatedAt", type: "date" };
@@ -156,24 +166,67 @@ const FunnelTable = () => {
   };
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
-    const filters = getQueryFiltersFromFilterArray(filterValue);
-    const response = await apolloClient.query({
-      query: queryGetBookingsWithCriteria,
-      fetchPolicy: "network-only",
-      variables: {
-        limit,
-        offset: skip,
-        sortBy: sortInfo,
-        filterBy: filters,
-        filterByOr: orFilters
-      }
-    });
-
-    const totalCount = response.data.getBookingsWithCriteria.count;
-    return { data: response.data.getBookingsWithCriteria.rows, count: totalCount };
+    console.log("STATUS 2: ", status.value);
+    console.log("skip", skip);
+    console.log("limit", limit);
+    console.log("sortInfo", sortInfo);
+    console.log("filterValue : ", filterValue);
+    if (status.value === "sent") {
+      const filters = getQueryFiltersFromFilterArray(filterValue);
+      console.log("filters : ", filters);
+      const response = await apolloClient.query({
+        query: queryEmailsNotificationsDeliveredWithCriteria,
+        fetchPolicy: "network-only",
+        variables: {
+          limit,
+          offset: skip,
+          sortBy: sortInfo,
+          filterBy: filters,
+          filterByOr: orFilters
+        }
+      });
+      console.log("DATA 0"); 
+      console.log("DATA: ", response.data.getEmailsNotificationsDeliveredWithCriteria.rows);
+      const totalCount = response.data.getEmailsNotificationsDeliveredWithCriteria.count;
+      return { data: response.data.getEmailsNotificationsDeliveredWithCriteria.rows, count: totalCount };
+    }
+    if (status.value === "error") {
+      const filters = getQueryFiltersFromFilterArray(filterValue);
+      console.log("filters : ", filters);
+      const response = await apolloClient.query({
+        query: queryEmailsNotificationsErrorWithCriteria,
+        fetchPolicy: "network-only",
+        variables: {
+          limit,
+          offset: skip,
+          sortBy: sortInfo,
+          filterBy: filters,
+          filterByOr: orFilters
+        }
+      });
+      const totalCount = response.data.getEmailsNotificationsErrorWithCriteria.count;
+      return { data: response.data.getEmailsNotificationsErrorWithCriteria.rows, count: totalCount };
+    }
+    if (status.value === "scheduled") {
+      const filters = getQueryFiltersFromFilterArray(filterValue);
+      console.log("filters : ", filters);
+      const response = await apolloClient.query({
+        query: queryEmailsNotificationsRequestWithCriteria,
+        fetchPolicy: "network-only",
+        variables: {
+          limit,
+          offset: skip,
+          sortBy: sortInfo,
+          filterBy: filters,
+          filterByOr: orFilters
+        }
+      });
+      const totalCount = response.data.getEmailsNotificationsRequestWithCriteria.count;
+      return { data: response.data.getEmailsNotificationsRequestWithCriteria.rows, count: totalCount };
+    }
   };
 
-  const dataSource = useCallback(loadData, []);
+  const dataSource = useCallback(loadData, [status]);
 
   const onExpandedRowsChange = useCallback(({ expandedRows, collapsedRows }) => {
     setExpandedRows(expandedRows);
@@ -250,13 +303,13 @@ const FunnelTable = () => {
 
   return (
     <div>
-      <BookingsTableStatusCards status={status} setStatus={setStatus} filters={filterValue} />
+      <EmailLogTableStatusCards status={status} setStatus={setStatus} filtersDelivered={filterValueDelivered} filtersError={filterValueError} filtersRequest={filterValueRequest} />
       <TasksBar
         setElementToAdd={(element) => {
           setStatus(defaultStatus);
           setElementToAdd(element);
         }}
-        titleView={"Bookings funnel"}
+        titleView={"Mail List"}
         titleBadge={status && status.label}
         showAddModal={() => handleModal()}
         getDataToExport={getDataToExport}
@@ -276,11 +329,6 @@ const FunnelTable = () => {
         onFilterValueChange={setFilterValue}
         showZebraRows={true}
         theme={skin === "dark" ? "amber-dark" : "default-light"}
-        /*cellSelection={cellSelection}
-        onCellSelectionChange={setCellSelection}
-        enableClipboard={true}
-        onCopySelectedCellsChange={onCopySelectedCellsChange}
-        onPasteSelectedCellsChange={onPasteSelectedCellsChange}*/
         selected={selected}
         checkboxColumn
         enableSelection={true}
@@ -294,40 +342,12 @@ const FunnelTable = () => {
         renderRowDetails={renderRowDetails}
         licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
       />
-      <AddNewBooking
-        open={showAddModal}
-        handleModal={handleModal}
-        classes={classes}
-        customers={customers}
-        baseElement={elementToAdd}
-        coordinators={coordinators}
-        onAddCompleted={onAddCompleted}
-      />
-      <EditBookingModal
-        open={editModal}
-        handleModal={handleEditModal}
-        currentElement={currentElement}
-        allCoordinators={coordinators}
-        allInstructors={instructors}
-        allClasses={classes}
-        handleClose={() => setCurrentElement({})}
-        editMode={currentElement && currentElement.status !== "closed" ? true : false}
-        onEditCompleted={onEditCompleted}
-      />
-      <Modal isOpen={isOpenModal} centered>
-        <ConfirmBookingsToClose
-          toggle={toggle}
-          closedReason={closedReason}
-          selectedBookingsIds={selectedBookingsIds}
-          onEditCompleted={onEditCompleted}
-          setSelected={setSelected}
-        />
-      </Modal>
+
     </div>
   );
 };
 
-export default FunnelTable;
+export default EmailLogTable;
 
 ReactDataGrid.defaultProps.filterTypes.string = {
   type: "string",

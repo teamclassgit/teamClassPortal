@@ -1,4 +1,4 @@
-import { BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, UserX, Users, Star } from "react-feather";
+import { BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, UserX, Users, Star, Mail } from "react-feather";
 
 export default [
   {
@@ -86,5 +86,11 @@ export default [
         navLink: "/distributors"
       }
     ]
+  },
+  {
+    id: "emailsLog",
+    title: "Emails Log",
+    icon: <Mail size={20} />,
+    navLink: "/email-log"
   }
 ];
