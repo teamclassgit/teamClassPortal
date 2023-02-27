@@ -58,7 +58,7 @@ const EmailLogTableStatusCards = ({ status, setStatus, filtersDelivered, filters
         <Card>
           <CardBody className="pt-1 pb-1">
             <CardTitle className="text-center mb-0">
-              <h6>Request</h6>
+              <h6>Requested</h6>
             </CardTitle>
             <CardText tag="div" className="email-log-table-status-card-content">
               <div className="d-flex justify-content-start align-items-center font-small-3 ">
@@ -80,7 +80,7 @@ const EmailLogTableStatusCards = ({ status, setStatus, filtersDelivered, filters
               outline={!status || (status && status.value === "scheduled") ? false : true}
               className=" m-0 btn-sm"
               onClick={(e) => {
-                setStatus({ value: "scheduled", label: "Request" });
+                setStatus({ value: "scheduled", label: "Requested" });
               }}
             >
               Details
