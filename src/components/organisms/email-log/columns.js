@@ -137,7 +137,7 @@ export const getColumns = () => {
       filterEditor: StringFilter,
       filterDelay: 1500,
       render: ({ value }) => {
-          return <span className="float-left">{value ? "TRUE" : "FALSE"}</span>;
+        return <span className="float-left">{value ? "TRUE" : "FALSE"}</span>;
       }
     },
     {

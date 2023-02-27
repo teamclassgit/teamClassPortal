@@ -91,6 +91,5 @@ EmailLogTasksBar.propTypes = {
 
 EmailLogTasksBar.defaultProps = {
   fileExportedName: "Emails",
-  buttonTitle: "Add Booking",
   isSearchFilter: false
 };

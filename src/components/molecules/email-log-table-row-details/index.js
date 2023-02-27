@@ -20,8 +20,8 @@ const RowDetailsEmailLog = ({ data }) => {
   ];
   const gridStyleMergeVariables = { minWidth: 800 };
   const columnsMergeVariables = [
-    { name: "name", header: "Name", type: "string", defaultWidth: 150},
-    { name: "content", header: "Email", type: "string", defaultWidth: 1000}
+    { name: "name", header: "Name", type: "string", defaultWidth: 150 },
+    { name: "content", header: "Email", type: "string", defaultWidth: 1000 }
   ];
 
   return (
@@ -66,17 +66,17 @@ const RowDetailsEmailLog = ({ data }) => {
           <tr>
             <td>Email To</td>
             <td><ReactDataGrid
-                  idProperty="_idEmailTo"
-                  columns={columnsEmailTo}
-                  dataSource={data.to}
-                  style={gridStyleEmailTo}
-                  pagination
-                  limit={50}
-                  livePagination
-                  showZebraRows={true}
-                  theme={skin === "dark" ? "amber-dark" : "default-light"}
-                  licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
-                />
+              idProperty="_idEmailTo"
+              columns={columnsEmailTo}
+              dataSource={data.to}
+              style={gridStyleEmailTo}
+              pagination
+              limit={50}
+              livePagination
+              showZebraRows={true}
+              theme={skin === "dark" ? "amber-dark" : "default-light"}
+              licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
+            />
             </td>
           </tr>
           {data.log && (
@@ -114,17 +114,17 @@ const RowDetailsEmailLog = ({ data }) => {
           <tr>
             <td>Merge Variables</td>
             <td><ReactDataGrid
-                  idProperty="_idEmailTo"
-                  columns={columnsMergeVariables}
-                  dataSource={data.mergeVariables}
-                  style={gridStyleMergeVariables}
-                  pagination
-                  limit={50}
-                  livePagination
-                  showZebraRows={true}
-                  theme={skin === "dark" ? "amber-dark" : "default-light"}
-                  licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
-                />
+              idProperty="_idEmailTo"
+              columns={columnsMergeVariables}
+              dataSource={data.mergeVariables}
+              style={gridStyleMergeVariables}
+              pagination
+              limit={50}
+              livePagination
+              showZebraRows={true}
+              theme={skin === "dark" ? "amber-dark" : "default-light"}
+              licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
+            />
             </td>
           </tr>
         </tbody>

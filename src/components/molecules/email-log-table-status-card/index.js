@@ -4,7 +4,7 @@ import { Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } fro
 import { TrendingUp } from "react-feather";
 import Avatar from "@components/avatar";
 import PropTypes from "prop-types";
-import { getTotalsEmailsNotificationsDeliveredUsingFilter, getTotalsEmailsNotificationsErrorUsingFilter, getTotalsEmailsNotificationsRequestUsingFilter  } from "@services/EmailService";
+import { getTotalsEmailsNotificationsDeliveredUsingFilter, getTotalsEmailsNotificationsErrorUsingFilter, getTotalsEmailsNotificationsRequestUsingFilter } from "@services/EmailService";
 
 // @styles
 import "./email-log-table-status-card.scss";
@@ -53,7 +53,41 @@ const EmailLogTableStatusCards = ({ status, setStatus, filtersDelivered, filters
   }, [filtersDelivered, filtersError, filtersRequest]);
 
   return (
-    <Row className="d-flex justify-content-between mt-1">
+    <Row className="d-flex justify-content-start mt-1">
+      <Col md="6" xl="2">
+        <Card>
+          <CardBody className="pt-1 pb-1">
+            <CardTitle className="text-center mb-0">
+              <h6>Request</h6>
+            </CardTitle>
+            <CardText tag="div" className="email-log-table-status-card-content">
+              <div className="d-flex justify-content-start align-items-center font-small-3 ">
+                <div>
+                  <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
+                </div>
+                <div className="pl-1 m-0">
+                  <div>
+                    <strong>{requestTotals.count}</strong>
+                  </div>
+                  <div className="font-small-1">Emails</div>
+                </div>
+              </div>
+            </CardText>
+          </CardBody>
+          <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
+            <Button
+              color="primary"
+              outline={!status || (status && status.value === "scheduled") ? false : true}
+              className=" m-0 btn-sm"
+              onClick={(e) => {
+                setStatus({ value: "scheduled", label: "Request" });
+              }}
+            >
+              Details
+            </Button>
+          </CardFooter>
+        </Card>
+      </Col>
       <Col md="6" xl="2">
         <Card className="">
           <CardBody className="pt-1 pb-1">
@@ -115,40 +149,6 @@ const EmailLogTableStatusCards = ({ status, setStatus, filtersDelivered, filters
               className=" m-0 btn-sm"
               onClick={(e) => {
                 setStatus({ value: "error", label: "Error" });
-              }}
-            >
-              Details
-            </Button>
-          </CardFooter>
-        </Card>
-      </Col>
-      <Col md="6" xl="2">
-        <Card>
-          <CardBody className="pt-1 pb-1">
-            <CardTitle className="text-center mb-0">
-              <h6>Request</h6>
-            </CardTitle>
-            <CardText tag="div" className="email-log-table-status-card-content">
-              <div className="d-flex justify-content-start align-items-center font-small-3 ">
-                <div>
-                  <Avatar color="light-primary" icon={<TrendingUp size={18} />} />
-                </div>
-                <div className="pl-1 m-0">
-                  <div>
-                    <strong>{requestTotals.count}</strong>
-                  </div>
-                  <div className="font-small-1">Emails</div>
-                </div>
-              </div>
-            </CardText>
-          </CardBody>
-          <CardFooter className="pt-1 pb-1 d-flex justify-content-center">
-            <Button
-              color="primary"
-              outline={!status || (status && status.value === "scheduled") ? false : true}
-              className=" m-0 btn-sm"
-              onClick={(e) => {
-                setStatus({ value: "scheduled", label: "Request" });
               }}
             >
               Details

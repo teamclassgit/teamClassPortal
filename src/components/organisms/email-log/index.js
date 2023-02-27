@@ -1,6 +1,5 @@
 // @packages
 import React, { useState, useEffect, useCallback} from "react";
-import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { apolloClient } from "@utility/RealmApolloClient";
 import moment from "moment-timezone";
@@ -46,14 +45,7 @@ const onRenderRow = (rowProps) => {
 const EmailLogTable = () => {
   const defaultStatus = { value: "sent", label: "Sent" };
   const skin = useSelector((state) => state.bookingsBackground);
-  const genericFilter = {};
   const [status, setStatus] = useState(defaultStatus);
-  const [editModal, setEditModal] = useState(false);
-  const [currentElement, setCurrentElement] = useState({});
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [classes, setClasses] = useState([]);
-  const [coordinators, setCoordinators] = useState([]);
-  const [instructors, setInstructors] = useState([]);
   const [filterValue, setFilterValue] = useState([]);
   const [filterValueDelivered, setFilterValueDelivered] = useState([]);
   const [filterValueError, setFilterValueError] = useState([]);
@@ -63,29 +55,8 @@ const EmailLogTable = () => {
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
   const [selected, setSelected] = useState({});
-  const [closedReason, setClosedReason] = useState("");
-  const [isOpenModal, setIsOpenModal] = useState(false);
-
-  const handleModal = () => setShowAddModal(!showAddModal);
-
-  const handleEditModal = () => {
-    setEditModal(!editModal);
-  };
-
-  const toggle = () => {
-    setOrFilters([]);
-    setSortInfo({ dir: -1, id: "createAt", name: "createAt", type: "date" });
-    setIsOpenModal(!isOpenModal);
-  };
-
-  const handleClickCurrentElement = () => {
-    setOrFilters([]);
-    setSortInfo({ dir: -1, id: "createAt", name: "createAt", type: "date" });
-    handleEditModal();
-  };
-
   const gridStyle = { minHeight: 600, marginTop: 10 };
-  const columns = getColumns(classes, coordinators, setCurrentElement, handleClickCurrentElement);
+  const columns = getColumns();
 
   useEffect(() => {
     if (!status) return;
@@ -158,69 +129,6 @@ const EmailLogTable = () => {
     return await getAllDataToExportEmailLog(filters, orFilters, sortInfo, status);
   };
 
-  const renderRowContextMenu = (menuProps) => {
-    menuProps.autoDismiss = true;
-    menuProps.items = [
-      {
-        label: "Close with reason:",
-        disabled: true
-      },
-      {
-        label: "Won",
-        onClick: () => {
-          setClosedReason("Won");
-          toggle();
-        }
-      },
-      {
-        label: "Lost",
-        onClick: () => {
-          setClosedReason("Lost");
-          toggle();
-        }
-      },
-      {
-        label: "Mistake",
-        onClick: () => {
-          setClosedReason("Mistake");
-          toggle();
-        }
-      },
-      {
-        label: "Duplicated",
-        onClick: () => {
-          setClosedReason("Duplicated");
-          toggle();
-        }
-      },
-      {
-        label: "Test",
-        onClick: () => {
-          setClosedReason("Test");
-          toggle();
-        }
-      },
-      {
-        label: "Postponed",
-        onClick: () => {
-          setClosedReason("Postponed");
-          toggle();
-        }
-      }
-    ];
-  };
-
-  const onSelectionChange = useCallback(({ selected, data }) => {
-    if (selected === true) {
-      data.forEach((booking) => setSelected((prev) => ({ ...prev, [booking._id]: booking })));
-    } else {
-      setSelected(selected);
-    }
-  }, []);
-  const toArray = (selected) => Object.keys(selected);
-
-  const selectedBookingsIds = toArray(selected);
-
   return (
     <div>
       <EmailLogTableStatusCards status={status} setStatus={setStatus} filtersDelivered={filterValueDelivered} filtersError={filterValueError} filtersRequest={filterValueRequest} />
@@ -247,8 +155,6 @@ const EmailLogTable = () => {
         selected={selected}
         checkboxColumn
         enableSelection={true}
-        onSelectionChange={onSelectionChange}
-        //renderRowContextMenu={selectedBookingsIds.length > 0 ? renderRowContextMenu : null}
         expandedRows={expandedRows}
         collapsedRows={collapsedRows}
         onExpandedRowsChange={onExpandedRowsChange}
