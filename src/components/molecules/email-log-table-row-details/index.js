@@ -1,8 +1,7 @@
 // @packages
-import React, { useCallback }  from "react";
+import React from "react";
 import moment from "moment";
-import { Briefcase, Calendar, Mail, Phone } from "react-feather";
-import { Alert } from "reactstrap";
+import { Briefcase, Mail } from "react-feather";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import ReactDataGrid from "@inovua/reactdatagrid-enterprise";

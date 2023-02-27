@@ -1,28 +1,18 @@
 // @packages
-import { Fragment } from "react";
 import { useHistory } from "react-router-dom";
 import moment from "moment";
 
 // @scripts
-import { DEFAULT_TIME_ZONE_LABEL } from "@utility/Constants";
-import { getBookingAndCalendarEventById } from "@services/BookingService";
-import { isNotEmptyArray } from "@utility/Utils";
 
 //@reactdatagrid packages
-import NumberFilter from "@inovua/reactdatagrid-community/NumberFilter";
 import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
-import { actionsLinkStage } from "../all-bookings/actionsLink";
+import functionsOptions from "@data/email-list-functions.json";
+import templateIdOptions from "@data/email-list-template-id";
 
-export const getColumns = (classes, coordinators, setCurrentElement, handleClickCurrentElement) => {
-
+export const getColumns = () => {
   const history = useHistory();
-
-  const handleEdit = (rowId) => {
-    history.push(`/booking/${rowId}`);
-  };
-
   const columns = [
     {
       name: "createAt",
@@ -79,13 +69,15 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       name: "templateId",
       header: "Template Id",
       type: "string",
-      filterEditor: StringFilter,
+      filterEditor: SelectFilter,
       filterDelay: 1500,
       width: 350,
-      render: ({ value }) => {
-        if (value) {
-          return <span className="float-left">{value}</span>;
-        }
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: templateIdOptions?.map((templateId) => {
+          return { id: templateId.value, label: templateId.label };
+        })
       }
     },
     {
@@ -103,13 +95,15 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       name: "functions",
       header: "Function Name",
       type: "string",
-      filterEditor: StringFilter,
+      filterEditor: SelectFilter,
       filterDelay: 1500,
       width: 400,
-      render: ({ value }) => {
-        if (value) {
-          return <span className="float-left">{value}</span>;
-        }
+      filterEditorProps: {
+        multiple: true,
+        wrapMultiple: false,
+        dataSource: functionsOptions?.map((functions) => {
+          return { id: functions.value, label: functions.label };
+        })
       }
     },
     {

@@ -1,7 +1,7 @@
 // @packages
 import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, CardTitle, CardText, CardFooter, Col, Row } from "reactstrap";
-import { DollarSign, TrendingUp } from "react-feather";
+import { TrendingUp } from "react-feather";
 import Avatar from "@components/avatar";
 import PropTypes from "prop-types";
 import { getTotalsEmailsNotificationsDeliveredUsingFilter, getTotalsEmailsNotificationsErrorUsingFilter, getTotalsEmailsNotificationsRequestUsingFilter  } from "@services/EmailService";

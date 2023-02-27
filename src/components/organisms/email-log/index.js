@@ -1,9 +1,8 @@
 // @packages
-import React, { useState, useEffect, useCallback, useLayoutEffect} from "react";
+import React, { useState, useEffect, useCallback} from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { apolloClient } from "@utility/RealmApolloClient";
-import { Modal } from "reactstrap";
 import moment from "moment-timezone";
 window.moment = moment;
 import { getQueryFiltersFromFilterArray } from "@utility/Utils";
@@ -16,21 +15,13 @@ import "@inovua/reactdatagrid-enterprise/theme/amber-dark.css";
 import "@organisms/all-bookings/BookingsTable.scss";
 
 // @scripts
-import queryGetBookingsWithCriteria from "@graphql/QueryGetBookingsWithCriteria";
 import queryEmailsNotificationsDeliveredWithCriteria from "@graphql/QueryEmailsNotificationsDeliveredWithCriteria";
 import queryEmailsNotificationsErrorWithCriteria from "@graphql/QueryEmailsNotificationsErrorWithCriteria";
 import queryEmailsNotificationsRequestWithCriteria from "@graphql/QueryEmailsNotificationsRequestWithCriteria";
-import queryAllClasses from "@graphql/QueryAllClasses";
-import queryAllCustomers from "@graphql/QueryAllCustomers";
-import queryAllCoordinators from "@graphql/QueryAllEventCoordinators";
-import queryAllInstructors from "@graphql/QueryAllInstructors";
-import EditBookingModal from "@organisms/edit-booking-modal";
-import AddNewBooking from "@organisms/add-new-booking";
 import EmailLogTableStatusCards from "@molecules/email-log-table-status-card";
 import RowDetailsEmailLog from "@molecules/email-log-table-row-details";
-import TasksBar from "@molecules/task-bar";
-import { getAllDataToExport } from "@services/BookingService";
-import ConfirmBookingsToClose from "@molecules/confirm-bookings-to-close";
+import EmailLogTasksBar from "@molecules/email-log-task-bar";
+import { getAllDataToExportEmailLog } from "@services/EmailService";
 import { getColumns } from "./columns";
 import { applyFilters } from "./filters";
 
@@ -60,8 +51,6 @@ const EmailLogTable = () => {
   const [editModal, setEditModal] = useState(false);
   const [currentElement, setCurrentElement] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
-  const [elementToAdd, setElementToAdd] = useState({});
-  const [customers, setCustomers] = useState([]);
   const [classes, setClasses] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [instructors, setInstructors] = useState([]);
@@ -95,47 +84,6 @@ const EmailLogTable = () => {
     handleEditModal();
   };
 
-  useQuery(queryAllClasses, {
-    fetchPolicy: "cache-and-network",
-    variables: {
-      filter: genericFilter
-    },
-    onCompleted: (data) => {
-      if (data && data.teamClasses) {
-        setClasses(data.teamClasses);
-      }
-    }
-  });
-
-  useQuery(queryAllCoordinators, {
-    variables: {
-      filter: genericFilter
-    },
-    onCompleted: (data) => {
-      if (data) setCoordinators(data.eventCoordinators);
-    },
-    fetchPolicy: "cache-and-network"
-  });
-
-  useQuery(queryAllCustomers, {
-    fetchPolicy: "cache-and-network",
-    variables: {
-      filter: {}
-    },
-    onCompleted: (data) => {
-      if (data) setCustomers(data.customers);
-    },
-    pollInterval: 200000
-  });
-
-  useQuery(queryAllInstructors, {
-    fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      if (data) setInstructors(data.instructors);
-    },
-    pollInterval: 200000
-  });
-
   const gridStyle = { minHeight: 600, marginTop: 10 };
   const columns = getColumns(classes, coordinators, setCurrentElement, handleClickCurrentElement);
 
@@ -145,35 +93,11 @@ const EmailLogTable = () => {
     applyFilters(filterValueDelivered, setFilterValueDelivered, status);
     applyFilters(filterValueError, setFilterValueError, status);
     applyFilters(filterValueRequest, setFilterValueRequest, status);
-    console.log("STATUS 1: ", status.value);
   }, [status]);
 
-
-  const onEditCompleted = (bookingId) => {
-    const sortEditedData = { dir: -1, id: "updatedAt", name: "updatedAt", type: "date" };
-    const currentFilters = [...orFilters];
-    currentFilters.push({ name: "_id", type: "string", operator: "eq", value: bookingId });
-    currentFilters.push({ name: "_id", type: "string", operator: "neq", value: bookingId });
-    setOrFilters(currentFilters);
-    setSortInfo(sortEditedData);
-  };
-
-  const onAddCompleted = (bookingId) => {
-    const currentFilters = [...filterValue.filter((element) => element.name !== "_id")];
-    const idFilter = { name: "_id", type: "string", operator: "contains", value: bookingId };
-    currentFilters.push(idFilter);
-    setFilterValue(currentFilters);
-  };
-
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
-    console.log("STATUS 2: ", status.value);
-    console.log("skip", skip);
-    console.log("limit", limit);
-    console.log("sortInfo", sortInfo);
-    console.log("filterValue : ", filterValue);
     if (status.value === "sent") {
       const filters = getQueryFiltersFromFilterArray(filterValue);
-      console.log("filters : ", filters);
       const response = await apolloClient.query({
         query: queryEmailsNotificationsDeliveredWithCriteria,
         fetchPolicy: "network-only",
@@ -185,14 +109,11 @@ const EmailLogTable = () => {
           filterByOr: orFilters
         }
       });
-      console.log("DATA 0"); 
-      console.log("DATA: ", response.data.getEmailsNotificationsDeliveredWithCriteria.rows);
       const totalCount = response.data.getEmailsNotificationsDeliveredWithCriteria.count;
       return { data: response.data.getEmailsNotificationsDeliveredWithCriteria.rows, count: totalCount };
     }
     if (status.value === "error") {
       const filters = getQueryFiltersFromFilterArray(filterValue);
-      console.log("filters : ", filters);
       const response = await apolloClient.query({
         query: queryEmailsNotificationsErrorWithCriteria,
         fetchPolicy: "network-only",
@@ -209,7 +130,6 @@ const EmailLogTable = () => {
     }
     if (status.value === "scheduled") {
       const filters = getQueryFiltersFromFilterArray(filterValue);
-      console.log("filters : ", filters);
       const response = await apolloClient.query({
         query: queryEmailsNotificationsRequestWithCriteria,
         fetchPolicy: "network-only",
@@ -235,7 +155,7 @@ const EmailLogTable = () => {
 
   const getDataToExport = async () => {
     const filters = getQueryFiltersFromFilterArray(filterValue);
-    return await getAllDataToExport(filters, orFilters, sortInfo);
+    return await getAllDataToExportEmailLog(filters, orFilters, sortInfo, status);
   };
 
   const renderRowContextMenu = (menuProps) => {
@@ -304,16 +224,11 @@ const EmailLogTable = () => {
   return (
     <div>
       <EmailLogTableStatusCards status={status} setStatus={setStatus} filtersDelivered={filterValueDelivered} filtersError={filterValueError} filtersRequest={filterValueRequest} />
-      <TasksBar
-        setElementToAdd={(element) => {
-          setStatus(defaultStatus);
-          setElementToAdd(element);
-        }}
+      <EmailLogTasksBar
         titleView={"Mail List"}
         titleBadge={status && status.label}
-        showAddModal={() => handleModal()}
         getDataToExport={getDataToExport}
-      ></TasksBar>
+      ></EmailLogTasksBar>
       <ReactDataGrid
         idProperty="_id"
         className="bookings-table text-small"
@@ -333,7 +248,7 @@ const EmailLogTable = () => {
         checkboxColumn
         enableSelection={true}
         onSelectionChange={onSelectionChange}
-        renderRowContextMenu={selectedBookingsIds.length > 0 ? renderRowContextMenu : null}
+        //renderRowContextMenu={selectedBookingsIds.length > 0 ? renderRowContextMenu : null}
         expandedRows={expandedRows}
         collapsedRows={collapsedRows}
         onExpandedRowsChange={onExpandedRowsChange}

@@ -1,0 +1,270 @@
+[
+	{
+		"label" : "deposit-confirmation-email-ops-ondemand",
+		"value" : "deposit-confirmation-email-ops-ondemand"
+	},
+	{
+		"label" : "tracking-link-reminder-to-instructor",
+		"value" : "tracking-link-reminder-to-instructor"
+	},
+	{
+		"label" : "new-date-time-accepted-to-customer",
+		"value" : "new-date-time-accepted-to-customer"
+	},
+	{
+		"label" : "notify-if-zoom-link-is-missing-to-ops",
+		"value" : "notify-if-zoom-link-is-missing-to-ops"
+	},
+	{
+		"label" : "date-and-time-requests-ops-ondemand",
+		"value" : "date-and-time-requests-ops-ondemand"
+	},
+	{
+		"label" : "sign-up-confirmation-code",
+		"value" : "sign-up-confirmation-code"
+	},
+	{
+		"label" : "new-reschedule-request-to-instructor",
+		"value" : "new-reschedule-request-to-instructor"
+	},
+	{
+		"label" : "general-inquiry-email-customers",
+		"value" : "general-inquiry-email-customers"
+	},
+	{
+		"label" : "gift-basket-purchase",
+		"value" : "gift-basket-purchase"
+	},
+	{
+		"label" : "general-email-membership-request-ops",
+		"value" : "general-email-membership-request-ops"
+	},
+	{
+		"label" : "on-demand-attendee-verification-code",
+		"value" : "on-demand-attendee-verification-code"
+	},
+	{
+		"label" : "step-5-final-registration-complete-ondemand",
+		"value" : "step-5-final-registration-complete-ondemand"
+	},
+	{
+		"label" : "welcome-to-the-dashboard",
+		"value" : "welcome-to-the-dashboard"
+	},
+	{
+		"label" : "pre-event-questionnaire-reminder-7-days-before",
+		"value" : "pre-event-questionnaire-reminder-7-days-before"
+	},
+	{
+		"label" : "date-time-request-received-email-customers",
+		"value" : "date-time-request-received-email-customers"
+	},
+	{
+		"label" : "general-email-membership-request",
+		"value" : "general-email-membership-request"
+	},
+	{
+		"label" : "step-5-final-registration-complete",
+		"value" : "step-5-final-registration-complete"
+	},
+	{
+		"label" : "late-attendee-request-accepted",
+		"value" : "late-attendee-request-accepted"
+	},
+	{
+		"label" : "step-9-review-email",
+		"value" : "step-9-review-email"
+	},
+	{
+		"label" : "date-time-rejection-to-customer",
+		"value" : "date-time-rejection-to-customer"
+	},
+	{
+		"label" : "pre-event-survey-responses-to-instructor",
+		"value" : "pre-event-survey-responses-to-instructor"
+	},
+	{
+		"label" : "tracking-added-to-coordinator",
+		"value" : "tracking-added-to-coordinator"
+	},
+	{
+		"label" : "morning-of-event-to-instructor-customer-coord",
+		"value" : "morning-of-event-to-instructor-customer-coord"
+	},
+	{
+		"label" : "t17-questionormedia",
+		"value" : "t17-questionormedia"
+	},
+	{
+		"label" : "partner-listing-request-ops",
+		"value" : "partner-listing-request-ops"
+	},
+	{
+		"label" : "late-attendee-request",
+		"value" : "late-attendee-request"
+	},
+	{
+		"label" : "step-5-final-registration-complete-no-kits",
+		"value" : "step-5-final-registration-complete-no-kits"
+	},
+	{
+		"label" : "date-time-confirmation-to-customer-reminder-2",
+		"value" : "date-time-confirmation-to-customer-reminder-2"
+	},
+	{
+		"label" : "join-details-and-add-event-to-calendar",
+		"value" : "join-details-and-add-event-to-calendar"
+	},
+	{
+		"label" : "step-4-registration-reminder-4-days-before",
+		"value" : "step-4-registration-reminder-4-days-before"
+	},
+	{
+		"label" : "date-time-confirmation-to-customer-ondemand",
+		"value" : "date-time-confirmation-to-customer-ondemand"
+	},
+	{
+		"label" : "notify-final-payment-to-ops",
+		"value" : "notify-final-payment-to-ops"
+	},
+	{
+		"label" : "reshedule-confirmation-email-to-customer",
+		"value" : "reshedule-confirmation-email-to-customer"
+	},
+	{
+		"label" : "private-event-request-ops",
+		"value" : "private-event-request-ops"
+	},
+	{
+		"label" : "deposit-confirmation-email-to-customer",
+		"value" : "deposit-confirmation-email-to-customer"
+	},
+	{
+		"label" : "instructors-approve-date-and-time-requests",
+		"value" : "instructors-approve-date-and-time-requests"
+	},
+	{
+		"label" : "email-to-all-registered-attendees",
+		"value" : "email-to-all-registered-attendees"
+	},
+	{
+		"label" : "gift-basket-purchase-ops",
+		"value" : "gift-basket-purchase-ops"
+	},
+	{
+		"label" : "deposit-confirmation-email-customer-ondemand",
+		"value" : "deposit-confirmation-email-customer-ondemand"
+	},
+	{
+		"label" : "date-time-confirmation-email-to-customer",
+		"value" : "date-time-confirmation-email-to-customer"
+	},
+	{
+		"label" : "email-to-coordinator-final-invoice-reminder",
+		"value" : "email-to-coordinator-final-invoice-reminder"
+	},
+	{
+		"label" : "request-a-quote",
+		"value" : "request-a-quote"
+	},
+	{
+		"label" : "date-time-request-received-email-ops",
+		"value" : "date-time-request-received-email-ops"
+	},
+	{
+		"label" : "step-10-publish-reviews",
+		"value" : "step-10-publish-reviews"
+	},
+	{
+		"label" : "step-7-pre-class-info",
+		"value" : "step-7-pre-class-info"
+	},
+	{
+		"label" : "payment-receipt-to-instructor-distributor",
+		"value" : "payment-receipt-to-instructor-distributor"
+	},
+	{
+		"label" : "email-to-notify-ops-about-date-and-time-rejections",
+		"value" : "email-to-notify-ops-about-date-and-time-rejections"
+	},
+	{
+		"label" : "step-10-publish-reviews-instructor",
+		"value" : "step-10-publish-reviews-instructor"
+	},
+	{
+		"label" : "registration-confirmation-ondemand",
+		"value" : "registration-confirmation-ondemand"
+	},
+	{
+		"label" : "event-confirmation-deposit-paid-to-instructor",
+		"value" : "event-confirmation-deposit-paid-to-instructor"
+	},
+	{
+		"label" : "registration-confirmation",
+		"value" : "registration-confirmation"
+	},
+	{
+		"label" : "partner-invoice-submission-ops",
+		"value" : "partner-invoice-submission-ops"
+	},
+	{
+		"label" : "zoom-link-added-edited-to-instructor",
+		"value" : "zoom-link-added-edited-to-instructor"
+	},
+	{
+		"label" : "request-a-quote-ondemand-reminder-1",
+		"value" : "request-a-quote-ondemand-reminder-1"
+	},
+	{
+		"label" : "step-4-registration-reminder-ondemand",
+		"value" : "step-4-registration-reminder-ondemand"
+	},
+	{
+		"label" : "zoom-link-added-to-coordinator",
+		"value" : "zoom-link-added-to-coordinator"
+	},
+	{
+		"label" : "set-up-forgot-password-email-template",
+		"value" : "set-up-forgot-password-email-template"
+	},
+	{
+		"label" : "late-attendee-request-rejected-by-customer",
+		"value" : "late-attendee-request-rejected-by-customer"
+	},
+	{
+		"label" : "late-attendee-request-confirmation",
+		"value" : "late-attendee-request-confirmation"
+	},
+	{
+		"label" : "step-8-pre-class-info-day-of",
+		"value" : "step-8-pre-class-info-day-of"
+	},
+	{
+		"label" : "late-attendee-request-rejection",
+		"value" : "late-attendee-request-rejection"
+	},
+	{
+		"label" : "kit-fullfitment-information",
+		"value" : "kit-fullfitment-information"
+	},
+	{
+		"label" : "new-event-request-to-instructor",
+		"value" : "new-event-request-to-instructor"
+	},
+	{
+		"label" : "date-time-confirmation-reminder-1-ondemand",
+		"value" : "date-time-confirmation-reminder-1-ondemand"
+	},
+	{
+		"label" : "deposit-confirmation-email-to-customer-ops",
+		"value" : "deposit-confirmation-email-to-customer-ops"
+	},
+	{
+		"label" : "request-quote-email-ops",
+		"value" : "request-quote-email-ops"
+	},
+	{
+		"label" : "welcome-to-newsletter",
+		"value" : "welcome-to-newsletter"
+	}
+]

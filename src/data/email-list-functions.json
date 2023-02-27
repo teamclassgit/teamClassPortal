@@ -1,0 +1,210 @@
+[
+  {
+      "label" : "EmailService_sendEmailQuestionOrMedia",
+      "value" : "EmailService_sendEmailQuestionOrMedia"
+  },
+  {
+      "label" : "EmailService_sendEmailConferenceLinkChangedByInstructor",
+      "value" : "EmailService_sendEmailConferenceLinkChangedByInstructor"
+  },
+  {
+      "label" : "EmailService_sendEmailLateRegistrationInstructorAnswer",
+      "value" : "EmailService_sendEmailLateRegistrationInstructorAnswer"
+  },
+  {             
+      "label" : "SheduleTaskService_sendEmailReminderPreClassInfoMorningOfEvent",
+      "value" : "SheduleTaskService_sendEmailReminderPreClassInfoMorningOfEvent"
+  },
+  {
+      "label" : "EmailService_sendEmailNotifyFinalPaymentToOps",
+      "value" : "EmailService_sendEmailNotifyFinalPaymentToOps"
+  },
+  {
+      "label" : "SheduleTaskService_sendEmailFinalRegistrationComplete",
+      "value" : "SheduleTaskService_sendEmailFinalRegistrationComplete"
+  },
+  {
+      "label" : "SheduleTaskService_sendEmailNotifyIfZoomLinkIsMissing2DaysBeforeEvent",
+      "value" : "SheduleTaskService_sendEmailNotifyIfZoomLinkIsMissing2DaysBeforeEvent"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateDateTimeConfirmation",
+      "value" : "EmailService_sendEmailTemplateDateTimeConfirmation"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateRegistrationConfirmation",
+      "value" : "EmailService_sendEmailTemplateRegistrationConfirmation"
+  },
+  {
+      "label" : "SheduleTaskService_sendEmailPreEventQuestionnaire7DaysBefore",
+      "value" : "SheduleTaskService_sendEmailPreEventQuestionnaire7DaysBefore"
+  },
+  {
+      "label" : "EmailService_sendEmailAttendeeCodeValidation",
+      "value" : "EmailService_sendEmailAttendeeCodeValidation"
+  },
+  {
+      "label" : "BookingService_addCampaignRequestQuote",
+      "value" : "BookingService_addCampaignRequestQuote"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateResheduleConfirmationToCustomer",
+      "value" : "EmailService_sendEmailTemplateResheduleConfirmationToCustomer"
+  },
+  {
+      "label" : "SheduleTaskService_sendEmailFinalRegistrationCompleteNoKits",
+      "value" : "SheduleTaskService_sendEmailFinalRegistrationCompleteNoKits"
+  },
+  {
+      "label" : "SheduleTaskService_sendEmailReminderPreClassInfo3DaysBeforeEvent",
+      "value" : "SheduleTaskService_sendEmailReminderPreClassInfo3DaysBeforeEvent"
+  },
+  {
+      "label" : "SheduleTaskService_sendEventReminderEmail",
+      "value" : "SheduleTaskService_sendEventReminderEmail"
+  },
+  {
+      "label" : "EmailService_sendEmailLateRegistrationCustomerAnswer",
+      "value" : "EmailService_sendEmailLateRegistrationCustomerAnswer"
+  },
+  {
+      "label" : "SheduleTaskService_sendEventReminderEmail3DayAfterDepositNotPaid",
+      "value" : "SheduleTaskService_sendEventReminderEmail3DayAfterDepositNotPaid"
+  },
+  {
+      "label" : "EmailService_sendEmailPartnerListingRequest",
+      "value" : "EmailService_sendEmailPartnerListingRequest"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateGeneralInquiry",
+      "value" : "EmailService_sendEmailTemplateGeneralInquiry"
+  },
+  {
+      "label" : "EmailService_sendEmailPreEventSurveyResponsesToInstructor",
+      "value" : "EmailService_sendEmailPreEventSurveyResponsesToInstructor"
+  },
+  {
+      "label" : "SheduleTaskService_sendEmailFinalRegistrationCompleteOnDemand",
+      "value" : "SheduleTaskService_sendEmailFinalRegistrationCompleteOnDemand"
+  },
+  {
+      "label" : "SheduleTaskService_sendReminder2DaysAfterNoSelectDateOnDemand",
+      "value" : "SheduleTaskService_sendReminder2DaysAfterNoSelectDateOnDemand"
+  },
+  {
+      "label" : "EmailService_sendEmailForgotPassword",
+      "value" : "EmailService_sendEmailForgotPassword"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateDepositConfirmation",
+      "value" : "EmailService_sendEmailTemplateDepositConfirmation"
+  },
+  {
+      "label" : "SheduleTaskService_reminderEmail1DayAfterDepositNotPaidOnDemand",
+      "value" : "SheduleTaskService_reminderEmail1DayAfterDepositNotPaidOnDemand"
+  },
+  {
+      "label" : "SheduleTaskService_sendEmailTrackingLinkReminder",
+      "value" : "SheduleTaskService_sendEmailTrackingLinkReminder"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateEventRequestInstructor",
+      "value" : "EmailService_sendEmailTemplateEventRequestInstructor"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateDateTimeRequestReceiver",
+      "value" : "EmailService_sendEmailTemplateDateTimeRequestReceiver"
+  },
+  {
+      "label" : "EmailService_sendEmailRequestDateAndTimeConfirmationOnDemand",
+      "value" : "EmailService_sendEmailRequestDateAndTimeConfirmationOnDemand"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateDateTimeRejectionToCustomer",
+      "value" : "EmailService_sendEmailTemplateDateTimeRejectionToCustomer"
+  },
+  {
+      "label" : "EmailService_sendEmailEventConfirmationDepositPaidInstructor",
+      "value" : "EmailService_sendEmailEventConfirmationDepositPaidInstructor"
+  },
+  {
+      "label" : "EmailService_sendNewsletterWelcomeEmail",
+      "value" : "EmailService_sendNewsletterWelcomeEmail"
+  },
+  {
+      "label" : "EmailService_sendNewLateAttendeeRequestEmails",
+      "value" : "EmailService_sendNewLateAttendeeRequestEmails"
+  },
+  {
+      "label" : "EmailService_sendEmailPartnerInvoiceSubmission",
+      "value" : "EmailService_sendEmailPartnerInvoiceSubmission"
+  },
+  {
+      "label" : "EmailService_sendEmailAllRegisteredAttendees",
+      "value" : "EmailService_sendEmailAllRegisteredAttendees"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateDateTimeRejectedByInstructor",
+      "value" : "EmailService_sendEmailTemplateDateTimeRejectedByInstructor"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateNewRescheduleRequestToInstructor",
+      "value" : "EmailService_sendEmailTemplateNewRescheduleRequestToInstructor"
+  },
+  {
+      "label" : "EmailService_sendEmailBasketPurchaseConfirmation",
+      "value" : "EmailService_sendEmailBasketPurchaseConfirmation"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateRequestQuote",
+      "value" : "EmailService_sendEmailTemplateRequestQuote"
+  },
+  {
+      "label" : "EmailService_sendEmailTrackingLinkChanged",
+      "value" : "EmailService_sendEmailTrackingLinkChanged"
+  },
+  {
+      "label" : "EmailService_sendEmailTemplateMembershipRequest",
+      "value" : "EmailService_sendEmailTemplateMembershipRequest"
+  },
+  {
+      "label" : "EmailService_sendEmailValidateCreateUser",
+      "value" : "EmailService_sendEmailValidateCreateUser"
+  },
+  {
+      "label" : "EmailService_sendEmailWithKitFullFitmentInformation",
+      "value" : "EmailService_sendEmailWithKitFullFitmentInformation"
+  },
+  {
+      "label" : "EmailService_sendEmailReminderMorningOfEvent",
+      "value" : "EmailService_sendEmailReminderMorningOfEvent"
+  },
+  {
+      "label" : "EmailService_sendEmailWelcomeDashboard",
+      "value" : "EmailService_sendEmailWelcomeDashboard"
+  },
+  {
+      "label" : "EmailService_sendEmailWithInvoicePaymentNotification",
+      "value" : "EmailService_sendEmailWithInvoicePaymentNotification"
+  },
+  {
+      "label" : "SheduleTaskService_sendEmailCoordinatorFinalInvoiceReminder",
+      "value" : "SheduleTaskService_sendEmailCoordinatorFinalInvoiceReminder"
+  },
+  {
+      "label" : "EmailService_sendEmailConferenceLinkChangedByCoordinator",
+      "value" : "EmailService_sendEmailConferenceLinkChangedByCoordinator"
+  },
+  {
+      "label" : "EmailService_sendEmailConferenceLinkProvidedByCustomer",
+      "value" : "EmailService_sendEmailConferenceLinkProvidedByCustomer"
+  },
+  {
+      "label" : "SheduleTaskService_sendReviewsSubmittedByAttendeesToCustomer",
+      "value" : "SheduleTaskService_sendReviewsSubmittedByAttendeesToCustomer"
+  },
+  {
+      "label" : "SheduleTaskService_sendEventReviewEmail",
+      "value" : "SheduleTaskService_sendEventReviewEmail"
+  }
+]
