@@ -135,7 +135,7 @@ const FunnelTable = () => {
 
   useEffect(() => {
     if (!status) return;
-    applyFilters(filterValue, setFilterValue, status);    
+    applyFilters(filterValue, setFilterValue, status);
   }, [status]);
 
   const onEditCompleted = (bookingId) => {
