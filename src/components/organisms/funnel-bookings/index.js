@@ -136,7 +136,6 @@ const FunnelTable = () => {
   useEffect(() => {
     if (!status) return;
     applyFilters(filterValue, setFilterValue, status);    
-    console.log("Filter Value Delivered:", filterValue);
   }, [status]);
 
   const onEditCompleted = (bookingId) => {
@@ -276,11 +275,6 @@ const FunnelTable = () => {
         onFilterValueChange={setFilterValue}
         showZebraRows={true}
         theme={skin === "dark" ? "amber-dark" : "default-light"}
-        /*cellSelection={cellSelection}
-        onCellSelectionChange={setCellSelection}
-        enableClipboard={true}
-        onCopySelectedCellsChange={onCopySelectedCellsChange}
-        onPasteSelectedCellsChange={onPasteSelectedCellsChange}*/
         selected={selected}
         checkboxColumn
         enableSelection={true}
