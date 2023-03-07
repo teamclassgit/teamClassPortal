@@ -18,6 +18,7 @@ export default gql`
     $pricePerson: Float!
     $salesTax: Float!
     $salesTaxState: String!
+    $taxExempt: Boolean!
     $serviceFee: Float!
     $discount: Float!
     $createdAt: DateTime!
@@ -84,6 +85,7 @@ export default gql`
         pricePerson: $pricePerson
         serviceFee: $serviceFee
         salesTax: $salesTax
+        taxExempt: $taxExempt
         salesTaxState: $salesTaxState
         discount: $discount
         status: $status

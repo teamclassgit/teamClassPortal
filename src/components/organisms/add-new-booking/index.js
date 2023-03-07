@@ -149,6 +149,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
           serviceFee: SERVICE_FEE,
           salesTax: SALES_TAX,
           salesTaxState: SALES_TAX_STATE,
+          taxExempt: true,
           discount: 0,
           customerCreatedAt: customer && customer.createdAt ? customer.createdAt : new Date(),
           createdAt: new Date(),
