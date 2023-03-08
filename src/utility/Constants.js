@@ -81,7 +81,7 @@ export const RUSH_FEE = 35;
 export const SERVICE_FEE = 0;
 export const EXPECTED_MARGIN = 0.43; //43% of the price
 export const CREDIT_CARD_FEE = 0.03;
-export const SALES_TAX = 0.0825;
+export const SALES_TAX = 0;
 export const SALES_TAX_STATE = "Texas";
 export const DEPOSIT = 0.25;
 
