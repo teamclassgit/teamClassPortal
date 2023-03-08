@@ -1,5 +1,4 @@
 export const applyFilters = (filterValue, setFilterValue, status) => {
-
   let currentFilters = [...filterValue];
 
   if (currentFilters && currentFilters.length === 0) {
@@ -7,6 +6,7 @@ export const applyFilters = (filterValue, setFilterValue, status) => {
         { name: "createAt", type: "date", operator: "inrange", value: undefined },
         { name: "_id", type: "string", operator: "contains", value: "" },
         { name: "subject", type: "string", operator: "contains", value: "" },
+        { name: "to", type: "string", operator: "array-to.email", value: "" },
         { name: "templateId", type: "select", operator: "inlist", value:  undefined },
         { name: "documentId", type: "string", operator: "contains", value: "" },
         { name: "collection", type: "string", operator: "contains", value: "" },

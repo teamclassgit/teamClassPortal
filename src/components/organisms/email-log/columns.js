@@ -12,7 +12,15 @@ import functionsOptions from "@data/email-list-functions.json";
 import templateIdOptions from "@data/email-list-template-id";
 
 export const getColumns = () => {
-  const history = useHistory();
+
+  const getRecipients = (emailsTo) => {
+    let result = "";
+    emailsTo.forEach((email, i) => {
+      result = result + (emailsTo[i + 1] ? `${email.email}, ` : `${email.email}`);
+    });
+    return result;
+  };
+
   const columns = [
     {
       name: "createAt",
@@ -51,6 +59,19 @@ export const getColumns = () => {
       render: ({ value }) => {
         if (value) {
           return <span className="float-left">{value}</span>;
+        }
+      }
+    },
+    {
+      name: "to",
+      header: "Recipients",
+      type: "string",
+      filterEditor: StringFilter,
+      filterDelay: 1500,
+      width: 500,
+      render: ({ value }) => {
+        if (value) {
+          return <span className="float-left">{getRecipients(value)}</span>;
         }
       }
     },
