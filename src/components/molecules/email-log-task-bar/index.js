@@ -82,8 +82,6 @@ export default EmailLogTasksBar;
 EmailLogTasksBar.propTypes = {
   titleView: PropTypes.string.isRequired,
   titleBadge: PropTypes.string.isRequired,
-  setElementToAdd: PropTypes.func.isRequired,
-  showAddModal: PropTypes.func.isRequired,
   getDataToExport: PropTypes.func.isRequired,
   fileExportedName: PropTypes.string,
   buttonTitle: PropTypes.string

@@ -1,4 +1,5 @@
-import { BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, UserX, Users, Star, Mail } from "react-feather";
+import { Activity, BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, UserX, Users, Star, Mail } from "react-feather";
+import IconStatus from "@atoms/icon-status";
 
 export default [
   {
@@ -92,5 +93,11 @@ export default [
     title: "Emails Log",
     icon: <Mail size={20} />,
     navLink: "/email-log"
+  },
+  {
+    id: "systemStatus",
+    title: "System Status",
+    icon: <IconStatus />,
+    navLink: "/system-status"
   }
 ];

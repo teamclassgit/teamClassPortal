@@ -2,6 +2,7 @@ import moment from "moment";
 import queryGetTotalsEmailsNotificationsDeliveredUsingFilter from "../graphql/QueryTotalsEmailsNotificationsDeliveredUsingFilter";
 import queryGetTotalsEmailsNotificationsErrorUsingFilter from "../graphql/QueryTotalsEmailsNotificationsErrorUsingFilter";
 import queryGetTotalsEmailsNotificationsRequestUsingFilter from "../graphql/QueryTotalsEmailsNotificationsRequestUsingFilter";
+import queryGetTotalsBookingStatusUsingFilter from "../graphql/QueryTotalsBookingStatusUsingFilter";
 import queryEmailsNotificationsDeliveredWithCriteria from "@graphql/QueryEmailsNotificationsDeliveredWithCriteria";
 import queryEmailsNotificationsErrorWithCriteria from "@graphql/QueryEmailsNotificationsErrorWithCriteria";
 import queryEmailsNotificationsRequestWithCriteria from "@graphql/QueryEmailsNotificationsRequestWithCriteria";
@@ -9,6 +10,17 @@ import queryEmailsNotificationsRequestWithCriteria from "@graphql/QueryEmailsNot
 import { apolloClient } from "../utility/RealmApolloClient";
 import { getQueryFiltersFromFilterArray, isNotEmptyArray } from "../utility/Utils";
 
+
+const getTotalsBookingStatusUsingFilter = async (filters) => {
+  const { data } = await apolloClient.query({
+    query: queryGetTotalsBookingStatusUsingFilter,
+    variables: {
+      filterBy: getQueryFiltersFromFilterArray(filters)
+    }
+  });
+
+  return data && data.totals;
+};
 
 const getTotalsEmailsNotificationsDeliveredUsingFilter = async (filters) => {
   const { data } = await apolloClient.query({
@@ -45,7 +57,6 @@ const getTotalsEmailsNotificationsRequestUsingFilter = async (filters) => {
 
 const getAllDataToExportEmailLog = async (filters, orFilters, sortInfo, status) => {
   let emails;
-  console.log("STATUS : ", status.value);
   if (status.value === "sent") {
     const { data } = await apolloClient.query({
       query: queryEmailsNotificationsDeliveredWithCriteria,
@@ -139,4 +150,4 @@ const getAllDataToExportEmailLog = async (filters, orFilters, sortInfo, status) 
   return bookingsArray;
 };
 
-export { getTotalsEmailsNotificationsDeliveredUsingFilter, getTotalsEmailsNotificationsErrorUsingFilter, getTotalsEmailsNotificationsRequestUsingFilter, getAllDataToExportEmailLog };
+export { getTotalsBookingStatusUsingFilter, getTotalsEmailsNotificationsDeliveredUsingFilter, getTotalsEmailsNotificationsErrorUsingFilter, getTotalsEmailsNotificationsRequestUsingFilter, getAllDataToExportEmailLog };
