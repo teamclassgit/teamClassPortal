@@ -4,8 +4,8 @@ export default gql `
   mutation updateSettingsBooking (
     $bookingId: String!
     $date: DateTime!
-    $joinInfo: BookingJoinInfoUpdateInput
-    $joinInfo_unset: Boolean
+    # $joinInfo: BookingJoinInfoUpdateInput
+    # $joinInfo_unset: Boolean
     $shippingTrackingLink: String
     $additionalClassOptions: [BookingAdditionalClassOptionUpdateInput]
     $tags: [String]
@@ -14,8 +14,8 @@ export default gql `
       query: { _id: $bookingId }
       set: {
         date: $date
-        joinInfo: $joinInfo
-        joinInfo_unset: $joinInfo_unset
+        # joinInfo: $joinInfo
+        # joinInfo_unset: $joinInfo_unset
         shippingTrackingLink: $shippingTrackingLink
         additionalClassOptions: $additionalClassOptions
         tags: $tags
@@ -29,12 +29,12 @@ export default gql `
         text
       }
       shippingTrackingLink
-      joinInfo {
-        eventId
-        joinUrl
-        manualLink
-        password
-      }
+      # joinInfo {
+      #   eventId
+      #   joinUrl
+      #   manualLink
+      #   password
+      # }
     }
   }
 `;

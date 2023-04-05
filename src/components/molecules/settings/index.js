@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 // @scripts
 import { selectThemeColors } from "@utils";
 import sendEmailConferenceLinkChangedByCoordinatorMutation from "@graphql/email/sendEmailConferenceLinkChangedByCoordinator";
+import MutationUpdateJoinLink from "@graphql//MutationUpdateJoinLink";
 import MutationUpdateSettingsBooking from "@graphql/MutationUpdateSettingsBooking";
 import tagsList from "@data/tags-list.json";
 
@@ -29,6 +30,7 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
   });
   const [updateSettingsBooking] = useMutation(MutationUpdateSettingsBooking);
   const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation);
+  const [mutationUpdateJoinInfo] = useMutation(MutationUpdateJoinLink, {});
 
   useEffect(() => {
     if (currentElement) {
@@ -96,13 +98,22 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
     try {
       await updateSettingsBooking({
         variables: {
-          bookingId: currentElement._id,
+          bookingId: currentElement?._id,
           date: new Date(),
           shippingTrackingLink: trackingLink,
-          joinInfo,
-          joinInfo_unset: joinInfo ? false : true,
+          // joinInfo,
+          // joinInfo_unset: joinInfo ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags
+        }
+      });
+
+      await mutationUpdateJoinInfo({
+        variables: {
+          bookingId: currentElement?._id,
+          link:joinInfo?.joinUrl,
+          password: joinInfo?.password,
+          who: "ops"
         }
       });
 
