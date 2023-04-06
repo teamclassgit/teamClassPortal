@@ -12,7 +12,7 @@ import { selectThemeColors } from "@utils";
 import MutationUpdateSettingsAndLinksInBooking from "@graphql/MutationUpdateSettingsAndLinksInBooking";
 import tagsList from "@data/tags-list.json";
 
-const SettingsComponent = ({ currentElement, editMode, closedBookingReason, cancel, onEditCompleted, handleClose }) => {
+const SettingsComponent = ({ currentElement, editMode, closedBookingReason, cancel, onEditCompleted, closeModal }) => {
 
   const [classOptionsTags, setClassOptionsTags] = useState([]);
   const [bookingTags, setBookingTags] = useState([]);
@@ -107,11 +107,12 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
         }
       });
 
-      setProcessing(false);
       onEditCompleted(currentElement._id);
+      setProcessing(false);
     } catch (e) {
       console.error(e);
     }
+    closeModal();
   };
 
   return (

@@ -130,7 +130,7 @@ const EditBookingModal = ({
             currentElement={currentElement}
             editMode={editMode}
             closedBookingReason={closedBookingReason}
-            cancel={cancel}
+            closeModal={cancel}
             onEditCompleted={onEditCompleted}
             handleClose={handleClose}
           />
