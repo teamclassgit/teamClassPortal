@@ -116,15 +116,15 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
           who: "ops"
         }
       });
-
-      if (isChangingJoinLink) {
-        const resultConferenceEmail = await sendEmailConferenceLinkChangedByCoordinator({
-          variables: {
-            bookingId: currentElement._id
-          }
-        });
-        console.log("Sending join info Email", resultConferenceEmail);
-      }
+      console.log("currentElement", currentElement);
+      // if (isChangingJoinLink) {
+      //   const resultConferenceEmail = await sendEmailConferenceLinkChangedByCoordinator({
+      //     variables: {
+      //       bookingId: currentElement._id
+      //     }
+      //   });
+      //   console.log("Sending join info Email", resultConferenceEmail);
+      // }
       setProcessing(false);
       cancel();
       onEditCompleted(currentElement._id);
