@@ -9,12 +9,10 @@ import PropTypes from "prop-types";
 
 // @scripts
 import { selectThemeColors } from "@utils";
-import sendEmailConferenceLinkChangedByCoordinatorMutation from "@graphql/email/sendEmailConferenceLinkChangedByCoordinator";
-import MutationUpdateJoinLink from "@graphql//MutationUpdateJoinLink";
-import MutationUpdateSettingsBooking from "@graphql/MutationUpdateSettingsBooking";
+import MutationUpdateSettingsAndLinksInBooking from "@graphql/MutationUpdateSettingsAndLinksInBooking";
 import tagsList from "@data/tags-list.json";
 
-const SettingsComponent = ({ currentElement, editMode, closedBookingReason, cancel, onEditCompleted }) => {
+const SettingsComponent = ({ currentElement, editMode, closedBookingReason, cancel, onEditCompleted, handleClose }) => {
 
   const [classOptionsTags, setClassOptionsTags] = useState([]);
   const [bookingTags, setBookingTags] = useState([]);
@@ -28,9 +26,8 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
     trackingLink: true,
     joinUrl: true
   });
-  const [updateSettingsBooking] = useMutation(MutationUpdateSettingsBooking);
-  const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation);
-  const [mutationUpdateJoinInfo] = useMutation(MutationUpdateJoinLink, {});
+
+  const [updateBookingSettingsAndJoinLink] = useMutation(MutationUpdateSettingsAndLinksInBooking, {});
 
   useEffect(() => {
     if (currentElement) {
@@ -96,37 +93,21 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
     }
 
     try {
-      await updateSettingsBooking({
+      
+      const result = await updateBookingSettingsAndJoinLink({
         variables: {
-          bookingId: currentElement?._id,
+          bookingId:currentElement?._id,
           date: new Date(),
+          link: joinLink,
+          password:passwordLink,
+          who: "ops",
           shippingTrackingLink: trackingLink,
-          // joinInfo,
-          // joinInfo_unset: joinInfo ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags
         }
       });
 
-      await mutationUpdateJoinInfo({
-        variables: {
-          bookingId: currentElement?._id,
-          link:joinInfo?.joinUrl,
-          password: joinInfo?.password,
-          who: "ops"
-        }
-      });
-      console.log("currentElement", currentElement);
-      // if (isChangingJoinLink) {
-      //   const resultConferenceEmail = await sendEmailConferenceLinkChangedByCoordinator({
-      //     variables: {
-      //       bookingId: currentElement._id
-      //     }
-      //   });
-      //   console.log("Sending join info Email", resultConferenceEmail);
-      // }
       setProcessing(false);
-      cancel();
       onEditCompleted(currentElement._id);
     } catch (e) {
       console.error(e);

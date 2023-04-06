@@ -132,6 +132,7 @@ const EditBookingModal = ({
             closedBookingReason={closedBookingReason}
             cancel={cancel}
             onEditCompleted={onEditCompleted}
+            handleClose={handleClose}
           />
         </TabPane>
       </TabContent>
