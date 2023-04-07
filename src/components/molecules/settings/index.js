@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Key, List, Truck, Video } from "react-feather";
 import { Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, ModalBody } from "reactstrap";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import Select from "react-select";
 import validator from "validator";
 import PropTypes from "prop-types";
@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 // @scripts
 import { selectThemeColors } from "@utils";
 import MutationUpdateSettingsAndLinksInBooking from "@graphql/MutationUpdateSettingsAndLinksInBooking";
+import QueryBookingById from "@graphql/QueryBookingById";
 import tagsList from "@data/tags-list.json";
 
 const SettingsComponent = ({ currentElement, editMode, closedBookingReason, close, onEditCompleted }) => {
@@ -27,13 +28,24 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, clos
     joinUrl: true
   });
 
+  const { data } = useQuery(QueryBookingById, {
+    fetchPolicy: "network-only",
+    pollInterval: 10000,
+    variables: {
+      bookingId: currentElement?._id
+    }
+  });
+
+  useEffect(() => {
+      setJoinLink(data?.booking?.joinInfo?.joinUrl || "");
+      setPasswordLink(data?.booking?.joinInfo?.password || "");
+  }, [data]);
+
   const [updateBookingSettingsAndJoinLink] = useMutation(MutationUpdateSettingsAndLinksInBooking, {});
 
   useEffect(() => {
     if (currentElement) {
       setTrackingLink(currentElement?.shippingTrackingLink || "");
-      setJoinLink(currentElement?.joinInfo?.joinUrl || "");
-      setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password || "");
       setClassOptionsTags(currentElement?.additionalClassOptions || []);
     }
   }, [currentElement]);
