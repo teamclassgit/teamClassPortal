@@ -84,11 +84,11 @@ const BasicInformation = ({
     const customer = currentElement.customer;
     const filteredClass = allClasses.find((element) => element._id === teamClass?._id);
 
-    setBookingSignUpDeadline([currentElement.signUpDeadline]);
-    setOnDemand(currentElement.onDemand);
-    setBookingTeamClassId(teamClass._id);
-    setBookingTeamClassName(teamClass.title);
-    setClassVariant(currentElement.classVariant);
+    setBookingSignUpDeadline([currentElement?.signUpDeadline]);
+    setOnDemand(currentElement?.onDemand);
+    setBookingTeamClassId(teamClass?._id);
+    setBookingTeamClassName(teamClass?.title);
+    setClassVariant(currentElement?.classVariant);
     setCoordinatorId(coordinator?._id);
     setCoordinatorName(coordinator?.name);
     setInstructorId(instructor?._id);

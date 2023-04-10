@@ -10,6 +10,12 @@ export default gql`
       eventCoordinatorId
       hasInternationalAttendees
       onDemand
+      joinInfo {
+        eventId
+        joinUrl
+        manualLink
+        password
+      }
       classVariant {
         title
         notes

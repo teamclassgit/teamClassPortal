@@ -2,18 +2,17 @@
 import React, { useEffect, useState } from "react";
 import { Key, List, Truck, Video } from "react-feather";
 import { Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, ModalBody } from "reactstrap";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import Select from "react-select";
 import validator from "validator";
 import PropTypes from "prop-types";
 
 // @scripts
 import { selectThemeColors } from "@utils";
-import sendEmailConferenceLinkChangedByCoordinatorMutation from "@graphql/email/sendEmailConferenceLinkChangedByCoordinator";
-import MutationUpdateSettingsBooking from "@graphql/MutationUpdateSettingsBooking";
+import MutationUpdateSettingsAndLinksInBooking from "@graphql/MutationUpdateSettingsAndLinksInBooking";
 import tagsList from "@data/tags-list.json";
 
-const SettingsComponent = ({ currentElement, editMode, closedBookingReason, cancel, onEditCompleted }) => {
+const SettingsComponent = ({ currentElement, editMode, closedBookingReason, close, onEditCompleted }) => {
 
   const [classOptionsTags, setClassOptionsTags] = useState([]);
   const [bookingTags, setBookingTags] = useState([]);
@@ -27,15 +26,15 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
     trackingLink: true,
     joinUrl: true
   });
-  const [updateSettingsBooking] = useMutation(MutationUpdateSettingsBooking);
-  const [sendEmailConferenceLinkChangedByCoordinator] = useMutation(sendEmailConferenceLinkChangedByCoordinatorMutation);
+
+  const [updateBookingSettingsAndJoinLink] = useMutation(MutationUpdateSettingsAndLinksInBooking, {});
 
   useEffect(() => {
     if (currentElement) {
       setTrackingLink(currentElement?.shippingTrackingLink || "");
-      setJoinLink(currentElement?.joinInfo?.joinUrl || "");
-      setPasswordLink(currentElement.joinInfo && currentElement.joinInfo.password || "");
       setClassOptionsTags(currentElement?.additionalClassOptions || []);
+      setJoinLink(currentElement?.joinInfo?.joinUrl || "");
+      setPasswordLink(currentElement?.joinInfo?.password || "");
     }
   }, [currentElement]);
 
@@ -94,29 +93,21 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
     }
 
     try {
-      await updateSettingsBooking({
+      const result = await updateBookingSettingsAndJoinLink({
         variables: {
-          bookingId: currentElement._id,
+          bookingId:currentElement?._id,
           date: new Date(),
+          link: joinLink,
+          password:passwordLink,
+          who: "ops",
           shippingTrackingLink: trackingLink,
-          joinInfo,
-          joinInfo_unset: joinInfo ? false : true,
           additionalClassOptions: classOptionsTags,
           tags: bookingTags
         }
       });
-
-      if (isChangingJoinLink) {
-        const resultConferenceEmail = await sendEmailConferenceLinkChangedByCoordinator({
-          variables: {
-            bookingId: currentElement._id
-          }
-        });
-        console.log("Sending join info Email", resultConferenceEmail);
-      }
-      setProcessing(false);
-      cancel();
+      close();
       onEditCompleted(currentElement._id);
+      setProcessing(false);
     } catch (e) {
       console.error(e);
     }
@@ -273,7 +264,7 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, canc
           <Button
             color="secondary"
             size="sm"
-            onClick={cancel}
+            onClick={close}
             outline
           >
             Cancel
