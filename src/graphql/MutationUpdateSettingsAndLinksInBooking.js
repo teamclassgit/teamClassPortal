@@ -19,8 +19,11 @@ export default gql`
         who: $who
       }
     ) {
-      success
-      message
+      _id
+      joinInfo {
+        joinUrl
+        password
+      }
     }
 
     updateOneBooking(

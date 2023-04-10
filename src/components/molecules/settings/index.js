@@ -10,7 +10,6 @@ import PropTypes from "prop-types";
 // @scripts
 import { selectThemeColors } from "@utils";
 import MutationUpdateSettingsAndLinksInBooking from "@graphql/MutationUpdateSettingsAndLinksInBooking";
-import QueryBookingById from "@graphql/QueryBookingById";
 import tagsList from "@data/tags-list.json";
 
 const SettingsComponent = ({ currentElement, editMode, closedBookingReason, close, onEditCompleted }) => {
@@ -28,25 +27,14 @@ const SettingsComponent = ({ currentElement, editMode, closedBookingReason, clos
     joinUrl: true
   });
 
-  const { data } = useQuery(QueryBookingById, {
-    fetchPolicy: "network-only",
-    pollInterval: 10000,
-    variables: {
-      bookingId: currentElement?._id
-    }
-  });
-
-  useEffect(() => {
-      setJoinLink(data?.booking?.joinInfo?.joinUrl || "");
-      setPasswordLink(data?.booking?.joinInfo?.password || "");
-  }, [data]);
-
   const [updateBookingSettingsAndJoinLink] = useMutation(MutationUpdateSettingsAndLinksInBooking, {});
 
   useEffect(() => {
     if (currentElement) {
       setTrackingLink(currentElement?.shippingTrackingLink || "");
       setClassOptionsTags(currentElement?.additionalClassOptions || []);
+      setJoinLink(currentElement?.joinInfo?.joinUrl || "");
+      setPasswordLink(currentElement?.joinInfo?.password || "");
     }
   }, [currentElement]);
 
