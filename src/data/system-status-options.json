@@ -1,0 +1,38 @@
+[
+  {
+      "label" : "quote",
+      "value" : "quote"
+  },
+  {
+      "label" : "date-requested",
+      "value" : "date-requested"
+  },
+  {
+      "label" : "confirmed",
+      "value" : "confirmed"
+  },
+  {
+      "label" : "paid",
+      "value" : "paid"
+  },
+  {
+      "label" : "sent-signUpDeadline",
+      "value" : "sent-signUpDeadline"
+  },
+  {
+      "label" : "sent-morningOfEvent",
+      "value" : "sent-morningOfEvent"
+  },
+  {
+      "label" : "sent-morningOfEventOps",
+      "value" : "sent-morningOfEventOps"
+  },
+  {
+      "label" : "sent-registeredAttendee",
+      "value" : "sent-registeredAttendee"
+  },
+  {
+      "label" : "sent-review",
+      "value" : "sent-review"
+  }
+]

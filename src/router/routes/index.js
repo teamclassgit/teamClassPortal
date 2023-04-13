@@ -85,6 +85,10 @@ const Routes = [
   {
     path: "/email-log",
     component: lazy(() => import("../../views/EmailLog"))
+  },
+  {
+    path: "/system-status",
+    component: lazy(() => import("../../views/SystemStatus"))
   }
 ];
 
