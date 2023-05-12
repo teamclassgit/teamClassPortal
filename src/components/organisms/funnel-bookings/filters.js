@@ -50,7 +50,8 @@ export const applyFilters = (filterValue, setFilterValue, status) => {
         { name: "preEventSurvey.source", type: "string", operator: "contains", value: "" },
         { name: "bookingTags", type: "string", operator: "contains", value: "" },
         { name: "totalMembershipDiscount", type: "number", operator: "contains", value: "" },
-        { name: "firstTouchChannel", type: "string", operator: "contains", value: "" }
+        { name: "firstTouchChannel", type: "string", operator: "contains", value: "" },
+        { name: "onDemand", type: "bool", operator: "equals", value: null }
       ];
     }
 

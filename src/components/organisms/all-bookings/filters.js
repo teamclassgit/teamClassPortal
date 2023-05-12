@@ -51,7 +51,8 @@ export const applyFilters = (filterValue, setFilterValue, setOrFilters) => {
       { name: "preEventSurvey.submittedAt", type: "date", operator: "inrange", value: undefined },
       { name: "preEventSurvey.source", type: "string", operator: "contains", value: "" },
       { name: "totalMembershipDiscount", type: "number", operator: "contains", value: "" },
-      { name: "firstTouchChannel", type: "string", operator: "contains", value: "" }
+      { name: "firstTouchChannel", type: "string", operator: "contains", value: "" },
+      { name: "onDemand", type: "bool", operator: "equals", value: null }
     ];
   }
 

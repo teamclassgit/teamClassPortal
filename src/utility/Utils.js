@@ -21,9 +21,7 @@ const isToday = (date) => {
   const today = new Date();
   return (
     /* eslint-disable operator-linebreak */
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
+    date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()
     /* eslint-enable */
   );
 };
@@ -32,11 +30,7 @@ export const capitalizeString = (str) => {
   if (!str) return;
   const strComponents = str.toLowerCase().split(" ");
   strComponents.forEach((element, index) => {
-    if (element && element[0] && element[0].length > 0)
-      strComponents[index] = element.replace(
-        element[0],
-        element[0].toUpperCase()
-      );
+    if (element && element[0] && element[0].length > 0) strComponents[index] = element.replace(element[0], element[0].toUpperCase());
   });
   return strComponents.join(" ");
 };
@@ -48,10 +42,7 @@ export const capitalizeString = (str) => {
  * @param {String} value date to format
  * @param {Object} formatting Intl object to format with
  */
-export const formatDate = (
-  value,
-  formatting = { month: "short", day: "numeric", year: "numeric" }
-) => {
+export const formatDate = (value, formatting = { month: "short", day: "numeric", year: "numeric" }) => {
   if (!value) return value;
   return new Intl.DateTimeFormat("en-US", formatting).format(new Date(value));
 };
@@ -92,9 +83,7 @@ export const getHomeRouteForLoggedInUser = (userRole) => {
 
 export const toAmPm = (hour, minutes, timeZoneLabel) => {
   const suffix = hour >= 12 ? "PM" : "AM";
-  const hours = `${hour >= 12 ? ((hour + 11) % 12) + 1 : hour}:${
-    minutes === 0 ? "00" : minutes
-  } ${suffix} ${timeZoneLabel}`;
+  const hours = `${hour >= 12 ? ((hour + 11) % 12) + 1 : hour}:${minutes === 0 ? "00" : minutes} ${suffix} ${timeZoneLabel}`;
 
   return hours;
 };
@@ -111,8 +100,7 @@ export const isPhoneValid = (phone) => {
 };
 
 export const isUrlValid = (url) => {
-  const reg =
-    /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-zA-Z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+  const reg = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-zA-Z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
   return !url || reg.test(url);
 };
 
@@ -132,9 +120,7 @@ export const selectThemeColors = (theme) => ({
 //gets the absoluteUrl of the site
 export const absoluteUrl = (req, setLocalhost) => {
   let protocol = "https:";
-  let host = req
-    ? req.headers["x-forwarded-host"] || req.headers["host"]
-    : window.location.host;
+  let host = req ? req.headers["x-forwarded-host"] || req.headers["host"] : window.location.host;
 
   if (host.indexOf("localhost") > -1) {
     if (setLocalhost) host = setLocalhost;
@@ -154,32 +140,19 @@ export const getQueryFiltersFromFilterArray = (filterValue) => {
   const filters = filterValue
     .filter(
       (item) =>
-        (item.operator !== "inrange" &&
-          item.operator !== "notinrange" &&
-          item.value &&
-          item.value !== "") ||
+        (item.operator !== "inrange" && item.operator !== "notinrange" && item.value && item.value !== "") ||
         ((item.operator === "inrange" || item.operator === "notinrange") &&
           item.value?.start &&
           item.value?.start !== "" &&
           item.value?.end &&
-          item.value?.end !== "")
+          item.value?.end !== "") ||
+        (item.type === "bool" && item.operator === "equals" && item.value !== null)
     )
     .map(({ name, type, operator, value }) => {
-      if (
-        type === "number" &&
-        (operator === "inrange" || operator === "notinrange")
-      )
-        return { name, type, operator, valueRangeNum: value };
-      if (
-        type === "date" &&
-        (operator === "inrange" || operator === "notinrange")
-      )
-        return { name, type, operator, valueRange: value };
-      if (
-        type === "select" &&
-        (operator === "inlist" || operator === "notinlist")
-      )
-        return { name, type, operator, valueList: value };
+      if (type === "bool" && operator === "equals" && value !== null) return { name, type, operator, value: value.toString() };
+      if (type === "number" && (operator === "inrange" || operator === "notinrange")) return { name, type, operator, valueRangeNum: value };
+      if (type === "date" && (operator === "inrange" || operator === "notinrange")) return { name, type, operator, valueRange: value };
+      if (type === "select" && (operator === "inlist" || operator === "notinlist")) return { name, type, operator, valueList: value };
       if (type === "number") return { name, type, operator, valueNum: value };
       return { name, type, operator, value };
     });
@@ -208,9 +181,7 @@ const uploadFileToS3 = async (key, file) => {
   const filename = encodeURIComponent(key);
   const fileType = encodeURIComponent(file.type);
 
-  const res = await fetch(
-    `https://www.teamclass.com/api/upload-url?file=${filename}&fileType=${fileType}`
-  );
+  const res = await fetch(`https://www.teamclass.com/api/upload-url?file=${filename}&fileType=${fileType}`);
   const { url, fields } = await res.json();
   const formData = new FormData();
 

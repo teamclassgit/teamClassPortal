@@ -13,10 +13,10 @@ import NumberFilter from "@inovua/reactdatagrid-community/NumberFilter";
 import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
+import BoolFilter from "@inovua/reactdatagrid-community/BoolFilter";
 import { actionsLinkStage } from "../all-bookings/actionsLink";
 
 export const getColumns = (classes, coordinators, setCurrentElement, handleClickCurrentElement) => {
-
   const history = useHistory();
 
   const handleEdit = (rowId) => {
@@ -29,13 +29,11 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       header: "Links",
       defaultWidth: 200,
       render: ({ data }) => {
-        if (data) {
+        if (data && actionsLinkStage(data._id, handleEdit)[data.bookingStage]) {
           return (
             <div className="d-flex">
               {actionsLinkStage(data._id, handleEdit)[data.bookingStage].map((action, idx) => (
-                <Fragment key={`${data.bookingStage}${idx}`}>
-                  {action}
-                </Fragment>
+                <Fragment key={`${data.bookingStage}${idx}`}>{action}</Fragment>
               ))}
             </div>
           );
@@ -562,9 +560,7 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       filterDelay: 1500,
       defaultWidth: 200,
       render: ({ data }) => {
-        return (
-          <span className="float-left">{data.classVariant?.hasKit ? "true" : "false" }</span>
-        );
+        return <span className="float-left">{data.classVariant?.hasKit ? "true" : "false"}</span>;
       }
     },
     {
@@ -574,9 +570,17 @@ export const getColumns = (classes, coordinators, setCurrentElement, handleClick
       filterDelay: 1500,
       defaultWidth: 220,
       render: ({ value }) => {
-        return (
-          <span className="float-left">{ value }</span>
-        );
+        return <span className="float-left">{value}</span>;
+      }
+    },
+    {
+      name: "onDemand",
+      header: "On Demand",
+      type: "bool",
+      filterEditor: BoolFilter,
+      defaultWidth: 200,
+      render: ({ value }) => {
+        return <span className="float-left">{value ? "true" : "false"}</span>;
       }
     }
   ];
