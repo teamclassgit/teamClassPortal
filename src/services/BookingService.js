@@ -9,7 +9,6 @@ import { CREDIT_CARD_FEE, DEPOSIT, EXPECTED_MARGIN, RUSH_FEE, SALES_TAX } from "
 import { apolloClient } from "../utility/RealmApolloClient";
 import { getQueryFiltersFromFilterArray, isNotEmptyArray } from "../utility/Utils";
 
-
 const calculateVariantPrice = (classVariant, attendees) => {
   if (!classVariant.groupEvent) {
     const margin = classVariant.expectedProfit || EXPECTED_MARGIN;
@@ -33,13 +32,13 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   let price = bookingInfo.classVariant ? bookingInfo.classVariant.pricePerson : bookingInfo.pricePerson;
 
   const discount = bookingInfo.discount;
-  
+
   const membershipDiscount = bookingInfo.membershipDiscount || 0;
-  
+
   let totalTaxableAdditionalItems = 0;
-  
+
   let totalNoTaxableAdditionalItems = 0;
-  
+
   let customAttendees = undefined;
 
   if (bookingInfo.invoiceDetails && bookingInfo.invoiceDetails.length >= 2) {
@@ -67,8 +66,8 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
 
   const addons = bookingInfo.addons
     ? bookingInfo.addons.reduce((previous, current) => {
-      return previous + (current.unit === "Attendee" ? current.unitPrice * attendees : current.unitPrice);
-    }, 0)
+        return previous + (current.unit === "Attendee" ? current.unitPrice * attendees : current.unitPrice);
+      }, 0)
     : 0;
 
   const withoutFee =
@@ -77,13 +76,13 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   const underGroupFee = attendees > minimum || (bookingInfo.classVariant && bookingInfo.classVariant.groupEvent) ? 0 : price * (minimum - attendees);
 
   let cardFee = 0;
-  
+
   const rushFeeByAttendee = bookingInfo.rushFee || RUSH_FEE;
-  
+
   const rushFee = isRushDate ? attendees * rushFeeByAttendee : 0;
 
   const totalDiscount = discount > 0 ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems) * discount : 0;
-  
+
   const totalMembershipDiscount =
     membershipDiscount > 0
       ? (withoutFee + totalTaxableAdditionalItems + addons + totalNoTaxableAdditionalItems - totalDiscount) * membershipDiscount
@@ -101,25 +100,10 @@ const getBookingTotals = (bookingInfo, isRushDate, salesTax = SALES_TAX, isCardF
   const taxRate = bookingInfo.taxExempt ? 0 : salesTax;
 
   const tax =
-    (withoutFee +
-      fee +
-      rushFee +
-      addons +
-      totalTaxableAdditionalItems -
-      totalDiscountTaxableItems -
-      totalMembershipDiscountTaxableItems) *
-    taxRate;
+    (withoutFee + fee + rushFee + addons + totalTaxableAdditionalItems - totalDiscountTaxableItems - totalMembershipDiscountTaxableItems) * taxRate;
 
   let finalValue =
-    withoutFee +
-    totalTaxableAdditionalItems +
-    totalNoTaxableAdditionalItems +
-    fee +
-    rushFee +
-    addons +
-    tax -
-    totalDiscount -
-    totalMembershipDiscount;
+    withoutFee + totalTaxableAdditionalItems + totalNoTaxableAdditionalItems + fee + rushFee + addons + tax - totalDiscount - totalMembershipDiscount;
 
   if (isCardFeeIncluded && !bookingInfo.ccFeeExempt) {
     cardFee = finalValue * CREDIT_CARD_FEE;
@@ -229,7 +213,8 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
     "totalDistributorInvoice",
     "totalInstructorInvoice",
     "firstTouchChannel",
-    "Shipping tracking link"
+    "Shipping tracking link",
+    "onDemad"
   ];
 
   bookingsArray.push(headers);
@@ -271,7 +256,7 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.cardFeeAmount,
       element.totalInvoice,
       element.balance,
-      (isNotEmptyArray(element.customerTags) ? element.customerTags.join(", ") : ""),
+      isNotEmptyArray(element.customerTags) ? element.customerTags.join(", ") : "",
       element.gclid,
       element.instantBooking,
       element.utm_campaign,
@@ -279,7 +264,7 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.utm_medium,
       element.utm_content,
       element.utm_term,
-      (isNotEmptyArray(element.bookingTags) ? element.bookingTags.join(", ") : ""),
+      isNotEmptyArray(element.bookingTags) ? element.bookingTags.join(", ") : "",
       element.preEventSurvey?.submittedAt,
       element.preEventSurvey?.source,
       element.distributorInvoiceStatus,
@@ -287,7 +272,8 @@ const getAllDataToExport = async (filters, orFilters, sortInfo) => {
       element.totalDistributorInvoice,
       element.totalInstructorInvoice,
       element.firstTouchChannel,
-      element.shippingTrackingLink
+      element.shippingTrackingLink,
+      element.onDemand ? "true" : "false"
     ];
     bookingsArray.push(row);
   });
@@ -334,7 +320,6 @@ const closeBookingsWithReason = async (bookingsId, closedReason) => {
 };
 
 const getUserMembershipDataByEmail = async (email) => {
-  
   if (!email) return null;
 
   const { data } = await apolloClient.query({
@@ -348,4 +333,12 @@ const getUserMembershipDataByEmail = async (email) => {
   return data?.getMembershipInfo;
 };
 
-export { getBookingTotals, getTotalsUsingFilter, getBookingAndCalendarEventById, getAllDataToExport, closeBookingsWithReason, calculateVariantPrice, getUserMembershipDataByEmail };
+export {
+  getBookingTotals,
+  getTotalsUsingFilter,
+  getBookingAndCalendarEventById,
+  getAllDataToExport,
+  closeBookingsWithReason,
+  calculateVariantPrice,
+  getUserMembershipDataByEmail
+};

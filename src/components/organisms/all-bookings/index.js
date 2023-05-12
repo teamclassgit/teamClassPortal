@@ -25,7 +25,7 @@ import TasksBar from "@molecules/task-bar";
 import { getAllDataToExport } from "@services/BookingService";
 import ConfirmBookingsToClose from "@molecules/confirm-bookings-to-close";
 import { getColumns } from "./columns";
-import { applyFilters } from "./filter";
+import { applyFilters } from "./filters";
 
 // @styles
 import "@inovua/reactdatagrid-enterprise/index.css";
@@ -297,7 +297,7 @@ const AllBookingsTable = () => {
         coordinators={coordinators}
         onAddCompleted={onAddCompleted}
       />
-      {editModal && !!currentElement ? 
+      {editModal && !!currentElement ? (
         <EditBookingModal
           open={editModal}
           handleModal={handleEditModal}
@@ -308,8 +308,8 @@ const AllBookingsTable = () => {
           handleClose={() => setCurrentElement({})}
           editMode={currentElement && currentElement.status !== "closed"}
           onEditCompleted={onEditCompleted}
-        /> : null
-      }
+        />
+      ) : null}
       <Modal isOpen={isOpenModal} centered>
         <ConfirmBookingsToClose
           toggle={toggle}
