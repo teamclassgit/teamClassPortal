@@ -78,7 +78,7 @@ export const DAYS_BEFORE_EVENT_REGISTRATION = 14;
 
 //Fees
 export const RUSH_FEE = 35;
-export const SERVICE_FEE = 0;
+export const SERVICE_FEE = 0.08;
 export const EXPECTED_MARGIN = 0.43; //43% of the price
 export const CREDIT_CARD_FEE = 0.03;
 export const SALES_TAX = 0;
