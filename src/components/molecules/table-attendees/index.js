@@ -118,6 +118,7 @@ const DataTableAttendees = ({
       sortable: true,
       maxWidth: "250px",
       cell: (row) => {
+        console.log("row", row);
         let isInternational = false;
         if (row.country && row.country !== "United States of America" && row.country !== "US" && row.country !== "USA" && row.country !== "Usa"
          && row.country !== "usa" && row.country !== "us" && row.country !== "United states" && row.country !== "United States"
@@ -130,6 +131,23 @@ const DataTableAttendees = ({
               {row?.city ? row?.city.concat(",") : ""} {row?.state ? row?.state : ""} {row?.country ? row.country : ""}{" "}
               {row?.zip ? row?.zip : ""}{" "}{isInternational && <Badge color="primary">International</Badge>}
             </div>
+        );
+      }
+    },
+    {
+      name: "deliveryStatus",
+      selector: "kitFullFitment",
+      sortable: true,
+      maxWidth: "250px",
+      cell: (row) => {
+        return (
+          <div  className={row.kitFullFitment?.status === "Delivered" ? "attendees-delivery-delivered" :
+            row.kitFullFitment?.status === "InfoReceived" ? "attendees-delivery-info-received" :
+            row.kitFullFitment?.status === "AvailableForPickup" ? "attendees-delivery-info-received" : 
+            row.kitFullFitment?.status === "InTransit" ? "attendees-delivery-in-transit" :
+            row.kitFullFitment?.status === "OutForDelivery" ? "attendees-delivery-out-for-delivery" : "attendees-delivery-other"}>
+            <span>{row.kitFullFitment?.status === "AvailableForPickup" ? "Pickup" : row?.kitFullFitment?.status || "Shipped"}</span>
+        </div>
         );
       }
     },
