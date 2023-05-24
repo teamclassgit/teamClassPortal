@@ -118,7 +118,6 @@ const DataTableAttendees = ({
       sortable: true,
       maxWidth: "250px",
       cell: (row) => {
-        console.log("row", row);
         let isInternational = false;
         if (row.country && row.country !== "United States of America" && row.country !== "US" && row.country !== "USA" && row.country !== "Usa"
          && row.country !== "usa" && row.country !== "us" && row.country !== "United states" && row.country !== "United States"
