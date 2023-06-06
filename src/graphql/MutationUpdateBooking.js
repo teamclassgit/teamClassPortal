@@ -68,6 +68,7 @@ export default gql`
         active
         groupEvent
         instructorFlatFee
+        flatFeeIncludedInPrice
         registrationFields {
           label
           placeholder

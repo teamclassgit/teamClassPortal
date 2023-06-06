@@ -24,6 +24,7 @@ export default gql`
         duration
         pricePerson
         instructorFlatFee
+        flatFeeIncludedInPrice
         pricePersonInstructor
         expectedProfit
         hasKit

@@ -73,6 +73,7 @@ mutation requestPreferredTime(
         duration
         pricePerson
         instructorFlatFee
+        flatFeeIncludedInPrice
         pricePersonInstructor
         expectedProfit
         hasKit

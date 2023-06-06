@@ -21,6 +21,7 @@ export default gql`
         active
         groupEvent
         instructorFlatFee
+        flatFeeIncludedInPrice
         expectedProfit
         pricePersonInstructor
         priceTiers {

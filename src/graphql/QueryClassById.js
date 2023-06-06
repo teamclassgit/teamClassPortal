@@ -88,6 +88,7 @@ export default gql`
         groupEvent
         kitHasAlcohol
         instructorFlatFee
+        flatFeeIncludedInPrice
         priceTiers {
           maximum
           minimum

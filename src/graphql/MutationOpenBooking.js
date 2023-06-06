@@ -78,6 +78,7 @@ export default gql`
         hasKit
         groupEvent
         instructorFlatFee
+        flatFeeIncludedInPrice
         pricePersonInstructor
         expectedProfit
         registrationFields {

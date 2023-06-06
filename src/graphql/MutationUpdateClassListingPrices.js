@@ -10,6 +10,7 @@ export default gql`
         groupEvent
         hasKit
         instructorFlatFee
+        flatFeeIncludedInPrice
         kitHasAlcohol
         maximum
         minimum

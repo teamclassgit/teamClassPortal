@@ -44,6 +44,7 @@ export default gql`
         groupEvent
         kitHasAlcohol
         instructorFlatFee
+        flatFeeIncludedInPrice
         registrationFields {
           label
           placeholder

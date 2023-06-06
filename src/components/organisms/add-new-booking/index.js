@@ -429,6 +429,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     active: element.active,
                     groupEvent: element.groupEvent,
                     instructorFlatFee: element.instructorFlatFee,
+                    flatFeeIncludedInPrice: element.flatFeeIncludedInPrice,
                     registrationFields: element.registrationFields
                   };
 
@@ -471,6 +472,7 @@ const AddNewBooking = ({ baseElement, classes, coordinators, customers, handleMo
                     active: classVariantsOptions[selectedVariant].active,
                     groupEvent: classVariantsOptions[selectedVariant].groupEvent,
                     instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee,
+                    flatFeeIncludedInPrice: classVariantsOptions[selectedVariant].flatFeeIncludedInPrice,
                     registrationFields: classVariantsOptions[selectedVariant].registrationFields
                   };
                   return {
