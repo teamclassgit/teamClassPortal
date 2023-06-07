@@ -738,7 +738,7 @@ const BasicInformation = ({
                 id="signUpDateLine"
                 className="flatpickr form-control"
                 placeholder="Select Date..."
-                onChange={(selectedDates, dateStr, instance) => {
+                onChange={(selectedDates) => {
                   setBookingSignUpDeadline(selectedDates);
                 }}
               />
