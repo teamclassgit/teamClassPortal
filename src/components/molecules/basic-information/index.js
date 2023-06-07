@@ -661,7 +661,7 @@ const BasicInformation = ({
                   active: classVariantsOptions[selectedVariant].active,
                   groupEvent: classVariantsOptions[selectedVariant].groupEvent,
                   instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee,
-                  flatFeeIncludedInPrice: classVariantsOptions[selectedVariant].flatFeeIncludedInPrice,
+                  flatFeeIncludedInPrice: classVariantsOptions[selectedVariant].flatFeeIncludedInPrice
                 };
                 return {
                   value: variant,
