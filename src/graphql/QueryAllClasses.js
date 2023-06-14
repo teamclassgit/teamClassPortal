@@ -28,6 +28,7 @@ export default gql`
         active
         groupEvent
         instructorFlatFee
+        flatFeeIncludedInPrice
         priceTiers {
           maximum
           minimum

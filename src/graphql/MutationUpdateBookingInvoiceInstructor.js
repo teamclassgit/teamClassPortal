@@ -39,6 +39,7 @@ export default gql`
         pricePerson
         pricePersonInstructor
         instructorFlatFee
+        flatFeeIncludedInPrice
         expectedProfit
         hasKit
         order

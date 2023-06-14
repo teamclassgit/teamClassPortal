@@ -610,6 +610,7 @@ const BasicInformation = ({
                 active: element.active,
                 groupEvent: element.groupEvent,
                 instructorFlatFee: element.instructorFlatFee,
+                flatFeeIncludedInPrice: element.flatFeeIncludedInPrice,
                 registrationFields: element.registrationFields
               };
               return {
@@ -659,7 +660,8 @@ const BasicInformation = ({
                   order: classVariantsOptions[selectedVariant].order,
                   active: classVariantsOptions[selectedVariant].active,
                   groupEvent: classVariantsOptions[selectedVariant].groupEvent,
-                  instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee
+                  instructorFlatFee: classVariantsOptions[selectedVariant].instructorFlatFee,
+                  flatFeeIncludedInPrice: classVariantsOptions[selectedVariant].flatFeeIncludedInPrice
                 };
                 return {
                   value: variant,
@@ -736,7 +738,7 @@ const BasicInformation = ({
                 id="signUpDateLine"
                 className="flatpickr form-control"
                 placeholder="Select Date..."
-                onChange={(selectedDates, dateStr, instance) => {
+                onChange={(selectedDates) => {
                   setBookingSignUpDeadline(selectedDates);
                 }}
               />

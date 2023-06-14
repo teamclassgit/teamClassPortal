@@ -91,6 +91,7 @@ export default gql`
           groupEvent
           hasKit
           instructorFlatFee
+          flatFeeIncludedInPrice
           pricePersonInstructor
           expectedProfit
           kitHasAlcohol
