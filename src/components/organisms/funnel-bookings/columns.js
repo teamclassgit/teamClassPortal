@@ -1,7 +1,7 @@
 // @packages
 import { Fragment } from "react";
 import { useHistory } from "react-router-dom";
-import moment from "moment";
+import moment from "moment-timezone";
 
 // @scripts
 import { DEFAULT_TIME_ZONE_LABEL } from "@utility/Constants";
