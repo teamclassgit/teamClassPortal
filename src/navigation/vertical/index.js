@@ -1,4 +1,4 @@
-import { Activity, BookOpen, Book, Briefcase, Calendar, Edit2, Gift, HelpCircle, Tag, Database, Filter, UserX, Users, Star, Mail } from "react-feather";
+import { BookOpen, Book, Briefcase, Calendar, Edit2, HelpCircle, Tag, Database, Filter, UserX, Users, Star, Mail } from "react-feather";
 import IconStatus from "@atoms/icon-status";
 
 export default [
