@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "3.8.4",
+    "@asseinfo/react-kanban": "^2.2.0",
     "@casl/ability": "^6.0.0",
     "@casl/react": "3.1.0",
     "@emotion/react": "^11.5.0",
@@ -20,7 +21,6 @@
     "@fullcalendar/timegrid": "6.1.9",
     "@iconify/react": "4.1.1",
     "@inovua/reactdatagrid-enterprise": "5.10.2",
-   
     "@mui/material": "5.14.12",
     "@twilio-paste/badge": "^8.1.0",
     "@twilio-paste/core": "^20.4.0",
@@ -47,7 +47,6 @@
     "history": "5.3.0",
     "moment": "2.29.4",
     "moment-timezone": "0.5.43",
-
     "prismjs": "1.29.0",
     "prop-types": "15.8.1",
     "query-string": "^8.1.0",
