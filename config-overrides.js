@@ -1,13 +1,15 @@
-const SassRuleRewire = require("react-app-rewire-sass-rule");
+/*eslint-disable */
 const path = require("path");
-const rewireAliases = require("react-app-rewire-aliases");
+// const rewireAliases = require("react-app-rewire-aliases");
+const { configPaths, alias} = require("react-app-rewire-alias");
 
 module.exports = function override (config, env) {
-  require("react-app-rewire-postcss")(config, {
-    plugins: loader => [require("postcss-rtl")()]
-  });
+  // require("react-app-rewire-postcss")(config, {
+  //   plugins: loader => [require("postcss-rtl")()]
+  // });
 
-  config = rewireAliases.aliasesOptions({
+  // config = rewireAliases.aliasesOptions({
+    alias({
     "@src": path.resolve(__dirname, "src"),
     "@assets": path.resolve(__dirname, "src/@core/assets"),
     "@components": path.resolve(__dirname, "src/@core/components"),
@@ -28,21 +30,27 @@ module.exports = function override (config, env) {
     "@organisms": path.resolve(__dirname, "src/components/organisms")
   })(config, env);
 
-  config = new SassRuleRewire()
-    .withRuleOptions({
-      test: /\.s[ac]ss$/i,
-      use: [
-        {
-          loader: "sass-loader",
-          options: {
-            sassOptions: {
-              includePaths: ["node_modules", "src/assets"]
-            }
+  const sassRule = config.module.rules.find(
+    (rule) => rule.test && rule.test.toString().includes(".scss")
+  );
+
+  if (sassRule) {
+
+    sassRule.use = [
+      "style-loader",
+      "css-loader",
+      {
+        loader: "sass-loader",
+        options: {
+          implementation: require("sass"), // Use Dart Sass
+          sassOptions: {
+            includePaths: path.resolve(__dirname, "src/assets", "src", "scss"),
+            indentedSyntax: false
           }
         }
-      ]
-    })
-    .rewire(config, env);
+      }
+    ];
+  }
 
   return config;
 };
