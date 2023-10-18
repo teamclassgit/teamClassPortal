@@ -10,10 +10,9 @@ import {
 } from "reactstrap";
 
 // @scripts
-import { closeBookingsWithReason } from "@services/BookingService";
 import { verifySentEmailSystemStatus } from "../../../services/EmailService";
 
-const ConfirmSystemStatusToVerified = ({toggle, closedReason, selectedDocumentsIds, onEditCompleted, setSelected }) => {
+const ConfirmSystemStatusToVerified = ({toggle, selectedDocumentsIds, onEditCompleted, setSelected }) => {
   const [closingBookingsInProcess, setClosingBookingsInProcess] = useState(false);
   const [isCatchError, setIsCatchError] = useState(false);
 
@@ -23,7 +22,6 @@ const ConfirmSystemStatusToVerified = ({toggle, closedReason, selectedDocumentsI
       setClosingBookingsInProcess(true);
 
       const response = await verifySentEmailSystemStatus(selectedDocumentsIds, true);
-      console.log("response", response);
 
       setTimeout(() => {
         onEditCompleted(selectedDocumentsIds[0]);
@@ -37,14 +35,14 @@ const ConfirmSystemStatusToVerified = ({toggle, closedReason, selectedDocumentsI
       console.log("err", err);
     }
   };
-  console.log("selectedBookingsIds", selectedDocumentsIds);
+
   return (
     <>
       <ModalHeader>
         Confirmation
       </ModalHeader>
       <ModalBody className="py-3">
-        <p className="text-center">Are you sure to verified {selectedDocumentsIds?.length} selected bookings?</p>
+        <p className="text-center">Are you sure to verified {selectedDocumentsIds?.length} selected documents?</p>
       </ModalBody>
       <ModalFooter>
         <Button
@@ -79,7 +77,6 @@ const ConfirmSystemStatusToVerified = ({toggle, closedReason, selectedDocumentsI
 
 ConfirmSystemStatusToVerified.propTypes = {
   toggle: PropTypes.func.isRequired,
-  closedReason: PropTypes.string.isRequired,
   selectedBookingsIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   onEditCompleted: PropTypes.func.isRequired,
   setSelected: PropTypes.func.isRequired

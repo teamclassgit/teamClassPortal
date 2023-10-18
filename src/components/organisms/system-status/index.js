@@ -165,7 +165,6 @@ const SystemStatus = () => {
   const toArray = (selected) => Object.keys(selected);
 
   const selectedBookingsIds = toArray(selected);
-  console.log("selected", selected);
 
   return (
     <div>
@@ -254,7 +253,6 @@ const SystemStatus = () => {
       <Modal isOpen={isOpenModal} centered>
       <ConfirmSystemStatusToVerified
         toggle={toggle}
-        // closedReason={closedReason}
         selectedDocumentsIds={selectedBookingsIds}
         onEditCompleted={onEditCompleted}
         setSelected={setSelected}
