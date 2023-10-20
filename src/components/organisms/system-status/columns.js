@@ -8,6 +8,7 @@ import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
 import statusOptions from "@data/system-status-options.json";
+import BoolFilter from "@inovua/reactdatagrid-community/BoolFilter";
 
 export const getColumns = (setColumns, typeCard) => {
   let columns = [];
@@ -99,21 +100,21 @@ export const getColumns = (setColumns, typeCard) => {
       {
         name: "createdDocument",
         header: "Created Document ?",
-        type: "string",
-        filterEditor: StringFilter,
-        filterDelay: 1500,
+        type: "bool",
+        filterEditor: BoolFilter,
+        defaultWidth: 200,
         render: ({ value }) => {
-          return <span className="float-left">{value ? "TRUE" : "FALSE"}</span>;
+          return <span className="float-left">{value ? "true" : "false"}</span>;
         }
       },
       {
         name: "sentDocument",
         header: "Sent document ?",
-        type: "string",
-        filterEditor: StringFilter,
-        filterDelay: 1500,
-        render: ({ value }) => {
-          return <span className="float-left">{value ? "TRUE" : "FALSE"}</span>;
+        type: "bool",
+        filterEditor: BoolFilter,
+        defaultWidth: 200,
+        render: ({ value, data }) => {
+          return <span className="float-left">{value ? "true" : "false"}</span>;
         }
       }
     ];
