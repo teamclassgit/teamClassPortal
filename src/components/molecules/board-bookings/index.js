@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, Row } from "reactstrap";
 import BoardCard from "@molecules/board-card";
-import Board from "@lourenci/react-kanban";
+import Board from "@asseinfo/react-kanban";
 import Avatar from "@components/avatar";
 import PropTypes from "prop-types";
 import { DollarSign, TrendingUp } from "react-feather";
@@ -12,7 +12,7 @@ import { BOOKING_STATUS } from "@utility/Constants";
 
 // @styles
 import "./BoardBookings.scss";
-import "@lourenci/react-kanban/dist/styles.css";
+import "@asseinfo/react-kanban/dist/styles.css";
 
 const BoardBookings = ({
   filteredBookingsQuote = [],
