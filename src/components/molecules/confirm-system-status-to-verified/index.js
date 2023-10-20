@@ -42,7 +42,7 @@ const ConfirmSystemStatusToVerified = ({toggle, selectedDocumentsIds, onEditComp
         Confirmation
       </ModalHeader>
       <ModalBody className="py-3">
-        <p className="text-center">Do you want to verify this {selectedDocumentsIds?.length} selected documents?</p>
+        <p className="text-center">Do you want to verify {selectedDocumentsIds?.length === 1 ? "this document" : "these documents"} ?</p>
       </ModalBody>
       <ModalFooter>
         <Button
