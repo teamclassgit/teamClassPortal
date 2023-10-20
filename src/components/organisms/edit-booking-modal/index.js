@@ -9,7 +9,7 @@ import {
   TabContent,
   TabPane
 } from "reactstrap";
-import { X, Info, Settings, MessageSquare, Users } from "react-feather";
+import { X, Info, Settings, MessageSquare, Users, Edit3} from "react-feather";
 
 // @scripts
 import Notes from "@molecules/notes";
@@ -19,6 +19,7 @@ import TeamMemberInstructor from "@molecules/team-member-instructor";
 
 // @styles
 import "./EditBookingModal.scss";
+import SignUpSettingsComponent from "../../molecules/sign-up-settings";
 
 const EditBookingModal = ({
   currentElement,
@@ -102,6 +103,11 @@ const EditBookingModal = ({
             <MessageSquare size="18" />
           </NavLink>
         </NavItem>
+        <NavItem>
+          <NavLink title="Sign up settings" active={active === "5"} onClick={() => toggle("5")}>
+            <Edit3 size="18" />
+          </NavLink>
+        </NavItem>
       </Nav>
       <TabContent className="py-5" activeTab={active} color="primary">
         <TabPane tabId="1">
@@ -127,6 +133,15 @@ const EditBookingModal = ({
         </TabPane>
         <TabPane tabId="2">
           <SettingsComponent
+            currentElement={currentElement}
+            editMode={editMode}
+            closedBookingReason={closedBookingReason}
+            close={cancel}
+            onEditCompleted={onEditCompleted}
+          />
+        </TabPane>
+        <TabPane tabId="5">
+          <SignUpSettingsComponent
             currentElement={currentElement}
             editMode={editMode}
             closedBookingReason={closedBookingReason}

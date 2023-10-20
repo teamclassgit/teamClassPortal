@@ -162,6 +162,20 @@ export default gql`
         manualLink
         password
       }
+      signUpPageSettings {
+        invitationFrom
+        additionalCopyToShow
+        optionalAddressCopy
+        additionalRegistrationFields {
+          label
+          placeholder
+          type
+          listItems
+          required
+          active
+          order
+        }
+      }
     }
   }
 `;
