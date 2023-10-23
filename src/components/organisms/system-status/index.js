@@ -289,3 +289,4 @@ ReactDataGrid.defaultProps.filterTypes.select = {
     }
   ]
 };
+

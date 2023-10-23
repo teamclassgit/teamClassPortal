@@ -8,7 +8,7 @@ import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
 import statusOptions from "@data/system-status-options.json";
-import BoolFilter from "@inovua/reactdatagrid-community/BoolFilter";
+import BoolFilter from "@inovua/reactdatagrid-enterprise/BoolFilter";
 
 export const getColumns = (setColumns, typeCard) => {
   let columns = [];

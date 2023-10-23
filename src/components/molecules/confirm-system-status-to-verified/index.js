@@ -77,7 +77,6 @@ const ConfirmSystemStatusToVerified = ({toggle, selectedDocumentsIds, onEditComp
 
 ConfirmSystemStatusToVerified.propTypes = {
   toggle: PropTypes.func.isRequired,
-  selectedBookingsIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   onEditCompleted: PropTypes.func.isRequired,
   setSelected: PropTypes.func.isRequired
 };
