@@ -9,9 +9,10 @@ export const applyFilters = (filterValue, setFilterValue, typeCard) => {
         { name: "attendeeId", type: "select", operator: "contains", value:  "" },
         { name: "documentId", type: "string", operator: "contains", value: "" },
         { name: "operationType", type: "string", operator: "contains", value: "" },
-        { name: "createdDocument", type: "bool", operator: "eq", value: undefined },
-        { name: "sentDocument", type: "bool", operator: "eq", value: undefined },
+        { name: "createdDocument", type: "bool", operator: "eq", value: null },
+        { name: "sentDocument", type: "bool", operator: "eq", value: null },
         { name: "status", type: "select", operator: "inlist", value: undefined }
+
       ];
     }
     setFilterValue(currentFilters);

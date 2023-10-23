@@ -22,6 +22,8 @@ import RowDetailsListingStatus from "@molecules/listing-status-table-row-details
 import StatusSystemTasksBar from "@molecules/system-status-task-bar";
 import { getColumns } from "./columns";
 import { applyFilters } from "./filtersEmail";
+import { Modal } from "reactstrap";
+import ConfirmSystemStatusToVerified from "../../molecules/confirm-system-status-to-verified";
 
 const renderRowDetailsCatalog = ({ data }) => {
   return data ? <RowDetailsListingStatus data={data} /> : <></>;
@@ -62,7 +64,16 @@ const SystemStatus = () => {
   const [sortInfo, setSortInfo] = useState({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
   const [expandedRows, setExpandedRows] = useState({ 1: true, 2: true });
   const [collapsedRows, setCollapsedRows] = useState(null);
+  const [emailBookingStatus, setEmailBookingStatus] = useState(true);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [selected, setSelected] = useState({});
   const gridStyle = { minHeight: 600, marginTop: 10 };
+
+  const toggle = () => {
+    setOrFilters([]);
+    setSortInfo({ dir: -1, id: "createdAt", name: "createdAt", type: "date" });
+    setIsOpenModal(!isOpenModal);
+  };
 
   useEffect(() => {
     if (!typeCard) return;
@@ -71,6 +82,15 @@ const SystemStatus = () => {
       applyFilters(filterValue, setFilterValue, typeCard);
     }
   }, [typeCard]);
+
+  const onEditCompleted = (bookingId) => {
+    const sortEditedData = { dir: -1, id: "updatedAt", name: "updatedAt", type: "date" };
+    const currentFilters = [...orFilters];
+    currentFilters.push({ name: "_id", type: "string", operator: "eq", value: bookingId });
+    currentFilters.push({ name: "_id", type: "string", operator: "neq", value: bookingId });
+    setOrFilters(currentFilters);
+    setSortInfo(sortEditedData);
+  };
 
   const loadData = async ({ skip, limit, sortInfo, filterValue }) => {
     if (typeCard.value === "email") {
@@ -107,7 +127,7 @@ const SystemStatus = () => {
           limit: limitStatus
         }
       });
-      return { data: response.data.getBookingFullStatus.bookingList, count: 0 };
+      return { data: response?.data?.getBookingFullStatus?.bookingList, count: 0 };
     }
   };
 
@@ -117,6 +137,34 @@ const SystemStatus = () => {
     setExpandedRows(expandedRows);
     setCollapsedRows(collapsedRows);
   }, []);
+
+  const renderRowContextMenu = (menuProps) => {
+    menuProps.autoDismiss = true;
+    menuProps.items = [
+      {
+        label: "Verified",
+        disabled: true
+      },
+      {
+        label: "Yes",
+        onClick: () => {
+          setEmailBookingStatus(true);
+          toggle();
+        }
+      }
+    ];
+  };
+
+  const onSelectionChange = useCallback(({ selected, data }) => {
+    if (selected === true) {
+      data.forEach((booking) => setSelected((prev) => ({ ...prev, [booking._id]: booking })));
+    } else {
+      setSelected(selected);
+    }
+  }, []);
+  const toArray = (selected) => Object.keys(selected);
+
+  const selectedBookingsIds = toArray(selected);
 
   return (
     <div>
@@ -129,7 +177,6 @@ const SystemStatus = () => {
         titleBadge={typeCard && typeCard.label}
       ></StatusSystemTasksBar>
       {typeCard && typeCard.value === "email" &&
-
         <ReactDataGrid
           idProperty="_id"
           className="bookings-table text-small"
@@ -150,6 +197,9 @@ const SystemStatus = () => {
           onRenderRow={onRenderRowEmails}
           rowExpandHeight={400}
           licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
+          renderRowContextMenu={selectedBookingsIds?.length > 0 ? renderRowContextMenu : null}
+          onSelectionChange={onSelectionChange}
+          selected={selected}
         />
       }
       {typeCard && typeCard.value === "catalog" &&
@@ -200,6 +250,14 @@ const SystemStatus = () => {
           licenseKey={process.env.REACT_APP_DATAGRID_LICENSE}
         />
       }
+      <Modal isOpen={isOpenModal} centered>
+      <ConfirmSystemStatusToVerified
+        toggle={toggle}
+        selectedDocumentsIds={selectedBookingsIds}
+        onEditCompleted={onEditCompleted}
+        setSelected={setSelected}
+      />
+    </Modal>
     </div>
   );
 };
@@ -231,3 +289,4 @@ ReactDataGrid.defaultProps.filterTypes.select = {
     }
   ]
 };
+

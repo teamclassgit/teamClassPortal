@@ -9,6 +9,7 @@ import queryEmailsNotificationsRequestWithCriteria from "@graphql/QueryEmailsNot
 
 import { apolloClient } from "../utility/RealmApolloClient";
 import { getQueryFiltersFromFilterArray, isNotEmptyArray } from "../utility/Utils";
+import MutationUpdateSystemStatus from "../graphql/MutationUpdateSystemStatus";
 
 
 const getTotalsBookingStatusUsingFilter = async (filters) => {
@@ -150,4 +151,17 @@ const getAllDataToExportEmailLog = async (filters, orFilters, sortInfo, status) 
   return bookingsArray;
 };
 
-export { getTotalsBookingStatusUsingFilter, getTotalsEmailsNotificationsDeliveredUsingFilter, getTotalsEmailsNotificationsErrorUsingFilter, getTotalsEmailsNotificationsRequestUsingFilter, getAllDataToExportEmailLog };
+const verifySentEmailSystemStatus = async (documentsId, isVerified) => {
+  const { data } = await apolloClient.mutate({
+    mutation: MutationUpdateSystemStatus, 
+    variables: {
+      input: { 
+        documentsId,
+        isVerified
+      }
+    }
+  });
+};
+
+
+export { getTotalsBookingStatusUsingFilter, getTotalsEmailsNotificationsDeliveredUsingFilter, getTotalsEmailsNotificationsErrorUsingFilter, getTotalsEmailsNotificationsRequestUsingFilter, getAllDataToExportEmailLog, verifySentEmailSystemStatus };
