@@ -1,0 +1,9 @@
+.additional-fields-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 15px;
+}
+
+.additional-fields-list-items {
+  display: block;
+}

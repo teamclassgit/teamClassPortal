@@ -5,6 +5,7 @@ import Select from "react-select";
 import { selectThemeColors } from "@utils";
 import MutationUpdateSignUpPageSettings from "../../../graphql/MutationUpdateSignUpPageSettings";
 import { useMutation } from "@apollo/client";
+import "./styles.scss";
 
 const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason, close, onEditCompleted }) => {
   const [processing, setProcessing] = useState(false);
@@ -12,7 +13,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     { id: 1, name:"label", label:"Label*", value: "", visible: false, type: "text", colSize:"12" },
     { id: 2, name:"placeholder", label:"Placeholder", value: "", visible: false, type: "text", colSize:"12"},
     { id: 3, name:"type", label:"Field Type*", value: "", visible: false, type: "select", colSize:"12"},
-    { id: 4, name:"list", label:"List Option?", value: "", visible: false, type: "text", colSize:"12"},
+    // { id: 4, name:"list", label:"List Option?", value: "", visible: false, type: "text", colSize:"12"},
     { id: 5, name:"required", label:"Is required?", value: true,  visible: false, type: "select", colSize:"5"},
     { id: 6, name:"active", label:"Is Active?", value: true, visible: false, type: "select", colSize:"5"}
   ]);
@@ -33,7 +34,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
       setAddressIsOptional(currentElement?.signUpPageSettings?.addressIsOptional || false);
       setInvitationFrom(currentElement?.signUpPageSettings?.invitationFrom || "");
       setOptionalAddressCopy(currentElement?.signUpPageSettings?.optionalAddressCopy || "");
-      setAdditionalRegistrationFieldsToShow(currentElement?.signUpPageSettings?.additionalRegistrationFields.map(item => item.label || []));
+      setAdditionalRegistrationFieldsToShow(currentElement?.signUpPageSettings?.additionalRegistrationFields || []);
     }
   }, [currentElement]);
 
@@ -58,7 +59,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     })
   };
 
-  // Function to show the input fields
   const showFields = () => {
     setIsSaveBtnVissible(true);
     const updatedFields = inputFields.map((field) => ({
@@ -68,11 +68,28 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     setInputFields(updatedFields);
   };
 
-  // Function to save the input values and hide the fields
-  const saveAndHideFields = () => {
-    // Here, you can save the input field values or perform any other necessary action.
-    console.log(inputFields);
+  const updateListFieldVisibility = (fieldType) => {
+    const updatedFields = inputFields.map((field) => ({
+      ...field,
+      visible: field.name === "list" && (fieldType === "list" || fieldType === "multiSelectionList")
+    }));
+    setInputFields(updatedFields);
+  };
 
+  const saveAndHideFields = () => {
+    const newField = {
+      label: inputFields.find((obj) => obj.name === "label").value,
+      placeholder: inputFields.find((obj) => obj.name === "placeholder").value,
+      type: inputFields.find((obj) => obj.name === "type").value,
+      listItems: inputFields.find((obj) => obj.name === "type").value === "list" || inputFields.find((obj) => obj.name === "type").value === "multiSelectionList" ? 
+        inputFields.find((obj) => obj.name === "list").value : "",
+      required: inputFields.find((obj) => obj.name === "required").value,
+      active: inputFields.find((obj) => obj.name === "active").value,
+      order: additionalRegistrationFields.length + 1
+    };
+  
+    setAdditionalRegistrationFields([...additionalRegistrationFields, newField]);
+  
     const updatedFields = inputFields.map((field) => ({
       ...field,
       value: "",
@@ -80,16 +97,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     }));
     setInputFields(updatedFields);
     setIsSaveBtnVissible(false);
-    setAdditionalRegistrationFields(...additionalRegistrationFields, {
-      active: inputFields.find(obj => obj.name === "active"),
-      label: inputFields.find(obj => obj.name === "label"),
-      listItems: inputFields.find(obj => obj.name === "list"),
-      // name: inputFields.find(obj => obj.name === "label"),
-      order: inputFields.length - 1,
-      placeholder: inputFields.find(obj => obj.name === "placeholder"),
-      required: inputFields.find(obj => obj.name === "required"),
-      type: inputFields.find(obj => obj.name === "type")
-    });
   };
 
   const handleUpdateBooking = async () => {
@@ -152,35 +159,28 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     <FormGroup>
       <Label for="classOptions">Additional registration fields</Label>
       {!isSaveBtnVissible && <Button className="ml-2 btn btn-primary btn-sm" onClick={showFields}>Add</Button>}
-      <div>
+      <div className="additional-fields-container">
         {inputFields?.map((field) =>
           (field.visible ? (
-            <Row key={field.id}>
-              <Col md={field.colSize}>
+            <div key={field.id}>
               <Label for="classOptions">{field.label}</Label>
               {field.type === "text" ? (
-                  <Input
-                    type="text"
-                    value={field.value}
-                    onChange={(e) => {
-                      const updatedFields = inputFields.map((f) =>
-                        (f.id === field.id ? { ...f, value: e.target.value } : f)
-                      );
-                      setInputFields(updatedFields);
-                    }}
-                  />
+                <Input
+                  type="text"
+                  value={field.value}
+                  onChange={(e) => {
+                    const updatedFields = inputFields.map((f) =>
+                      (f.id === field.id ? { ...f, value: e.target.value } : f)
+                    );
+                    setInputFields(updatedFields);
+                  }}
+                />
               ) : (
+                <>
                   <Select
                     theme={selectThemeColors}
                     styles={selectStyles}
-                    // isDisabled={currentElement.status === BOOKING_CLOSED_STATUS}
-                    className="react-select edit-booking-select-instructor"
-                    classNamePrefix="select"
-                    placeholder="Select..."
-                    value={{
-                      // label: instructorName,
-                      // value: instructorId
-                    }}
+                    // ...
                     options={field.name === "type" ? [
                       {
                         value: "list",
@@ -215,22 +215,51 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
                       ]
                     }
                     onChange={(option) => {
-                      // setInstructorId(option.value);
-                      // setInstructorName(option.label);
+                      const updatedFields = inputFields.map((f) => {
+                        if (f.id === field.id) {
+                          if (field.name === "type") {
+                            return { ...f, value: option.value };
+                          } else if (field.name === "required") {
+                            return { ...f, value: option.value === true };
+                          } else if (field.name === "active") {
+                            return { ...f, value: option.value === true };
+                          } else {
+                            return f;
+                          }
+                        }
+                        return f;
+                      });
+                      setInputFields(updatedFields);
                     }}
                     isClearable={false}
                   />
+                  {field.name === "type" && (field.value === "list" || field.value === "multiSelectionList") && (
+                    <div className="additional-fields-list-items">
+                      <Label for="classOptions">List Items</Label>
+                      <Input
+                        type="text"
+                        value={field.listItems}
+                        onChange={(e) => {
+                          const updatedFields = inputFields.map((f) =>
+                            (f.id === field.id ? { ...f, listItems: e.target.value } : f)
+                          );
+                          setInputFields(updatedFields);
+                        }}
+                      />
+                      <small>Add the items separated by commas</small>
+                    </div>
+                  )}
+                </>
               )}
-              </Col>
-            </Row>
+            </div>
           ) : null)
         )}
-      {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields}>Add</Button>}
       </div>
+      {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields}>Add</Button>}
     </FormGroup>
-    {additionalRegistrationFieldsToShow?.map((item, idx) => (
-      <Label key={idx} for="classOptions">{item.label.join(", ")}</Label>
-    ))}
+    <Label className="mb-2" for="classOptions">
+      <b><i>{additionalRegistrationFieldsToShow.map((item) => item.label).join(", ")}</i></b>
+   </Label>
     <FormGroup>
       <Label for="classOptions">Is address optional?</Label>
       <Select
@@ -287,130 +316,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
           onChange={(e) => setAdditionalCopyToShow(e.target.value)}
         />
     </FormGroup>
-    {/* <FormGroup>
-      <Label for="joinUrl">Event join info</Label>
-      <InputGroup size="sm">
-        <InputGroupAddon addonType="prepend">
-          <InputGroupText>
-            <Video size={15} />
-          </InputGroupText>
-        </InputGroupAddon>
-        <Input
-          type="text"
-          id="joinUrl"
-          name="joinUrl"
-          placeholder="Event link"
-          value={joinLink}
-          onChange={(e) => {
-            setJoinLink(e.target.value);
-            if (currentElement?.joinInfo?.joinUrl?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
-              setIsChangingJoinLink(true);
-            } else {
-              setIsChangingJoinLink(false);
-            }
-          }}
-          onBlur={(e) => urlValidation(e)}
-        />
-      </InputGroup>
-    </FormGroup>
-    <FormGroup>
-      <InputGroup size="sm">
-        <InputGroupAddon addonType="prepend">
-          <InputGroupText>
-            <Key size={15} />
-          </InputGroupText>
-        </InputGroupAddon>
-        <Input
-          type="text"
-          id="key"
-          name="key"
-          placeholder="Event password"
-          value={passwordLink}
-          onChange={(e) => {
-            setPasswordLink(e.target.value);
-            if (currentElement?.joinInfo?.password?.trim().toLowerCase() !== e.target.value.trim().toLowerCase()) {
-              setIsChangingJoinLink(true);
-            } else {
-              setIsChangingJoinLink(false);
-            }
-          }}
-        />
-      </InputGroup>
-    </FormGroup>
-    <FormGroup>
-      <Label for="trackingLink">Shipping tracking</Label>
-      <InputGroup size="sm">
-        <InputGroupAddon addonType="prepend">
-          <InputGroupText>
-            <Truck size={15} />
-          </InputGroupText>
-        </InputGroupAddon>
-        <Input
-          type="text"
-          id="trackingLink"
-          name="trackingLink"
-          placeholder="Tracking doc link"
-          value={trackingLink}
-          onChange={(e) => setTrackingLink(e.target.value)}
-          onBlur={(e) => urlValidation(e)}
-        />
-      </InputGroup>
-    </FormGroup>
-
-    <FormGroup>
-      <Label for="classOptions">Additional class options</Label>
-      <InputGroup size="sm">
-        <InputGroupAddon addonType="prepend">
-          <InputGroupText>
-            <List size={15} />
-          </InputGroupText>
-        </InputGroupAddon>
-        <Input
-          type="text"
-          id="classOptions"
-          name="classOptions"
-          placeholder="New options"
-          disabled={classOptionsTags.length >= 20 ? true : false}
-          onChange={(e) => setIndividualTag(e.target.value)}
-          value={individualTag}
-          onKeyDown={handleAddition}
-        />
-      </InputGroup>
-    </FormGroup>
-
-    {classOptionsTags &&
-      classOptionsTags.map((tag, index) => (
-        <span key={`${tag}${index}`} className="tags">
-          {tag.text}
-          <a href="#" className="pl-1" onClick={() => handleDelete(index)}>
-            x
-          </a>
-        </span>
-      ))}
-
-    <FormGroup>
-      <a target="_blank" rel="noopener noreferrer" href={`https://teamclass.com/booking/pre-event/${currentElement?._id}`}>
-        <small>Click to see survey"s answer, and selected options.</small>
-      </a>
-      {!currentElement?.preEventSurvey?.submittedAt && <p className="pre-event-small-note">(Pre event survey is yet to be completed.)</p>}
-    </FormGroup>
-
-    <FormGroup>
-      <Label for="selectedtags">Tags</Label>
-      <Select
-        theme={selectThemeColors}
-        className="react-select"
-        classNamePrefix="select"
-        placeholder="Booking tags"
-        options={tagsList}
-        isMulti
-        closeMenuOnSelect={false}
-        styles={selectStylesTags}
-        defaultValue={tagsList.map((tag) => currentElement?.tags?.includes(tag.value) && tag)}
-        onChange={(element) => setBookingTags(element.map((tag) => tag.value))}
-      />
-    </FormGroup> */}
-
     {editMode && (
       <div align="center">
         <Button
