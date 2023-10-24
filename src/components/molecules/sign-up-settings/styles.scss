@@ -2,8 +2,11 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 15px;
+  row-gap: 10px;
+
+  .additional-fields-list-items {
+    width: 210%;
+    margin-top: 15px;
+  }
 }
 
-.additional-fields-list-items {
-  display: block;
-}

@@ -17,35 +17,35 @@ const SimpleEditor = ({classOptionsView, initialContent = null, onChangeContent}
   }
   );
 
-  // useEffect(() => {
-  //   if (!onChangeFired) {
-  //     const blocksFromHTML = convertFromHTML(initialContent);
-  //     const state = ContentState.createFromBlockArray(
-  //       blocksFromHTML?.contentBlocks,
-  //       blocksFromHTML?.entityMap
-  //     );
-  //     setEditorState(EditorState.createWithContent(state));
-  //   }
-  // }, [initialContent]);
+  useEffect(() => {
+    if (!onChangeFired) {
+      const blocksFromHTML = convertFromHTML(initialContent);
+      const state = ContentState.createFromBlockArray(
+        blocksFromHTML?.contentBlocks,
+        blocksFromHTML?.entityMap
+      );
+      setEditorState(EditorState.createWithContent(state));
+    }
+  }, [initialContent]);
 
-  // const handleEditorChange = (state) => {
-  //   setEditorState(state);
-  //   convertContentToHTML();
-  // };
+  const handleEditorChange = (state) => {
+    setEditorState(state);
+    convertContentToHTML();
+  };
 
-  // const convertContentToHTML = () => {
-  //   const currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
-  //   onChangeContent(currentContentAsHTML);
-  //   setOnChangeFired(true);
-  // };
+  const convertContentToHTML = () => {
+    const currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
+    onChangeContent(currentContentAsHTML);
+    setOnChangeFired(true);
+  };
 
 
   return (
     <div className="App">
       <div style={{ border: "1px solid #ebedec", padding: "2px",  maxHeight: "500px" }}>
         <Editor
-          // editorState={editorState}
-          // onEditorStateChange={handleEditorChange}
+          editorState={editorState}
+          onEditorStateChange={handleEditorChange}
         />
       </div>
     </div>

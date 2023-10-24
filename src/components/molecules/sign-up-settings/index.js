@@ -24,6 +24,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
   const [invitationFrom, setInvitationFrom] = useState("");
   const [optionalAddressCopy, setOptionalAddressCopy] = useState("");
   const [additionalRegistrationFieldsToShow, setAdditionalRegistrationFieldsToShow] = useState([]);
+  const [listItems, setListItems] = useState([]);
 
   const [updateSignUpSettings] = useMutation(MutationUpdateSignUpPageSettings, {});
 
@@ -82,13 +83,14 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
       placeholder: inputFields.find((obj) => obj.name === "placeholder").value,
       type: inputFields.find((obj) => obj.name === "type").value,
       listItems: inputFields.find((obj) => obj.name === "type").value === "list" || inputFields.find((obj) => obj.name === "type").value === "multiSelectionList" ? 
-        inputFields.find((obj) => obj.name === "list").value : "",
+        listItems : [],
       required: inputFields.find((obj) => obj.name === "required").value,
       active: inputFields.find((obj) => obj.name === "active").value,
       order: additionalRegistrationFields.length + 1
     };
   
     setAdditionalRegistrationFields([...additionalRegistrationFields, newField]);
+    setAdditionalRegistrationFieldsToShow([...additionalRegistrationFields, newField]);
   
     const updatedFields = inputFields.map((field) => ({
       ...field,
@@ -98,6 +100,13 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     setInputFields(updatedFields);
     setIsSaveBtnVissible(false);
   };
+
+  const handleUpdate = (data) => {
+    console.log("data:", data);
+    setAdditionalCopyToShow(data);
+    // setFormInputs({ ...formInputs, [field]: data });
+  };
+
 
   const handleUpdateBooking = async () => {
     setProcessing(true);
@@ -136,6 +145,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     }
   };
 
+
   console.log("currentElement", currentElement);
   console.log("inputFields", inputFields);
   console.log("optionalAddressCopy", optionalAddressCopy);
@@ -149,12 +159,12 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     </FormGroup>
     <FormGroup>
       <Label for="classOptions">Additional information to show:</Label>
-      {/* <SimpleEditor
-        // initialContent={formInputs[input.name] || ""}
-        // onChangeContent={(content) => {
-        //   handleUpdate(content, input.name);
-        // }}
-      /> */}
+      <SimpleEditor
+        initialContent={additionalCopyToShow || ""}
+        onChangeContent={(content) => {
+          handleUpdate(content);
+        }}
+      />
     </FormGroup>
     <FormGroup>
       <Label for="classOptions">Additional registration fields</Label>
@@ -215,35 +225,38 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
                       ]
                     }
                     onChange={(option) => {
-                      const updatedFields = inputFields.map((f) => {
-                        if (f.id === field.id) {
+                      const updatedFields = inputFields.map((subField) => {
+                        if (subField.id === field.id) {
                           if (field.name === "type") {
-                            return { ...f, value: option.value };
+                            return { ...subField, value: option.value };
                           } else if (field.name === "required") {
-                            return { ...f, value: option.value === true };
+                            return { ...subField, value: option.value === true };
                           } else if (field.name === "active") {
-                            return { ...f, value: option.value === true };
+                            return { ...subField, value: option.value === true };
                           } else {
-                            return f;
+                            return subField;
                           }
                         }
-                        return f;
+                        return subField;
                       });
                       setInputFields(updatedFields);
                     }}
                     isClearable={false}
                   />
                   {field.name === "type" && (field.value === "list" || field.value === "multiSelectionList") && (
-                    <div className="additional-fields-list-items">
+                    <div className="additional-fields-list-items" style={{ display: "block" }}>
                       <Label for="classOptions">List Items</Label>
                       <Input
                         type="text"
-                        value={field.listItems}
+                        value={listItems}
                         onChange={(e) => {
-                          const updatedFields = inputFields.map((f) =>
-                            (f.id === field.id ? { ...f, listItems: e.target.value } : f)
-                          );
-                          setInputFields(updatedFields);
+                          const updatedFields = [...inputFields];
+                          const arrayOfStringValues = e.target.value.split(",");
+                          console.log("arrayOfStringValues", arrayOfStringValues);
+                          setListItems(arrayOfStringValues);
+                          // updatedFields.push({ id: 4, name:"list", label:"List Option?", value: arrayOfStringValues, visible: false, type: "text", colSize:"12"});
+                          // console.log("updatedFields", updatedFields);
+                          // setInputFields(updatedFields);
                         }}
                       />
                       <small>Add the items separated by commas</small>
@@ -255,7 +268,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
           ) : null)
         )}
       </div>
-      {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields}>Add</Button>}
+        {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields}>Add</Button>}
     </FormGroup>
     <Label className="mb-2" for="classOptions">
       <b><i>{additionalRegistrationFieldsToShow.map((item) => item.label).join(", ")}</i></b>
@@ -312,8 +325,8 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
           id="trackingLink"
           name="trackingLink"
           placeholder=""
-          value={additionalCopyToShow}
-          onChange={(e) => setAdditionalCopyToShow(e.target.value)}
+          value={invitationFrom}
+          onChange={(e) => setInvitationFrom(e.target.value)}
         />
     </FormGroup>
     {editMode && (
