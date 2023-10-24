@@ -96,7 +96,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
   };
 
   const handleUpdate = (data) => {
-    console.log("data:", data);
     setAdditionalCopyToShow(data);
   };
 
