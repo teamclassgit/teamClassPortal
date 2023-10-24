@@ -1,10 +1,13 @@
+// @packages
 import { useEffect, useState } from "react";
 import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, ModalBody, Row } from "reactstrap";
-import SimpleEditor from "../simple-editor";
 import Select from "react-select";
+import { useMutation } from "@apollo/client";
+// @scripts
+import SimpleEditor from "../simple-editor";
 import { selectThemeColors } from "@utils";
 import MutationUpdateSignUpPageSettings from "../../../graphql/MutationUpdateSignUpPageSettings";
-import { useMutation } from "@apollo/client";
+// @styles
 import "./styles.scss";
 
 const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason, close, onEditCompleted }) => {
@@ -13,9 +16,8 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     { id: 1, name:"label", label:"Label*", value: "", visible: false, type: "text", colSize:"12" },
     { id: 2, name:"placeholder", label:"Placeholder", value: "", visible: false, type: "text", colSize:"12"},
     { id: 3, name:"type", label:"Field Type*", value: "", visible: false, type: "select", colSize:"12"},
-    // { id: 4, name:"list", label:"List Option?", value: "", visible: false, type: "text", colSize:"12"},
-    { id: 5, name:"required", label:"Is required?", value: true,  visible: false, type: "select", colSize:"5"},
-    { id: 6, name:"active", label:"Is Active?", value: true, visible: false, type: "select", colSize:"5"}
+    { id: 5, name:"required", label:"Is required?*", value: "",  visible: false, type: "select", colSize:"5"},
+    { id: 6, name:"active", label:"Is Active?*", value: "", visible: false, type: "select", colSize:"5"}
   ]);
   const [isSaveBtnVissible, setIsSaveBtnVissible] = useState(false);
   const [additionalCopyToShow, setAdditionalCopyToShow] = useState("");
@@ -69,14 +71,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     setInputFields(updatedFields);
   };
 
-  const updateListFieldVisibility = (fieldType) => {
-    const updatedFields = inputFields.map((field) => ({
-      ...field,
-      visible: field.name === "list" && (fieldType === "list" || fieldType === "multiSelectionList")
-    }));
-    setInputFields(updatedFields);
-  };
-
   const saveAndHideFields = () => {
     const newField = {
       label: inputFields.find((obj) => obj.name === "label").value,
@@ -104,25 +98,11 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
   const handleUpdate = (data) => {
     console.log("data:", data);
     setAdditionalCopyToShow(data);
-    // setFormInputs({ ...formInputs, [field]: data });
   };
 
 
   const handleUpdateBooking = async () => {
     setProcessing(true);
-    // let signUpPageSettings = { ...currentElement.signUpPageSettings };
-    // if (!joinLink && !passwordLink) {
-    //   joinInfo = undefined;
-    // } else if (joinInfo && joinInfo.joinUrl) {
-    //   joinInfo.joinUrl = joinLink;
-    //   joinInfo.password = passwordLink;
-    // } else {
-    //   joinInfo = {
-    //     joinUrl: joinLink,
-    //     password: passwordLink
-    //   };
-    // }
-
     try {
       const result = await updateSignUpSettings({
         variables: {
@@ -145,11 +125,15 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     }
   };
 
+  const isAddBtnDissabled = (fields) => {
+    for (const field of fields) {
+      if ((field.name === "name" || field.name === "type" || field.name === "required" || field.name === "active") && field.visible && field.value === "") {
+        return false;
+      }
+    }
+    return true;
+  };
 
-  console.log("currentElement", currentElement);
-  console.log("inputFields", inputFields);
-  console.log("optionalAddressCopy", optionalAddressCopy);
-  console.log("additionalRegistrationFields", additionalRegistrationFields);
   return (
     <ModalBody className="flex-grow-1">
     <FormGroup>
@@ -190,7 +174,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
                   <Select
                     theme={selectThemeColors}
                     styles={selectStyles}
-                    // ...
                     options={field.name === "type" ? [
                       {
                         value: "list",
@@ -250,13 +233,8 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
                         type="text"
                         value={listItems}
                         onChange={(e) => {
-                          const updatedFields = [...inputFields];
                           const arrayOfStringValues = e.target.value.split(",");
-                          console.log("arrayOfStringValues", arrayOfStringValues);
                           setListItems(arrayOfStringValues);
-                          // updatedFields.push({ id: 4, name:"list", label:"List Option?", value: arrayOfStringValues, visible: false, type: "text", colSize:"12"});
-                          // console.log("updatedFields", updatedFields);
-                          // setInputFields(updatedFields);
                         }}
                       />
                       <small>Add the items separated by commas</small>
@@ -268,7 +246,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
           ) : null)
         )}
       </div>
-        {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields}>Add</Button>}
+      {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields} disabled={!isAddBtnDissabled(inputFields)}>Add</Button>}
     </FormGroup>
     <Label className="mb-2" for="classOptions">
       <b><i>{additionalRegistrationFieldsToShow.map((item) => item.label).join(", ")}</i></b>
@@ -278,7 +256,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
       <Select
         theme={selectThemeColors}
         styles={selectStyles}
-        // isDisabled={currentElement.status === BOOKING_CLOSED_STATUS}
         className="react-select edit-booking-select-instructor"
         classNamePrefix="select"
         placeholder="Select..."
@@ -300,7 +277,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
         }
         onChange={(option) => {
           setAddressIsOptional(option.value);
-          // setInstructorName(option.label);
         }}
         isClearable={false}
       />

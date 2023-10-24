@@ -16,10 +16,10 @@ import Notes from "@molecules/notes";
 import SettingsComponent from "@molecules/settings";
 import BasicInformation from "@molecules/basic-information";
 import TeamMemberInstructor from "@molecules/team-member-instructor";
+import SignUpSettingsComponent from "../../molecules/sign-up-settings";
 
 // @styles
 import "./EditBookingModal.scss";
-import SignUpSettingsComponent from "../../molecules/sign-up-settings";
 
 const EditBookingModal = ({
   currentElement,
