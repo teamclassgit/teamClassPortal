@@ -3,7 +3,7 @@
   "version": "6.4.0",
   "private": true,
   "dependencies": {
-    "@apollo/client": "3.8.4",
+    "@apollo/client": "3.3.16",
     "@asseinfo/react-kanban": "^2.2.0",
     "@casl/ability": "^6.0.0",
     "@casl/react": "3.1.0",

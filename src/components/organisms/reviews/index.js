@@ -289,6 +289,7 @@ const ReviewsList = () => {
                         <CustomInput
                           id={review._id}
                           type="switch"
+                          value={review.visible}
                           checked={review.visible}
                           label="Published"
                           onChange={(e) => {
@@ -303,6 +304,7 @@ const ReviewsList = () => {
                           id={`${review._id}testimonial`}
                           type="switch"
                           className="mt-1"
+                          value={review.testimonial}
                           checked={review.testimonial}
                           label="Testimonial"
                           onChange={(e) => {
