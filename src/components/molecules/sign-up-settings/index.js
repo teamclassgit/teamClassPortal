@@ -313,7 +313,24 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
           ) : null)
         )}
       </div>
-      {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields} disabled={!isAddBtnDissabled(inputFields)}>{isEditingAdditionalRegistrationFields ? "Add Changes" : "Add"}</Button>}
+      {isSaveBtnVissible && (
+        <>
+          <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields} disabled={!isAddBtnDissabled(inputFields)}>{isEditingAdditionalRegistrationFields ? "Add Changes" : "Add"}</Button>
+          <Button  color="secondary" className="mt-1 ml-1 btn-sm" outline onClick={_ => {
+             const updatedFields = inputFields.map((field) => ({
+              ...field,
+              visible: false
+            }));
+            setInputFields(updatedFields);
+            setEditedField();
+            setIsEditingAdditionalRegistrationFields(false);
+            setIsSaveBtnVissible(false);
+          }}>
+            {"Cancel"}
+          </Button> 
+ 
+        </>
+      )}
     </FormGroup>
     <Label className="mb-2" for="classOptions">
       <b><i>{additionalRegistrationFieldsToShow.map((item, index) => <p key={index}>{item.label}{" "}<Edit className="cursor-pointer" onClick={_ => editAdditionalFields(item)} size="12"/>{" "}<Trash2 className="cursor-pointer" onClick={_ => deleteAdditionalFields(item)}size="13"/></p>)}</i></b>
@@ -347,30 +364,6 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
         }}
         isClearable={false}
       />
-    </FormGroup>
-
-    <FormGroup>
-      <Label for="classOptions">Optional Address:</Label>
-        <Input
-          type="text"
-          id="trackingLink"
-          name="trackingLink"
-          placeholder=""
-          value={optionalAddressCopy}
-          onChange={(e) => setOptionalAddressCopy(e.target.value)}
-        />
-
-    </FormGroup>
-    <FormGroup>
-      <Label for="classOptions">Invitation from?:</Label>
-        <Input
-          type="text"
-          id="trackingLink"
-          name="trackingLink"
-          placeholder=""
-          value={invitationFrom}
-          onChange={(e) => setInvitationFrom(e.target.value)}
-        />
     </FormGroup>
     {editMode && (
       <div align="center">
