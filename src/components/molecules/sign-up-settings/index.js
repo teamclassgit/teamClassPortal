@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, ModalBody, Row } from "reactstrap";
 import Select from "react-select";
 import { useMutation } from "@apollo/client";
+import { Edit, Trash2 } from "react-feather";
 // @scripts
 import SimpleEditor from "../simple-editor";
 import { selectThemeColors } from "@utils";
@@ -27,6 +28,8 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
   const [optionalAddressCopy, setOptionalAddressCopy] = useState("");
   const [additionalRegistrationFieldsToShow, setAdditionalRegistrationFieldsToShow] = useState([]);
   const [listItems, setListItems] = useState([]);
+  const [isEditingAdditionalRegistrationFields, setIsEditingAdditionalRegistrationFields] = useState(false);
+  const [editedField, setEditedField] = useState(null);
 
   const [updateSignUpSettings] = useMutation(MutationUpdateSignUpPageSettings, {});
 
@@ -72,27 +75,43 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
   };
 
   const saveAndHideFields = () => {
-    const newField = {
-      label: inputFields.find((obj) => obj.name === "label").value,
-      placeholder: inputFields.find((obj) => obj.name === "placeholder").value,
-      type: inputFields.find((obj) => obj.name === "type").value,
-      listItems: inputFields.find((obj) => obj.name === "type").value === "list" || inputFields.find((obj) => obj.name === "type").value === "multiSelectionList" ? 
-        listItems : [],
-      required: inputFields.find((obj) => obj.name === "required").value,
-      active: inputFields.find((obj) => obj.name === "active").value,
-      order: additionalRegistrationFields.length + 1
+    const label = inputFields.find((obj) => obj.name === "label").value;
+    const placeholder = inputFields.find((obj) => obj.name === "placeholder").value;
+    const type = inputFields.find((obj) => obj.name === "type").value;
+    const required = inputFields.find((obj) => obj.name === "required").value;
+    const active = inputFields.find((obj) => obj.name === "active").value;
+  
+    const order = editedField ? editedField.order : additionalRegistrationFields.length + 1;
+  
+    const updatedField = {
+      label,
+      placeholder,
+      type,
+      listItems: (type === "list" || type === "multiSelectionList") ? listItems : [],
+      required,
+      active,
+      order
     };
   
-    setAdditionalRegistrationFields([...additionalRegistrationFields, newField]);
-    setAdditionalRegistrationFieldsToShow([...additionalRegistrationFields, newField]);
+    if (editedField) {
+      const updatedFields = additionalRegistrationFields.map((field) =>
+        (isEqual(field, editedField) ? updatedField : field)
+      );
+      setAdditionalRegistrationFields(updatedFields);
+      setAdditionalRegistrationFieldsToShow(updatedFields);
+    } else {
+      setAdditionalRegistrationFields([...additionalRegistrationFields, updatedField]);
+      setAdditionalRegistrationFieldsToShow([...additionalRegistrationFields, updatedField]);
+    }
   
-    const updatedFields = inputFields.map((field) => ({
+    const clearedFields = inputFields.map((field) => ({
       ...field,
       value: "",
       visible: false
     }));
-    setInputFields(updatedFields);
+    setInputFields(clearedFields);
     setIsSaveBtnVissible(false);
+    setEditedField(null);
   };
 
   const handleUpdate = (data) => {
@@ -122,6 +141,8 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     } catch (e) {
       console.error(e);
     }
+    setIsEditingAdditionalRegistrationFields(false);
+    setEditedField({});
   };
 
   const isAddBtnDissabled = (fields) => {
@@ -131,6 +152,34 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
       }
     }
     return true;
+  };
+
+  // Util function to compare two objects
+  const isEqual = (objA, objB) => {
+    console.log("isEqual", JSON.stringify(objA) === JSON.stringify(objB));
+    return JSON.stringify(objA) === JSON.stringify(objB);
+  };
+
+  const editAdditionalFields = (field) => {
+    setEditedField(field);
+    setIsEditingAdditionalRegistrationFields(true);
+    setIsSaveBtnVissible(true);
+    if (field.type === "list" || field.type === "multiSelectionList") {
+      setListItems(field.listItems.join(", "));
+    }
+    const updatedFields = inputFields.map((inputField) => ({
+      ...inputField,
+      visible: true,
+      value: field[inputField.name]
+    }));
+    setInputFields(updatedFields);
+  };
+
+  const deleteAdditionalFields = (field) => {
+    let newAdditionalRegistrationFields = [...additionalRegistrationFields];
+    newAdditionalRegistrationFields = newAdditionalRegistrationFields.filter(item => !isEqual(item, field));
+    setAdditionalRegistrationFields(newAdditionalRegistrationFields);
+    setAdditionalRegistrationFieldsToShow(newAdditionalRegistrationFields);
   };
 
   return (
@@ -173,6 +222,16 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
                   <Select
                     theme={selectThemeColors}
                     styles={selectStyles}
+                    value={field.name === "type" ? 
+                    {
+                      value: field.value,
+                      label: field.value
+                    } : 
+                    {
+                      value: field.value,
+                      label: field.value ? "Yes" : "No"
+                    }
+                  }
                     options={field.name === "type" ? [
                       {
                         value: "list",
@@ -245,10 +304,10 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
           ) : null)
         )}
       </div>
-      {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields} disabled={!isAddBtnDissabled(inputFields)}>Add</Button>}
+      {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields} disabled={!isAddBtnDissabled(inputFields)}>{isEditingAdditionalRegistrationFields ? "Save Changes" : "Add"}</Button>}
     </FormGroup>
     <Label className="mb-2" for="classOptions">
-      <b><i>{additionalRegistrationFieldsToShow.map((item) => item.label).join(", ")}</i></b>
+      <b><i>{additionalRegistrationFieldsToShow.map((item, index) => <p key={index}>{item.label}{" "}<Edit onClick={_ => editAdditionalFields(item)} size="12"/>{" "}<Trash2 onClick={_ => deleteAdditionalFields(item)}size="13"/></p>)}</i></b>
    </Label>
     <FormGroup>
       <Label for="classOptions">Is address optional?</Label>
