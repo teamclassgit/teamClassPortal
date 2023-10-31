@@ -332,7 +332,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
         </>
       )}
     </FormGroup>
-    <Label className="mb-2" for="classOptions">
+    <Label className="mb-1" for="classOptions">
       <b><i>{additionalRegistrationFieldsToShow.map((item, index) => <p key={index}>{item.label}{" "}<Edit className="cursor-pointer" onClick={_ => editAdditionalFields(item)} size="12"/>{" "}<Trash2 className="cursor-pointer" onClick={_ => deleteAdditionalFields(item)}size="13"/></p>)}</i></b>
    </Label>
     <FormGroup>
