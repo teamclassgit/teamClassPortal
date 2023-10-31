@@ -316,7 +316,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
       {isSaveBtnVissible && <Button className="mt-1 btn btn-primary btn-sm" onClick={saveAndHideFields} disabled={!isAddBtnDissabled(inputFields)}>{isEditingAdditionalRegistrationFields ? "Add Changes" : "Add"}</Button>}
     </FormGroup>
     <Label className="mb-2" for="classOptions">
-      <b><i>{additionalRegistrationFieldsToShow.map((item, index) => <p key={index}>{item.label}{" "}<Edit onClick={_ => editAdditionalFields(item)} size="12"/>{" "}<Trash2 onClick={_ => deleteAdditionalFields(item)}size="13"/></p>)}</i></b>
+      <b><i>{additionalRegistrationFieldsToShow.map((item, index) => <p key={index}>{item.label}{" "}<Edit className="cursor-pointer" onClick={_ => editAdditionalFields(item)} size="12"/>{" "}<Trash2 className="cursor-pointer" onClick={_ => deleteAdditionalFields(item)}size="13"/></p>)}</i></b>
    </Label>
     <FormGroup>
       <Label for="classOptions">Is address optional?</Label>
