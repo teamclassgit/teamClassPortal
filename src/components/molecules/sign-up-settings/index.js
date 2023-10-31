@@ -112,6 +112,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     setInputFields(clearedFields);
     setIsSaveBtnVissible(false);
     setEditedField(null);
+    setListItems([]);
   };
 
   const handleUpdate = (data) => {
@@ -180,6 +181,14 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
     newAdditionalRegistrationFields = newAdditionalRegistrationFields.filter(item => !isEqual(item, field));
     setAdditionalRegistrationFields(newAdditionalRegistrationFields);
     setAdditionalRegistrationFieldsToShow(newAdditionalRegistrationFields);
+    const updatedFields = inputFields.map((field) => ({
+      ...field,
+      visible: false
+    }));
+    setInputFields(updatedFields);
+    setEditedField();
+    setIsEditingAdditionalRegistrationFields(false);
+    setIsSaveBtnVissible(false);
   };
 
   return (
