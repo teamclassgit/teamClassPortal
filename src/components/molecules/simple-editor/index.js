@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
-// import dynamic from "next/dynamic";
 import { ContentState, EditorState, convertFromHTML} from "draft-js";
 import { convertToHTML } from "draft-convert";
 import {Editor} from "react-draft-wysiwyg";
-// const Editor = dynamic(
-//   () => import("react-draft-wysiwyg").then(mod => mod.Editor),
-//   { ssr: false }
-// );
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const SimpleEditor = ({classOptionsView, initialContent = null, onChangeContent}) => {
