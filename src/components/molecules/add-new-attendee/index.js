@@ -15,6 +15,9 @@ import noShippingAlcoholStates from "@data/no-shipping-alcohol-states.json";
 
 // @styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import "./styles.scss";
 
 const AddNewAttendee = ({
   currentBookingId,
@@ -282,7 +285,7 @@ const AddNewAttendee = ({
             />
           </InputGroup>
         </FormGroup>
-        <FormGroup>
+        {/* <FormGroup>
           <InputGroup>
             <InputGroupAddon addonType="prepend">
               <InputGroupText>
@@ -297,8 +300,14 @@ const AddNewAttendee = ({
               value={newPhone}
               onChange={(e) => setNewPhone(e.target.value)}
             />
+
           </InputGroup>
-        </FormGroup>
+        </FormGroup> */}
+        <PhoneInput
+              className="form-control"
+              placeholder="Enter phone number"
+              value={newPhone}
+              onChange={setNewPhone}/>
         {booking.classVariant?.hasKit && (
           <FormGroup>
             <FormGroup>
@@ -336,8 +345,9 @@ const AddNewAttendee = ({
                 />
                 <Input
                   id="zip"
-                  type="number"
+                  type="text"
                   placeholder="Zip Code"
+                  maxLength={12}
                   required={booking.classVariant.hasKit ? true : false}
                   value={newZip}
                   onChange={(e) => {

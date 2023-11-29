@@ -159,6 +159,10 @@ const InvoiceBuilder = ({ realCountAttendees, booking, setBooking, calendarEvent
     setInvoiceItems(newInvoiceItems);
   };
 
+  console.log("invoiceItems, booking.classVariant", invoiceItems);
+  console.log("booking.classVariant)", booking.classVariant);
+  console.log("", booking.classVariant.flatFeeIncludedInPrice && booking.classVariant.instructorFlatFee > 0 ? booking.classVariant.instructorFlatFee : 0);
+
   return (
     <Fragment>
       <Row>
