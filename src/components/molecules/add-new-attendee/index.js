@@ -1,6 +1,6 @@
 // @packages
 import "cleave.js/dist/addons/cleave-phone.us";
-import Cleave from "cleave.js/react";
+import PhoneInput from "react-phone-number-input";
 import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
@@ -15,7 +15,6 @@ import noShippingAlcoholStates from "@data/no-shipping-alcohol-states.json";
 
 // @styles
 import "@styles/react/libs/flatpickr/flatpickr.scss";
-import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import "./styles.scss";
 
@@ -285,29 +284,12 @@ const AddNewAttendee = ({
             />
           </InputGroup>
         </FormGroup>
-        {/* <FormGroup>
-          <InputGroup>
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                <Phone size={15} />
-              </InputGroupText>
-            </InputGroupAddon>
-            <Cleave
-              className="form-control"
-              placeholder="Phone"
-              options={options}
-              id="phone"
-              value={newPhone}
-              onChange={(e) => setNewPhone(e.target.value)}
-            />
-
-          </InputGroup>
-        </FormGroup> */}
         <PhoneInput
-              className="form-control"
-              placeholder="Enter phone number"
-              value={newPhone}
-              onChange={setNewPhone}/>
+          className="form-control"
+          placeholder="Enter phone number"
+          value={newPhone}
+          onChange={setNewPhone}
+        />
         {booking.classVariant?.hasKit && (
           <FormGroup>
             <FormGroup>
