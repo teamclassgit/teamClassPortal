@@ -159,10 +159,6 @@ const InvoiceBuilder = ({ realCountAttendees, booking, setBooking, calendarEvent
     setInvoiceItems(newInvoiceItems);
   };
 
-  console.log("invoiceItems, booking.classVariant", invoiceItems);
-  console.log("booking.classVariant)", booking.classVariant);
-  console.log("", booking.classVariant.flatFeeIncludedInPrice && booking.classVariant.instructorFlatFee > 0 ? booking.classVariant.instructorFlatFee : 0);
-
   return (
     <Fragment>
       <Row>
@@ -267,7 +263,8 @@ const InvoiceBuilder = ({ realCountAttendees, booking, setBooking, calendarEvent
                       </div>
                     </td>
                     <td align="center">
-                      <NumberInput
+                      <Input
+                        type="number"
                         min={1}
                         max={10000}
                         value={element.units}
@@ -275,7 +272,7 @@ const InvoiceBuilder = ({ realCountAttendees, booking, setBooking, calendarEvent
                         className="w-50"
                         disabled={!element.unitsEditable}
                         required={true}
-                        onChange={(newValue) => onChangeUnits(element, newValue, index)}
+                        onChange={(e) => onChangeUnits(element, e.target.value, index)}
                       />
                     </td>
                     <td align="center">
