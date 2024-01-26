@@ -337,43 +337,47 @@ const DataTableAttendees = ({
                         </>
                       </DropdownItem>
                     )}
-                    <DropdownItem className="align-middle w-100">
-                      <ExportToExcelLegacy
-                        apiData={attendeesExcelTable}
-                        fileName={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
-                          customer && customer.company ? customer.company : ""
-                        }-${moment().format("LL")}-${teamClassInfo.title}`}
-                        title={
+                    {attendees?.length > 0 && (
+                      <>
+                        <DropdownItem className="align-middle w-100">
+                          <ExportToExcelLegacy
+                            apiData={attendeesExcelTable}
+                            fileName={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
+                              customer && customer.company ? customer.company : ""
+                            }-${moment().format("LL")}-${teamClassInfo.title}`}
+                            title={
+                              <h6>
+                                <FileText size={13} />
+                                {"   Excel File"}
+                              </h6>
+                            }
+                            smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
+                          />
+                        </DropdownItem>
+                        <DropdownItem className="align-middle w-100">
+                          <ExportToCsv
+                            array={attendees}
+                            name={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
+                              customer && customer.company ? customer.company : ""
+                            }-${moment().format("LL")}-${teamClassInfo.title}.csv`}
+                            title={
+                              <h6>
+                                <File size={13} />
+                                {"   Csv File"}
+                              </h6>
+                            }
+                            smallText={<h6 className="small m-0 p-0">Download csv file with attendees</h6>}
+                            teamClassInfo={teamClassInfo}
+                          />
+                        </DropdownItem>
+                        <DropdownItem className="align-middle w-100"  onClick={e => setDeleteAllAteendeesModal(!deleteAllAteendeesModal)}>
                           <h6>
-                            <FileText size={13} />
-                            {"   Excel File"}
+                            <Trash2 size={15} /> Delete attendees
                           </h6>
-                        }
-                        smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
-                      />
-                    </DropdownItem>
-                    <DropdownItem className="align-middle w-100">
-                      <ExportToCsv
-                        array={attendees}
-                        name={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
-                          customer && customer.company ? customer.company : ""
-                        }-${moment().format("LL")}-${teamClassInfo.title}.csv`}
-                        title={
-                          <h6>
-                            <File size={13} />
-                            {"   Csv File"}
-                          </h6>
-                        }
-                        smallText={<h6 className="small m-0 p-0">Download csv file with attendees</h6>}
-                        teamClassInfo={teamClassInfo}
-                      />
-                    </DropdownItem>
-                    <DropdownItem className="align-middle w-100"  onClick={e => setDeleteAllAteendeesModal(!deleteAllAteendeesModal)}>
-                      <h6>
-                        <Trash2 size={15} /> Delete attendees
-                      </h6>
-                      <small>Remove all the attendees</small>
-                    </DropdownItem>
+                          <small>Remove all the attendees</small>
+                        </DropdownItem>
+                      </>
+                    )}
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
