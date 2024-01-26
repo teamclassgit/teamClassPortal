@@ -517,7 +517,6 @@ const DataTableAttendees = ({
                     ids: allIds
                   }
                 });
-                console.log("result", result);
                 updateAttendeesCount(0);
                 setData([]);
                 setDeleteAllAteendeesModal(!deleteAllAteendeesModal);
