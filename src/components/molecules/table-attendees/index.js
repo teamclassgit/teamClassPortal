@@ -3,7 +3,7 @@ import React, { forwardRef, Fragment, useState } from "react";
 import Avatar from "@components/avatar";
 import ReactPaginate from "react-paginate";
 import DataTable from "react-data-table-component";
-import { ChevronDown, Edit, FileText, File, Grid, Plus, Share, Trash, X } from "react-feather";
+import { ChevronDown, Edit, FileText, File, Grid, Plus, Share, Trash, Trash2, X } from "react-feather";
 import {
   Badge,
   Button,
@@ -24,6 +24,7 @@ import {
 } from "reactstrap";
 import moment from "moment";
 import PropTypes from "prop-types";
+import { useMutation } from "@apollo/client";
 
 // @scripts
 import AddNewAttendee from "@molecules/add-new-attendee";
@@ -31,6 +32,8 @@ import UploadData from "@molecules/upload-data-attendees";
 import ExportToCsv from "@molecules/export-to-csv";
 import { BOOKING_CLOSED_STATUS } from "@utility/Constants";
 import ExportToExcelLegacy from "@molecules/export-to-excel-legacy";
+import MutationDeleteAllAttendees from "../../../graphql/MutationDeleteAllAttendees";
+
 import "./TableAttendees.scss";
 
 // ** Bootstrap Checkbox Component
@@ -62,9 +65,11 @@ const DataTableAttendees = ({
   const [filteredData, setFilteredData] = useState([]);
   const [mode, setMode] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteAllAteendeesModal, setDeleteAllAteendeesModal] = useState(false);
   const [elementToDelete, setElementToDelete] = useState(null);
   const [attendeesExcelTable, setAttendeesExcelTable] = useState([]);
   const [excelHeadersTemplate, setExcelHeadersTemplate] = useState([]);
+  const [deleteAttendees] = useMutation(MutationDeleteAllAttendees, {});
   // ** Function to handle Modal toggle
   const handleModal = () => setModal(!modal);
   // ** Function to handle Modal toggle
@@ -332,37 +337,47 @@ const DataTableAttendees = ({
                         </>
                       </DropdownItem>
                     )}
-                    <DropdownItem className="align-middle w-100">
-                      <ExportToExcelLegacy
-                        apiData={attendeesExcelTable}
-                        fileName={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
-                          customer && customer.company ? customer.company : ""
-                        }-${moment().format("LL")}-${teamClassInfo.title}`}
-                        title={
+                    {attendees?.length > 0 && (
+                      <>
+                        <DropdownItem className="align-middle w-100">
+                          <ExportToExcelLegacy
+                            apiData={attendeesExcelTable}
+                            fileName={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
+                              customer && customer.company ? customer.company : ""
+                            }-${moment().format("LL")}-${teamClassInfo.title}`}
+                            title={
+                              <h6>
+                                <FileText size={13} />
+                                {"   Excel File"}
+                              </h6>
+                            }
+                            smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
+                          />
+                        </DropdownItem>
+                        <DropdownItem className="align-middle w-100">
+                          <ExportToCsv
+                            array={attendees}
+                            name={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
+                              customer && customer.company ? customer.company : ""
+                            }-${moment().format("LL")}-${teamClassInfo.title}.csv`}
+                            title={
+                              <h6>
+                                <File size={13} />
+                                {"   Csv File"}
+                              </h6>
+                            }
+                            smallText={<h6 className="small m-0 p-0">Download csv file with attendees</h6>}
+                            teamClassInfo={teamClassInfo}
+                          />
+                        </DropdownItem>
+                        <DropdownItem className="align-middle w-100"  onClick={e => setDeleteAllAteendeesModal(!deleteAllAteendeesModal)}>
                           <h6>
-                            <FileText size={13} />
-                            {"   Excel File"}
+                            <Trash2 size={15} /> Delete attendees
                           </h6>
-                        }
-                        smallText={<h6 className="small m-0 p-0">Download excel file with attendees</h6>}
-                      />
-                    </DropdownItem>
-                    <DropdownItem className="align-middle w-100">
-                      <ExportToCsv
-                        array={attendees}
-                        name={`${customer && customer.name}${customer && customer.company ? ", " : ""}${
-                          customer && customer.company ? customer.company : ""
-                        }-${moment().format("LL")}-${teamClassInfo.title}.csv`}
-                        title={
-                          <h6>
-                            <File size={13} />
-                            {"   Csv File"}
-                          </h6>
-                        }
-                        smallText={<h6 className="small m-0 p-0">Download csv file with attendees</h6>}
-                        teamClassInfo={teamClassInfo}
-                      />
-                    </DropdownItem>
+                          <small>Remove all the attendees</small>
+                        </DropdownItem>
+                      </>
+                    )}
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
@@ -477,6 +492,44 @@ const DataTableAttendees = ({
             }}
           >
             Delete
+          </Button>
+        </ModalFooter>
+      </Modal>
+      <Modal isOpen={deleteAllAteendeesModal} toggle={() => setDeleteAllAteendeesModal(!deleteAllAteendeesModal)} backdrop={false} className="modal-dialog-centered border-0">
+        <ModalHeader toggle={() => setDeleteAllAteendeesModal(!deleteAllAteendeesModal)} close={CloseBtn}>
+          Are you sure you want to delete all the attendees?
+        </ModalHeader>
+        <ModalFooter className="justify-content-center">
+          <Button
+            color="secondary"
+            size="sm"
+            onClick={(e) => {
+              e.preventDefault();
+              setDeleteAllAteendeesModal(!deleteAllAteendeesModal);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            size="sm"
+            onClick={async (e) => {
+              try {
+                const allIds = data.map((attendee) => attendee._id);
+                const result = await deleteAttendees({
+                  variables: {
+                    ids: allIds
+                  }
+                });
+                updateAttendeesCount(0);
+                setData([]);
+                setDeleteAllAteendeesModal(!deleteAllAteendeesModal);
+              } catch (err) {
+                console.log("Something went wrong: ", err);
+              }
+            }}
+          >
+            Delete All
           </Button>
         </ModalFooter>
       </Modal>
