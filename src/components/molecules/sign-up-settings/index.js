@@ -261,6 +261,10 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
                       {
                         value: "multiSelectionList",
                         label: "multiSelectionList"
+                      },
+                      {
+                        value: "image",
+                        label: "image"
                       }
                     ] : 
                       [
