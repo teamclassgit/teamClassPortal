@@ -180,6 +180,7 @@ export default gql`
       signUpPageSettings {
         invitationFrom
         additionalCopyToShow
+        isAddressVissible
         additionalRegistrationFields {
           label
           placeholder
