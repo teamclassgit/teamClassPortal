@@ -166,6 +166,7 @@ export default gql`
         invitationFrom
         additionalCopyToShow
         optionalAddressCopy
+        isAddressVissible
         additionalRegistrationFields {
           label
           placeholder

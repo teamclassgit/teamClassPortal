@@ -10,6 +10,7 @@ import { selectThemeColors } from "@utils";
 import MutationUpdateSignUpPageSettings from "../../../graphql/MutationUpdateSignUpPageSettings";
 // @styles
 import "./styles.scss";
+import { Switch } from "@mui/material";
 
 const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason, close, onEditCompleted }) => {
   const [processing, setProcessing] = useState(false);
@@ -30,6 +31,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
   const [listItems, setListItems] = useState([]);
   const [isEditingAdditionalRegistrationFields, setIsEditingAdditionalRegistrationFields] = useState(false);
   const [editedField, setEditedField] = useState(null);
+  const [isAddressVissible, setIsAddressVissible] = useState(true);
 
   const [updateSignUpSettings] = useMutation(MutationUpdateSignUpPageSettings, {});
 
@@ -41,6 +43,8 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
       setInvitationFrom(currentElement?.signUpPageSettings?.invitationFrom || "");
       setOptionalAddressCopy(currentElement?.signUpPageSettings?.optionalAddressCopy || "");
       setAdditionalRegistrationFieldsToShow(currentElement?.signUpPageSettings?.additionalRegistrationFields || []);
+      setIsAddressVissible((currentElement?.signUpPageSettings?.isAddressVissible === undefined || currentElement?.signUpPageSettings?.isAddressVissible === null) ? true : currentElement?.signUpPageSettings?.isAddressVissible);
+
     }
   }, [currentElement]);
 
@@ -129,6 +133,7 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
           updatedAt: new Date(),
           signUpPageSettings: {
             additionalCopyToShow,
+            isAddressVissible,
             additionalRegistrationFields,
             addressIsOptional,
             invitationFrom,
@@ -364,6 +369,14 @@ const SignUpSettingsComponent = ({ currentElement, editMode, closedBookingReason
         }}
         isClearable={false}
       />
+    </FormGroup>
+    <FormGroup>
+      <Label for="classOptions">Is address Vissible?</Label>
+      <Switch
+         checked={isAddressVissible}
+         onChange={e => { console.log("e.target.checked", e.target.checked); setIsAddressVissible(e.target.checked); } }
+         inputProps={{ "aria-label": "controlled" }}
+       />
     </FormGroup>
     {editMode && (
       <div align="center">
